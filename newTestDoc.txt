@@ -1,6 +1,8 @@
 newTestDoc . txt
 
-lines 1
+for(a)
+    lines 1111
+next
 
 2
 
