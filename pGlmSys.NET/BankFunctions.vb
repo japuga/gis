@@ -15,6 +15,17 @@ Module BankFunctions
         Return dt
 
     End Function
+    Public Function getDataSet(ByVal query As String) As DataSet
+        Dim ds As DataSet = New DataSet("tmpDS")
+        Dim da As SqlDataAdapter = New SqlDataAdapter()
+        Dim cmd As SqlCommand = cn.CreateCommand()
+
+        cmd.CommandText = query
+        da.SelectCommand = cmd
+        da.Fill(ds)
+        '        dt = ds.Tables(0)
+        Return ds
+    End Function
     'Lista de funciones usadas en cheques y bancos
     'Carga cb con Lista de Bancos del cliente
     Public Sub load_bank(ByRef cb As System.Windows.Forms.ComboBox, ByRef sCustId As String)

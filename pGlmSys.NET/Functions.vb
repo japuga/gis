@@ -2,6 +2,7 @@ Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
+
 Module Functions
 	'UPGRADE_ISSUE: Declaring a parameter 'As Any' is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="FAE78A8D-8978-4FD4-8208-5B7324A8F795"'
     Private Declare Function GetIpAddrTable_API Lib "IpHlpApi" Alias "GetIpAddrTable" (ByRef pIPAddrTable As Object, ByRef pdwSize As Integer, ByVal bOrder As Integer) As Integer
@@ -605,14 +606,12 @@ ErrorHandler:
 	Public Function openExcelFile(ByRef sFilename As String, ByRef XLApp As Microsoft.Office.Interop.Excel.Application, ByRef XL_wbook As Microsoft.Office.Interop.Excel.Workbook) As Object
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object openExcelFile. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		openExcelFile = False
+        openExcelFile = False
 		
 		XLApp = GetObject( , "excel.application")
 		XL_wbook = XLApp.Workbooks.Open(sFilename)
 		XLApp.Visible = False
-		'UPGRADE_WARNING: Couldn't resolve default property of object openExcelFile. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		openExcelFile = True
+        openExcelFile = True
 		
 ErrorEnd: 
 		Exit Function

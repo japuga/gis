@@ -1,17 +1,18 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepRecycleTonGen
 	Inherits System.Windows.Forms.Form
 	Private params As gRptRecycleTonGenParamUDT
 	
 	Private sLocalVersion As String
 	Private sLocalReport As String
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
 	Public crysApp As CRPEAuto.Application
 	Public crysRepRecycleTon As CRPEAuto.Report
-    Private rsReport As SqlDataReader
+    Private rsReport As DataTable
 	Private sWhere As String
 	
 	
@@ -123,9 +124,9 @@ Friend Class frmRepRecycleTonGen
         sStmt = "SELECT count(*) FROM RptRecycleTonGen WHERE report_id = " & Str(nReport)
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
-            If rsLocal.Item(0).Value > 0 Then
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Found records
             Else
                 MsgBox("No data was generated for :" & sLocalReport & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -142,7 +143,7 @@ Friend Class frmRepRecycleTonGen
 		
 		sStmt = "SELECT report_id, cust_id, cust_name, report_start, report_end, " & " store_number, store_name, trash_tons, " & " recycle_tons, store_total_tons, store_composting_tons," & " landfill_percent, recycle_percent " & " FROM RptRecycleTonGen " & " WHERE report_id = " & Str(nReport) & " ORDER BY store_number "
         cmd.CommandText = sStmt
-        rsReport = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsReport = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
 		'If gbDebug Then
 		'DataGrid1.Visible = True
@@ -152,7 +153,7 @@ Friend Class frmRepRecycleTonGen
 		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
 		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 		'Cargo la plantilla de Crystal Reports con los datos
-		load_report()
+        load_report(rsReport)
 		
 		Exit Sub
 		
@@ -164,66 +165,81 @@ ErrorHandler:
 		'    MsgBox e.Description
 		'Next
 	End Sub
-	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+    Private Function load_report(ByVal dstReport As DataTable) As Boolean
+        'Dim reportDb As CRPEAuto.Database
+        'Dim reportTables As CRPEAuto.DatabaseTables
+        'Dim reportTable As CRPEAuto.DatabaseTable
+        'Dim reportPage As CRPEAuto.PageSetup
+        'Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptRecycleTon.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
-			crysRepRecycleTon = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepRecycleTon = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        'crysRepRecycleTon.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepRecycleTon.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepRecycleTon.PageSetup
-		
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		
-		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		'crysRepRecycleTon.DialogParentWindow = Me
-		crysRepRecycleTon.ProgressDialogEnabled = True
-		crysRepRecycleTon.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            rptDoc.Load(strReportsSysPath & "rptRecycleTonGen.rpt")
+        Catch ex As Exception
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End Try
+
+        rptDoc.SetDataSource(dstReport)
+
+        frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepCostContSearchViewer.CrystalReportViewer1.Visible = True
+        frmRepCostContSearchViewer.CrystalReportViewer1.Show()
+        frmRepCostContSearchViewer.Show()
+        Exit Function
+
+        'On Error GoTo ErrorHandler
+
+        ''Abro el archivo con el reporte
+        'crysApp = CreateObject("Crystal.CRPE.Application")
+
+        ''sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptRecycleTon.rpt"
+        'sFile = get_template(sLocalReport, cbReportTemplate.Text)
+
+        'If fileTmp.FileExists(sFile) Then
+        '    crysRepRecycleTon = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        crysRepRecycleTon = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
+
+        'End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        ''crysRepRecycleTon.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
+
+        'reportDb = crysRepRecycleTon.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        'reportPage = crysRepRecycleTon.PageSetup
+
+
+        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
+        ''reportTable.SetPrivateData 3, AdoRs
+        'reportTable.SetPrivateData(3, rsReport)
+
+        ''cd.CancelError = True
+        ''cd.ShowPrinter
+        ''crysRepRecycleTon.DialogParentWindow = Me
+        'crysRepRecycleTon.ProgressDialogEnabled = True
+        'crysRepRecycleTon.Preview()
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
+    End Function
 	
 	
 	
@@ -244,6 +260,11 @@ ErrorHandler:
 	Private Function find_printer() As Boolean
 		'If there is not printers in the system
 		'UPGRADE_ISSUE: Printers method Printers.Count was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
+
+        'solo para debug
+        find_printer = True
+        Exit Function
+
         If System.Drawing.Printing.PrinterSettings.InstalledPrinters.Count <= 0 Then
             MsgBox("There are not printers defined in this computer." & vbCrLf & "Please set up a default printer before proceeding.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Message")
 
@@ -414,13 +435,11 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            If dtStartDate._Value > dtEndDate._Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		

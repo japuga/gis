@@ -889,204 +889,204 @@ Friend Class frmCustInvGenPreview
 		
 		With frmCustInvGen
 			
-			create_param_rs("cust_invoice_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, Trim(CStr(Cust_invoice_seq)), cm, 6)
-			create_param_rs("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(.cbCustId.Text), cm, 2)
-			create_param_rs("invoice_date", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.dtInvoiceDate.value, 10), cm, 10)
-			create_param_rs("invoice_date_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtInvoiceDate.Text, 50), cm, 50)
-			create_param_rs("address", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtAddress.Text, 200), cm, 200)
-			create_param_rs("period_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(.cbPeriod, .cbPeriod.SelectedIndex), cm, 10)
-			create_param_rs("billing_period", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txBillingPeriod.Text, 50), cm, 50)
-			create_param_rs("account_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtAccountNo.Text, 50), cm, 50)
-			create_param_rs("invoice_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtInvoiceNo.Text, 50), cm, 50)
-			create_param_rs("body_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtDescription.Text, 500), cm, 500)
-			
-			create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtInvoiceTotal.Text), cm, 16)
-			
-			
-			create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtSavings.Text), cm, 16)
-			create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtSavingsPercent.Text), cm, 16)
-			create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtStoreFlatFee.Text), cm, 16)
-			create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtInvoiceFee.Text), cm, 16)
-			create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtTax.Text), cm, 16)
-			create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtGrandTotal.Text), cm, 16)
-			
-			create_param_rs("greeting_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, (.txtGreeting.Text), cm, 500)
-			create_param_rs("fileName", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, "", cm, 200)
-			
-			If VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex) = 0 Then
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				create_param_rs("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, System.DBNull.Value, cm, 6)
-			Else
-				create_param_rs("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex), cm, 6)
-			End If
-			
-			create_param_rs("template_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(.cbTemplate, .cbTemplate.SelectedIndex), cm, 6)
-			
-			create_param_rs("id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, .nSelectedId, cm, 6)
-		End With
-		
+            create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
+            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(.cbCustId.Text), cm, 2)
+            create_param_rs("invoice_date", DbType.String, ParameterDirection.Input, VB.Left(.dtInvoiceDate.Value, 10), cm, 10)
+            create_param_rs("invoice_date_desc", DbType.String, ParameterDirection.Input, VB.Left(.txtInvoiceDate.Text, 50), cm, 50)
+            create_param_rs("address", DbType.String, ParameterDirection.Input, VB.Left(.txtAddress.Text, 200), cm, 200)
+            create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(.cbPeriod, .cbPeriod.SelectedIndex), cm, 10)
+            create_param_rs("billing_period", DbType.String, ParameterDirection.Input, VB.Left(.txBillingPeriod.Text, 50), cm, 50)
+            create_param_rs("account_no", DbType.String, ParameterDirection.Input, VB.Left(.txtAccountNo.Text, 50), cm, 50)
+            create_param_rs("invoice_no", DbType.String, ParameterDirection.Input, VB.Left(.txtInvoiceNo.Text, 50), cm, 50)
+            create_param_rs("body_desc", DbType.String, ParameterDirection.Input, VB.Left(.txtDescription.Text, 500), cm, 500)
+
+            create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtInvoiceTotal.Text), cm, 16)
+
+
+            create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtSavings.Text), cm, 16)
+            create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtSavingsPercent.Text), cm, 16)
+            create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtStoreFlatFee.Text), cm, 16)
+            create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtInvoiceFee.Text), cm, 16)
+            create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtTax.Text), cm, 16)
+            create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtGrandTotal.Text), cm, 16)
+
+            create_param_rs("greeting_desc", DbType.String, ParameterDirection.Input, (.txtGreeting.Text), cm, 500)
+            create_param_rs("fileName", DbType.String, ParameterDirection.Input, "", cm, 200)
+
+            If VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex) = 0 Then
+                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+                create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, System.DBNull.Value, cm, 6)
+            Else
+                create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex), cm, 6)
+            End If
+
+            create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(.cbTemplate, .cbTemplate.SelectedIndex), cm, 6)
+
+            create_param_rs("id", DbType.Int32, ParameterDirection.Input, .nSelectedId, cm, 6)
+        End With
+
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
-		cm.CommandText = sStmt
-		'    cm.Execute
+        cm.CommandText = sStmt
+        '    cm.Execute
         nRecords = cm.ExecuteNonQuery()
-		'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If nRecords > 0 Then
-			'ok
-			'insert_document = True
-		Else
-			'cn.RollbackTrans
-			'UPGRADE_WARNING: Couldn't resolve default property of object nDbTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			nDbTran = 0
-			MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-			Me.Close()
-			'insert_document = False
-			'Exit Function
-		End If
-		
-		
-		'Dim nFile As Integer
-		'Dim sFile As String
-		'sFile = App.Path & "\tmp" & Trim(Cust_invoice_seq) '"C:\archivos\test2.doc"
-		
-		
-		'jpdebug.begin.013010
-		create_document_word()
-		oleOpenForEdition()
-		
-		'jpdebug.end
-		
-		'2012.01.17.begin
-		'If this point was reach then everything run smoothly
-		build_document = True
-		'2012.01.17.end
-		
-		'stre.Open
-		'stre.Type = adTypeBinary
-		'stre.Write rs("filecontent").value
-		
-		'stre.SaveToFile sFile, adSaveCreateOverWrite
-		
-		
-		'nFile = FreeFile()
-		
-		'Open sFile For Input As #nFile
-		
-		'''''OLEInvoice.SourceDoc = sFile
-		'OLE2.ReadFromFile sFile
-		
-	End Function
-	
-	Private Sub insert_document(ByRef nFile As String)
-		Dim nDbTran As Object
+        'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        If nRecords > 0 Then
+            'ok
+            'insert_document = True
+        Else
+            'cn.RollbackTrans
+            'UPGRADE_WARNING: Couldn't resolve default property of object nDbTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            nDbTran = 0
+            MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+            Me.Close()
+            'insert_document = False
+            'Exit Function
+        End If
+
+
+        'Dim nFile As Integer
+        'Dim sFile As String
+        'sFile = App.Path & "\tmp" & Trim(Cust_invoice_seq) '"C:\archivos\test2.doc"
+
+
+        'jpdebug.begin.013010
+        create_document_word()
+        oleOpenForEdition()
+
+        'jpdebug.end
+
+        '2012.01.17.begin
+        'If this point was reach then everything run smoothly
+        build_document = True
+        '2012.01.17.end
+
+        'stre.Open
+        'stre.Type = adTypeBinary
+        'stre.Write rs("filecontent").value
+
+        'stre.SaveToFile sFile, adSaveCreateOverWrite
+
+
+        'nFile = FreeFile()
+
+        'Open sFile For Input As #nFile
+
+        '''''OLEInvoice.SourceDoc = sFile
+        'OLE2.ReadFromFile sFile
+
+    End Function
+
+    Private Sub insert_document(ByRef nFile As String)
+        Dim nDbTran As Object
         Dim nRecords As Integer = 0
-		Dim iSeq As Object
-		Dim rsLocal As Object
-		
-		'cust_id CHAR(2) NOT NULL,
-		'  invoice_date SMALLDATETIME,
-		'  invoice_date_desc VARCHAR(50),
-		'  address VARCHAR(200),
-		'  period_seq INT,
-		'  billing_period VARCHAR(50),
-		'  account_no VARCHAR(50),
-		'  invoice_no VARCHAR(50),
-		'  body_desc VARCHAR(500),
-		'  invoice_total DECIMAL(16,2),
-		'  savings DECIMAL(16,2),
-		'  savings_percent DECIMAL(16,2),
-		'  store_flag_fee DECIMAL(16,2),
-		'  invoice_fee DECIMAL(16,2),
-		'  tax DECIMAL(16,2),
-		'  grand_total DECIMAL (16,2),
-		'  greeting_desc VarChar(500)
-		'
-		
-		'***********************************************************************
-		'
-		'     Obtener último secuencial...!!!
-		'
-		'***********************************************************************
-		sStmt = "SELECT max(cust_invoice_seq) as iSeq " & " FROM CustomerInvoice "
-		
-		rsLocal = exec_sql(sStmt)
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.State. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If rsLocal.State <> ADODB.ObjectStateEnum.adStateOpen Then
-			MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-			'insert_document = False
-			Exit Sub
-		Else
-			'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.RecordCount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If rsLocal.RecordCount <= 0 Then
-				MsgBox("No GIR report was found for selected combination: " & vbCrLf & "Customer, Period", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-				'insert_document = False
-				Exit Sub
-			End If
-		End If
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		'UPGRADE_WARNING: Couldn't resolve default property of object iSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        Dim iSeq As Object
+        Dim rsLocal As Object
+
+        'cust_id CHAR(2) NOT NULL,
+        '  invoice_date SMALLDATETIME,
+        '  invoice_date_desc VARCHAR(50),
+        '  address VARCHAR(200),
+        '  period_seq INT,
+        '  billing_period VARCHAR(50),
+        '  account_no VARCHAR(50),
+        '  invoice_no VARCHAR(50),
+        '  body_desc VARCHAR(500),
+        '  invoice_total DECIMAL(16,2),
+        '  savings DECIMAL(16,2),
+        '  savings_percent DECIMAL(16,2),
+        '  store_flag_fee DECIMAL(16,2),
+        '  invoice_fee DECIMAL(16,2),
+        '  tax DECIMAL(16,2),
+        '  grand_total DECIMAL (16,2),
+        '  greeting_desc VarChar(500)
+        '
+
+        '***********************************************************************
+        '
+        '     Obtener último secuencial...!!!
+        '
+        '***********************************************************************
+        sStmt = "SELECT max(cust_invoice_seq) as iSeq " & " FROM CustomerInvoice "
+
+        rsLocal = exec_sql(sStmt)
+
+        'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.State. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        If rsLocal.State <> ADODB.ObjectStateEnum.adStateOpen Then
+            MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
+            'insert_document = False
+            Exit Sub
+        Else
+            'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.RecordCount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If rsLocal.RecordCount <= 0 Then
+                MsgBox("No GIR report was found for selected combination: " & vbCrLf & "Customer, Period", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
+                'insert_document = False
+                Exit Sub
+            End If
+        End If
+
+        'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+        'UPGRADE_WARNING: Couldn't resolve default property of object iSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         iSeq = IIf(IsDBNull(rsLocal.item("iSeq").value), 0, rsLocal.item("iSeq").value) + 1
-		
-		
-		'***********************************************************************
-		'
-		'    Inertando datos...!!!!
-		'
-		'***********************************************************************
-		
-		sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq) " & " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-		
+
+
+        '***********************************************************************
+        '
+        '    Inertando datos...!!!!
+        '
+        '***********************************************************************
+
+        sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq) " & " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
         cm = cn.CreateCommand
-		
-		With frmCustInvGen
-			
-			'UPGRADE_WARNING: Couldn't resolve default property of object iSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			create_param_rs("cust_invoice_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, Trim(iSeq), cm, 6)
-			create_param_rs("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(.cbCustId.Text), cm, 2)
-			create_param_rs("invoice_date", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.dtInvoiceDate.value, 10), cm, 10)
-			create_param_rs("invoice_date_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtInvoiceDate.Text, 50), cm, 50)
-			create_param_rs("address", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtAddress.Text, 200), cm, 200)
-			create_param_rs("period_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(.cbPeriod, .cbPeriod.SelectedIndex), cm, 10)
-			create_param_rs("billing_period", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txBillingPeriod.Text, 50), cm, 50)
-			create_param_rs("account_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtAccountNo.Text, 50), cm, 50)
-			create_param_rs("invoice_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtInvoiceNo.Text, 50), cm, 50)
-			create_param_rs("body_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(.txtDescription.Text, 500), cm, 500)
-			
-			create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtInvoiceTotal.Text), cm, 16)
-			create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtSavings.Text), cm, 16)
-			create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtSavingsPercent.Text), cm, 16)
-			create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtStoreFlatFee.Text), cm, 16)
-			create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtInvoiceFee.Text), cm, 16)
-			create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtTax.Text), cm, 16)
-			create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, (.txtGrandTotal.Text), cm, 16)
-			
-			create_param_rs("greeting_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, (.txtGreeting.Text), cm, 500)
-			create_param_rs("fileName", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(nFile, 200), cm, 200)
-			create_param_rs("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex), cm, 6)
-		End With
-		
+
+        With frmCustInvGen
+
+            'UPGRADE_WARNING: Couldn't resolve default property of object iSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(iSeq), cm, 6)
+            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(.cbCustId.Text), cm, 2)
+            create_param_rs("invoice_date", DbType.String, ParameterDirection.Input, VB.Left(.dtInvoiceDate.Value, 10), cm, 10)
+            create_param_rs("invoice_date_desc", DbType.String, ParameterDirection.Input, VB.Left(.txtInvoiceDate.Text, 50), cm, 50)
+            create_param_rs("address", DbType.String, ParameterDirection.Input, VB.Left(.txtAddress.Text, 200), cm, 200)
+            create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(.cbPeriod, .cbPeriod.SelectedIndex), cm, 10)
+            create_param_rs("billing_period", DbType.String, ParameterDirection.Input, VB.Left(.txBillingPeriod.Text, 50), cm, 50)
+            create_param_rs("account_no", DbType.String, ParameterDirection.Input, VB.Left(.txtAccountNo.Text, 50), cm, 50)
+            create_param_rs("invoice_no", DbType.String, ParameterDirection.Input, VB.Left(.txtInvoiceNo.Text, 50), cm, 50)
+            create_param_rs("body_desc", DbType.String, ParameterDirection.Input, VB.Left(.txtDescription.Text, 500), cm, 500)
+
+            create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtInvoiceTotal.Text), cm, 16)
+            create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtSavings.Text), cm, 16)
+            create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtSavingsPercent.Text), cm, 16)
+            create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtStoreFlatFee.Text), cm, 16)
+            create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtInvoiceFee.Text), cm, 16)
+            create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtTax.Text), cm, 16)
+            create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, (.txtGrandTotal.Text), cm, 16)
+
+            create_param_rs("greeting_desc", DbType.String, ParameterDirection.Input, (.txtGreeting.Text), cm, 500)
+            create_param_rs("fileName", DbType.String, ParameterDirection.Input, VB.Left(nFile, 200), cm, 200)
+            create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(.cbGroupStore, .cbGroupStore.SelectedIndex), cm, 6)
+        End With
+
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
-		cm.CommandText = sStmt
-		'    cm.Execute
+        cm.CommandText = sStmt
+        '    cm.Execute
         nRecords = cm.ExecuteNonQuery()
-		'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If nRecords > 0 Then
-			'ok
-			'insert_document = True
-		Else
-			'cn.RollbackTrans
-			'UPGRADE_WARNING: Couldn't resolve default property of object nDbTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			nDbTran = 0
-			MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-			'insert_document = False
-			'Exit Function
-		End If
-		
-	End Sub
+        'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        If nRecords > 0 Then
+            'ok
+            'insert_document = True
+        Else
+            'cn.RollbackTrans
+            'UPGRADE_WARNING: Couldn't resolve default property of object nDbTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            nDbTran = 0
+            MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+            'insert_document = False
+            'Exit Function
+        End If
+
+    End Sub
 	
 	
 	Public Sub oleOpenForEdition()

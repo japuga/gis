@@ -817,37 +817,53 @@ ErrorHandler:
 
         nRecords = 0
 
-        sStmt = "INSERT INTO RptCriteriaCostCont (cust_id, rep_no, report_id," & " state_id, group_seq, rep_template_name, report_caption, " & " is_period_seq, period_seq, start_date, end_date, " & " print_equipment_status, show_detailed_charges, " & " show_contract_date, show_savings_percent_total, " & " publish_to_web, web_report_name, " & " use_glm_rate, show_glm_vendor, is_final_version) " & " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
-
-
+        sStmt = "INSERT INTO RptCriteriaCostCont (cust_id, rep_no, report_id," & " state_id, group_seq, rep_template_name, report_caption, " & " is_period_seq, period_seq, start_date, end_date, " & " print_equipment_status, show_detailed_charges, " & " show_contract_date, show_savings_percent_total, " & " publish_to_web, web_report_name, " & " use_glm_rate, show_glm_vendor, is_final_version) " & _
+        " VALUES (" & _
+        "@cust_id, @rep_no, @report_id, @state_id, @group_seq, @rep_template_name, @report_caption, @is_period_seq, @period_seq," & _
+        "@start_date, @end_date, @print_equipment_status, @show_detailed_charges, @show_contract_date, @show_savings_percent_total," & _
+        "@publish_to_web, @web_report_name, @use_glm_rate, @show_glm_vendor, @is_final_version )"
+        '" VALUES (@cust_id, @rep_no, @report_id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
+        '        sStmt = sStmt & "'" & Trim(custId) & "'," &_
+        '"'" & Trim(custId) & "'," &_
+        '        "'" & Trim(custId) & "'," &_
+        '        "'" & Trim(custId) & "'," &_
         cm = cn.CreateCommand()
-
-        create_param("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(custId), cm, 2)
-        create_param("rep_no", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, repNo, cm)
-        create_param("report_id", ADODB.DataTypeEnum.adBigInt, ADODB.ParameterDirectionEnum.adParamInput, reportId, cm)
-        create_param("state_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(stateId), cm, 3)
-        create_param("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, groupSeq, cm)
-        create_param("rep_template_name", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, repTemplateName, cm, 50)
-        create_param("report_caption", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, reportCaption, cm, 30)
-        create_param("is_period_seq", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, isPeriodSeq, cm, 5)
-        create_param("period_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, periodSeq, cm)
-        create_param("start_date", ADODB.DataTypeEnum.adDBDate, ADODB.ParameterDirectionEnum.adParamInput, startDate, cm)
-        create_param("end_date", ADODB.DataTypeEnum.adDBDate, ADODB.ParameterDirectionEnum.adParamInput, endDate, cm)
-        create_param("print_equipment_status", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, printEquipmentStatus, cm, 5)
-        create_param("show_detailed_charges", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, showDetailedCharges, cm, 5)
-        create_param("show_contract_date", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, showContractDate, cm, 5)
-        create_param("show_savings_percent_total", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, showSavingsPercentTotal, cm, 5)
-        create_param("publish_to_web", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, publishToWeb, cm, 5)
-        create_param("web_report_name", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, webReportName, cm, 60)
-        create_param("use_glm_rate", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, useGlmRate, cm, 5)
-        create_param("show_glm_vendor", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, showGlmVendor, cm, 5)
-        create_param("is_final_version", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, isFinalVersion, cm, 5)
-
-
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
 
-        nRecords = cm.ExecuteNonQuery()
+        Dim prm As SqlParameter = New SqlParameter()
+        prm.SqlDbType = SqlDbType.Date
+        prm.Direction = ParameterDirection.Input
+        create_param("cust_id", SqlDbType.Char, ParameterDirection.Input, Trim(custId), cm, 2)
+        'create_param("cust_id", SqlDbType.Int, ParameterDirection.Input, Trim(custId), cm, 2)
+        create_param("rep_no", SqlDbType.Int, ParameterDirection.Input, repNo, cm)
+        create_param("report_id", SqlDbType.Int, ParameterDirection.Input, reportId, cm)
+        create_param("state_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(stateId), cm, 3)
+        create_param("group_seq", SqlDbType.Int, ParameterDirection.Input, groupSeq, cm)
+        create_param("rep_template_name", SqlDbType.VarChar, ParameterDirection.Input, repTemplateName, cm, 50)
+        create_param("report_caption", SqlDbType.VarChar, ParameterDirection.Input, reportCaption, cm, 30)
+        create_param("is_period_seq", SqlDbType.VarChar, ParameterDirection.Input, isPeriodSeq, cm, 5)
+        create_param("period_seq", SqlDbType.Int, ParameterDirection.Input, periodSeq, cm)
+        create_param("start_date", SqlDbType.Date, ParameterDirection.Input, startDate, cm)
+        create_param("end_date", SqlDbType.Date, ParameterDirection.Input, endDate, cm)
+        create_param("print_equipment_status", SqlDbType.VarChar, ParameterDirection.Input, printEquipmentStatus, cm, 5)
+        create_param("show_detailed_charges", SqlDbType.VarChar, ParameterDirection.Input, showDetailedCharges, cm, 5)
+        create_param("show_contract_date", SqlDbType.VarChar, ParameterDirection.Input, showContractDate, cm, 5)
+        create_param("show_savings_percent_total", SqlDbType.VarChar, ParameterDirection.Input, showSavingsPercentTotal, cm, 5)
+        create_param("publish_to_web", SqlDbType.VarChar, ParameterDirection.Input, publishToWeb, cm, 5)
+        create_param("web_report_name", SqlDbType.VarChar, ParameterDirection.Input, webReportName, cm, 60)
+        create_param("use_glm_rate", SqlDbType.VarChar, ParameterDirection.Input, useGlmRate, cm, 5)
+        create_param("show_glm_vendor", SqlDbType.VarChar, ParameterDirection.Input, showGlmVendor, cm, 5)
+        create_param("is_final_version", SqlDbType.VarChar, ParameterDirection.Input, isFinalVersion, cm, 5)
+        prm = cm.Parameters(0)
+
+        Try
+            'cm.ExecuteNonQuery()
+            nRecords = cm.ExecuteNonQuery()
+        Catch ex As Exception
+            'MsgBox("Error: " & ex.Message, MsgBoxStyle.Exclamation, "Error")
+        End Try
+
         If nRecords > 0 Then
             'ok
             insert_costcont_report_criteria = True
@@ -1157,10 +1173,23 @@ ErrorHandler:
     'Returns string to map CCR columns
     Public Sub get_ccr_map_fields()
 
-        sStmt = "SELECT account, account_no, content_desc, cust_id, " & "cust_name, eqpt_mask, eqpt_seq, frequency_mask, " & "invoice, invoice_no, location, old_rate, " & "rate, rate_status, report_end, report_start, " & "savings, comment,serv_desc," & "serv_desc1, serv_sum1, serv_desc2, serv_sum2, " & "serv_desc3, serv_sum3, serv_desc4, serv_sum4, " & "serv_desc5, serv_sum5, serv_desc6, serv_sum6, " & "serv_desc7, serv_sum7, serv_desc8, serv_sum8, " & "serv_desc9, serv_sum9, serv_desc10, serv_sum10, " & "serv_desc11, serv_sum11, serv_desc12, serv_sum12, " & "serv_desc13, serv_sum13, serv_desc14, serv_sum14, " & "serv_desc101, serv_sum101, " & "serv_desc102, serv_sum102, " & "serv_desc103, serv_sum103, " & "serv_desc104, serv_sum104, " & "serv_desc105, serv_sum105, " & "serv_desc106, serv_sum106, " & "serv_desc107, serv_sum107, " & "serv_id, "
+        sStmt = "SELECT account, account_no, content_desc, cust_id, " & "cust_name, eqpt_mask, eqpt_seq, frequency_mask, " & _
+        "invoice, invoice_no, location, old_rate, " & "rate, rate_status, report_end, report_start, " & "savings, comment,serv_desc," & _
+        "serv_desc1, serv_sum1, serv_desc2, serv_sum2, " & "serv_desc3, serv_sum3, serv_desc4, serv_sum4, " & _
+        "serv_desc5, serv_sum5, serv_desc6, serv_sum6, " & "serv_desc7, serv_sum7, serv_desc8, serv_sum8, " & _
+        "serv_desc9, serv_sum9, serv_desc10, serv_sum10, " & "serv_desc11, serv_sum11, serv_desc12, serv_sum12, " & _
+        "serv_desc13, serv_sum13, serv_desc14, serv_sum14, " & "serv_desc101, serv_sum101, " & "serv_desc102, serv_sum102, " & _
+        "serv_desc103, serv_sum103, " & "serv_desc104, serv_sum104, " & "serv_desc105, serv_sum105, " & "serv_desc106, serv_sum106, " & _
+        "serv_desc107, serv_sum107, " & "serv_id, "
 
         'unidades, usage, store_id, store_no,
-        sStmt = sStmt & "units, serv_usage, store_id, store_no," & "total_charges, total_savings, " & " total_serv, total_units," & "unit_type, vend_name, vend_seq, " & "vinvoice_date, eqpt_temp, units, " & "serv_usage , total_nonbillsavings, contract_range,  " & "total_savingsPercent, label_savingsPercent, store_savings, store_name, " & "account_mask, glm_savings, contract_opening_date, contract_expiration_date, " & "store_address, store_city, state_id, store_number, glm_rate, current_rate, " & "current_glmrate_savings, total_current_glmrate_savings, store_current_glmrate_savings, " & "total_glmrate_serv, total_glmrate_charges, store_total " & " FROM RptCostCont " & " WHERE report_id = "
+        sStmt = sStmt & "units, serv_usage, store_id, store_no," & "total_charges, total_savings, " & " total_serv, total_units," & _
+        "unit_type, vend_name, vend_seq, " & "vinvoice_date, eqpt_temp, units, " & "serv_usage , total_nonbillsavings, contract_range,  " & _
+        "total_savingsPercent, label_savingsPercent, store_savings, store_name, " & _
+        "account_mask, glm_savings, contract_opening_date, contract_expiration_date, " & _
+        "store_address, store_city, state_id, store_number, glm_rate, current_rate, " & _
+        "current_glmrate_savings, total_current_glmrate_savings, store_current_glmrate_savings, " & _
+        "total_glmrate_serv, total_glmrate_charges, store_total " & " FROM RptCostCont " & " WHERE report_id = "
 
 
     End Sub
@@ -1264,7 +1293,11 @@ ErrorHandler:
         nOtTrashWgt = 0
 
         '1.Get list of Stores with invoices for given period(s) and saves them in stores array
-        sStmt = "SELECT DISTINCT a.cust_id, a.store_id, a.store_number, a.store_address " & " FROM Store a, VInvoice b " & " WHERE a.cust_id = '" & params.sCustId & "' " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.store_status = 'A' " & " AND b.period_seq IN ( " & params.sPeriodSeqList & ")" & " AND a.store_id IN ( SELECT store_id FROM groupStore gs " & "                       WHERE gs.cust_id =  a.cust_id " & "                       AND gs.group_seq = " & Str(params.nGroupSeq) & " ) "
+        sStmt = "SELECT DISTINCT a.cust_id, a.store_id, a.store_number, a.store_address " & _
+        " FROM Store a, VInvoice b " & " WHERE a.cust_id = '" & params.sCustId & "' " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.store_status = 'A' " & " AND b.period_seq IN ( " & params.sPeriodSeqList & ")" & _
+        " AND a.store_id IN ( SELECT store_id FROM groupStore gs " & _
+        "                       WHERE gs.cust_id =  a.cust_id " & _
+        "                       AND gs.group_seq = " & Str(params.nGroupSeq) & " ) "
         '" and a.store_number in ('ATT91121') "
         'ND242
         'ND621
@@ -1273,11 +1306,11 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            stores.Add(New Object() {rs.Rows(row).Item("cust_id").Value, rs.Rows(row).Item("store_id").Value, _
-                                    rs.Rows(row).Item("store_number").Value, rs.Rows(row).Item("store_address").Value, _
+            stores.Add(New Object() {rs.Rows(row).Item("cust_id"), rs.Rows(row).Item("store_id"), _
+                                    rs.Rows(row).Item("store_number"), rs.Rows(row).Item("store_address"), _
                                     nBalerWgt, nPkrWgt, nDumpWgt, nTotWgt, nDumCompWgt, nTotCompWgt, nOtCondemoWgt, _
                                     nDumTrashWgt, nPkrTrashWgt, nTotTrashWgt, nVipTrashWgt, nOtTrashWgt, nStoreRecycle, _
-                                    nStoreTrash}, rs.Rows(row).Item("cust_id").Value + Str(rs.Rows(row).Item("store_id").Value))
+                                    nStoreTrash}, rs.Rows(row).Item("cust_id") + Str(rs.Rows(row).Item("store_id")))
             'stores.Add Array(rs.item("cust_id").value, _
             'rs.item("store_id").value, _
             'rs.item("store_number").value, _
@@ -2060,8 +2093,8 @@ ErrorHandler:
 
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            startDate = rs.Rows(0).Item(0).Value
-            endDate = rs.Rows(0).Item(1).Value
+            startDate = rs.Rows(0).Item(0)
+            endDate = rs.Rows(0).Item(1)
         End If
 
         getPeriodDates.str1 = VB6.Format(startDate, "mm/dd/yyyy")

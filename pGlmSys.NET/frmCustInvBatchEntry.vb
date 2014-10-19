@@ -173,62 +173,62 @@ Friend Class frmCustInvBatchEntry
         cm = cn.CreateCommand
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object Cust_invoice_seq_batch. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		create_param_rs("cust_inv_batch_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, Trim(Cust_invoice_seq_batch), cm, 10)
-		create_param_rs("cust_id", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(cbCustId.Text), cm, 10)
-		create_param_rs("period_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), cm, 10)
-		create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.dtInvoiceDate.value, 10), cm, 10)
-		create_param_rs("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex), cm, 10)
-		create_param_rs("batch_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, (txBatchDesc.Text), cm, 100)
-		create_param_rs("batch_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, Trim(VB6.Format(Today, "yyyy-MM-dd")), cm, 20)
-		'& " " & Trim(Format(Time, "HH:mm:ss"))
-		
+        create_param_rs("cust_inv_batch_seq", DbType.Int32, ParameterDirection.Input, Trim(Cust_invoice_seq_batch), cm, 10)
+        create_param_rs("cust_id", DbType.String, ParameterDirection.Input, Trim(cbCustId.Text), cm, 10)
+        create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), cm, 10)
+        create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
+        create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex), cm, 10)
+        create_param_rs("batch_desc", DbType.String, ParameterDirection.Input, (txBatchDesc.Text), cm, 100)
+        create_param_rs("batch_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, Trim(VB6.Format(Today, "yyyy-MM-dd")), cm, 20)
+        '& " " & Trim(Format(Time, "HH:mm:ss"))
+
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
-		cm.CommandText = sStmt
-		
+        cm.CommandText = sStmt
+
         'On Error Resume Next
         nRecords = cm.ExecuteNonQuery()
-		
-		If Err.Number <> 0 Then
+
+        If Err.Number <> 0 Then
             nDbTran.Rollback()
-			MsgBox(Err.Description, MsgBoxStyle.Critical, "GML")
-			Exit Sub
-		End If
-		
+            MsgBox(Err.Description, MsgBoxStyle.Critical, "GML")
+            Exit Sub
+        End If
+
         'On Error GoTo 0
-		
-		
-		
-		'**********************************************************
-		'Insert BATCH Details
-		'**********************************************************
-		
-		
-		'Getting "Address" y "Account No"
-		'getAddress_Account
-		
-		
-		
-		
-		
-		
-		'***********************************************************************
-		'Get a list of Stores
-		'***********************************************************************
-		
-		
-		'sStmt = "SELECT tb1.*, tb3.address, city, state_id, zip FROM " _
-		'& " groupStore tb1 LEFT OUTER JOIN store_address tb2 " _
-		'& " ON (tb1.store_id = tb2.store_id) " _
-		'& " LEFT OUTER JOIN address_catalog tb3 " _
-		'& " ON (tb2.address_seq = tb3.address_seq) " _
-		'& " WHERE tb1.group_seq = " & cbStoreGroup.ItemData(cbStoreGroup.ListIndex) _
-		'& " AND tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "'" _
-		'& " AND tb2.cust_id = '" & Trim(Me.cbCustId.Text) & "'"
-		
-		sStmt = "SELECT tb1.*, tb4.address, tb4.city, tb4.state_id, tb4.zip, tb5.store_billing_contact, tb5.store_number, tb5.store_billing_account " & " FROM  groupStore tb1 INNER JOIN  store tb5 " & " ON tb1.cust_id = tb5.cust_id " & " AND tb1.store_id = tb5.store_id " & " LEFT OUTER JOIN (SELECT tb2.cust_id, tb2.store_id, tb2.store_address_seq," & "                          tb3.Address , tb3.city, tb3.state_id, tb3.zip " & "                  FROM store_address tb2 " & "                  INNER JOIN address_catalog tb3 " & "                  ON tb2.address_seq = tb3.address_seq " & " ) tb4 " & " ON tb1.store_id = tb4.store_id " & " AND tb1.cust_id = tb4.cust_id " & " AND tb5.store_address_seq = tb4.store_address_seq " & " WHERE tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "' " & " AND tb1.group_seq =" & Str(VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex))
-		
-		rsLocal = exec_sql(sStmt)
+
+
+
+        '**********************************************************
+        'Insert BATCH Details
+        '**********************************************************
+
+
+        'Getting "Address" y "Account No"
+        'getAddress_Account
+
+
+
+
+
+
+        '***********************************************************************
+        'Get a list of Stores
+        '***********************************************************************
+
+
+        'sStmt = "SELECT tb1.*, tb3.address, city, state_id, zip FROM " _
+        '& " groupStore tb1 LEFT OUTER JOIN store_address tb2 " _
+        '& " ON (tb1.store_id = tb2.store_id) " _
+        '& " LEFT OUTER JOIN address_catalog tb3 " _
+        '& " ON (tb2.address_seq = tb3.address_seq) " _
+        '& " WHERE tb1.group_seq = " & cbStoreGroup.ItemData(cbStoreGroup.ListIndex) _
+        '& " AND tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "'" _
+        '& " AND tb2.cust_id = '" & Trim(Me.cbCustId.Text) & "'"
+
+        sStmt = "SELECT tb1.*, tb4.address, tb4.city, tb4.state_id, tb4.zip, tb5.store_billing_contact, tb5.store_number, tb5.store_billing_account " & " FROM  groupStore tb1 INNER JOIN  store tb5 " & " ON tb1.cust_id = tb5.cust_id " & " AND tb1.store_id = tb5.store_id " & " LEFT OUTER JOIN (SELECT tb2.cust_id, tb2.store_id, tb2.store_address_seq," & "                          tb3.Address , tb3.city, tb3.state_id, tb3.zip " & "                  FROM store_address tb2 " & "                  INNER JOIN address_catalog tb3 " & "                  ON tb2.address_seq = tb3.address_seq " & " ) tb4 " & " ON tb1.store_id = tb4.store_id " & " AND tb1.cust_id = tb4.cust_id " & " AND tb5.store_address_seq = tb4.store_address_seq " & " WHERE tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "' " & " AND tb1.group_seq =" & Str(VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex))
+
+        rsLocal = exec_sql(sStmt)
 
         For row As Integer = 0 To rsLocal.Rows.Count - 1
 
@@ -332,29 +332,29 @@ Friend Class frmCustInvBatchEntry
             sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("zip").Value), "", Trim(rsLocal.Rows(row).Item("zip").Value) & " ") & vbCrLf
             'sAddress = sAddress & IIf(IsNull(rsLocal.item("cust_contact")), "", "Attn: " & Trim(rsLocal.item("cust_contact")) & vbCrLf)
 
-            create_param_rs("cust_invoice_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, Trim(CStr(Cust_invoice_seq)), cm, 6)
-            create_param_rs("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Trim(Me.cbCustId.Text), cm, 2)
-            create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
-            create_param_rs("invoice_date_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.txtInvoiceDate.Text, 50), cm, 50)
-            create_param_rs("address", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(sAddress, 200), cm, 200)
-            create_param_rs("period_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(Me.cbPeriod, Me.cbPeriod.SelectedIndex), cm, 10)
-            create_param_rs("billing_period", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.txBillingPeriod.Text, 50), cm, 50)
-            create_param_rs("account_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(sAccountNo, 50), cm, 50)
-            create_param_rs("invoice_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.txtInvoiceNo.Text, 50), cm, 50)
-            create_param_rs("body_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, VB.Left(Me.txtDescription.Text, 500), cm, 500)
+            create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
+            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(Me.cbCustId.Text), cm, 2)
+            create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
+            create_param_rs("invoice_date_desc", DbType.String, ParameterDirection.Input, VB.Left(Me.txtInvoiceDate.Text, 50), cm, 50)
+            create_param_rs("address", DbType.String, ParameterDirection.Input, VB.Left(sAddress, 200), cm, 200)
+            create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(Me.cbPeriod, Me.cbPeriod.SelectedIndex), cm, 10)
+            create_param_rs("billing_period", DbType.String, ParameterDirection.Input, VB.Left(Me.txBillingPeriod.Text, 50), cm, 50)
+            create_param_rs("account_no", DbType.String, ParameterDirection.Input, VB.Left(sAccountNo, 50), cm, 50)
+            create_param_rs("invoice_no", DbType.String, ParameterDirection.Input, VB.Left(Me.txtInvoiceNo.Text, 50), cm, 50)
+            create_param_rs("body_desc", DbType.String, ParameterDirection.Input, VB.Left(Me.txtDescription.Text, 500), cm, 500)
 
-            create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mInvoiceTotal, cm, 16)
-            create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mSavings, cm, 16)
-            create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mSavingsPercent, cm, 16)
-            create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mStoreFlatFee, cm, 16)
-            create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mInvoiceFee, cm, 16)
-            create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mTax, cm, 16)
-            create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, mGrandTotal, cm, 16)
+            create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mInvoiceTotal, cm, 16)
+            create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mSavings, cm, 16)
+            create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mSavingsPercent, cm, 16)
+            create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mStoreFlatFee, cm, 16)
+            create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mInvoiceFee, cm, 16)
+            create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mTax, cm, 16)
+            create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mGrandTotal, cm, 16)
 
-            create_param_rs("greeting_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, (Me.txtGreeting.Text), cm, 500)
-            create_param_rs("fileName", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, "", cm, 200)
-            create_param_rs("group_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nGroupSeq, cm, 6)
-            create_param_rs("template_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex), cm, 6)
+            create_param_rs("greeting_desc", DbType.String, ParameterDirection.Input, (Me.txtGreeting.Text), cm, 500)
+            create_param_rs("fileName", DbType.String, ParameterDirection.Input, "", cm, 200)
+            create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, nGroupSeq, cm, 6)
+            create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex), cm, 6)
 
             cm = cn.CreateCommand '.let_ActiveConnection(cn)
             cm.CommandType = CommandType.Text

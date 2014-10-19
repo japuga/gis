@@ -19,8 +19,7 @@ Friend Class frmMain
 	
 	Private Sub frmMain_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		'Message in toolbar
-		'UPGRADE_WARNING: Str has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		sbMain.Text = "Login: " & Trim(get_user_name(gsUser)) & vbTab & vbTab & Str(TimeOfDay.ToOADate)
+        sbMain.Text = "Login: " & Trim(get_user_name(gsUser)) & vbTab & vbTab & Str(TimeOfDay.ToOADate)
 		
 		load_menu((gsUser))
 	End Sub
@@ -433,7 +432,7 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
-            If rs.Rows(0).Item("type_id").Value = "A" Then
+            If rs.Rows(0).Item("type_id") = "A" Then
                 'Administrator
                 mniUserMaintenance(0).Visible = True
                 mniUserMaintenance(1).Visible = True

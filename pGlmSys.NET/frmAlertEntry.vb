@@ -105,27 +105,27 @@ Friend Class frmAlertEntry
             stmt = "INSERT INTO alert (cust_id, store_id, alert_seq, alert_date, alert_message_rtf) " & " VALUES ( ?, ?, ?, ?, ?)"
             oCmd.CommandText = stmt
 
-            'oCmd.CreateParameter()"cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 2)
+            'oCmd.CreateParameter()"cust_id", DbType.String, ParameterDirection.Input, 2)
             oPrm = New SqlParameter("cust_id", SqlDbType.VarChar, 2, ParameterDirection.Input)
             oPrm.Value = cust_id
             oCmd.Parameters.Add(oPrm)
 
-            'oCmd.CreateParameter("store_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 10)
+            'oCmd.CreateParameter("store_id", SqlDbType.VarChar, ParameterDirection.Input, 10)
             oPrm = New SqlParameter("store_id", SqlDbType.VarChar, 10, ParameterDirection.Input)
             oPrm.Value = store_id
             oCmd.Parameters.Add(oPrm)
 
-            'oCmd.CreateParameter("alert_seQ", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 10)
+            'oCmd.CreateParameter("alert_seQ", SqlDbType.VarChar, ParameterDirection.Input, 10)
             oPrm = New SqlParameter("alert_seQ", SqlDbType.VarChar, 10, ParameterDirection.Input)        
             oPrm.Value = iAlert_seq
             oCmd.Parameters.Add(oPrm)
 
-            'oCmd.CreateParameter("alert_date", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 10)
+            'oCmd.CreateParameter("alert_date", SqlDbType.VarChar, ParameterDirection.Input, 10)
             oPrm = New SqlParameter("alert_date", SqlDbType.VarChar, 10, ParameterDirection.Input)
             oPrm.Value = Today
             oCmd.Parameters.Add(oPrm)
 
-            'oCmd.CreateParameter("atert_message_rtF", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Len(Me.rtbAlertMessage.Rtf))
+            'oCmd.CreateParameter("atert_message_rtF", SqlDbType.VarChar, ParameterDirection.Input, Len(Me.rtbAlertMessage.Rtf))
             oPrm = New SqlParameter("atert_message_rtF", SqlDbType.VarChar, Len(Me.rtbAlertMessage.Rtf), ParameterDirection.Input)
             oPrm.Value = Me.rtbAlertMessage.Rtf
             oCmd.Parameters.Add(oPrm)
@@ -135,7 +135,7 @@ Friend Class frmAlertEntry
             stmt = "UPDATE alert SET alert_message_rtf=? " & " WHERE alert_seq=" & iAlert_seq            
             oCmd.CommandText = stmt
 
-            'oCmd.CreateParameter(atert_message_rtF, ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, Len(Me.rtbAlertMessage.Rtf))
+            'oCmd.CreateParameter(atert_message_rtF, SqlDbType.VarChar, ParameterDirection.Input, Len(Me.rtbAlertMessage.Rtf))
             oPrm = New SqlParameter(atert_message_rtF, SqlDbType.VarChar, Len(Me.rtbAlertMessage.Rtf), ParameterDirection.Input)
             oPrm.Value = Me.rtbAlertMessage.Rtf
             oCmd.Parameters.Add(oPrm)

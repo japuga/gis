@@ -142,56 +142,56 @@ ErrorHandler:
 				
                 cm = cn.CreateCommand
 				
-				create_param_rs("template_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nTemplateId, cm, 6)
-				create_param_rs("templateName", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
-				create_param_rs("description", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtDescription.Text)), cm, 200)
-				create_param_rs("filename", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtFilename.Text)), cm, 250)
-				
-				
+                create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, nTemplateId, cm, 6)
+                create_param_rs("templateName", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
+                create_param_rs("description", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
+                create_param_rs("filename", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
+
+
 
                 cm.CommandType = CommandType.Text
-				cm.CommandText = sStmt
-				
+                cm.CommandText = sStmt
+
                 nRecords = cm.ExecuteNonQuery()
-				'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				If nRecords > 0 Then
-					'ok
-					gCustInvTemplate.nTemplateId = nTemplateId
-					save_template = True
-					MsgBox("Template was inserted successfully.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					save_template = False
-					MsgBox("Failed to insert in Template table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					Me.Close()
-				End If
-				
-			Case General.modo.UpdateRecord
-				sStmt = "UPDATE CustomerInvoiceTemplate " & " SET template_name = ?, description = ?, filename = ? " & " WHERE template_id  = ? "
-				
+                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                If nRecords > 0 Then
+                    'ok
+                    gCustInvTemplate.nTemplateId = nTemplateId
+                    save_template = True
+                    MsgBox("Template was inserted successfully.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
+                Else
+                    save_template = False
+                    MsgBox("Failed to insert in Template table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+                    Me.Close()
+                End If
+
+            Case General.modo.UpdateRecord
+                sStmt = "UPDATE CustomerInvoiceTemplate " & " SET template_name = ?, description = ?, filename = ? " & " WHERE template_id  = ? "
+
                 cm = cn.CreateCommand
-				
-				create_param_rs("templateName", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
-				create_param_rs("description", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtDescription.Text)), cm, 200)
-				create_param_rs("filename", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtFilename.Text)), cm, 250)
-				create_param_rs("template_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, gCustInvTemplate.nTemplateId, cm, 6)
-				
+
+                create_param_rs("templateName", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
+                create_param_rs("description", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
+                create_param_rs("filename", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
+                create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, gCustInvTemplate.nTemplateId, cm, 6)
+
                 cm = cn.CreateCommand '.let_ActiveConnection(cn)
                 cm.CommandType = CommandType.Text
-				cm.CommandText = sStmt
-				
+                cm.CommandText = sStmt
+
                 nRecords = cm.ExecuteNonQuery()
-				'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				If nRecords > 0 Then
-					'ok
-					
-					save_template = True
-					MsgBox("Template was updated successfully.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					save_template = False
-					MsgBox("Failed to insert in Template table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					Me.Close()
-				End If
-				
-		End Select
+                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                If nRecords > 0 Then
+                    'ok
+
+                    save_template = True
+                    MsgBox("Template was updated successfully.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
+                Else
+                    save_template = False
+                    MsgBox("Failed to insert in Template table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+                    Me.Close()
+                End If
+
+        End Select
 	End Function
 End Class

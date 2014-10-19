@@ -56,6 +56,7 @@ Module General
     Public gbDebug As Boolean
     Public gbError As Boolean
     Public gnLoginId As Integer
+    Public strReportsSysPath As String = "E:\glm\Visual Basic\GLM-System\Reports\"
     Public Structure gReportUDT
         Dim name As String 'Report Name
         Dim Index As Short 'Menu Report Index
@@ -1008,7 +1009,7 @@ Module General
 
         'get_global_settings
         'Parametrize file name
-        sLogfile = "c:\Logfile.txt"
+        sLogfile = "e:\Logfile.txt"
         gReport.Index = 0
         gReport.name = ""
         gReport.static_Renamed = True
@@ -2445,7 +2446,24 @@ ErrorHandler:
 
 
     Public Sub load_cb_period(ByRef sCaller As String, ByRef sCustId As String, ByRef cbPeriodName As System.Windows.Forms.ComboBox)
-        On Error GoTo ErrorHandler
+        Try
+            If Len(sCustId) <= 0 Then
+                cbPeriodName.Items.Clear()
+                Exit Sub
+            End If
+
+
+            sStmt = "SELECT period_name, period_seq, period_start_date FROM period " & " WHERE cust_id ='" & Trim(sCustId) & "'" & " ORDER BY period_start_date DESC"
+            load_cb_query2(cbPeriodName, sStmt, 2, True)
+
+
+
+            If cbPeriodName.Items.Count > 0 Then
+                cbPeriodName.SelectedIndex = 0
+            End If
+        Catch ex As Exception
+            save_error(sCaller, "load_cb_period")
+        End Try
         If Len(sCustId) <= 0 Then
             cbPeriodName.Items.Clear()
             Exit Sub
@@ -2463,8 +2481,6 @@ ErrorHandler:
 
         Exit Sub
 
-ErrorHandler:
-        save_error(sCaller, "load_cb_period")
 
     End Sub
 End Module
