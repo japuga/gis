@@ -248,12 +248,12 @@ Friend Class frmStoreAddressEntry
 				
 				cmLocal = New ADODB.Command
 				
-				create_param_rs("address", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80)
-				create_param_rs("city", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(txtCity.Text)), cmLocal, 40)
-				create_param_rs("state_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, (cbState.Text), cmLocal, 2)
-				create_param_rs("zip", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, (txtZip.Text), cmLocal, 20)
+                create_param_rs("address", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80)
+                create_param_rs("city", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtCity.Text)), cmLocal, 40)
+                create_param_rs("state_id", DbType.String, ParameterDirection.Input, (cbState.Text), cmLocal, 2)
+                create_param_rs("zip", DbType.String, ParameterDirection.Input, (txtZip.Text), cmLocal, 20)
 				
-				create_param_rs("address_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, gStoreAddress.nAddressSeq, cmLocal, 4)
+                create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, gStoreAddress.nAddressSeq, cmLocal, 4)
 				'create_param_rs "context_table", adVarChar, adParamInput, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100
 				
 				

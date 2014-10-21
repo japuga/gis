@@ -2,6 +2,7 @@ Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepCostContSearch
 	Inherits System.Windows.Forms.Form
 	Private sLocalVersion As String
@@ -657,6 +658,7 @@ ErrorHandler:
 
         'Ejecuto el procedure y verifico por error
         cmReport.Parameters("@nError").Direction = ParameterDirection.Output
+        cmReport.CommandTimeout = 300
         cmReport.ExecuteNonQuery()
 
         rptCostContParam.nError = cmReport.Parameters("@nError").Value
@@ -688,25 +690,22 @@ ErrorHandler:
         'Mapping
         'Build query for RepData
         'If map_fields_data(rptCostContParam.sCustId, sLocalReport, sLocalVersion, nReport) = False Then
-        '    Screen.MousePointer = vbDefault
+        '    'Screen.MousePointer = vbDefault
         '    Exit Sub
         'End If
 
         If Not map_fields_data2(nReport) Then
-            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
             Exit Sub
         End If
 
-
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        Dim dtSource As DataTable = getDataTable(sStmt)
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         'Cargo la plantilla de Crystal Reports con los datos
-        load_report()
+        load_report(dtSource)
         Exit Sub
 
 ErrorHandler:
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         save_error("frmReportInv", "show_report2")
 
@@ -767,43 +766,43 @@ ErrorHandler:
 	Public Function map_fields_data2(ByRef nReportId As Integer) As Boolean
 		
 		map_fields_data2 = False
-		
-		'sStmt = _
-		'"SELECT account, account_no, content_desc, cust_id, " + _
-		'"cust_name, eqpt_mask, eqpt_seq, frequency_mask, " + _
-		'"invoice, invoice_no, location, old_rate, " + _
-		'"rate, rate_status, report_end, report_start, " + _
-		'"savings, comment,serv_desc," + _
-		'"serv_desc1, serv_sum1, serv_desc2, serv_sum2, " + _
-		'"serv_desc3, serv_sum3, serv_desc4, serv_sum4, " + _
-		'"serv_desc5, serv_sum5, serv_desc6, serv_sum6, " + _
-		'"serv_desc7, serv_sum7, serv_desc8, serv_sum8, " + _
-		'"serv_desc9, serv_sum9, serv_desc10, serv_sum10, " + _
-		'"serv_desc11, serv_sum11, serv_desc12, serv_sum12, " + _
-		'"serv_desc13, serv_sum13, serv_desc14, serv_sum14, " + _
-		'"serv_desc101, serv_sum101, " + _
-		'"serv_desc102, serv_sum102, " + _
-		'"serv_desc103, serv_sum103, " + _
-		'"serv_desc104, serv_sum104, " + _
-		'"serv_desc105, serv_sum105, " + _
-		'"serv_desc106, serv_sum106, " + _
-		'"serv_desc107, serv_sum107, " + _
-		'"serv_id, "
-		
-		'sStmt = sStmt + _
-		'"units, serv_usage, store_id, store_no," + _
-		'"total_charges, total_savings, " + _
-		'" total_serv, total_units," + _
-		'"unit_type, vend_name, vend_seq, " + _
-		'"vinvoice_date, eqpt_temp, units, " + _
-		'"serv_usage , total_nonbillsavings, contract_range,  " + _
-		'"total_savingsPercent, label_savingsPercent, store_savings, store_name, " + _
-		'"account_mask, glm_savings, contract_opening_date, contract_expiration_date, " + _
-		'"store_address, store_city, state_id, store_number, glm_rate, current_rate, " + _
-		'"current_glmrate_savings, total_current_glmrate_savings, store_current_glmrate_savings, " + _
-		'"total_glmrate_serv, total_glmrate_charges, store_total " + _
-		'" FROM RptCostCont " + _
-		'" WHERE report_id = " + Str(nReportId)
+        'este sStmt esta comentado en el codigo legacy
+        'sStmt = _
+        '"SELECT account, account_no, content_desc, cust_id, " + _
+        '"cust_name, eqpt_mask, eqpt_seq, frequency_mask, " + _
+        '"invoice, invoice_no, location, old_rate, " + _
+        '"rate, rate_status, report_end, report_start, " + _
+        '"savings, comment,serv_desc," + _
+        '"serv_desc1, serv_sum1, serv_desc2, serv_sum2, " + _
+        '"serv_desc3, serv_sum3, serv_desc4, serv_sum4, " + _
+        '"serv_desc5, serv_sum5, serv_desc6, serv_sum6, " + _
+        '"serv_desc7, serv_sum7, serv_desc8, serv_sum8, " + _
+        '"serv_desc9, serv_sum9, serv_desc10, serv_sum10, " + _
+        '"serv_desc11, serv_sum11, serv_desc12, serv_sum12, " + _
+        '"serv_desc13, serv_sum13, serv_desc14, serv_sum14, " + _
+        '"serv_desc101, serv_sum101, " + _
+        '"serv_desc102, serv_sum102, " + _
+        '"serv_desc103, serv_sum103, " + _
+        '"serv_desc104, serv_sum104, " + _
+        '"serv_desc105, serv_sum105, " + _
+        '"serv_desc106, serv_sum106, " + _
+        '"serv_desc107, serv_sum107, " + _
+        '"serv_id, "
+
+        '' sStmt = sStmt + _
+        '"units, serv_usage, store_id, store_no," + _
+        '"total_charges, total_savings, " + _
+        '" total_serv, total_units," + _
+        '"unit_type, vend_name, vend_seq, " + _
+        '"vinvoice_date, eqpt_temp, units, " + _
+        '"serv_usage , total_nonbillsavings, contract_range,  " + _
+        '"total_savingsPercent, label_savingsPercent, store_savings, store_name, " + _
+        '"account_mask, glm_savings, contract_opening_date, contract_expiration_date, " + _
+        '"store_address, store_city, state_id, store_number, glm_rate, current_rate, " + _
+        '"current_glmrate_savings, total_current_glmrate_savings, store_current_glmrate_savings, " + _
+        '"total_glmrate_serv, total_glmrate_charges, store_total " + _
+        '" FROM RptCostCont " + _
+        '" WHERE report_id = " + Str(nReportId)
 		
 		'Get CCR string to map fields
 		get_ccr_map_fields()
@@ -817,97 +816,108 @@ ErrorHandler:
 	End Function
 	'Usa el recordset rsReport que fue previamente cargado
 	'con los datos de Repdata y lo paso al reporte de Crystal Reports
-	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+    Private Function load_report(ByVal dstReport As DataTable) As Boolean
+        'Dim reportDb As CRPEAuto.Database
+        'Dim reportTables As CRPEAuto.DatabaseTables
+        'Dim reportTable As CRPEAuto.DatabaseTable
+        'Dim reportPage As CRPEAuto.PageSetup
+        'Dim sFile As String 'Path de la plantilla del reporte
         ' sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'ADO
-		'Set cn = New ADODB.Connection
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
+        Catch ex As Exception
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End Try
+
+        rptDoc.SetDataSource(dstReport)
+
+        frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepCostContSearchViewer.CrystalReportViewer1.Visible = True
+        frmRepCostContSearchViewer.CrystalReportViewer1.Show()
+        frmRepCostContSearchViewer.Show()
+        Exit Function
+        'On Error GoTo ErrorHandler
+
+        'ADO
+        'Set cn = New ADODB.Connection
         'Set AdoRs = New SqlDataReader
         'Set rsReport = New SqlDataReader
-		'cn.Provider = "SQLOLEDB"
-		'cn.ConnectionString = "User Id=sa;Password=sa;" + _
-		''    "Initial Catalog=glm;Data Source=jpuentelap1;"
-		'cn.Open
-		'AdoRs.Open "select store_id as id, state_id as store, " + _
-		''    "store_address as address , store_city as city  " + _
-		''    "from store", cn
-		
-		'AdoRs.Open "select store_id, store_name,store_address," + _
-		'"store_city from store", cn
-		'MsgBox AdoRs(2)
-		
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		
-		'Select Case Trim(cbVersion)
-		'Case "BRANCH"
-		'   sFile = "c:\glm\Reports\rptInvoice5.rpt"
-		'Set report = app1.OpenReport("c:\glm\Reports\rptInvoice5.rpt")
-		'Set report = app1.OpenReport("d:\glm\tmp\rptPrueba2.rpt")
-		'Case "LIST"
-		'Set report = app1.OpenReport("c:\glm\Visual Basic\GLM-System\Reports\rptInvList.rpt")
-		
-		'  sReportTemplate = "rptInvList.rpt"
-		'  sFile = Trim(App.Path) + "\" + sReportTemplate
-		'  sFile = "c:\glm\rptInvList.rpt"
-		'MsgBox "Looking for file:" + sFile
-		'End Select
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptCostCont.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		If fileTmp.FileExists(sFile) Then
-			crysRepCostCont = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepCostCont = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'cn.Provider = "SQLOLEDB"
+        'cn.ConnectionString = "User Id=sa;Password=sa;" + _
+        ''    "Initial Catalog=glm;Data Source=jpuentelap1;"
+        'cn.Open
+        'AdoRs.Open "select store_id as id, state_id as store, " + _
+        ''    "store_address as address , store_city as city  " + _
+        ''    "from store", cn
+
+        'AdoRs.Open "select store_id, store_name,store_address," + _
+        '"store_city from store", cn
+        'MsgBox AdoRs(2)
+
+
+        'Abro el archivo con el reporte
+        'crysApp = CreateObject("Crystal.CRPE.Application")
+
+
+        'Select Case Trim(cbVersion)
+        'Case "BRANCH"
+        '   sFile = "c:\glm\Reports\rptInvoice5.rpt"
+        'Set report = app1.OpenReport("c:\glm\Reports\rptInvoice5.rpt")
+        'Set report = app1.OpenReport("d:\glm\tmp\rptPrueba2.rpt")
+        'Case "LIST"
+        'Set report = app1.OpenReport("c:\glm\Visual Basic\GLM-System\Reports\rptInvList.rpt")
+
+        '  sReportTemplate = "rptInvList.rpt"
+        '  sFile = Trim(App.Path) + "\" + sReportTemplate
+        '  sFile = "c:\glm\rptInvList.rpt"
+        'MsgBox "Looking for file:" + sFile
+        'End Select
+
+        'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptCostCont.rpt"
+        'sFile = get_template(sLocalReport, cbReportTemplate.Text)
+        'If fileTmp.FileExists(sFile) Then
+        '    crysRepCostCont = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        crysRepCostCont = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
+        'End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
         'crysRepCostCont.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepCostCont.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepCostCont.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		
-		
-		'Set DataGrid1.DataSource = rsReport
-		reportTable.SetPrivateData(3, rsReport)
-		'reportTable.SetPrivateData 3, AdoRs
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		
-		crysRepCostCont.ProgressDialogEnabled = True
-		crysRepCostCont.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+
+        'reportDb = crysRepCostCont.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        'reportPage = crysRepCostCont.PageSetup
+
+        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
+
+        'Set DataGrid1.DataSource = rsReport
+        'reportTable.SetPrivateData(3, rsReport)
+        'reportTable.SetPrivateData 3, AdoRs
+
+        'cd.CancelError = True
+        'cd.ShowPrinter
+
+        crysRepCostCont.ProgressDialogEnabled = True
+        crysRepCostCont.Preview()
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
+    End Function
 	
 	
 	Private Sub frmRepCostContSearch_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load

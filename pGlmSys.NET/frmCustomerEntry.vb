@@ -3,7 +3,7 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmCustomerEntry
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	Private Const MAXBILLINGACCOUNTNO As Short = 30
 	
 	
@@ -158,197 +158,213 @@ ErrorHandler:
 		Dim sCustPhone2 As String
 		Dim sCustPhone3 As String
         Dim sInvoicePayFlag As String
-        Dim nTrans As SqlTransaction
+        'Dim nTrans As SqlTransaction
         Dim cmd As SqlCommand = cn.CreateCommand()
+
 		
-		On Error GoTo ErrorHandler
-		
-		save_customer = True
 
-        cm = cn.CreateCommand()
-        cm.CommandType = CommandType.Text
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone1.Text) > 0 Then
-			sCustPhone1 = mtxtCustPhone1.Text
-		Else
-			sCustPhone1 = ""
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone2.Text) > 0 Then
-			sCustPhone2 = mtxtCustPhone2.Text
-		Else
-			sCustPhone2 = ""
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone3.Text) > 0 Then
-			sCustPhone3 = mtxtCustPhone3.Text
-		Else
-			sCustPhone3 = ""
-		End If
-		
-		If chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Checked Then
-			sInvoicePayFlag = "F"
-		Else
-			sInvoicePayFlag = "T"
-		End If
-		
-		Select Case gCustomerRecord.bFlag
-			Case General.modo.NewRecord
-				'Verificar que no se repita Cliente
-                sStmt = "SELECT cust_id FROM customer " & "WHERE cust_id ='" & txtCustId.Text & "'"
-                cm.CommandText = sStmt
-				
-                rsLocal = cm.ExecuteReader()
+        Try
+            save_customer = True
 
-                If rsLocal.HasRows() > 0 Then
-                    MsgBox("Customer Code already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-                    txtCustId.Focus()
-                    save_customer = False
-                    Exit Function
-                End If
+            cm = cn.CreateCommand()
+            cm.CommandType = CommandType.Text
 
+            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
+            If mtxtCustPhone1.Text(1) <> " " Then
+                sCustPhone1 = mtxtCustPhone1.Text
+            Else
+                sCustPhone1 = ""
+            End If
 
-                sStmt = "SELECT cust_name FROM customer " & "WHERE cust_name ='" & Trim(txtCustName.Text) & "'"
-                cm.CommandText = sStmt
+            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
+            If mtxtCustPhone2.Text(1) <> " " Then
+                Dim s As String = mtxtCustPhone2.Text(1)
+                sCustPhone2 = mtxtCustPhone2.Text(2) 'mtxtCustPhone2.Text
+            Else
+                sCustPhone2 = ""
+            End If
 
-                rsLocal = cm.ExecuteReader()
+            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
+            If mtxtCustPhone3.Text(1) <> " " Then
+                sCustPhone3 = mtxtCustPhone3.Text
+            Else
+                sCustPhone3 = ""
+            End If
 
-                If rsLocal.HasRows() Then
-                    MsgBox("Customer Name already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-                    txtCustName.Focus()
-                    save_customer = False
-                    Exit Function
-                End If
+            If chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Checked Then
+                sInvoicePayFlag = "F"
+            Else
+                sInvoicePayFlag = "T"
+            End If
 
+            Select Case gCustomerRecord.bFlag
+                Case General.modo.NewRecord
+                    'Verificar que no se repita Cliente
+                    sStmt = "SELECT cust_id FROM customer " & "WHERE cust_id ='" & txtCustId.Text & "'"
+                    cm.CommandText = sStmt
 
-                'Insertar en tabla Customer
-                nLevel = cn.BeginTransaction()
-                'MsgBox "Nesting level:" + Str(nLevel)
-                sStmt = "INSERT INTO customer(cust_id, state_id, " & "cust_name, cust_contact, cust_phone1," & "cust_phone2, cust_phone3, cust_address, " & "cust_city, cust_zip, cust_contact_title, " & "cust_email, qb_group_id, qb_cust_name, " & "qb_account_name, cust_report_name, " & "invoice_pay_flag, negative_savings_flag, contract_number, billing_account_no )" & " VALUES ('" & Trim(txtCustId.Text) & "'," & "'" & cbState.Text & "','" & quotation_mask(Trim(txtCustName.Text)) & "'," & "'" & quotation_mask(Trim(txtCustContact.Text)) & "'," & "'" & Trim(sCustPhone1) & "'," & "'" & Trim(sCustPhone2) & "'," & "'" & Trim(sCustPhone3) & "'," & "'" & quotation_mask(Trim(txtCustAddress.Text)) & "'," & "'" & quotation_mask(Trim(txtCustCity.Text)) & "'," & "'" & Trim(txtCustZip.Text) & "'," & "'" & quotation_mask(Trim(txtContactTitle.Text)) & "'," & "'" & quotation_mask(Trim(txtCustEmail.Text)) & "'," & "'" & cbQBGroupId.Text & "','" & quotation_mask(cbQBCustName.Text) & "'," & "'" & quotation_mask(cbQBAccountName.Text) & "'," & "'" & quotation_mask(Trim(txtCustReportName.Text)) & "', " & "'" & sInvoicePayFlag & "', " & "'" & cbNegativeSavingsFlag.Text & "', " & "'" & quotation_mask((txtContractNumber.Text)) & "'," & "'" & quotation_mask((txtBillingAccountNo.Text)) & "')"
-                cm.CommandText = sStmt
-                nRecords = cm.ExecuteNonQuery()
+                    rsLocal = getDataTable(sStmt) 'cm.ExecuteReader()
 
-                If nRecords > 0 Then
-                    'ok
-                Else
-                    nLevel.Rollback()
-                    MsgBox("Failed to insert into Customer table, " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                    save_customer = False
-                    Exit Function
-                End If
-
-                'Crear grupo ALL por defecto
-                sStmt = "SELECT MAX(group_seq) FROM Groups"
-                cm.CommandText = sStmt
-                rsLocal = cm.ExecuteReader()
-
-                If rsLocal.HasRows() Then
-                    nGroupSeq = rsLocal.Item(0).Value + 1
-                Else
-                    nGroupSeq = 1
-                End If
-                
-
-                'Grupo por defecto al que pertenecen todas las tiendas.
-                sStmt = "INSERT INTO Groups (cust_id, group_seq, group_name)" & "VALUES ('" & txtCustId.Text & "'," & Str(nGroupSeq) & ",'All')"
-                cm.CommandText = sStmt
-                nRecords = cm.ExecuteNonQuery()
-
-                If nRecords > 0 Then
-                    'ok
-                    nLevel.Commit()
-                    gCustomerRecord.bFlag = General.modo.SavedRecord
-
-                    MsgBox("Customer was successfully created.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
-                Else
-                    nLevel.Rollback()
-                    save_customer = False
-                    MsgBox("Failed to create default Group. " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                End If
-
-                'Agregar Informacion en RepCust para RepCostContainment Report
-                'Esto es opcional, si falla no se hace RollBack
-                If gCustomerRecord.bFlag = General.modo.SavedRecord Then
-                    cm.CommandType = CommandType.StoredProcedure
-                    cm.CommandText = "usp_insert_rep_cust"
-                    'cm.Parameters.Refresh()
-                    cm.Parameters("@sCustId").Value = Trim(txtCustId.Text)
-                    cm.ExecuteNonQuery()
-                    If cm.Parameters("@nResult").Value = 0 Then
-                        'ok
-                    Else
-                        MsgBox("Failed to add Report Defaults.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                    If rsLocal.Rows.Count > 0 Then
+                        MsgBox("Customer Code already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        txtCustId.Focus()
+                        save_customer = False
+                        Exit Function
                     End If
-                End If
-            Case General.modo.UpdateRecord
-                'Verificar que no se repita
-                sStmt = "SELECT cust_name FROM customer " & "WHERE cust_name ='" & Trim(txtCustName.Text) & "'" & " AND cust_id <>'" & txtCustId.Text & "'"
-                cmd.CommandText = sStmt
-                rsLocal = cmd.ExecuteReader
-
-                If rsLocal.HasRows() Then
-                    MsgBox("Customer Name already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-                    txtCustName.Focus()
-                    save_customer = False
-                    Exit Function
-                End If
 
 
-                'Actualizar registro
-                nLevel = cn.BeginTransaction()
-                sStmt = "UPDATE customer SET " & "cust_name ='" & quotation_mask(Trim(txtCustName.Text)) & "'," & "state_id = '" & cbState.Text & "'," & "cust_contact = '" & quotation_mask(Trim(txtCustContact.Text)) & "'," & "cust_phone1= '" & Trim(sCustPhone1) & "'," & "cust_phone2= '" & Trim(sCustPhone2) & "'," & "cust_phone3= '" & Trim(sCustPhone3) & "'," & "cust_address= '" & quotation_mask(Trim(txtCustAddress.Text)) & "'," & "cust_city = '" & quotation_mask(Trim(txtCustCity.Text)) & "'," & "cust_zip ='" & Trim(txtCustZip.Text) & "'," & "cust_contact_title ='" & quotation_mask(Trim(txtContactTitle.Text)) & "'," & "cust_email ='" & quotation_mask(Trim(txtCustEmail.Text)) & "'," & "qb_group_id ='" & cbQBGroupId.Text & "'," & "qb_cust_name = '" & quotation_mask(cbQBCustName.Text) & "'," & "qb_account_name = '" & quotation_mask(cbQBAccountName.Text) & "'," & "cust_report_name ='" & quotation_mask(Trim(txtCustReportName.Text)) & "', " & "invoice_pay_flag ='" & sInvoicePayFlag & "'," & "negative_savings_flag ='" & cbNegativeSavingsFlag.Text & "', " & "contract_number = '" & quotation_mask((txtContractNumber.Text)) & "', " & "billing_account_no = '" & quotation_mask((txtBillingAccountNo.Text)) & "' " & " WHERE cust_id = '" & txtCustId.Text & "'"
-                cmd.CommandText = sStmt
-                nRecords = cmd.ExecuteNonQuery()
+                    sStmt = "SELECT cust_name FROM customer " & "WHERE cust_name ='" & Trim(txtCustName.Text) & "'"
+                    cm.CommandText = sStmt
 
-                If nRecords > 0 Then
-                    'ok
-                    nLevel.Commit()
-                    gCustomerRecord.bFlag = General.modo.SavedRecord
-                    MsgBox("Customer was successfully updated.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
-                Else
-                    nLevel.Rollback()
-                    MsgBox("Failed to update Customer table, " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                    save_customer = False
-                    Exit Function
-                End If
+                    rsLocal = getDataTable(sStmt) 'cm.ExecuteReader()
 
-        End Select
-		Exit Function
-		
-ErrorHandler: 
-		save_customer = False
+                    If rsLocal.Rows.Count > 0 Then
+                        MsgBox("Customer Name already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        txtCustName.Focus()
+                        save_customer = False
+                        Exit Function
+                    End If
 
-        nLevel.Rollback()
+                    nLevel = cn.BeginTransaction()
+                    Try
+                        'Insertar en tabla Customer
+                        'MsgBox "Nesting level:" + Str(nLevel)
+                        sStmt = "INSERT INTO customer(cust_id, state_id, " & "cust_name, cust_contact, cust_phone1," & "cust_phone2, cust_phone3, cust_address, " & "cust_city, cust_zip, cust_contact_title, " & "cust_email, qb_group_id, qb_cust_name, " & "qb_account_name, cust_report_name, " & "invoice_pay_flag, negative_savings_flag, contract_number, billing_account_no )" & " VALUES ('" & Trim(txtCustId.Text) & "'," & "'" & cbState.Text & "','" & quotation_mask(Trim(txtCustName.Text)) & "'," & "'" & quotation_mask(Trim(txtCustContact.Text)) & "'," & "'" & Trim(sCustPhone1) & "'," & "'" & Trim(sCustPhone2) & "'," & "'" & Trim(sCustPhone3) & "'," & "'" & quotation_mask(Trim(txtCustAddress.Text)) & "'," & "'" & quotation_mask(Trim(txtCustCity.Text)) & "'," & "'" & Trim(txtCustZip.Text) & "'," & "'" & quotation_mask(Trim(txtContactTitle.Text)) & "'," & "'" & quotation_mask(Trim(txtCustEmail.Text)) & "'," & "'" & cbQBGroupId.Text & "','" & quotation_mask(cbQBCustName.Text) & "'," & "'" & quotation_mask(cbQBAccountName.Text) & "'," & "'" & quotation_mask(Trim(txtCustReportName.Text)) & "', " & "'" & sInvoicePayFlag & "', " & "'" & cbNegativeSavingsFlag.Text & "', " & "'" & quotation_mask((txtContractNumber.Text)) & "'," & "'" & quotation_mask((txtBillingAccountNo.Text)) & "')"
+                        cm.CommandText = sStmt
+                        nRecords = cm.ExecuteNonQuery()
 
-        save_error(Me.Name, "save_Customer")
-        MsgBox("Failed to save Customer info. Review log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
-	End Function
+                        If nRecords > 0 Then
+                            'ok
+                        Else
+                            nLevel.Rollback()
+                            MsgBox("Failed to insert into Customer table, " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                            save_customer = False
+                            Exit Function
+                        End If
+
+                    Catch ex As Exception
+                        save_customer = False
+
+                        nLevel.Rollback()
+
+                        save_error(Me.Name, "save_Customer")
+                        MsgBox("Failed to save Customer info. Review log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                    End Try
+                    'Crear grupo ALL por defecto
+                    sStmt = "SELECT MAX(group_seq) FROM Groups"
+                    cm.CommandText = sStmt
+                    rsLocal = getDataTable(sStmt) 'cm.ExecuteReader()
+
+                    If rsLocal.Rows.Count > 0 Then
+                        nGroupSeq = rsLocal.Rows(0).Item(0) + 1
+                    Else
+                        nGroupSeq = 1
+                    End If
+
+
+                    'Grupo por defecto al que pertenecen todas las tiendas.
+                    sStmt = "INSERT INTO Groups (cust_id, group_seq, group_name)" & "VALUES ('" & txtCustId.Text & "'," & Str(nGroupSeq) & ",'All')"
+                    cm.CommandText = sStmt
+                    nRecords = cm.ExecuteNonQuery()
+
+                    If nRecords > 0 Then
+                        'ok
+                        nLevel.Commit()
+                        gCustomerRecord.bFlag = General.modo.SavedRecord
+
+                        MsgBox("Customer was successfully created.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    Else
+                        nLevel.Rollback()
+                        save_customer = False
+                        MsgBox("Failed to create default Group. " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                    End If
+
+                    'Agregar Informacion en RepCust para RepCostContainment Report
+                    'Esto es opcional, si falla no se hace RollBack
+                    If gCustomerRecord.bFlag = General.modo.SavedRecord Then
+                        cm.CommandType = CommandType.StoredProcedure
+                        cm.CommandText = "usp_insert_rep_cust"
+                        'cm.Parameters.Refresh()
+                        cm.Parameters("@sCustId").Value = Trim(txtCustId.Text)
+                        cm.ExecuteNonQuery()
+                        If cm.Parameters("@nResult").Value = 0 Then
+                            'ok
+                        Else
+                            MsgBox("Failed to add Report Defaults.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                        End If
+                    End If
+                Case General.modo.UpdateRecord
+                    'Verificar que no se repita
+                    sStmt = "SELECT cust_name FROM customer " & "WHERE cust_name ='" & Trim(txtCustName.Text) & "'" & " AND cust_id <>'" & txtCustId.Text & "'"
+                    cmd.CommandText = sStmt
+                    rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader
+
+                    If rsLocal.Rows.Count > 0 Then
+                        MsgBox("Customer Name already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        txtCustName.Focus()
+                        save_customer = False
+                        Exit Function
+                    End If
+
+                    Try
+                        'Actualizar registro
+                        nLevel = cn.BeginTransaction()
+                        sStmt = "UPDATE customer SET " & "cust_name ='" & quotation_mask(Trim(txtCustName.Text)) & "'," & "state_id = '" & cbState.Text & "'," & "cust_contact = '" & quotation_mask(Trim(txtCustContact.Text)) & "'," & "cust_phone1= '" & Trim(sCustPhone1) & "'," & "cust_phone2= '" & Trim(sCustPhone2) & "'," & "cust_phone3= '" & Trim(sCustPhone3) & "'," & "cust_address= '" & quotation_mask(Trim(txtCustAddress.Text)) & "'," & "cust_city = '" & quotation_mask(Trim(txtCustCity.Text)) & "'," & "cust_zip ='" & Trim(txtCustZip.Text) & "'," & "cust_contact_title ='" & quotation_mask(Trim(txtContactTitle.Text)) & "'," & "cust_email ='" & quotation_mask(Trim(txtCustEmail.Text)) & "'," & "qb_group_id ='" & cbQBGroupId.Text & "'," & "qb_cust_name = '" & quotation_mask(cbQBCustName.Text) & "'," & "qb_account_name = '" & quotation_mask(cbQBAccountName.Text) & "'," & "cust_report_name ='" & quotation_mask(Trim(txtCustReportName.Text)) & "', " & "invoice_pay_flag ='" & sInvoicePayFlag & "'," & "negative_savings_flag ='" & cbNegativeSavingsFlag.Text & "', " & "contract_number = '" & quotation_mask((txtContractNumber.Text)) & "', " & "billing_account_no = '" & quotation_mask((txtBillingAccountNo.Text)) & "' " & " WHERE cust_id = '" & txtCustId.Text & "'"
+                        cmd = cn.CreateCommand
+                        cmd.Transaction = nLevel
+                        cmd.CommandText = sStmt
+                        nRecords = cmd.ExecuteNonQuery()
+
+                        If nRecords > 0 Then
+                            'ok
+                            nLevel.Commit()
+                            gCustomerRecord.bFlag = General.modo.SavedRecord
+                            MsgBox("Customer was successfully updated.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                        Else
+                            nLevel.Rollback()
+                            MsgBox("Failed to update Customer table, " & vbCrLf & "Check log file for details", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                            save_customer = False
+                            Exit Function
+                        End If
+                    Catch exc As Exception
+                        MsgBox("Failed to save Customer info. Review log file for details: " & exc.Message, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                    End Try
+            End Select
+            Exit Function
+
+        Catch ex As Exception
+            Dim err As String = ex.Message
+            save_customer = False
+
+            'nLevel.Rollback()
+
+            save_error(Me.Name, "save_Customer")
+            MsgBox("Failed to save Customer info. Review log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+        End Try
+    End Function
 	Private Sub frmCustomerEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		set_limits()
 		init_vars()
 	End Sub
 	Private Sub set_limits()
 		
-		'UPGRADE_WARNING: TextBox property txtCustId.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustId.Maxlength = 2
-		'UPGRADE_WARNING: TextBox property txtCustName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustName.Maxlength = 20
-		'UPGRADE_WARNING: TextBox property txtCustContact.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustContact.Maxlength = 20
-		'UPGRADE_WARNING: TextBox property txtCustAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustAddress.Maxlength = 30
-		'UPGRADE_WARNING: TextBox property txtCustCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustCity.Maxlength = 15
-		'UPGRADE_WARNING: TextBox property txtCustZip.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustZip.Maxlength = 15
-		'UPGRADE_WARNING: TextBox property txtContactTitle.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtContactTitle.Maxlength = 20
-		'UPGRADE_WARNING: TextBox property txtCustEmail.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustEmail.Maxlength = 40
-		'UPGRADE_WARNING: TextBox property txtCustReportName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 		txtCustReportName.Maxlength = 30
 		
 	End Sub
@@ -419,156 +435,156 @@ ErrorHandler:
 		sStmt = "SELECT cust_id, cust_name, cust_contact, " & "state_id, cust_phone1, cust_phone2, " & "cust_phone3, cust_address, cust_city, " & "cust_zip, cust_contact_title, cust_email," & "qb_group_id, qb_cust_name, qb_account_name, " & "cust_report_name, invoice_pay_flag, " & "negative_savings_flag, billing_account_no " & " FROM customer WHERE cust_id ='" & sCustId & "'"
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader()
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-        If rsLocal.HasRows() Then
+        If rsLocal.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_id").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_id")) Then
                 txtCustId.Text = ""
                 load_customer = False
                 MsgBox("Error loading Customer Code.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                 load_customer = False
                 Exit Function
             Else
-                txtCustId.Text = rsLocal.Item("cust_id").Value
+                txtCustId.Text = rsLocal.Rows(0).Item("cust_id")
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_name").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_name")) Then
                 txtCustName.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_name").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_name"))) = 0 Then
                     txtCustName.Text = ""
                 Else
-                    txtCustName.Text = rsLocal.Item("cust_name").Value
+                    txtCustName.Text = rsLocal.Rows(0).Item("cust_name")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_contact").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_contact")) Then
                 txtCustContact.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_contact").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_contact"))) = 0 Then
                     txtCustContact.Text = ""
                 Else
-                    txtCustContact.Text = rsLocal.Item("cust_contact").Value
+                    txtCustContact.Text = rsLocal.Rows(0).Item("cust_contact")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_contact_title").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_contact_title")) Then
                 txtContactTitle.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_contact_title").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_contact_title"))) = 0 Then
                     txtContactTitle.Text = ""
                 Else
-                    txtContactTitle.Text = rsLocal.Item("cust_contact_title").Value
+                    txtContactTitle.Text = rsLocal.Rows(0).Item("cust_contact_title")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_report_name").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_report_name")) Then
                 txtCustReportName.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_report_name").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_report_name"))) = 0 Then
                     txtCustReportName.Text = ""
                 Else
-                    txtCustReportName.Text = rsLocal.Item("cust_report_name").Value
+                    txtCustReportName.Text = rsLocal.Rows(0).Item("cust_report_name")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_address").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_address")) Then
                 txtCustAddress.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_address").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_address"))) = 0 Then
                     txtCustAddress.Text = ""
                 Else
-                    txtCustAddress.Text = rsLocal.Item("cust_address").Value
+                    txtCustAddress.Text = rsLocal.Rows(0).Item("cust_address")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_city").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_city")) Then
                 txtCustCity.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_city").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_city"))) = 0 Then
                     txtCustCity.Text = ""
                 Else
-                    txtCustCity.Text = rsLocal.Item("cust_city").Value
+                    txtCustCity.Text = rsLocal.Rows(0).Item("cust_city")
                 End If
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_zip").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_zip")) Then
                 txtCustZip.Text = ""
             Else
-                txtCustZip.Text = rsLocal.Item("cust_zip").Value
+                txtCustZip.Text = rsLocal.Rows(0).Item("cust_zip")
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_email").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_email")) Then
                 txtCustEmail.Text = ""
             Else
-                If Len(Trim(rsLocal.Item("cust_email").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_email"))) = 0 Then
                     txtCustEmail.Text = ""
                 Else
-                    txtCustEmail.Text = rsLocal.Item("cust_email").Value
+                    txtCustEmail.Text = rsLocal.Rows(0).Item("cust_email")
                 End If
             End If
 
             'State
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("state_id").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("state_id")) Then
                 cbState.SelectedIndex = 0
             Else
-                set_cb(cbState, rsLocal.Item("state_id").Value)
+                set_cb(cbState, rsLocal.Rows(0).Item("state_id"))
             End If
 
             'Phone1
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_phone1").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_phone1")) Then
                 'Nothing
             Else
-                If Len(Trim(rsLocal.Item("cust_phone1").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_phone1"))) = 0 Then
                     'Nothing
                 Else
-                    sCustPhone = Trim(rsLocal.Item("cust_phone1").Value)
+                    sCustPhone = Trim(rsLocal.Rows(0).Item("cust_phone1"))
                     mtxtCustPhone1.Text = sCustPhone
                 End If
             End If
             'Phone2
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_phone2").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_phone2")) Then
                 'Nothing
             Else
-                If Len(Trim(rsLocal.Item("cust_phone2").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_phone2"))) = 0 Then
                     'Nothing
                 Else
-                    sCustPhone = Trim(rsLocal.Item("cust_phone2").Value)
+                    sCustPhone = Trim(rsLocal.Rows(0).Item("cust_phone2"))
                     mtxtCustPhone2.Text = sCustPhone
                 End If
             End If
 
             'Phone3
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("cust_phone3").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("cust_phone3")) Then
                 'Nothing
             Else
-                If Len(Trim(rsLocal.Item("cust_phone3").Value)) = 0 Then
+                If Len(Trim(rsLocal.Rows(0).Item("cust_phone3"))) = 0 Then
                     'Nothing
                 Else
-                    sCustPhone = Trim(rsLocal.Item("cust_phone3").Value)
+                    sCustPhone = Trim(rsLocal.Rows(0).Item("cust_phone3"))
                     mtxtCustPhone3.Text = sCustPhone
                 End If
             End If
 
             'Invoice Flag
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("invoice_pay_flag").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("invoice_pay_flag")) Then
                 chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Unchecked
             Else
-                If rsLocal.Item("invoice_pay_flag").Value = "T" Then
+                If rsLocal.Rows(0).Item("invoice_pay_flag") = "T" Then
                     chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Unchecked
                 Else
                     chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Checked
@@ -577,26 +593,26 @@ ErrorHandler:
 
             'Negative Savings Flag
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Item("negative_savings_flag").Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item("negative_savings_flag")) Then
                 cbNegativeSavingsFlag.SelectedIndex = 0
             Else
-                set_cb(cbNegativeSavingsFlag, rsLocal.Item("negative_savings_flag").Value)
+                set_cb(cbNegativeSavingsFlag, rsLocal.Rows(0).Item("negative_savings_flag"))
             End If
 
             'Billing Account
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            txtBillingAccountNo.Text = IIf(IsDBNull(rsLocal.Item("billing_account_no").Value), "", rsLocal.Item("billing_account_no").Value)
+            txtBillingAccountNo.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no")), "", rsLocal.Rows(0).Item("billing_account_no"))
 
 
             'Quick Books
-            set_cb(cbQBGroupId, Trim(rsLocal.Item("qb_group_id").Value))
+            set_cb(cbQBGroupId, Trim(rsLocal.Rows(0).Item("qb_group_id")))
             If cbQBGroupId.SelectedIndex >= 0 Then
                 cbQBGroupDesc.SelectedIndex = cbQBGroupId.SelectedIndex
             End If
 
-            set_cb(cbQBCustName, Trim(rsLocal.Item("qb_cust_name").Value))
+            set_cb(cbQBCustName, Trim(rsLocal.Rows(0).Item("qb_cust_name")))
 
-            set_cb(cbQBAccountName, Trim(rsLocal.Item("qb_account_name").Value))
+            set_cb(cbQBAccountName, Trim(rsLocal.Rows(0).Item("qb_account_name")))
 
         End If
 

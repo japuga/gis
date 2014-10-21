@@ -90,8 +90,8 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rs.Rows(0).Item("type_id").Value) Then
-                get_user_type = rs.Rows(0).Item("type_id").Value
+            If Not IsDBNull(rs.Rows(0).Item("type_id")) Then
+                get_user_type = rs.Rows(0).Item("type_id")
             End If
         End If
 
@@ -153,10 +153,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item(0).Value) Then
+            If IsDBNull(rs.Rows(0).Item(0)) Then
                 get_table_sequence = 1
             Else
-                get_table_sequence = rs.Rows(0).Item(0).Value + 1
+                get_table_sequence = rs.Rows(0).Item(0) + 1
             End If
         End If
 
@@ -274,17 +274,17 @@ ErrorHandler:
 
 
                 ReDim Preserve period_start_date(nCounter)
-                cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name").value), rsLocal.Rows(row).Item("period_seq").value))
-                'period_start_date(nCounter + 1) = rsLocal.Fields("period_start_date").value
+                cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name")), rsLocal.Rows(row).Item("period_seq")))
+                'period_start_date(nCounter + 1) = rsLocal.Fields("period_start_date")
                 'UPGRADE_WARNING: Couldn't resolve default property of object period_start_date(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                period_start_date(nCounter) = rsLocal.Rows(row).Item("period_start_date").value
+                period_start_date(nCounter) = rsLocal.Rows(row).Item("period_start_date")
             Else
                 'UPGRADE_WARNING: Lower bound of array period_start_date was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
                 'UPGRADE_ISSUE: As Date was removed from ReDim period_start_date(1 To nCounter + 1) statement. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="19AFCB41-AA8E-4E6B-A441-A3E802E5FD64"'
                 ReDim Preserve period_start_date(nCounter + 1)
-                cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name").value), rsLocal.Rows(row).Item("period_seq").value))
+                cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name")), rsLocal.Rows(row).Item("period_seq")))
                 'UPGRADE_WARNING: Couldn't resolve default property of object period_start_date(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                period_start_date(nCounter + 1) = rsLocal.Rows(row).Item("period_start_date").value
+                period_start_date(nCounter + 1) = rsLocal.Rows(row).Item("period_start_date")
 
             End If
 
@@ -334,8 +334,8 @@ ErrorHandler:
 		'nCounter = 0
 		'rsLocal.MoveFirst
 		'Do While Not rsLocal.EOF
-		'    cbStoreGroup.AddItem Trim(rsLocal.Fields("group_name").value), nCounter
-		'    cbStoreGroup.ItemData(cbStoreGroup.NewIndex) = rsLocal.Fields("group_seq").value
+        '    cbStoreGroup.AddItem Trim(rsLocal.Fields("group_name")), nCounter
+        '    cbStoreGroup.ItemData(cbStoreGroup.NewIndex) = rsLocal.Fields("group_seq")
 		'    nCounter = nCounter + 1
 		'    rsLocal.MoveNext
 		'Loop
@@ -372,12 +372,12 @@ ErrorHandler:
 		
         cmLocal = cn.CreateCommand
 		
-		create_param_rs("address_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nAddressSeq, cmLocal, 4)
-		create_param_rs("context_table", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100)
-		create_param_rs("address", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(sAddress)), cmLocal, 80)
-		create_param_rs("city", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, quotation_mask(Trim(sCity)), cmLocal, 40)
-		create_param_rs("state_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, sStateId, cmLocal, 2)
-		create_param_rs("zip", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, sZip, cmLocal, 20)
+        create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
+        create_param_rs("context_table", DbType.String, ParameterDirection.Input, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100)
+        create_param_rs("address", DbType.String, ParameterDirection.Input, quotation_mask(Trim(sAddress)), cmLocal, 80)
+        create_param_rs("city", DbType.String, ParameterDirection.Input, quotation_mask(Trim(sCity)), cmLocal, 40)
+        create_param_rs("state_id", SqlDbType.VarChar, ParameterDirection.Input, sStateId, cmLocal, 2)
+        create_param_rs("zip", DbType.String, ParameterDirection.Input, sZip, cmLocal, 20)
 		
 		
 		
@@ -392,13 +392,13 @@ ErrorHandler:
 			
 			'UPGRADE_NOTE: Object cmLocal may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 
-			create_param_rs("store_address_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nStoreAddressSeq, cmLocal, 4)
-			create_param_rs("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, sCustId, cmLocal, 2)
+            create_param_rs("store_address_seq", DbType.Int32, ParameterDirection.Input, nStoreAddressSeq, cmLocal, 4)
+            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, sCustId, cmLocal, 2)
 			'jp.begin.2010.02.16 - Address maintenance
-			create_param_rs("store_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nStoreId, cmLocal, 4)
+            create_param_rs("store_id", DbType.Int32, ParameterDirection.Input, nStoreId, cmLocal, 4)
 			'create_param_rs "store_id", adInteger, adParamInput, gStoreAddressRecord.nStoreId, cmLocal, 4
 			'jp.end.2010.02.16
-			create_param_rs("address_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, nAddressSeq, cmLocal, 4)
+            create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
 			
 			
             cmLocal.CommandType = CommandType.Text
@@ -432,52 +432,50 @@ ErrorHandler:
 	
     Public Function getPeriodDatesStr(ByRef sCustId As String, ByRef nPeriodSeq As Short) As gDumpUDT
         getPeriodDatesStr = New gDumpUDT
-        On Error GoTo ErrorHandler
+        Try
+            sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(sCustId) & "'" & " AND period_seq =" & Str(nPeriodSeq)
 
-        sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(sCustId) & "'" & " AND period_seq =" & Str(nPeriodSeq)
+            rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rs.Rows.Count > 0 Then
 
-        If rs.Rows.Count > 0 Then
-
-            'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            gDump.str1 = rs.Rows(0).Item("period_start_date")
-            'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            gDump.str2 = rs.Rows(0).Item("period_end_date")
-        End If
-
+                'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                gDump.str1 = rs.Rows(0).Item("period_start_date")
+                'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                gDump.str2 = rs.Rows(0).Item("period_end_date")
+            End If
+        Catch ex As Exception
+            save_error("DbFunctions", "getPeriodDates")
+            MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+        End Try
         Exit Function
-
-ErrorHandler:
-        save_error("DbFunctions", "getPeriodDates")
-        MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
-
     End Function
 	
 	Public Function getPeriodStartEndDate(ByRef sCustId As String, ByRef nPeriodSeq As Short, ByRef sStartEnd As String) As String
         Dim sPeriodDate As String = ""
 		
-		On Error GoTo ErrorHandler
-		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(sCustId) & "'" & " AND period_seq =" & Str(nPeriodSeq)
-		
-        rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rs.Rows.Count > 0 Then
-            If sStartEnd = "START" Then
-                sPeriodDate = rs.Rows(0).Item("period_start_date").Value
-            Else
-                sPeriodDate = rs.Rows(0).Item("period_end_date").Value
+        Try
+            sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(sCustId) & "'" & " AND period_seq =" & Str(nPeriodSeq)
+
+            rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rs.Rows.Count > 0 Then
+                If sStartEnd = "START" Then
+                    sPeriodDate = rs.Rows(0).Item("period_start_date")
+                Else
+                    sPeriodDate = rs.Rows(0).Item("period_end_date")
+                End If
             End If
-        End If
 
 
-        getPeriodStartEndDate = sPeriodDate
-        Exit Function
-
-ErrorHandler:
-        save_error("DBFunctions", "getPeriodDate")
-        MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+            getPeriodStartEndDate = sPeriodDate
+            Exit Function
+        Catch ex As Exception
+            save_error("DBFunctions", "getPeriodDate")
+            MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+            getPeriodStartEndDate = ""
+        End Try
 		
-	End Function
+    End Function
 	
 	'Returns a list of period sequences like this: 21,34,12
 	
@@ -493,7 +491,7 @@ ErrorHandler:
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            sPeriodList = sPeriodList & Str(rs.Rows(row).Item("period_seq").value) & ","
+            sPeriodList = sPeriodList & Str(rs.Rows(row).Item("period_seq")) & ","
             sPeriodList = Trim(sPeriodList)
         Next row
 

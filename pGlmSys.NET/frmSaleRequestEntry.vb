@@ -242,8 +242,8 @@ Friend Class frmSaleRequestEntry
 		cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
 		cmLocal.CommandText = sStmt
 		
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, nRequestSeq))
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, nItemSeq))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, nRequestSeq))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", DbType.Int32, ParameterDirection.Input, 4, nItemSeq))
 		
 		
 		cmLocal.let_ActiveConnection(cn)
@@ -413,52 +413,52 @@ Friend Class frmSaleRequestEntry
 				cmLocal.CommandText = sStmt
 				
 				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, nRequestSeq))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("cust_id", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 2, cbCustId.Text))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("store_id", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, VB6.GetItemData(cbStoreNo, cbStoreNo.SelectedIndex)))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 50, quotation_mask((txtSaleRequest.Text))))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, 10, dtRequestDate.value))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("response_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, 10, dtResponseDate.value))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("tracking_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 80, quotation_mask((txtTrackingNo.Text))))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 500, quotation_mask((txtNotes.Text))))
-				
-				cmLocal.let_ActiveConnection(cn)
-				cmLocal.Execute(nRecords)
-				If nRecords > 0 Then
-					'gSaleRequest.bFlag = modo.SavedRecord
-					gSaleRequest.nRequestSeq = nRequestSeq
-					MsgBox("Sale Request was saved successfully", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				Else
-					MsgBox("Record was not inserted. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					
-				End If
-				
-			Case General.modo.UpdateRecord
-				sStmt = " UPDATE SaleRequest " & " SET request_date = ? , " & "     response_date =  ?, " & "     tracking_no = ?, " & "     notes = ? " & " WHERE request_seq = ? "
-				
-				cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
-				cmLocal.CommandText = sStmt
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, 10, dtRequestDate.value))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("response_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, 10, dtResponseDate.value))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("tracking_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 80, quotation_mask((txtTrackingNo.Text))))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 500, quotation_mask((txtNotes.Text))))
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleRequest.nRequestSeq))
-				
-				cmLocal.let_ActiveConnection(cn)
-				cmLocal.Execute(nRecords)
-				'MsgBox "Request:" + Str(gSaleRequest.nRequestSeq)
-				
-				If nRecords > 0 Then
-					'gSaleRequest.bFlag = modo.SavedRecord
-					MsgBox("Sale Request was updated successfully", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				Else
-					MsgBox("Record was not updated. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					
-				End If
-				
-				
-		End Select
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, nRequestSeq))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("cust_id", SqlDbType.VarChar, ParameterDirection.Input, 2, cbCustId.Text))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("store_id", DbType.Int32, ParameterDirection.Input, 4, VB6.GetItemData(cbStoreNo, cbStoreNo.SelectedIndex)))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_no", DbType.String, ParameterDirection.Input, 50, quotation_mask((txtSaleRequest.Text))))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, 10, dtRequestDate.Value))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("response_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, 10, dtResponseDate.Value))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("tracking_no", DbType.String, ParameterDirection.Input, 80, quotation_mask((txtTrackingNo.Text))))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", DbType.String, ParameterDirection.Input, 500, quotation_mask((txtNotes.Text))))
+
+                cmLocal.let_ActiveConnection(cn)
+                cmLocal.Execute(nRecords)
+                If nRecords > 0 Then
+                    'gSaleRequest.bFlag = modo.SavedRecord
+                    gSaleRequest.nRequestSeq = nRequestSeq
+                    MsgBox("Sale Request was saved successfully", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
+                Else
+                    MsgBox("Record was not inserted. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+
+                End If
+
+            Case General.modo.UpdateRecord
+                sStmt = " UPDATE SaleRequest " & " SET request_date = ? , " & "     response_date =  ?, " & "     tracking_no = ?, " & "     notes = ? " & " WHERE request_seq = ? "
+
+                cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
+                cmLocal.CommandText = sStmt
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, 10, dtRequestDate.Value))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("response_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, 10, dtResponseDate.Value))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("tracking_no", DbType.String, ParameterDirection.Input, 80, quotation_mask((txtTrackingNo.Text))))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", DbType.String, ParameterDirection.Input, 500, quotation_mask((txtNotes.Text))))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleRequest.nRequestSeq))
+
+                cmLocal.let_ActiveConnection(cn)
+                cmLocal.Execute(nRecords)
+                'MsgBox "Request:" + Str(gSaleRequest.nRequestSeq)
+
+                If nRecords > 0 Then
+                    'gSaleRequest.bFlag = modo.SavedRecord
+                    MsgBox("Sale Request was updated successfully", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
+                Else
+                    MsgBox("Record was not updated. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+
+                End If
+
+
+        End Select
 		
 		'UPGRADE_NOTE: Object cmLocal may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		cmLocal = Nothing

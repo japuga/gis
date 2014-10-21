@@ -784,7 +784,7 @@ ErrorHandler:
         cmTest.CommandText = "SELECT store_id, store_number FROM store WHERE cust_id = ?  "
 
 
-        '("custId", ADODB.DataTypeEnum.adChar, ADODB.ParameterDirectionEnum.adParamInput, 2, "ND")
+        '("custId", SqlDbType.VarChar, ParameterDirection.Input, 2, "ND")
         paramTest = New SqlParameter("custId", SqlDbType.VarChar, 2, ParameterDirection.Input)
         paramTest.Value = "ND"
 

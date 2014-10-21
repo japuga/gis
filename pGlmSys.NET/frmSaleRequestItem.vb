@@ -148,82 +148,82 @@ Friend Class frmSaleRequestItem
 				cmLocal.CommandText = sStmt
 				
 				'Parameters
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleRequest.nRequestSeq))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleRequest.nRequestSeq))
 				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, nItemSeq))
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", DbType.Int32, ParameterDirection.Input, 4, nItemSeq))
 				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("item_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 300, quotation_mask((txtItemDesc.Text))))
-				
-				
-				paramQty = cmLocal.CreateParameter("item_qty", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, 16, txtQty.Text)
-				'paramQty.NumericScale = 2
-				'paramQty.Precision = 2
-				cmLocal.Parameters.Append(paramQty)
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("account_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 80, quotation_mask((txtAccountNo.Text))))
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_item_status", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 100, cbRequestItemStatus.Text))
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 500, quotation_mask((txtNotes.Text))))
-				
-				
-				paramAvlQty = cmLocal.CreateParameter("available_qty", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, 16, txtQty.Text)
-				'paramAvlQty.NumericScale = 2
-				'paramAvlQty.Precision = 2
-				cmLocal.Parameters.Append(paramAvlQty)
-				
-				cmLocal.let_ActiveConnection(cn)
-				cmLocal.Execute(nRecords)
-				If nRecords > 0 Then
-					gSaleItem.bFlag = General.modo.SavedRecord
-					gSaleItem.nItemSeq = nItemSeq
-					MsgBox("Item was successfully saved.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					MsgBox("Item was not saved. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Message")
-					
-				End If
-				
-				
-			Case General.modo.UpdateRecord
-				sStmt = "UPDATE saleRequestItem " & " SET item_desc = ?, " & "     item_qty = ?, " & "     account_no = ?, " & "     request_item_status = ?," & "     notes = ?," & "     available_qty = ?" & " WHERE request_seq = ?" & " AND item_seq = ? "
-				
-				cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
-				cmLocal.CommandText = sStmt
-				
-				'Parameters
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("item_desc", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 300, quotation_mask((txtItemDesc.Text))))
-				
-				
-				paramQty = cmLocal.CreateParameter("item_qty", ADODB.DataTypeEnum.adDecimal, ADODB.ParameterDirectionEnum.adParamInput, 8, txtQty.Text)
-				paramQty.Precision = 2
-				cmLocal.Parameters.Append(paramQty)
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("account_no", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 80, quotation_mask((txtAccountNo.Text))))
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_item_status", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 100, cbRequestItemStatus.Text))
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 500, quotation_mask((txtNotes.Text))))
-				
-				
-				paramAvlQty = cmLocal.CreateParameter("available_qty", ADODB.DataTypeEnum.adDecimal, ADODB.ParameterDirectionEnum.adParamInput, 8, txtQty.Text)
-				paramAvlQty.Precision = 2
-				cmLocal.Parameters.Append(paramAvlQty)
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleRequest.nRequestSeq))
-				
-				cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleItem.nItemSeq))
-				
-				cmLocal.let_ActiveConnection(cn)
-				cmLocal.Execute(nRecords)
-				If nRecords > 0 Then
-					gSaleItem.bFlag = General.modo.SavedRecord
-					MsgBox("Item was successfully saved.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					MsgBox("Item was not saved. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Message")
-					
-				End If
-				
-		End Select
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("item_desc", DbType.String, ParameterDirection.Input, 300, quotation_mask((txtItemDesc.Text))))
+
+
+                paramQty = cmLocal.CreateParameter("item_qty", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, 16, txtQty.Text)
+                'paramQty.NumericScale = 2
+                'paramQty.Precision = 2
+                cmLocal.Parameters.Append(paramQty)
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("account_no", DbType.String, ParameterDirection.Input, 80, quotation_mask((txtAccountNo.Text))))
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_item_status", DbType.String, ParameterDirection.Input, 100, cbRequestItemStatus.Text))
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", DbType.String, ParameterDirection.Input, 500, quotation_mask((txtNotes.Text))))
+
+
+                paramAvlQty = cmLocal.CreateParameter("available_qty", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, 16, txtQty.Text)
+                'paramAvlQty.NumericScale = 2
+                'paramAvlQty.Precision = 2
+                cmLocal.Parameters.Append(paramAvlQty)
+
+                cmLocal.let_ActiveConnection(cn)
+                cmLocal.Execute(nRecords)
+                If nRecords > 0 Then
+                    gSaleItem.bFlag = General.modo.SavedRecord
+                    gSaleItem.nItemSeq = nItemSeq
+                    MsgBox("Item was successfully saved.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
+                Else
+                    MsgBox("Item was not saved. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Message")
+
+                End If
+
+
+            Case General.modo.UpdateRecord
+                sStmt = "UPDATE saleRequestItem " & " SET item_desc = ?, " & "     item_qty = ?, " & "     account_no = ?, " & "     request_item_status = ?," & "     notes = ?," & "     available_qty = ?" & " WHERE request_seq = ?" & " AND item_seq = ? "
+
+                cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
+                cmLocal.CommandText = sStmt
+
+                'Parameters
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("item_desc", DbType.String, ParameterDirection.Input, 300, quotation_mask((txtItemDesc.Text))))
+
+
+                paramQty = cmLocal.CreateParameter("item_qty", ADODB.DataTypeEnum.adDecimal, ParameterDirection.Input, 8, txtQty.Text)
+                paramQty.Precision = 2
+                cmLocal.Parameters.Append(paramQty)
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("account_no", DbType.String, ParameterDirection.Input, 80, quotation_mask((txtAccountNo.Text))))
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_item_status", DbType.String, ParameterDirection.Input, 100, cbRequestItemStatus.Text))
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", DbType.String, ParameterDirection.Input, 500, quotation_mask((txtNotes.Text))))
+
+
+                paramAvlQty = cmLocal.CreateParameter("available_qty", ADODB.DataTypeEnum.adDecimal, ParameterDirection.Input, 8, txtQty.Text)
+                paramAvlQty.Precision = 2
+                cmLocal.Parameters.Append(paramAvlQty)
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleRequest.nRequestSeq))
+
+                cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleItem.nItemSeq))
+
+                cmLocal.let_ActiveConnection(cn)
+                cmLocal.Execute(nRecords)
+                If nRecords > 0 Then
+                    gSaleItem.bFlag = General.modo.SavedRecord
+                    MsgBox("Item was successfully saved.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
+                Else
+                    MsgBox("Item was not saved. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Message")
+
+                End If
+
+        End Select
 		
 		'UPGRADE_NOTE: Object cmLocal may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		cmLocal = Nothing

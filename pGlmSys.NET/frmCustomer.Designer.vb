@@ -17,68 +17,64 @@
 	'Required by the Windows Form Designer
 	Private components As System.ComponentModel.IContainer
 	Public ToolTip1 As System.Windows.Forms.ToolTip
-	Public WithEvents dgCustomer As AxMSDataGridLib.AxDataGrid
-	Public WithEvents _Toolbar1_Button5 As System.Windows.Forms.ToolStripSeparator
+    Public WithEvents _Toolbar1_Button5 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents Toolbar1 As System.Windows.Forms.ToolStrip
 	'NOTE: The following procedure is required by the Windows Form Designer
 	'It can be modified using the Windows Form Designer.
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-		Dim resources As System.Resources.ResourceManager = New System.Resources.ResourceManager(GetType(frmCustomer))
-		Me.components = New System.ComponentModel.Container()
-		Me.ToolTip1 = New System.Windows.Forms.ToolTip(components)
-		Me.dgCustomer = New AxMSDataGridLib.AxDataGrid
-		Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-		Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
-		Me.Toolbar1.SuspendLayout()
-		Me.SuspendLayout()
-		Me.ToolTip1.Active = True
-		CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).BeginInit()
-		Me.Text = "Customer Maintenance"
-		Me.ClientSize = New System.Drawing.Size(574, 270)
-		Me.Location = New System.Drawing.Point(4, 23)
-		Me.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation
-		Me.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.BackColor = System.Drawing.SystemColors.Control
-		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
-		Me.ControlBox = True
-		Me.Enabled = True
-		Me.KeyPreview = False
-		Me.MaximizeBox = True
-		Me.MinimizeBox = True
-		Me.Cursor = System.Windows.Forms.Cursors.Default
-		Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.ShowInTaskbar = True
-		Me.HelpButton = False
-		Me.WindowState = System.Windows.Forms.FormWindowState.Normal
-		Me.Name = "frmCustomer"
-		dgCustomer.OcxState = CType(resources.GetObject("dgCustomer.OcxState"), System.Windows.Forms.AxHost.State)
-		Me.dgCustomer.Size = New System.Drawing.Size(545, 185)
-		Me.dgCustomer.Location = New System.Drawing.Point(16, 72)
-		Me.dgCustomer.TabIndex = 1
-		Me.dgCustomer.Name = "dgCustomer"
-		Me.Toolbar1.ShowItemToolTips = True
-		Me.Toolbar1.Dock = System.Windows.Forms.DockStyle.Top
-		Me.Toolbar1.Size = New System.Drawing.Size(574, 44)
-		Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
-		Me.Toolbar1.TabIndex = 0
-		Me.Toolbar1.ImageList = ImageList2
-		Me.Toolbar1.Name = "Toolbar1"
-		Me._Toolbar1_Button5.Size = New System.Drawing.Size(40, 39)
-		Me._Toolbar1_Button5.AutoSize = False
-		Me._Toolbar1_Button5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText
-		Me._Toolbar1_Button5.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
-		Me._Toolbar1_Button5.ToolTipText = "Print"
-		Me._Toolbar1_Button5.Width = 10
-		Me._Toolbar1_Button5.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-		Me.Controls.Add(dgCustomer)
-		Me.Controls.Add(Toolbar1)
-		Me.Toolbar1.Items.Add(_Toolbar1_Button5)
-		CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).EndInit()
-		Me.Toolbar1.ResumeLayout(False)
-		Me.ResumeLayout(False)
-		Me.PerformLayout()
-	End Sub
+        Me.components = New System.ComponentModel.Container
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
+        Me.dgCustomer = New System.Windows.Forms.DataGridView
+        Me.Toolbar1.SuspendLayout()
+        CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'Toolbar1
+        '
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Toolbar1_Button5})
+        Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
+        Me.Toolbar1.Name = "Toolbar1"
+        Me.Toolbar1.Size = New System.Drawing.Size(574, 39)
+        Me.Toolbar1.TabIndex = 0
+        '
+        '_Toolbar1_Button5
+        '
+        Me._Toolbar1_Button5.AutoSize = False
+        Me._Toolbar1_Button5.Name = "_Toolbar1_Button5"
+        Me._Toolbar1_Button5.Size = New System.Drawing.Size(10, 39)
+        '
+        'dgCustomer
+        '
+        Me.dgCustomer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgCustomer.Location = New System.Drawing.Point(12, 30)
+        Me.dgCustomer.Name = "dgCustomer"
+        Me.dgCustomer.Size = New System.Drawing.Size(550, 228)
+        Me.dgCustomer.TabIndex = 2
+        '
+        'frmCustomer
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.SystemColors.Control
+        Me.ClientSize = New System.Drawing.Size(574, 270)
+        Me.Controls.Add(Me.dgCustomer)
+        Me.Controls.Add(Me.Toolbar1)
+        Me.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Location = New System.Drawing.Point(4, 23)
+        Me.Name = "frmCustomer"
+        Me.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Text = "Customer Maintenance"
+        Me.Toolbar1.ResumeLayout(False)
+        Me.Toolbar1.PerformLayout()
+        CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub
+    Friend WithEvents dgCustomer As System.Windows.Forms.DataGridView
 #End Region 
 End Class

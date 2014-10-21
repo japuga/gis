@@ -151,15 +151,15 @@ Friend Class frmSaleRequestTicket
 		cmLocal.CommandText = sStmt
 		
 		'Parameters
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("ticket_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, nTicketSeq))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("ticket_seq", DbType.Int32, ParameterDirection.Input, 4, nTicketSeq))
 		
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleTicket.nRequestSeq))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleTicket.nRequestSeq))
 		
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, VB6.GetItemData(cbItemDesc, cbItemDesc.SelectedIndex)))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", DbType.Int32, ParameterDirection.Input, 4, VB6.GetItemData(cbItemDesc, cbItemDesc.SelectedIndex)))
 		
 		
 		'Qty
-		paramQty = cmLocal.CreateParameter("qty", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, 16)
+        paramQty = cmLocal.CreateParameter("qty", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, 16)
 		'paramQty.NumericScale = 2
 		'paramQty.Precision = 2
 		paramQty.value = CDbl(txtQty.Text)
@@ -167,20 +167,20 @@ Friend Class frmSaleRequestTicket
 		cmLocal.Parameters.Append(paramQty)
 		
 		'Amount
-		paramAmount = cmLocal.CreateParameter("sale_amount", ADODB.DataTypeEnum.adDouble, ADODB.ParameterDirectionEnum.adParamInput, 16, txtSaleAmount.Text)
+        paramAmount = cmLocal.CreateParameter("sale_amount", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, 16, txtSaleAmount.Text)
 		'paramAmount.NumericScale = 2
 		'paramAmount.Precision = 2
 		cmLocal.Parameters.Append(paramAmount)
 		
 		'SaleDate
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("sale_date", ADODB.DataTypeEnum.adDate, ADODB.ParameterDirectionEnum.adParamInput, 10, dtSaleDate.value))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("sale_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, 10, dtSaleDate.Value))
 		
 		
 		'notes
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 500, quotation_mask(Trim(txtNotes.Text))))
-		
-		'Buyer
-		cmLocal.Parameters.Append(cmLocal.CreateParameter("buyer", ADODB.DataTypeEnum.adVarChar, ADODB.ParameterDirectionEnum.adParamInput, 50, quotation_mask(Trim(txtBuyer.Text))))
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("notes", DbType.String, ParameterDirection.Input, 500, quotation_mask(Trim(txtNotes.Text))))
+
+        'Buyer
+        cmLocal.Parameters.Append(cmLocal.CreateParameter("buyer", DbType.String, ParameterDirection.Input, 50, quotation_mask(Trim(txtBuyer.Text))))
 		
 		cmLocal.let_ActiveConnection(cn)
 		cmLocal.Execute(nRecords)
@@ -201,12 +201,12 @@ Friend Class frmSaleRequestTicket
 			'Parameters
 			newQty = avlQty - CDbl(txtQty.Text)
 			
-			paramNewQty = cmLocal.CreateParameter("avl_qty", ADODB.DataTypeEnum.adDecimal, ADODB.ParameterDirectionEnum.adParamInput, 9, newQty)
+            paramNewQty = cmLocal.CreateParameter("avl_qty", ADODB.DataTypeEnum.adDecimal, ParameterDirection.Input, 9, newQty)
 			paramNewQty.Precision = 2
 			cmLocal.Parameters.Append(paramNewQty)
 			
-			cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, gSaleTicket.nRequestSeq))
-			cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", ADODB.DataTypeEnum.adInteger, ADODB.ParameterDirectionEnum.adParamInput, 4, VB6.GetItemData(cbItemDesc, cbItemDesc.SelectedIndex)))
+            cmLocal.Parameters.Append(cmLocal.CreateParameter("request_seq", DbType.Int32, ParameterDirection.Input, 4, gSaleTicket.nRequestSeq))
+            cmLocal.Parameters.Append(cmLocal.CreateParameter("item_seq", DbType.Int32, ParameterDirection.Input, 4, VB6.GetItemData(cbItemDesc, cbItemDesc.SelectedIndex)))
 			
 			cmLocal.let_ActiveConnection(cn)
 			cmLocal.Execute(nRecords)
