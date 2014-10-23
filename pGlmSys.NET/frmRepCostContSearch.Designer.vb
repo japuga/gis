@@ -659,4 +659,8 @@
 
     End Sub
 #End Region 
+
+    Private Sub cbCustName_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cbCustName.Click
+
+    End Sub
 End Class
