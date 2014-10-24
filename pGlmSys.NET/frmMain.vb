@@ -380,7 +380,7 @@ ErrorHandler:
 		VB6.ShowForm(frmCustInvTemplate, VB6.FormShowConstants.Modal, Me)
 	End Sub
 	
-    Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _Toolbar1_Button2.Click, _Toolbar1_Button4.Click, _Toolbar1_Button6.Click, _Toolbar1_Button8.Click, _Toolbar1_Button10.Click
+    Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _Toolbar1_Button4.Click, _Toolbar1_Button6.Click, _Toolbar1_Button10.Click
         Dim Button As System.Windows.Forms.ToolStripItem = CType(eventSender, System.Windows.Forms.ToolStripItem)
         If Button.Name = "phone" Then
 
@@ -413,6 +413,10 @@ ErrorHandler:
         Dim cmd As SqlCommand = cn.CreateCommand()
         'Validates menu options based on user info from tables:
         'suser,suser_options, suser_type
+        ToolStripButton1.ImageScaling = ToolStripItemImageScaling.None
+        ToolStripButton1.AutoSize = False
+        ToolStripButton1.Size = New System.Drawing.Size(80, 90)
+
 
         mniUserMaintenance(0).Visible = False
         mniUserMaintenance(1).Visible = False

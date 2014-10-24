@@ -2,11 +2,15 @@ Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
 Module BankFunctions
-    Public Function getDataTable(ByVal query As String) As DataTable
+    Public Function getDataTable(ByVal query As String, Optional ByRef aTrans As SqlTransaction = Nothing) As DataTable
         Dim ds As DataSet = New DataSet("tmpDS")
         Dim da As SqlDataAdapter = New SqlDataAdapter()
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim dt As DataTable
+
+        If Not IsNothing(aTrans) Then
+            cmd.Transaction = aTrans
+        End If
 
         cmd.CommandText = query
         da.SelectCommand = cmd

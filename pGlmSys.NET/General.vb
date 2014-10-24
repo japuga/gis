@@ -56,8 +56,7 @@ Module General
     Public gbDebug As Boolean
     Public gbError As Boolean
     Public gnLoginId As Integer
-    'Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
-    Public strReportsSysPath As String = "C:\glm\vbnet\pGlmSys.NET\"
+    Public strReportsSysPath As String = "E:\glm\Visual Basic\GLM-System\Reports\"
     Public Structure gReportUDT
         Dim name As String 'Report Name
         Dim Index As Short 'Menu Report Index
@@ -1010,8 +1009,7 @@ Module General
 
         'get_global_settings
         'Parametrize file name
-        'sLogfile = "e:\Logfile.txt"
-        sLogfile = "c:\Logfile.txt"
+        sLogfile = "e:\Logfile.txt"
         gReport.Index = 0
         gReport.name = ""
         gReport.static_Renamed = True
@@ -1502,8 +1500,7 @@ ErrorHandler:
                 cb.Items.Insert(nCounter, rs.Rows(row).Item(0))
                 Select Case nFields
                     Case 2
-                        VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1))
-                        'VB6.SetItemData(cb, nCounter, rs.Rows(0).Item(1))
+                        VB6.SetItemData(cb, nCounter, rs.Rows(0).Item(1))
                 End Select
                 nCounter = nCounter + 1
             Next row

@@ -157,10 +157,7 @@ ErrorHandler:
 		If val_fields = False Then
 			Exit Sub
 		End If
-
-        'MessageBox.Show(cbPeriodName.Items(cbPeriodName.SelectedIndex).ToString())
-        MessageBox.Show(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
-
+		
 		
 		With rptCostContParam
 			.sCustId = cbCustId.Text '"OB"

@@ -69,13 +69,6 @@ Friend Class frmAccess
                              "Persist Security Info=True;" & _
                              "User ID=jp;" & _
                              "Password=jp;" & "Connection Timeout = 300"
-
-            sStr = "Data Source= rpt1\rpt1sql  ;" & _
-                             "Initial Catalog=GLM;" & _
-                             "Persist Security Info=True;" & _
-                             "User ID=jp;" & _
-                             "Password=jp;" & "Connection Timeout = 300"
-
             cn.ConnectionString = sStr
             'cn.ConnectionTimeout = 300
 
