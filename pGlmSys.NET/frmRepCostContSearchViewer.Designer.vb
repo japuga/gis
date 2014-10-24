@@ -32,7 +32,7 @@ Partial Class frmRepCostContSearchViewer
         Me.CrystalReportViewer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CrystalReportViewer1.Location = New System.Drawing.Point(0, 0)
         Me.CrystalReportViewer1.Name = "CrystalReportViewer1"
-        Me.CrystalReportViewer1.ReportSource = "E:\glm\Visual Basic\GLM-System\Reports\rptCostCont.rpt"
+        Me.CrystalReportViewer1.ReportSource = "C:\glm\vbnet\pGlmSys.NET\rptCostCont.rpt"
         Me.CrystalReportViewer1.Size = New System.Drawing.Size(1145, 681)
         Me.CrystalReportViewer1.TabIndex = 0
         '
