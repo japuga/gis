@@ -703,9 +703,11 @@ ErrorHandler:
         End If
 
         Dim dtSource As DataTable = getDataTable(sStmt)
+        'Dim dsSource As DataSet = getDataSet(sStmt)
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         'Cargo la plantilla de Crystal Reports con los datos
         load_report(dtSource)
+        'load_report(dsSource)
         Exit Sub
 
 ErrorHandler:
@@ -818,8 +820,10 @@ ErrorHandler:
 		
 	End Function
 	'Usa el recordset rsReport que fue previamente cargado
-	'con los datos de Repdata y lo paso al reporte de Crystal Reports
+    'con los datos de Repdata y lo paso al reporte de Crystal Reports
+    'Private Function load_report(ByVal dstReport As DataTable) As Boolean
     Private Function load_report(ByVal dstReport As DataTable) As Boolean
+
         'Dim reportDb As CRPEAuto.Database
         'Dim reportTables As CRPEAuto.DatabaseTables
         'Dim reportTable As CRPEAuto.DatabaseTable
@@ -831,7 +835,7 @@ ErrorHandler:
 
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
-            rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
+            rptDoc.Load(strReportsSysPath & "rptCostCont2013A.rpt")
         Catch ex As Exception
             MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try

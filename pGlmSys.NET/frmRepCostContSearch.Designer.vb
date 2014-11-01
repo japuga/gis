@@ -108,6 +108,7 @@
         Me.label3 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
+        Me.ListView1 = New System.Windows.Forms.ListView
         CType(Me.DataGrid1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Frame1.SuspendLayout()
         CType(Me.dtEndDate, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -222,7 +223,7 @@
         Me.txtReportName.MaxLength = 0
         Me.txtReportName.Name = "txtReportName"
         Me.txtReportName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtReportName.Size = New System.Drawing.Size(201, 21)
+        Me.txtReportName.Size = New System.Drawing.Size(201, 20)
         Me.txtReportName.TabIndex = 29
         '
         'ckPublish
@@ -265,7 +266,7 @@
         Me.txtReportCaption.MaxLength = 0
         Me.txtReportCaption.Name = "txtReportCaption"
         Me.txtReportCaption.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtReportCaption.Size = New System.Drawing.Size(209, 21)
+        Me.txtReportCaption.Size = New System.Drawing.Size(209, 20)
         Me.txtReportCaption.TabIndex = 7
         '
         'ckPrintStatus
@@ -612,12 +613,21 @@
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Customer"
         '
+        'ListView1
+        '
+        Me.ListView1.Location = New System.Drawing.Point(243, 522)
+        Me.ListView1.Name = "ListView1"
+        Me.ListView1.Size = New System.Drawing.Size(121, 97)
+        Me.ListView1.TabIndex = 37
+        Me.ListView1.UseCompatibleStateImageBehavior = False
+        '
         'frmRepCostContSearch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(580, 549)
+        Me.Controls.Add(Me.ListView1)
         Me.Controls.Add(Me.ckPrintFinal)
         Me.Controls.Add(Me.ckGlmVendor)
         Me.Controls.Add(Me.cbReportTemplateDesc)
@@ -656,6 +666,7 @@
         CType(Me.dtEndDate, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dtStartDate, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 #End Region 
@@ -663,4 +674,5 @@
     Private Sub cbCustName_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cbCustName.Click
 
     End Sub
+    Friend WithEvents ListView1 As System.Windows.Forms.ListView
 End Class

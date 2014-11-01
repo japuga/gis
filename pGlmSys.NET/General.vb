@@ -58,9 +58,14 @@ Module General
     Public gbDebug As Boolean
     Public gbError As Boolean
     Public gnLoginId As Integer
+<<<<<<< HEAD
     'Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
     'OSdriveLetter es de la forma "E:\", o "C:\"
     Public strReportsSysPath As String = OSdriveLetter & "glm\vbnet\pGlmSys.NET\"
+=======
+    Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
+    'Public strReportsSysPath As String = "C:\glm\vbnet\pGlmSys.NET\"
+>>>>>>> e1583352e61b1fff7d0e990a493dda9503f0f7ab
     Public Structure gReportUDT
         Dim name As String 'Report Name
         Dim Index As Short 'Menu Report Index
