@@ -56,8 +56,8 @@ Module General
     Public gbDebug As Boolean
     Public gbError As Boolean
     Public gnLoginId As Integer
-    'Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
-    Public strReportsSysPath As String = "C:\glm\vbnet\pGlmSys.NET\"
+    Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
+    'Public strReportsSysPath As String = "C:\glm\vbnet\pGlmSys.NET\"
     Public Structure gReportUDT
         Dim name As String 'Report Name
         Dim Index As Short 'Menu Report Index
