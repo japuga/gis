@@ -39,7 +39,7 @@ Friend Class frmBankDesc
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
-            If rs.Rows(0).Item(0).Value > 0 Then
+            If rs.Rows(0).Item(0) > 0 Then
                 MsgBox("Duplicate Bank Name. Try Again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                 Exit Function
             End If
@@ -53,11 +53,11 @@ Friend Class frmBankDesc
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item(0).Value) Then
+
+            If IsDBNull(rs.Rows(0).Item(0)) Then
                 nBankId = 1
             Else
-                nBankId = rs.Rows(0).Item(0).Value
+                nBankId = rs.Rows(0).Item(0)
                 nBankId = nBankId + 1
             End If
         Else

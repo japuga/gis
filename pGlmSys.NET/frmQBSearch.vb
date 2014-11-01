@@ -13,14 +13,14 @@ Friend Class frmQBSearch
 		get_data()
 	End Sub
 	
-	Private Sub dgQB_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgQB.DblClick
-		get_data()
-	End Sub
+    Private Sub dgQB_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        get_data()
+    End Sub
 	Private Sub get_data()
 		gQBSearch.qb_name = ""
-		If dgQB.Row >= 0 Then
-			gQBSearch.qb_name = dgQB.Columns("Name").Text
-		End If
+        If dgQB.CurrentRow.Index >= 0 Then
+            gQBSearch.qb_name = dgQB.CurrentRow.Cells("Name").Value
+        End If
 		Me.Close()
 		
 	End Sub

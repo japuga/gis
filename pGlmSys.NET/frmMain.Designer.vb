@@ -194,11 +194,12 @@
         Me._sbMain_Panel1 = New System.Windows.Forms.ToolStripStatusLabel
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
-        Me._Toolbar1_Button6 = New System.Windows.Forms.ToolStripSeparator
-        Me.ToolStripButton1 = New System.Windows.Forms.ToolStripButton
-        Me._Toolbar1_Button10 = New System.Windows.Forms.ToolStripSeparator
         Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button10 = New System.Windows.Forms.ToolStripSeparator
+        Me.ToolStripButton1 = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
+        Me.ToolStripButton3 = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button6 = New System.Windows.Forms.ToolStripSeparator
         Me.Image1 = New System.Windows.Forms.PictureBox
         Me.mniArea = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me._mniArea_272 = New System.Windows.Forms.ToolStripMenuItem
@@ -356,7 +357,6 @@
         Me.mnuVendorPayments = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.mnuVendors = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip
-        Me.ToolStripButton3 = New System.Windows.Forms.ToolStripButton
         Me.sbMain.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -477,17 +477,21 @@
         Me.Toolbar1.Size = New System.Drawing.Size(76, 398)
         Me.Toolbar1.TabIndex = 0
         '
-        '_Toolbar1_Button4
+        'ToolStripButton2
         '
-        Me._Toolbar1_Button4.AutoSize = False
-        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
-        Me._Toolbar1_Button4.Size = New System.Drawing.Size(166, 39)
+        Me.ToolStripButton2.AutoSize = False
+        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
+        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton2.Name = "ToolStripButton2"
+        Me.ToolStripButton2.Size = New System.Drawing.Size(50, 45)
+        Me.ToolStripButton2.Text = "ToolStripButton2"
         '
-        '_Toolbar1_Button6
+        '_Toolbar1_Button10
         '
-        Me._Toolbar1_Button6.AutoSize = False
-        Me._Toolbar1_Button6.Name = "_Toolbar1_Button6"
-        Me._Toolbar1_Button6.Size = New System.Drawing.Size(166, 39)
+        Me._Toolbar1_Button10.AutoSize = False
+        Me._Toolbar1_Button10.Name = "_Toolbar1_Button10"
+        Me._Toolbar1_Button10.Size = New System.Drawing.Size(166, 39)
         '
         'ToolStripButton1
         '
@@ -498,21 +502,27 @@
         Me.ToolStripButton1.Name = "ToolStripButton1"
         Me.ToolStripButton1.Size = New System.Drawing.Size(53, 50)
         '
-        '_Toolbar1_Button10
+        '_Toolbar1_Button4
         '
-        Me._Toolbar1_Button10.AutoSize = False
-        Me._Toolbar1_Button10.Name = "_Toolbar1_Button10"
-        Me._Toolbar1_Button10.Size = New System.Drawing.Size(166, 39)
+        Me._Toolbar1_Button4.AutoSize = False
+        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
+        Me._Toolbar1_Button4.Size = New System.Drawing.Size(166, 39)
         '
-        'ToolStripButton2
+        'ToolStripButton3
         '
-        Me.ToolStripButton2.AutoSize = False
-        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
-        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton2.Name = "ToolStripButton2"
-        Me.ToolStripButton2.Size = New System.Drawing.Size(50, 45)
-        Me.ToolStripButton2.Text = "ToolStripButton2"
+        Me.ToolStripButton3.AutoSize = False
+        Me.ToolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton3.Image = CType(resources.GetObject("ToolStripButton3.Image"), System.Drawing.Image)
+        Me.ToolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton3.Name = "ToolStripButton3"
+        Me.ToolStripButton3.Size = New System.Drawing.Size(50, 50)
+        Me.ToolStripButton3.Text = "ToolStripButton3"
+        '
+        '_Toolbar1_Button6
+        '
+        Me._Toolbar1_Button6.AutoSize = False
+        Me._Toolbar1_Button6.Name = "_Toolbar1_Button6"
+        Me._Toolbar1_Button6.Size = New System.Drawing.Size(166, 39)
         '
         'Image1
         '
@@ -1306,16 +1316,6 @@
         Me.MainMenu1.Name = "MainMenu1"
         Me.MainMenu1.Size = New System.Drawing.Size(719, 24)
         Me.MainMenu1.TabIndex = 4
-        '
-        'ToolStripButton3
-        '
-        Me.ToolStripButton3.AutoSize = False
-        Me.ToolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton3.Image = CType(resources.GetObject("ToolStripButton3.Image"), System.Drawing.Image)
-        Me.ToolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton3.Name = "ToolStripButton3"
-        Me.ToolStripButton3.Size = New System.Drawing.Size(50, 50)
-        Me.ToolStripButton3.Text = "ToolStripButton3"
         '
         'frmMain
         '

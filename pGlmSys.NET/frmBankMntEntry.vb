@@ -95,7 +95,7 @@ ErrorHandler:
 				
                 rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
                 If rs.Rows.Count > 0 Then
-                    If rs.Rows(0).Item(0).Value > 0 Then
+                    If rs.Rows(0).Item(0) > 0 Then
                         save_bank = False
                         MsgBox("Duplicate Bank. Please use another name")
                         Exit Function
@@ -109,10 +109,10 @@ ErrorHandler:
 
                 If rs.Rows.Count > 0 Then
                     'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rs.Rows(0).Item(0).Value) Then
+                    If IsDBNull(rs.Rows(0).Item(0)) Then
                         nBankId = 1
                     Else
-                        nBankId = rs.Rows(0).Item(0).Value + 1
+                        nBankId = rs.Rows(0).Item(0) + 1
                     End If
                 Else
                     nBankId = 1
@@ -143,7 +143,7 @@ ErrorHandler:
                 rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rs.Rows.Count > 0 Then
-                    If rs.Rows(0).Item(0).Value <> gBank.nBankId Then
+                    If rs.Rows(0).Item(0) <> gBank.nBankId Then
                         save_bank = False
                         MsgBox("Duplicate Bank Name. Please use another name")
                         Exit Function

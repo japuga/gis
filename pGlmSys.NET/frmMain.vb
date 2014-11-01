@@ -457,4 +457,9 @@ ErrorHandler:
         End If
 
     End Sub
+
+    Private Sub _mniVendors_24_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _mniVendors_24.Click
+        Dim Index As Short = mniVendors.GetIndex(sender)
+        VB6.ShowForm(frmVendor, VB6.FormShowConstants.Modal, Me)
+    End Sub
 End Class
