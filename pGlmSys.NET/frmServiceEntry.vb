@@ -52,7 +52,7 @@ Friend Class frmServiceEntry
                         val_fields = False
                         Exit Function
                     Case General.modo.UpdateRecord
-                        If rs.Rows(0).Item("serv_id").Value = gServiceRecord.serv_id Then
+                        If rs.Rows(0).Item("serv_id") = gServiceRecord.serv_id Then
                             'ok
                         Else
                             MsgBox("There is another service " & "with the same name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Message")
@@ -142,10 +142,10 @@ ErrorHandler:
 
                 If rs.Rows.Count > 0 Then
                     'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rs.Rows(0).Item(0).Value) Then
+                    If IsDBNull(rs.Rows(0).Item(0)) Then
                         nServId = 1
                     Else
-                        nServId = rs.Rows(0).Item(0).Value + 1
+                        nServId = rs.Rows(0).Item(0) + 1
                     End If
                 Else
                     nServId = 1
@@ -205,7 +205,8 @@ ErrorHandler:
 		cb_init(cbServEqpt)
 		cb_init(cbServRateContract)
 		cb_init(cbServFrequency)
-		'Credit
+        'Credit
+        cbServCredit.Items.Clear()
 		cbServCredit.Items.Insert(0, "Debit")
 		cbServCredit.Items.Insert(1, "Credit")
 		'Measure Units
@@ -270,7 +271,8 @@ ErrorHandler:
 	End Sub
 	
 	Private Sub cb_init(ByRef cb As System.Windows.Forms.ComboBox)
-		cb.Items.Insert(0, "Yes")
+        cb.Items.Clear()
+        cb.Items.Insert(0, "Yes")
 		cb.Items.Insert(1, "No")
 		
 		

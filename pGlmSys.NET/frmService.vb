@@ -136,56 +136,48 @@ ErrorHandler:
 		
         gServiceRecord.serv_id = rsLocal.Rows(0).Item("serv_id")
 		'Desc
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Name")) Then
             gServiceRecord.serv_desc = ""
         Else
             gServiceRecord.serv_desc = Trim(rsLocal.Rows(0).Item("Name"))
         End If
 		'serv_eqpt
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Eqpt")) Then
             gServiceRecord.serv_eqpt = "F"
         Else
             gServiceRecord.serv_eqpt = rsLocal.Rows(0).Item("Eqpt")
         End If
 		'Credit
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Cred")) Then
             gServiceRecord.serv_credit = "F"
         Else
             gServiceRecord.serv_credit = rsLocal.Rows(0).Item("Cred")
         End If
 		'serv_rate_contract
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Contract")) Then
             gServiceRecord.serv_rate_contract = "F"
         Else
             gServiceRecord.serv_rate_contract = rsLocal.Rows(0).Item("Contract")
         End If
 		'serv_measure_unit
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("serv_measure_unit")) Then
             gServiceRecord.serv_measure_unit = ""
         Else
             gServiceRecord.serv_measure_unit = Trim(rsLocal.Rows(0).Item("serv_measure_unit"))
         End If
 		'unit_desc
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Unit")) Then
             gServiceRecord.unit_desc = ""
         Else
             gServiceRecord.unit_desc = Trim(rsLocal.Rows(0).Item("Unit"))
         End If
 		'Class
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Class")) Then
             gServiceRecord.serv_class = ""
         Else
             gServiceRecord.serv_class = rsLocal.Rows(0).Item("Class")
         End If
 		'Class Id
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("serv_class_id")) Then
             gServiceRecord.serv_class_id = ""
         Else
@@ -193,7 +185,6 @@ ErrorHandler:
         End If
 		
 		'Frequency
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("Freq")) Then
             gServiceRecord.serv_frequency = ""
         Else
@@ -201,7 +192,6 @@ ErrorHandler:
         End If
 		
 		'ServIdConversion
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(rsLocal.Rows(0).Item("serv_id_conversion")) Then
             gServiceRecord.serv_id_conversion = 0
         Else
