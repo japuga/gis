@@ -153,7 +153,7 @@ ErrorHandler:
 	Private Function save_customer() As Boolean
 		Dim nGroupSeq As Short
 		Dim nRecords As Short
-        Dim nLevel As sqltransaction
+        Dim nLevel As SqlTransaction
 		Dim sCustPhone1 As String
 		Dim sCustPhone2 As String
 		Dim sCustPhone3 As String
@@ -161,7 +161,7 @@ ErrorHandler:
         'Dim nTrans As SqlTransaction
         Dim cmd As SqlCommand = cn.CreateCommand()
 
-		
+        nLevel = Nothing
 
         Try
             save_customer = True
@@ -226,6 +226,7 @@ ErrorHandler:
                     End If
 
                     nLevel = cn.BeginTransaction()
+                    cm.Transaction = nLevel
                     Try
                         'Insertar en tabla Customer
                         'MsgBox "Nesting level:" + Str(nLevel)
@@ -253,7 +254,7 @@ ErrorHandler:
                     'Crear grupo ALL por defecto
                     sStmt = "SELECT MAX(group_seq) FROM Groups"
                     cm.CommandText = sStmt
-                    rsLocal = getDataTable(sStmt) 'cm.ExecuteReader()
+                    rsLocal = getDataTable(sStmt, nLevel) 'cm.ExecuteReader()
 
                     If rsLocal.Rows.Count > 0 Then
                         nGroupSeq = rsLocal.Rows(0).Item(0) + 1
@@ -282,16 +283,30 @@ ErrorHandler:
                     'Agregar Informacion en RepCust para RepCostContainment Report
                     'Esto es opcional, si falla no se hace RollBack
                     If gCustomerRecord.bFlag = General.modo.SavedRecord Then
-                        cm.CommandType = CommandType.StoredProcedure
-                        cm.CommandText = "usp_insert_rep_cust"
-                        'cm.Parameters.Refresh()
-                        cm.Parameters("@sCustId").Value = Trim(txtCustId.Text)
-                        cm.ExecuteNonQuery()
-                        If cm.Parameters("@nResult").Value = 0 Then
-                            'ok
-                        Else
-                            MsgBox("Failed to add Report Defaults.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-                        End If
+                        Try
+
+                            nLevel = Nothing
+                            cm.CommandType = CommandType.StoredProcedure
+                            cm.CommandText = "usp_insert_rep_cust"
+                            SqlCommandBuilder.DeriveParameters(cm)
+
+                            'cm.Parameters.Refresh()
+                            cm.Parameters("@sCustId").Value = Trim(txtCustId.Text)
+                            cm.Parameters("@nResult").Direction = ParameterDirection.Output
+                            
+                            'cm.Parameters("@nReportId").Value = 
+                            'Dim str As String = cm.Parameters("@sCustId").ParameterName
+                            cm.ExecuteNonQuery()
+
+                            If cm.Parameters("@nResult").Value = 0 Then
+                                'ok
+                            Else
+                                MsgBox("Failed to add Report Defaults.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                            End If
+
+                        Catch ex As Exception
+                            'no importa si algo malo pasa.
+                        End Try
                     End If
                 Case General.modo.UpdateRecord
                     'Verificar que no se repita
@@ -335,8 +350,10 @@ ErrorHandler:
         Catch ex As Exception
             Dim err As String = ex.Message
             save_customer = False
+            If Not IsNothing(nLevel) Then
+                nLevel.Rollback()
+            End If
 
-            'nLevel.Rollback()
 
             save_error(Me.Name, "save_Customer")
             MsgBox("Failed to save Customer info. Review log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")

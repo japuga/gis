@@ -45,189 +45,178 @@ Friend Class frmVendorEntry
 		Dim sVendFax2 As String
 		Dim sVendPayPhone1 As String
 		
-		On Error GoTo ErrorHandler
-		
-		If Not val_fields Then
-			Exit Sub
-		End If
-		
-		'Checking mask
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPhone1.Text) = 0 Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object sVendPhone1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sVendPhone1 = ""
-		Else
-			'UPGRADE_WARNING: Couldn't resolve default property of object sVendPhone1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sVendPhone1 = mtxtVendPhone1.Text
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPhone2.Text) = 0 Then
-			sVendPhone2 = ""
-		Else
-			sVendPhone2 = mtxtVendPhone2.Text
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendFax1.Text) = 0 Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object sVendFax1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sVendFax1 = ""
-		Else
-			'UPGRADE_WARNING: Couldn't resolve default property of object sVendFax1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sVendFax1 = mtxtVendFax1.Text
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendFax2.Text) = 0 Then
-			sVendFax2 = ""
-		Else
-			sVendFax2 = mtxtVendFax2.Text
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPayPhone1.Text) = 0 Then
-			sVendPayPhone1 = ""
-		Else
-			sVendPayPhone1 = mtxtVendPayPhone1.Text
-		End If
-		
-		'INSERT/UPDATE
-		Select Case General.gbVendorMode
-			Case General.modo.NewRecord
-				gVBranchRecord.nVendSeq = get_vend_seq
-				For i = 0 To 100
-					'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-					If IsDbNull(asQBName(i)) Then
-						asQBName(i) = ""
-					End If
-				Next i
-				
-				
-				
-				'UPGRADE_WARNING: Couldn't resolve default property of object sVendFax1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				'UPGRADE_WARNING: Couldn't resolve default property of object sVendPhone1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				sStmt = "INSERT INTO vbranch (vend_id," & "vend_seq, state_id, vend_name, vend_repre, " & "vend_phone1, vend_phone2, vend_fax1, vend_fax2," & "vend_address, vend_city, vend_zip, vend_area," & "vend_pay_address, vend_pay_city," & "vend_pay_zip, vend_pay_phone1, vend_pay_state)" & " VALUES (" & Str(gVendorSearch.nVendId) & ", " & Str(gVBranchRecord.nVendSeq) & ", " & "'" & cbState.Text & "', " & "'" & Trim(gVendorSearch.sVendName) & "'," & "'" & quotation_mask(txtVendRepre.Text) & "'," & "'" & Trim(sVendPhone1) & "','" & Trim(sVendPhone2) & "'," & "'" & Trim(sVendFax1) & "','" & Trim(sVendFax2) & "'," & "'" & quotation_mask(txtVendAddress.Text) & "'," & "'" & quotation_mask(txtVendCity.Text) & "'," & "'" & Trim(txtVendZip.Text) & "','" & Trim(txtVendArea.Text) & "'," & "'" & quotation_mask(txtVendPayAddress.Text) & "'," & "'" & quotation_mask(txtVendPayCity.Text) & "'," & "'" & Trim(txtVendPayZip.Text) & "','" & Trim(sVendPayPhone1) & "'," & "'" & Trim(cbVendPayState.Text) & "')"
-				
-                'MsgBox sStmt
-                cmLocal = cn.CreateCommand
-				With cmLocal
+        Try
 
-                    .CommandType = CommandType.Text
-					.CommandText = sStmt
-                    nCount = .ExecuteNonQuery()
-				End With
-				If nCount = 1 Then
-					'Registro salvado en BD.
-					'Refrescar datagrid con nuevos datos
-					General.gbVendorMode = General.modo.SavedRecord
-				Else
-					MsgBox("Failed to insert Vendor Branch.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Error")
-					Exit Sub
-				End If
-				
-				'Insercion de QBooks
-				For i = 0 To cbQBGroupId.Items.Count - 1
-					cbQBGroupId.SelectedIndex = i
-					If Len(asQBName(i)) > 0 Then
-						
-						sStmt = "INSERT INTO qb_vendor_vbranch " & "(qb_group_id, name, vend_seq) VALUES " & " ('" & Trim(cbQBGroupId.Text) & "'," & "'" & Trim(quotation_mask(asQBName(i))) & "'," & Str(gVBranchRecord.nVendSeq) & ")"
-						
-                        'MsgBox sStmt
-                        cmLocal = cn.CreateCommand
-						With cmLocal
-                            .CommandType = CommandType.Text
-							.CommandText = sStmt
-                            nCount = .ExecuteNonQuery()
-						End With
-						If nCount = 1 Then
-							'OK
-						Else
-							MsgBox("Failed to insert QBooks Vendor.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Error")
-							Exit Sub
-						End If
-					End If
-					
-				Next i
-				MsgBox("Vendor was successfully created!", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				
-				
-			Case General.modo.UpdateRecord
-				
-				'UPGRADE_WARNING: Couldn't resolve default property of object sVendFax1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				'UPGRADE_WARNING: Couldn't resolve default property of object sVendPhone1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				sStmt = "UPDATE vbranch SET " & "vend_area = '" & Trim(txtVendArea.Text) & "'," & "state_id = '" & cbState.Text & "'," & "vend_address = '" & quotation_mask(txtVendAddress.Text) & "'," & "vend_repre = '" & quotation_mask(txtVendRepre.Text) & "'," & "vend_city = '" & quotation_mask(txtVendCity.Text) & "'," & "vend_zip = '" & Trim(txtVendZip.Text) & "'," & "vend_phone1 = '" & Trim(sVendPhone1) & "'," & "vend_phone2 = '" & Trim(sVendPhone2) & "'," & "vend_fax1 ='" & Trim(sVendFax1) & "'," & "vend_fax2 ='" & Trim(sVendFax2) & "'," & "vend_pay_address='" & quotation_mask(txtVendPayAddress.Text) & "'," & "vend_pay_city ='" & quotation_mask(txtVendPayCity.Text) & "'," & "vend_pay_zip='" & Trim(txtVendPayZip.Text) & "'," & "vend_pay_phone1='" & Trim(sVendPayPhone1) & "'," & "vend_pay_state='" & Trim(cbVendPayState.Text) & "' " & " WHERE vend_id =" & Str(gVendorSearch.nVendId) & " AND vend_seq = " & Str(gVBranchRecord.nVendSeq)
-				
-                'MsgBox sStmt
-                cmLocal = cn.CreateCommand
-				With cmLocal
+            If Not val_fields() Then
+                Exit Sub
+            End If
 
-                    .CommandType = CommandType.Text
-					.CommandText = sStmt
-                    nCount = .ExecuteNonQuery()
-				End With
-				
-				If nCount >= 1 Then
-					'Registro salvado en BD.
-					'Refrescar datagrid con nuevos datos
-					General.gbVendorMode = General.modo.SavedRecord
-				End If
-				
-				'Actualizacion de QBooks
-				For i = 0 To cbQBGroupId.Items.Count - 1
-					sName = ""
-					cbQBGroupId.SelectedIndex = i
-					If Len(asQBName(i)) > 0 Then
-						'Verificar cambio
-						sName = get_qb_vendor(cbQBGroupId.Text, gVBranchRecord.nVendSeq)
-						
-						If sName <> asQBName(i) Then
-							'DELETE
-							If Len(sName) > 0 Then
-								sStmt = "DELETE FROM qb_vendor_vbranch " & "WHERE qb_group_id ='" & Trim(cbQBGroupId.Text) & "'" & " AND vend_seq =" & Str(gVBranchRecord.nVendSeq)
-                                cmLocal = cn.CreateCommand
-								With cmLocal
-                                    .CommandType = CommandType.Text
-									.CommandText = sStmt
-                                    nCount = .ExecuteNonQuery()
-								End With
-								If nCount = 1 Then
-									'OK
-								Else
-									MsgBox("Failed to update QBooks Vendor.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Error")
-									Exit Sub
-								End If
-							End If
-							
-							'INSERT
-							sStmt = "INSERT INTO qb_vendor_vbranch " & "(qb_group_id, name, vend_seq) VALUES " & " ('" & Trim(cbQBGroupId.Text) & "'," & "'" & Trim(quotation_mask(asQBName(i))) & "'," & Str(gVBranchRecord.nVendSeq) & ")"
-							
+            'Checking mask
+
+            If Len(mtxtVendPhone1.Text) = 0 Then
+                sVendPhone1 = ""
+            Else
+                sVendPhone1 = mtxtVendPhone1.Text
+            End If
+
+
+            If Len(mtxtVendPhone2.Text) = 0 Then
+                sVendPhone2 = ""
+            Else
+                sVendPhone2 = mtxtVendPhone2.Text
+            End If
+
+
+            If Len(mtxtVendFax1.Text) = 0 Then
+                sVendFax1 = ""
+            Else
+                sVendFax1 = mtxtVendFax1.Text
+            End If
+
+            If Len(mtxtVendFax2.Text) = 0 Then
+                sVendFax2 = ""
+            Else
+                sVendFax2 = mtxtVendFax2.Text
+            End If
+
+            If Len(mtxtVendPayPhone1.Text) = 0 Then
+                sVendPayPhone1 = ""
+            Else
+                sVendPayPhone1 = mtxtVendPayPhone1.Text
+            End If
+
+            'INSERT/UPDATE
+            Select Case General.gbVendorMode
+                Case General.modo.NewRecord
+                    gVBranchRecord.nVendSeq = get_vend_seq()
+                    For i = 0 To 100
+                        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+                        If IsDBNull(asQBName(i)) Then
+                            asQBName(i) = ""
+                        End If
+                    Next i
+
+                    sStmt = "INSERT INTO vbranch (vend_id," & "vend_seq, state_id, vend_name, vend_repre, " & "vend_phone1, vend_phone2, vend_fax1, vend_fax2," & "vend_address, vend_city, vend_zip, vend_area," & "vend_pay_address, vend_pay_city," & "vend_pay_zip, vend_pay_phone1, vend_pay_state)" & " VALUES (" & Str(gVendorSearch.nVendId) & ", " & Str(gVBranchRecord.nVendSeq) & ", " & "'" & cbState.Text & "', " & "'" & Trim(gVendorSearch.sVendName) & "'," & "'" & quotation_mask(txtVendRepre.Text) & "'," & "'" & Trim(sVendPhone1) & "','" & Trim(sVendPhone2) & "'," & "'" & Trim(sVendFax1) & "','" & Trim(sVendFax2) & "'," & "'" & quotation_mask(txtVendAddress.Text) & "'," & "'" & quotation_mask(txtVendCity.Text) & "'," & "'" & Trim(txtVendZip.Text) & "','" & Trim(txtVendArea.Text) & "'," & "'" & quotation_mask(txtVendPayAddress.Text) & "'," & "'" & quotation_mask(txtVendPayCity.Text) & "'," & "'" & Trim(txtVendPayZip.Text) & "','" & Trim(sVendPayPhone1) & "'," & "'" & Trim(cbVendPayState.Text) & "')"
+
+                    'MsgBox sStmt
+                    cmLocal = cn.CreateCommand
+                    With cmLocal
+
+                        .CommandType = CommandType.Text
+                        .CommandText = sStmt
+                        nCount = .ExecuteNonQuery()
+                    End With
+                    If nCount = 1 Then
+                        'Registro salvado en BD.
+                        'Refrescar datagrid con nuevos datos
+                        General.gbVendorMode = General.modo.SavedRecord
+                    Else
+                        MsgBox("Failed to insert Vendor Branch.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                        Exit Sub
+                    End If
+
+                    'Insercion de QBooks
+                    For i = 0 To cbQBGroupId.Items.Count - 1
+                        cbQBGroupId.SelectedIndex = i
+                        If Len(asQBName(i)) > 0 Then
+
+                            sStmt = "INSERT INTO qb_vendor_vbranch " & "(qb_group_id, name, vend_seq) VALUES " & " ('" & Trim(cbQBGroupId.Text) & "'," & "'" & Trim(quotation_mask(asQBName(i))) & "'," & Str(gVBranchRecord.nVendSeq) & ")"
+
                             'MsgBox sStmt
                             cmLocal = cn.CreateCommand
-							With cmLocal
+                            With cmLocal
                                 .CommandType = CommandType.Text
-								.CommandText = sStmt
+                                .CommandText = sStmt
                                 nCount = .ExecuteNonQuery()
-							End With
-							If nCount = 1 Then
-								'OK
-							Else
-								MsgBox("Failed to insert QBooks Vendor.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Error")
-								Exit Sub
-							End If
-						End If 'sName
-					End If 'len
-				Next i
-				
-				MsgBox("Vendor data was successfully updated!", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				
-		End Select
-		Me.Close()
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "save_vendor")
-		MsgBox("An unexpected error has occurred. Please check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-	End Sub
+                            End With
+                            If nCount = 1 Then
+                                'OK
+                            Else
+                                MsgBox("Failed to insert QBooks Vendor.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                                Exit Sub
+                            End If
+                        End If
+
+                    Next i
+                    MsgBox("Vendor was successfully created!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+
+
+                Case General.modo.UpdateRecord
+
+                    sStmt = "UPDATE vbranch SET " & "vend_area = '" & Trim(txtVendArea.Text) & "'," & "state_id = '" & cbState.Text & "'," & "vend_address = '" & quotation_mask(txtVendAddress.Text) & "'," & "vend_repre = '" & quotation_mask(txtVendRepre.Text) & "'," & "vend_city = '" & quotation_mask(txtVendCity.Text) & "'," & "vend_zip = '" & Trim(txtVendZip.Text) & "'," & "vend_phone1 = '" & Trim(sVendPhone1) & "'," & "vend_phone2 = '" & Trim(sVendPhone2) & "'," & "vend_fax1 ='" & Trim(sVendFax1) & "'," & "vend_fax2 ='" & Trim(sVendFax2) & "'," & "vend_pay_address='" & quotation_mask(txtVendPayAddress.Text) & "'," & "vend_pay_city ='" & quotation_mask(txtVendPayCity.Text) & "'," & "vend_pay_zip='" & Trim(txtVendPayZip.Text) & "'," & "vend_pay_phone1='" & Trim(sVendPayPhone1) & "'," & "vend_pay_state='" & Trim(cbVendPayState.Text) & "' " & " WHERE vend_id =" & Str(gVendorSearch.nVendId) & " AND vend_seq = " & Str(gVBranchRecord.nVendSeq)
+
+                    'MsgBox sStmt
+                    cmLocal = cn.CreateCommand
+                    With cmLocal
+
+                        .CommandType = CommandType.Text
+                        .CommandText = sStmt
+                        nCount = .ExecuteNonQuery()
+                    End With
+
+                    If nCount >= 1 Then
+                        'Registro salvado en BD.
+                        'Refrescar datagrid con nuevos datos
+                        General.gbVendorMode = General.modo.SavedRecord
+                    End If
+
+                    'Actualizacion de QBooks
+                    For i = 0 To cbQBGroupId.Items.Count - 1
+                        sName = ""
+                        cbQBGroupId.SelectedIndex = i
+                        If Len(asQBName(i)) > 0 Then
+                            'Verificar cambio
+                            sName = get_qb_vendor(cbQBGroupId.Text, gVBranchRecord.nVendSeq)
+
+                            If sName <> asQBName(i) Then
+                                'DELETE
+                                If Len(sName) > 0 Then
+                                    sStmt = "DELETE FROM qb_vendor_vbranch " & "WHERE qb_group_id ='" & Trim(cbQBGroupId.Text) & "'" & " AND vend_seq =" & Str(gVBranchRecord.nVendSeq)
+                                    cmLocal = cn.CreateCommand
+                                    With cmLocal
+                                        .CommandType = CommandType.Text
+                                        .CommandText = sStmt
+                                        nCount = .ExecuteNonQuery()
+                                    End With
+                                    If nCount = 1 Then
+                                        'OK
+                                    Else
+                                        MsgBox("Failed to update QBooks Vendor.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                                        Exit Sub
+                                    End If
+                                End If
+
+                                'INSERT
+                                sStmt = "INSERT INTO qb_vendor_vbranch " & "(qb_group_id, name, vend_seq) VALUES " & " ('" & Trim(cbQBGroupId.Text) & "'," & "'" & Trim(quotation_mask(asQBName(i))) & "'," & Str(gVBranchRecord.nVendSeq) & ")"
+
+                                'MsgBox sStmt
+                                cmLocal = cn.CreateCommand
+                                With cmLocal
+                                    .CommandType = CommandType.Text
+                                    .CommandText = sStmt
+                                    nCount = .ExecuteNonQuery()
+                                End With
+                                If nCount = 1 Then
+                                    'OK
+                                Else
+                                    MsgBox("Failed to insert QBooks Vendor.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
+                                    Exit Sub
+                                End If
+                            End If 'sName
+                        End If 'len
+                    Next i
+
+                    MsgBox("Vendor data was successfully updated!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+
+            End Select
+            Me.Close()
+            Exit Sub
+
+        Catch ex As Exception
+            save_error(Me.Name, "save_vendor")
+            MsgBox("An unexpected error has occurred. Please check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        End Try
+    End Sub
 	
 	'Valida los datos en la forma
 	Private Function val_fields() As Boolean
@@ -245,16 +234,16 @@ ErrorHandler:
 		Else
 			If General.gbVendorMode = General.modo.NewRecord Then
 				'Verificar que esta area no sea repetida
-				sStmt = "SELECT count(*) FROM vbranch " & "WHERE vend_id=" & Str(gVendorSearch.nVendId) & "AND vend_area='" & Trim(txtVendArea.Text) & "' "
+                sStmt = "SELECT count(*) FROM vbranch " & "WHERE vend_id=" & Str(gVendorSearch.nVendId) & " AND vend_area='" & Trim(txtVendArea.Text) & "' "
 				
                 rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                If rsLocal.Rows(0).Item(0).Value > 0 Then
+                If rsLocal.Rows(0).Item(0) > 0 Then
                     MsgBox("There is a Vendor previously created," & "with that area.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
                     val_fields = False
                     Exit Function
                 End If
-        End If
+            End If
 		End If
 		
 		'Address
@@ -407,10 +396,10 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Rows(0).Item(0).Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item(0)) Then
                 nVendSeq = 1
             Else
-                nVendSeq = rsLocal.Rows(0).Item(0).Value + 1
+                nVendSeq = rsLocal.Rows(0).Item(0) + 1
             End If
         Else
             MsgBox("Unable to get Sequence Number for New Branch.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
@@ -653,7 +642,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            sVendor = rsLocal.Rows(0).Item("name").Value
+            sVendor = rsLocal.Rows(0).Item("name")
         End If
 
         get_qb_vendor = sVendor

@@ -24,9 +24,13 @@
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmCustomer))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me.btNew = New System.Windows.Forms.ToolStripButton
+        Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
+        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.dgCustomer = New System.Windows.Forms.DataGridView
         Me.Toolbar1.SuspendLayout()
         CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -34,11 +38,32 @@
         '
         'Toolbar1
         '
-        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Toolbar1_Button5})
+        Me.Toolbar1.AutoSize = False
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.ToolStripButton2, Me._Toolbar1_Button5, Me.btExit})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
         Me.Toolbar1.Name = "Toolbar1"
-        Me.Toolbar1.Size = New System.Drawing.Size(574, 39)
+        Me.Toolbar1.Size = New System.Drawing.Size(574, 59)
         Me.Toolbar1.TabIndex = 0
+        '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 56)
+        Me.btNew.Text = "New"
+        '
+        'ToolStripButton2
+        '
+        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
+        Me.ToolStripButton2.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton2.Name = "ToolStripButton2"
+        Me.ToolStripButton2.Size = New System.Drawing.Size(36, 56)
+        Me.ToolStripButton2.Text = "Save"
         '
         '_Toolbar1_Button5
         '
@@ -46,12 +71,22 @@
         Me._Toolbar1_Button5.Name = "_Toolbar1_Button5"
         Me._Toolbar1_Button5.Size = New System.Drawing.Size(10, 39)
         '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 56)
+        Me.btExit.Text = "Exit"
+        '
         'dgCustomer
         '
         Me.dgCustomer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgCustomer.Location = New System.Drawing.Point(12, 30)
+        Me.dgCustomer.Location = New System.Drawing.Point(12, 62)
         Me.dgCustomer.Name = "dgCustomer"
-        Me.dgCustomer.Size = New System.Drawing.Size(550, 228)
+        Me.dgCustomer.Size = New System.Drawing.Size(550, 196)
         Me.dgCustomer.TabIndex = 2
         '
         'frmCustomer
@@ -72,9 +107,11 @@
         Me.Toolbar1.PerformLayout()
         CType(Me.dgCustomer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Friend WithEvents dgCustomer As System.Windows.Forms.DataGridView
+    Friend WithEvents ToolStripButton2 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
 #End Region 
 End Class

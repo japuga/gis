@@ -4,7 +4,7 @@ Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
 Friend Class frmBankEntry
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	
 	'UPGRADE_WARNING: Event cbBankName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbBankName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbBankName.SelectedIndexChanged
@@ -91,12 +91,12 @@ ErrorHandler:
 
                 sStmt = "SELECT MAX(bank_cust_seq) FROM bankAccount "
                 cmd.CommandText = sStmt
-                rs = getDataTable(sStmt) 'cmd.ExecuteReader()
+                rsLocal = getDataTable(sStmt, nTran) 'cmd.ExecuteReader()
 
 
-                If rsLocal.HasRows() Then
-                    If rsLocal.Item(0).Value > 0 Then
-                        nBankCustSeq = rsLocal.Item(0).Value + 1
+                If rsLocal.Rows.Count > 0 Then
+                    If rsLocal.Rows(0).Item(0) > 0 Then
+                        nBankCustSeq = rsLocal.Rows(0).Item(0) + 1
                     Else
                         nBankCustSeq = 1
                     End If
@@ -104,15 +104,12 @@ ErrorHandler:
                     nBankCustSeq = 1
                 End If
 
-                MsgBox("Failed to obtain next Bank Sequence.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-                Exit Function
-
-
                 sStmt = "INSERT INTO BankAccount(bank_cust_seq, " & "bank_account, bank_id, cust_id, " & "bank_account_balance, last_check_no )" & " VALUES " & "(" & Str(nBankCustSeq) & "," & "'" & Trim(txtBankAccount.Text) & "'," & Str(VB6.GetItemData(cbBankName, cbBankName.SelectedIndex)) & "," & "'" & cbCustId.Text & "'," & Str(CDbl(txtBankAccountBalance.Text)) & "," & Str(CDbl(txtLastCheckNo.Text)) & ")"
                 'MsgBox sStmt
                 cmd.CommandText = sStmt
+                cmd.Transaction = nTran
                 nRecords = cmd.ExecuteNonQuery()
-                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
                 If nRecords = 1 Then
                     'ok
                 Else
@@ -127,7 +124,7 @@ ErrorHandler:
                 'MsgBox sStmt
                 cmd.CommandText = sStmt
                 nRecords = cmd.ExecuteNonQuery()
-                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
                 If nRecords = 1 Then
                     'ok
                     nTran.Commit()
@@ -146,9 +143,9 @@ ErrorHandler:
                 '1.Update BankAccount
                 sStmt = "UPDATE BankAccount " & "SET bank_account = '" & Trim(txtBankAccount.Text) & "', " & " bank_account_balance =" & txtBankAccountBalance.Text & " WHERE bank_cust_seq =" & Str(gBankAccount.nBankCustSeq)
                 cmd.CommandText = sStmt
-                nRecords = cm.ExecuteNonQuery()
+                cmd.Transaction = nTran
+                nRecords = cmd.ExecuteNonQuery()
 
-                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If nRecords > 0 Then
                     'ok
                 Else
@@ -160,14 +157,13 @@ ErrorHandler:
                 '2.QB_BankAccount
                 sStmt = "SELECT name FROM qb_bankAccount " & " WHERE bank_cust_seq =" & Str(gBankAccount.nBankCustSeq) & " " & " AND qb_group_id ='" & cbQBGroupId.Text & "'"
                 cmd.CommandText = sStmt
-                rs = getDataTable(sStmt) 'cmd.ExecuteReader()
+                rs = getDataTable(sStmt, nTran) 'cmd.ExecuteReader()
 
                 If rs.Rows.Count > 0 Then
-                    'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rs.Rows(0).Item("name").Value) Then
+                    If IsDBNull(rs.Rows(0).Item("name")) Then
                         sName = ""
                     Else
-                        sName = rs.Rows(0).Item("name").Value
+                        sName = rs.Rows(0).Item("name")
                     End If
                     bQbBankAccountExist = True
                 Else
@@ -186,7 +182,6 @@ ErrorHandler:
                         cmd.CommandText = sStmt
                         nRecords = cmd.ExecuteNonQuery()
 
-                        'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         If nRecords > 0 Then
                             'continue
                         Else
@@ -198,7 +193,7 @@ ErrorHandler:
                         'We insert new BankName to comply with user changes
                         sStmt = "INSERT INTO Qb_BankAccount (bank_cust_seq," & "name, qb_group_id) VALUES" & "(" & Str(gBankAccount.nBankCustSeq) & "," & "'" & quotation_mask(cbQBBankName.Text) & "'," & "'" & cbQBGroupId.Text & "')"
                         cmd.CommandText = sStmt
-                        nRecords = cm.ExecuteNonQuery()
+                        nRecords = cmd.ExecuteNonQuery()
 
                         'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         If nRecords > 0 Then
@@ -268,9 +263,9 @@ ErrorHandler:
 			Case General.modo.NewRecord
 				sStmt = "SELECT bank_cust_seq FROM bankAccount " & " WHERE cust_id = '" & cbCustId.Text & "' " & " AND bank_id = " & Str(VB6.GetItemData(cbBankName, cbBankName.SelectedIndex)) & " AND bank_account ='" & Trim(txtBankAccount.Text) & "'"
                 cmd.CommandText = sStmt
-                rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                If rsLocal.HasRows() Then
+                If rsLocal.Rows.Count > 0 Then
                     MsgBox("This is a duplicate Bank Account. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                     val_fields = False
                     Exit Function
@@ -283,9 +278,9 @@ ErrorHandler:
                 If Trim(txtBankAccount.Text) <> Trim(gBankAccount.sBankAccount) Then
                     sStmt = "SELECT bank_cust_seq FROM bankAccount " & " WHERE cust_id = '" & gBankAccount.sCustId & "' " & " AND bank_id = " & Str(gBankAccount.nBankId) & " AND bank_account ='" & Trim(txtBankAccount.Text) & "'"
                     cmd.CommandText = sStmt
-                    rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                    rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                    If rsLocal.HasRows() Then
+                    If rsLocal.Rows.Count > 0 Then
                         MsgBox("This is a duplicate Bank Account. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                         val_fields = False
                         Exit Function
@@ -368,11 +363,9 @@ ErrorHandler:
 	Private Sub init_vars()
 
         'Set Limits
-        'UPGRADE_WARNING: TextBox property txtBankAccount.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
         txtBankAccount.MaxLength = 20
-        'UPGRADE_WARNING: TextBox property txtBankAccountBalance.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         txtBankAccountBalance.MaxLength = 12
-        'UPGRADE_WARNING: TextBox property txtLastCheckNo.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         txtLastCheckNo.MaxLength = 7
 
         'CustId
@@ -400,7 +393,7 @@ ErrorHandler:
             Case General.modo.NewRecord
                 'Choose First customer by default
                 If cbCustName.Items.Count > 0 Then
-                    cbCustName.SelectedIndex = 0
+                    cbCustName.SelectedIndex = 1
                 End If
 
                 'Choose first bank by default
@@ -412,15 +405,13 @@ ErrorHandler:
                 txtBankAccountBalance.Text = CStr(gBankAccount.nBankAccountBalance)
                 txtLastCheckNo.Text = CStr(gBankAccount.nLastCheckNo)
 
-
-
             Case General.modo.UpdateRecord
                 set_cb(cbCustId, gBankAccount.sCustId)
                 If cbCustId.SelectedIndex >= 0 Then
                     cbCustName.SelectedIndex = cbCustId.SelectedIndex
                 End If
                 cbCustName.Enabled = False
-                'UPGRADE_ISSUE: ComboBox property cbCustName.Locked was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
+
                 'cbCustName.
 
                 set_cb_ItemData(cbBankName, gBankAccount.nBankId)
@@ -431,7 +422,7 @@ ErrorHandler:
                 txtBankAccount.Text = gBankAccount.sBankAccount
                 txtBankAccountBalance.Text = CStr(gBankAccount.nBankAccountBalance)
                 'If gBankAccount.sBankAccountBalanceMask = "" Then
-                '    mtxtBankAccountBalance.Text = "$_,___,___.__"
+                '    txtBankAccountBalance.Text = "$_,___,___.__"
                 'Else
                 '    mtxtBankAccountBalance = gBankAccount.sBankAccountBalanceMask
                 'End If
@@ -456,7 +447,7 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         If rs.Rows.Count > 0 Then
-            gBankAccount.sQBGroupId = rs.Rows(0).Item("qb_group_id").Value
+            gBankAccount.sQBGroupId = rs.Rows(0).Item("qb_group_id")
             set_cb(cbQBGroupId, gBankAccount.sQBGroupId)
             cbQBGroupDesc.SelectedIndex = cbQBGroupId.SelectedIndex
         Else

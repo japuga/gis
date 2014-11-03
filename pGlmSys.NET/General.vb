@@ -1,8 +1,10 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports System.IO
 Module General
 
+    Public OSdriveLetter As String = Path.GetPathRoot(My.Application.Info.DirectoryPath).ToString
     Public cn As SqlClient.SqlConnection
     Public bcnStatus As cnStatus
     Public Enum cnStatus
@@ -56,8 +58,10 @@ Module General
     Public gbDebug As Boolean
     Public gbError As Boolean
     Public gnLoginId As Integer
-    Public strReportsSysPath As String = "C:\glm\Visual Basic\GLM-System\Reports\"
-    'Public strReportsSysPath As String = "C:\glm\vbnet\pGlmSys.NET\"
+
+    'OSdriveLetter es de la forma "E:\", o "C:\"
+    Public strReportsSysPath As String = OSdriveLetter & "glm\Visual Basic\GLM-System\Reports\"
+
     Public Structure gReportUDT
         Dim name As String 'Report Name
         Dim Index As Short 'Menu Report Index
@@ -1011,7 +1015,8 @@ Module General
         'get_global_settings
         'Parametrize file name
         'sLogfile = "e:\Logfile.txt"
-        sLogfile = "c:\Logfile.txt"
+        'OS drive letter es de la forma "C:\" o "E:\"
+        sLogfile = OSdriveLetter & "Logfile.txt"
         gReport.Index = 0
         gReport.name = ""
         gReport.static_Renamed = True

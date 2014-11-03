@@ -4,8 +4,8 @@ Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
 Friend Class frmVendorSearch
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
-	Private cmLocal As ADODB.Command
+    Private rsLocal As DataTable
+    Private cmLocal As SqlCommand
 	
 	
 	'UPGRADE_WARNING: Event cbVendor.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -45,10 +45,9 @@ Friend Class frmVendorSearch
 	End Sub
 	Private Sub init_vars()
 
-		cmLocal = New ADODB.Command
-		cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
-		cmLocal.let_ActiveConnection(cn)
-		
+        cmLocal = cn.CreateCommand
+        cmLocal.CommandType = CommandType.Text
+
 		'**** Inicializo gVendorSearch
 		gVendorSearch.bFlag = False
 		gVendorSearch.nVendId = -1
@@ -116,34 +115,34 @@ Friend Class frmVendorSearch
 		
 		sStmt = "SELECT vend_id FROM vendor " & "WHERE vend_name='" & Trim(sVendorName) & "'"
         cmd.CommandText = sStmt
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.HasRows() Then
+        If rsLocal.Rows.Count < 1 Then
             bNew = True
         Else
             MsgBox("Vendor already exists in database.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-            rsLocal.Close()
+
             Exit Function
         End If
-        rsLocal.Close()
+
 
 
         If bNew Then
             sStmt = "SELECT MAX(vend_id) FROM vendor"
             cmd.CommandText = sStmt
-            rsLocal = cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-            If rsLocal.HasRows() Then
+            rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rsLocal.Rows.Count < 1 Then
                 nVendId = 1
             Else
-                nVendId = rsLocal.Item(0).Value + 1
+                nVendId = rsLocal.Rows(0).Item(0) + 1
             End If
-            rsLocal.Close()
+
 
         End If
 
         sStmt = "INSERT INTO vendor (vend_id, vend_name)" & " VALUES (" & Str(nVendId) & ",'" & Trim(sVendorName) & "')"
         cmLocal.CommandText = sStmt
-        cmLocal.Execute(nCount)
+        nCount = cmLocal.ExecuteNonQuery 'cmLocal.Execute(nCount)
         If nCount = 1 Then
             'Se inserto
             save_vendor_name = True

@@ -3,12 +3,12 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmBank
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
     Private ImageList2 As New ImageList()
 	
-	Private Sub dgBankAccount_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgBankAccount.DblClick
-		update_bankAccount()
-	End Sub
+    Private Sub dgBankAccount_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_bankAccount()
+    End Sub
 	
 	Private Sub frmBank_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -21,44 +21,44 @@ Friend Class frmBank
     End Sub
 	Private Sub load_dgBankAccount()
 		
-		On Error GoTo ErrorHandler
-        Dim cmd As SqlCommand = cn.CreateCommand()
-		sStmt = "SELECT BankAccount.cust_id, " & " Customer.cust_name AS Cust, " & " Bank.bank_id, Bank.bank_name AS 'Bank', " & " BankAccount.bank_account AS Account , " & " BankAccount.bank_account_balance AS Balance," & " BankAccount.last_check_no AS LastCheck, " & " BankAccount.bank_cust_seq " & "FROM Bank, BankAccount, Customer " & "WHERE Bank.bank_id = BankAccount.bank_id " & " AND BankAccount.cust_id = Customer.cust_id " & " ORDER BY Customer.cust_name, Bank.bank_name, BankAccount.bank_account"
-        cmd.CommandText = sStmt
-		'UPGRADE_NOTE: Object dgBankAccount.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		dgBankAccount.DataSource = Nothing
-		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
-            dgBankAccount.DataSource = rsLocal
-        Else
-            'UPGRADE_NOTE: Object dgBankAccount.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+        Try
+            Dim cmd As SqlCommand = cn.CreateCommand()
+            sStmt = "SELECT BankAccount.cust_id, " & " Customer.cust_name AS Cust, " & " Bank.bank_id, Bank.bank_name AS 'Bank', " & " BankAccount.bank_account AS Account , " & " BankAccount.bank_account_balance AS Balance," & " BankAccount.last_check_no AS LastCheck, " & " BankAccount.bank_cust_seq " & "FROM Bank, BankAccount, Customer " & "WHERE Bank.bank_id = BankAccount.bank_id " & " AND BankAccount.cust_id = Customer.cust_id " & " ORDER BY Customer.cust_name, Bank.bank_name, BankAccount.bank_account"
+            cmd.CommandText = sStmt
+
             dgBankAccount.DataSource = Nothing
+
+            rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rsLocal.Rows.Count > 0 Then
+                dgBankAccount.DataSource = rsLocal
+            Else
+
+                dgBankAccount.DataSource = Nothing
+                Exit Sub
+            End If
+
+            'Format Datagrid
+            dgBankAccount.Columns("cust_id").Visible = False
+            dgBankAccount.Columns("bank_id").Visible = False
+            dgBankAccount.Columns("bank_cust_seq").Visible = False
+            'dgBankAccount.Columns("bank_account_balance_mask").Visible = False
+
+            dgBankAccount.Columns("Cust").Width = VB6.TwipsToPixelsX(1800)
+            dgBankAccount.Columns("Bank").Width = VB6.TwipsToPixelsX(1300)
+            dgBankAccount.Columns("Account").Width = VB6.TwipsToPixelsX(1600)
+            dgBankAccount.Columns("Balance").Width = VB6.TwipsToPixelsX(800)
+            dgBankAccount.Columns("LastCheck").Width = VB6.TwipsToPixelsX(1100)
+
+            dgBankAccount.Refresh()
+            'dgBankAccount.Refresh()
+
             Exit Sub
-        End If
-		
-		'Format Datagrid
-		dgBankAccount.Columns("cust_id").Visible = False
-		dgBankAccount.Columns("bank_id").Visible = False
-		dgBankAccount.Columns("bank_cust_seq").Visible = False
-		'dgBankAccount.Columns("bank_account_balance_mask").Visible = False
-		
-		dgBankAccount.Columns("Cust").Width = VB6.TwipsToPixelsX(1800)
-		dgBankAccount.Columns("Bank").Width = VB6.TwipsToPixelsX(1300)
-		dgBankAccount.Columns("Account").Width = VB6.TwipsToPixelsX(1600)
-		dgBankAccount.Columns("Balance").Width = VB6.TwipsToPixelsX(800)
-		dgBankAccount.Columns("LastCheck").Width = VB6.TwipsToPixelsX(1100)
-		
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-        dgBankAccount.Refresh()
-        'dgBankAccount.Refresh()
-		
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "load_dgBankAccount")
-		MsgBox("Unexpected error found while loading Bank Account Information." & vbCrLf & "Review lod file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-	End Sub
+        Catch ex As Exception
+            save_error(Me.Name, "load_dgBankAccount")
+            MsgBox("Unexpected error found while loading Bank Account Information." & vbCrLf & "Review lod file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        End Try
+       
+    End Sub
 	
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _Toolbar1_Button5.Click
         Dim Button As System.Windows.Forms.ToolStripItem = CType(eventSender, System.Windows.Forms.ToolStripItem)
@@ -85,22 +85,24 @@ ErrorHandler:
 		End If
 		
 	End Sub
-	Private Sub update_bankAccount()
-		If dgBankAccount.SelBookmarks.Count > 0 Then
-			'ok
-			gBankAccount.bFlag = General.modo.UpdateRecord
-			If set_data Then
-				VB6.ShowForm(frmBankEntry, VB6.FormShowConstants.Modal, Me)
-				If gBankAccount.bFlag = General.modo.SavedRecord Then
-					load_dgBankAccount()
-				End If
-			End If
-		Else
-			MsgBox("Please select a record before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			Exit Sub
-		End If
-		
-	End Sub
+    Private Sub update_bankAccount()
+
+        'If dgBankAccount.SelBookmarks.Count > 0 Then
+        If dgBankAccount.SelectedRows.Count > 0 Then
+            'ok
+            gBankAccount.bFlag = General.modo.UpdateRecord
+            If set_data() Then
+                VB6.ShowForm(frmBankEntry, VB6.FormShowConstants.Modal, Me)
+                If gBankAccount.bFlag = General.modo.SavedRecord Then
+                    load_dgBankAccount()
+                End If
+            End If
+        Else
+            MsgBox("Please select a record before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
+
+    End Sub
 	
 	Private Function set_data() As Boolean
 		
@@ -116,64 +118,59 @@ ErrorHandler:
 				
 				
 			Case General.modo.UpdateRecord
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("bank_cust_seq").Text) Then
-					If CDbl(dgBankAccount.Columns("bank_cust_seq").Text) > 0 Then
-						gBankAccount.nBankCustSeq = CShort(dgBankAccount.Columns("bank_cust_seq").Text)
-					Else
-						MsgBox("Failed to load Bank Id", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-						set_data = False
-						Exit Function
-					End If
-				Else
-					MsgBox("Failed to load Bank Id", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					set_data = False
-					Exit Function
-				End If
+
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value) Then
+                    If CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value) > 0 Then
+                        gBankAccount.nBankCustSeq = CShort(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value)
+                    Else
+                        MsgBox("Failed to load Bank Id", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                        set_data = False
+                        Exit Function
+                    End If
+                Else
+                    MsgBox("Failed to load Bank Id", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    set_data = False
+                    Exit Function
+                End If
 				
 				'BankId
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("bank_id").Text) Then
-					gBankAccount.nBankId = CShort(dgBankAccount.Columns("bank_id").Text)
-				Else
-					MsgBox("Bank information was not properly loaded.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					set_data = False
-					Exit Function
-				End If
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("bank_id").Value) Then
+                    gBankAccount.nBankId = CShort(dgBankAccount.CurrentRow.Cells("bank_id").Value)
+                Else
+                    MsgBox("Bank information was not properly loaded.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    set_data = False
+                    Exit Function
+                End If
 				
 				'CustId
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("cust_id").Text) Then
-					gBankAccount.sCustId = dgBankAccount.Columns("cust_id").Text
-				End If
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("cust_id").Value) Then
+                    gBankAccount.sCustId = dgBankAccount.CurrentRow.Cells("cust_id").Value
+                End If
 				
 				'Bank Account
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("Account").Text) Then
-					gBankAccount.sBankAccount = dgBankAccount.Columns("Account").Text
-				Else
-					MsgBox("Failed to load Bank Account", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					set_data = False
-					Exit Function
-				End If
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("Account").Value) Then
+                    gBankAccount.sBankAccount = dgBankAccount.CurrentRow.Cells("Account").Value
+                Else
+                    MsgBox("Failed to load Bank Account", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    set_data = False
+                    Exit Function
+                End If
 				
 				'Balance
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("balance").Text) Then
-					gBankAccount.nBankAccountBalance = CDbl(dgBankAccount.Columns("balance").Text)
-				Else
-					gBankAccount.nBankAccountBalance = 0
-				End If
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("balance").Value) Then
+                    gBankAccount.nBankAccountBalance = CDbl(dgBankAccount.CurrentRow.Cells("balance").Value)
+                Else
+                    gBankAccount.nBankAccountBalance = 0
+                End If
 				
 				'Last Check No
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(dgBankAccount.Columns("LastCheck").Text) Then
-					gBankAccount.nLastCheckNo = CInt(dgBankAccount.Columns("LastCheck").Text)
-				Else
-					MsgBox("Failed to get Last printed Check.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					set_data = False
-					Exit Function
-				End If
+                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("LastCheck").Value) Then
+                    gBankAccount.nLastCheckNo = CInt(dgBankAccount.CurrentRow.Cells("LastCheck").Value)
+                Else
+                    MsgBox("Failed to get Last printed Check.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    set_data = False
+                    Exit Function
+                End If
 				
 		End Select
 		
@@ -182,23 +179,24 @@ ErrorHandler:
 		Dim nRecords As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
 		On Error GoTo ErrorHandler
-		
-		If dgBankAccount.SelBookmarks.Count > 0 Then
-			'Verify if there is no check associated to this Bank Account
-			sStmt = "SELECT COUNT(*) FROM BCheck " & " WHERE bank_cust_seq=" & Str(CDbl(dgBankAccount.Columns("bank_cust_seq").Text))
+        'dgBankAccount.SelectedRows.Count
+        'If dgBankAccount.SelBookmarks.Count > 0 Then
+        If dgBankAccount.SelectedRows.Count > 0 Then
+            'Verify if there is no check associated to this Bank Account
+            sStmt = "SELECT COUNT(*) FROM BCheck " & " WHERE bank_cust_seq=" & Str(CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value))
             cmd.CommandText = sStmt
-			
+
             rs = getDataTable(sStmt) ' cmd.ExecuteReader()
             If rs.Rows.Count > 0 Then
-                If rs.Rows(0).Item(0).Value > 0 Then
+                If rs.Rows(0).Item(0) > 0 Then
                     MsgBox("Failed to delete. Found some checks associated to this Bank Account.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                     Exit Sub
                 End If
             End If
 
-            sStmt = "DELETE FROM BankAccount " & "WHERE bank_cust_seq =" & Str(CDbl(dgBankAccount.Columns("bank_cust_seq").Text))
+            sStmt = "DELETE FROM BankAccount " & "WHERE bank_cust_seq =" & Str(CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value))
             cmd.CommandText = sStmt
-            nRecords = cm.ExecuteNonQuery()
+            nRecords = cmd.ExecuteNonQuery()
             If nRecords > 0 Then
                 'ok
                 MsgBox("Bank Account was successfully removed.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
@@ -221,4 +219,19 @@ ErrorHandler:
         MsgBox("Unexpected error found while deleting Bank Account." & vbCrLf & "Please review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
 		
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_bankAccount()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_bankAccount()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_bankAccount()
+    End Sub
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

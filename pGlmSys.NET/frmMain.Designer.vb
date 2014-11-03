@@ -21,11 +21,9 @@
 	Public WithEvents _sbMain_Panel1 As System.Windows.Forms.ToolStripStatusLabel
 	Public WithEvents sbMain As System.Windows.Forms.StatusStrip
 	Public WithEvents ImageList1 As System.Windows.Forms.ImageList
-	Public WithEvents _Toolbar1_Button2 As System.Windows.Forms.ToolStripSeparator
-	Public WithEvents _Toolbar1_Button4 As System.Windows.Forms.ToolStripSeparator
+    Public WithEvents _Toolbar1_Button4 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents _Toolbar1_Button6 As System.Windows.Forms.ToolStripSeparator
-	Public WithEvents _Toolbar1_Button8 As System.Windows.Forms.ToolStripSeparator
-	Public WithEvents _Toolbar1_Button10 As System.Windows.Forms.ToolStripSeparator
+    Public WithEvents _Toolbar1_Button10 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents Toolbar1 As System.Windows.Forms.ToolStrip
 	Public WithEvents Image1 As System.Windows.Forms.PictureBox
 	Public WithEvents mniArea As Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray
@@ -196,11 +194,12 @@
         Me._sbMain_Panel1 = New System.Windows.Forms.ToolStripStatusLabel
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-        Me._Toolbar1_Button2 = New System.Windows.Forms.ToolStripSeparator
-        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
-        Me._Toolbar1_Button6 = New System.Windows.Forms.ToolStripSeparator
-        Me._Toolbar1_Button8 = New System.Windows.Forms.ToolStripSeparator
+        Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button10 = New System.Windows.Forms.ToolStripSeparator
+        Me.ToolStripButton1 = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
+        Me.ToolStripButton3 = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button6 = New System.Windows.Forms.ToolStripSeparator
         Me.Image1 = New System.Windows.Forms.PictureBox
         Me.mniArea = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me._mniArea_272 = New System.Windows.Forms.ToolStripMenuItem
@@ -358,8 +357,6 @@
         Me.mnuVendorPayments = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.mnuVendors = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip
-        Me.ToolStripButton1 = New System.Windows.Forms.ToolStripButton
-        Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
         Me.sbMain.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -438,9 +435,9 @@
         '
         Me.sbMain.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.sbMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._sbMain_Panel1})
-        Me.sbMain.Location = New System.Drawing.Point(167, 392)
+        Me.sbMain.Location = New System.Drawing.Point(76, 397)
         Me.sbMain.Name = "sbMain"
-        Me.sbMain.Size = New System.Drawing.Size(553, 25)
+        Me.sbMain.Size = New System.Drawing.Size(643, 25)
         Me.sbMain.TabIndex = 1
         '
         '_sbMain_Panel1
@@ -470,38 +467,25 @@
         '
         'Toolbar1
         '
+        Me.Toolbar1.AutoSize = False
         Me.Toolbar1.Dock = System.Windows.Forms.DockStyle.Left
         Me.Toolbar1.ImageList = Me.ImageList1
-        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Toolbar1_Button2, Me._Toolbar1_Button4, Me._Toolbar1_Button6, Me._Toolbar1_Button8, Me.ToolStripButton1, Me._Toolbar1_Button10, Me.ToolStripButton2})
+        Me.Toolbar1.ImageScalingSize = New System.Drawing.Size(64, 64)
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripButton2, Me._Toolbar1_Button10, Me.ToolStripButton1, Me._Toolbar1_Button4, Me.ToolStripButton3, Me._Toolbar1_Button6})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 24)
         Me.Toolbar1.Name = "Toolbar1"
-        Me.Toolbar1.Size = New System.Drawing.Size(167, 393)
+        Me.Toolbar1.Size = New System.Drawing.Size(76, 398)
         Me.Toolbar1.TabIndex = 0
         '
-        '_Toolbar1_Button2
+        'ToolStripButton2
         '
-        Me._Toolbar1_Button2.AutoSize = False
-        Me._Toolbar1_Button2.Name = "_Toolbar1_Button2"
-        Me._Toolbar1_Button2.Size = New System.Drawing.Size(166, 39)
-        Me._Toolbar1_Button2.Visible = False
-        '
-        '_Toolbar1_Button4
-        '
-        Me._Toolbar1_Button4.AutoSize = False
-        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
-        Me._Toolbar1_Button4.Size = New System.Drawing.Size(166, 39)
-        '
-        '_Toolbar1_Button6
-        '
-        Me._Toolbar1_Button6.AutoSize = False
-        Me._Toolbar1_Button6.Name = "_Toolbar1_Button6"
-        Me._Toolbar1_Button6.Size = New System.Drawing.Size(166, 39)
-        '
-        '_Toolbar1_Button8
-        '
-        Me._Toolbar1_Button8.AutoSize = False
-        Me._Toolbar1_Button8.Name = "_Toolbar1_Button8"
-        Me._Toolbar1_Button8.Size = New System.Drawing.Size(166, 39)
+        Me.ToolStripButton2.AutoSize = False
+        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
+        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton2.Name = "ToolStripButton2"
+        Me.ToolStripButton2.Size = New System.Drawing.Size(50, 45)
+        Me.ToolStripButton2.Text = "ToolStripButton2"
         '
         '_Toolbar1_Button10
         '
@@ -509,11 +493,42 @@
         Me._Toolbar1_Button10.Name = "_Toolbar1_Button10"
         Me._Toolbar1_Button10.Size = New System.Drawing.Size(166, 39)
         '
+        'ToolStripButton1
+        '
+        Me.ToolStripButton1.AutoSize = False
+        Me.ToolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton1.Image = CType(resources.GetObject("ToolStripButton1.Image"), System.Drawing.Image)
+        Me.ToolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton1.Name = "ToolStripButton1"
+        Me.ToolStripButton1.Size = New System.Drawing.Size(53, 50)
+        '
+        '_Toolbar1_Button4
+        '
+        Me._Toolbar1_Button4.AutoSize = False
+        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
+        Me._Toolbar1_Button4.Size = New System.Drawing.Size(166, 39)
+        '
+        'ToolStripButton3
+        '
+        Me.ToolStripButton3.AutoSize = False
+        Me.ToolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.ToolStripButton3.Image = CType(resources.GetObject("ToolStripButton3.Image"), System.Drawing.Image)
+        Me.ToolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.ToolStripButton3.Name = "ToolStripButton3"
+        Me.ToolStripButton3.Size = New System.Drawing.Size(50, 50)
+        Me.ToolStripButton3.Text = "ToolStripButton3"
+        '
+        '_Toolbar1_Button6
+        '
+        Me._Toolbar1_Button6.AutoSize = False
+        Me._Toolbar1_Button6.Name = "_Toolbar1_Button6"
+        Me._Toolbar1_Button6.Size = New System.Drawing.Size(166, 39)
+        '
         'Image1
         '
         Me.Image1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Image1.Image = CType(resources.GetObject("Image1.Image"), System.Drawing.Image)
-        Me.Image1.Location = New System.Drawing.Point(200, 16)
+        Me.Image1.Location = New System.Drawing.Point(199, 24)
         Me.Image1.Name = "Image1"
         Me.Image1.Size = New System.Drawing.Size(314, 371)
         Me.Image1.TabIndex = 3
@@ -1299,34 +1314,15 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mnuFile_1, Me._mnuInput_2, Me._mnuOperatons_3, Me._mnuAdministrative_6, Me._mnuReports_4, Me._mnuSettings_0, Me._mnuHelp_6})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(720, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(719, 24)
         Me.MainMenu1.TabIndex = 4
-        '
-        'ToolStripButton1
-        '
-        Me.ToolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton1.Image = CType(resources.GetObject("ToolStripButton1.Image"), System.Drawing.Image)
-        Me.ToolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton1.Name = "ToolStripButton1"
-        Me.ToolStripButton1.Size = New System.Drawing.Size(164, 20)
-        Me.ToolStripButton1.Text = "ToolStripButton1"
-        '
-        'ToolStripButton2
-        '
-        Me.ToolStripButton2.AutoSize = False
-        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
-        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton2.Name = "ToolStripButton2"
-        Me.ToolStripButton2.Size = New System.Drawing.Size(64, 64)
-        Me.ToolStripButton2.Text = "ToolStripButton2"
         '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
-        Me.ClientSize = New System.Drawing.Size(720, 417)
+        Me.ClientSize = New System.Drawing.Size(719, 422)
         Me.Controls.Add(Me.pbMain)
         Me.Controls.Add(Me.sbMain)
         Me.Controls.Add(Me.Toolbar1)
@@ -1414,5 +1410,6 @@
     End Sub
     Friend WithEvents ToolStripButton2 As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripButton1 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents ToolStripButton3 As System.Windows.Forms.ToolStripButton
 #End Region 
 End Class
