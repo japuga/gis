@@ -29,8 +29,8 @@ Friend Class frmRepCostContSearch
     Private rsLocal As DataTable
     Private cmdLocal As SqlCommand
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepCostCont As CRPEAuto.Report
+    'Public crysApp As CRPEAuto.Application
+    'Public crysRepCostCont As CRPEAuto.Report
     Private rsReport As DataTable
 	
 	
@@ -835,7 +835,7 @@ ErrorHandler:
 
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
-            rptDoc.Load(strReportsSysPath & "rptCostCont2013A.rpt")
+            rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
         Catch ex As Exception
             MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
@@ -917,8 +917,8 @@ ErrorHandler:
         'cd.CancelError = True
         'cd.ShowPrinter
 
-        crysRepCostCont.ProgressDialogEnabled = True
-        crysRepCostCont.Preview()
+        'crysRepCostCont.ProgressDialogEnabled = True
+        'crysRepCostCont.Preview()
 
         'ErrorHandler:
         'If Err.Number = cdlCancel Then

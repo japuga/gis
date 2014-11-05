@@ -469,7 +469,6 @@ C:\glm\vbnet\pGlmSys.NET\obj\Debug\Interop.VBIDE.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\AxInterop.MSComCtl2.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\AxInterop.MSDataGridLib.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\GIS.vbproj.ResolveComReference.cache
-C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.rptCostCont.rpt
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.frmAbout.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.frmAccess.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.frmAccount.resources
