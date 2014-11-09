@@ -4,31 +4,29 @@ Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
 Friend Class frmStoreEntry
 	Inherits System.Windows.Forms.Form
-    Private rsTmp As SqlDataReader
-	Private cmLocal As ADODB.Command
-    Private rsLocal As SqlDataReader
-	
-	
-	'UPGRADE_WARNING: Event ckSame.CheckStateChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub ckSame_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles ckSame.CheckStateChanged
-		If ckSame.CheckState = System.Windows.Forms.CheckState.Checked Then
-			cmdAddress.Enabled = False
-			If Not setBillingAsPhysicalAddress Then
-				ckSame.CheckState = System.Windows.Forms.CheckState.Unchecked
-			End If
-		Else
-			cmdAddress.Enabled = True
-			
-			gStoreRecord.nStoreAddressSeq = 0
-			
-			Me.txtStoreBillAddress.Text = ""
-			Me.txtStoreBillCity.Text = ""
-			Me.txtStoreBillState.Text = ""
-			Me.txtStoreBillZip.Text = ""
-		End If
-		
-		
-	End Sub
+    Private rsTmp As DataTable
+    Private cmLocal As SqlCommand
+    Private rsLocal As DataTable
+
+    Private Sub ckSame_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles ckSame.CheckStateChanged
+        If ckSame.CheckState = System.Windows.Forms.CheckState.Checked Then
+            cmdAddress.Enabled = False
+            If Not setBillingAsPhysicalAddress() Then
+                ckSame.CheckState = System.Windows.Forms.CheckState.Unchecked
+            End If
+        Else
+            cmdAddress.Enabled = True
+
+            gStoreRecord.nStoreAddressSeq = 0
+
+            Me.txtStoreBillAddress.Text = ""
+            Me.txtStoreBillCity.Text = ""
+            Me.txtStoreBillState.Text = ""
+            Me.txtStoreBillZip.Text = ""
+        End If
+
+
+    End Sub
 	
 	Private Sub cmdAddress_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdAddress.Click
 		
@@ -94,38 +92,35 @@ Friend Class frmStoreEntry
 		'    End If
 		'End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStorePhone1.Text) = 0 Then
-			sStorePhone1 = ""
-		Else
-			sStorePhone1 = mtxtStorePhone1.Text
-		End If
+        If getPhoneNumberLen(mtxtStorePhone1.Text) = 0 Then
+            sStorePhone1 = ""
+        Else
+            sStorePhone1 = mtxtStorePhone1.Text
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStorePhone2.Text) = 0 Then
-			sStorePhone2 = ""
-		Else
-			sStorePhone2 = mtxtStorePhone2.Text
-		End If
+        If getPhoneNumberLen(mtxtStorePhone2.Text) = 0 Then
+            sStorePhone2 = ""
+        Else
+            sStorePhone2 = mtxtStorePhone2.Text
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStoreFax1.Text) = 0 Then
-			sStoreFax1 = ""
-		Else
-			sStoreFax1 = mtxtStoreFax1.Text
-		End If
+        If getPhoneNumberLen(mtxtStoreFax1.Text) = 0 Then
+            sStoreFax1 = ""
+        Else
+            sStoreFax1 = mtxtStoreFax1.Text
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStoreFax2.Text) = 0 Then
-			sStoreFax2 = ""
-		Else
-			sStoreFax2 = mtxtStoreFax2.Text
-		End If
+        If getPhoneNumberLen(mtxtStoreFax2.Text) = 0 Then
+            sStoreFax2 = ""
+        Else
+            sStoreFax2 = mtxtStoreFax2.Text
+        End If
 		
 		If Len(txtOccupants.Text) = 0 Then
 			nOccupants = 0
 		Else
-			nOccupants = Int(CDbl(txtOccupants.Text))
+            'nOccupants = Int(CDbl(txtOccupants.Text))
+            nOccupants = Int(Convert.ToDouble(txtOccupants.Text))
 		End If
 		
 		Select Case General.gbMode
@@ -142,13 +137,12 @@ Friend Class frmStoreEntry
 				
 				
 				
-				'msgBox sStmt
-				With cmLocal
-					.let_ActiveConnection(cn)
-					.CommandType = ADODB.CommandTypeEnum.adCmdText
-					.CommandText = sStmt
-					.Execute(nCount)
-				End With
+                'msgBox sStmt
+                cmLocal = cn.CreateCommand
+                cmLocal.CommandType = CommandType.Text
+                cmLocal.CommandText = sStmt
+                nCount = cmLocal.ExecuteNonQuery()
+				
 				If nCount = 1 Then
 					'Registro salvado en BD.
 					'Refrescar datagrid con nuevos datos
@@ -167,38 +161,31 @@ Friend Class frmStoreEntry
 				
 				
 				sStmt = "UPDATE store SET " & "store_name = '" & Trim(txtStoreName.Text) & "'," & "store_address = '" & Trim(txtStoreAddress.Text) & "', " & "store_city = '" & Trim(txtStoreCity.Text) & "', " & "state_id = '" & cbState.Text & "', " & "store_zip = '" & Trim(txtStoreZip.Text) & " ', " & "store_phone1 = '" & Trim(sStorePhone1) & "', " & "store_phone2 = '" & Trim(sStorePhone2) & "', " & "store_fax1 = '" & Trim(sStoreFax1) & "', " & "store_fax2 ='" & Trim(sStoreFax2) & "', " & "store_contact = '" & Trim(txtStoreContact.Text) & "', " & "store_status = '" & VB.Left(cbStoreStatus.Text, 1) & "', " & "store_folder = '" & Trim(txtStoreFolder.Text) & "', " & "store_co_code = '" & Trim(txtStoreCoCode.Text) & "', " & "store_occupants = " & Str(nOccupants) & ", " & "store_billing_contact = '" & Trim(quotation_mask((txtBillingContact.Text))) & "', " & "store_billing_account = '" & Trim(quotation_mask((txtBillingAccount.Text))) & "', " & "lf_group = '" & txtLfGroup.Text & "', " & "store_market = '" & txtStoreMarket.Text & "', " & "store_sold = '" & txtStoreSold.Text & "' "
-				
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				'UPGRADE_WARNING: Couldn't resolve default property of object dtStoreSoldDate.value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				If dtStoreSoldDate.value Is System.DBNull.Value Then
-					sStmt = sStmt & ", store_sold_date = '" & CStr(dtStoreSoldDate.value) & "'"
-				End If
-				
-				
-				If gStoreRecord.nStoreAddressSeq > 0 Then
-					sStmt = sStmt & "," & "store_address_seq = " & Str(gStoreRecord.nStoreAddressSeq)
-				Else
-					sStmt = sStmt & "," & "store_address_seq = null "
-				End If
-				
-				sWhere = " WHERE store_id =" & Str(gStoreRecord.nStoreId) & " AND cust_id ='" & Trim(txtCustId.Text) & "'"
-				
-				sStmt = sStmt & sWhere
-				
-				With cmLocal
-					.let_ActiveConnection(cn)
-					.CommandType = ADODB.CommandTypeEnum.adCmdText
-					.CommandText = sStmt
-					.Execute(nCount)
-				End With
-				If nCount >= 1 Then
-					'Registro salvado en BD.
-					'Refrescar datagrid con nuevos datos
-					General.gbMode = General.modo.SavedRecord
-				End If
-				MsgBox("Store was successfully updated!", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				
-		End Select
+
+                'If dtStoreSoldDate.Value Like System.DBNull.Value Then
+                sStmt = sStmt & ", store_sold_date = '" & CStr(dtStoreSoldDate.Value) & "'"
+
+                If gStoreRecord.nStoreAddressSeq > 0 Then
+                    sStmt = sStmt & "," & "store_address_seq = " & Str(gStoreRecord.nStoreAddressSeq)
+                Else
+                    sStmt = sStmt & "," & "store_address_seq = null "
+                End If
+
+                sWhere = " WHERE store_id =" & Str(gStoreRecord.nStoreId) & " AND cust_id ='" & Trim(txtCustId.Text) & "'"
+
+                sStmt = sStmt & sWhere
+                cmLocal.CommandType = CommandType.Text
+                cmLocal.CommandText = sStmt
+                nCount = cmLocal.ExecuteNonQuery()
+
+                If nCount >= 1 Then
+                    'Registro salvado en BD.
+                    'Refrescar datagrid con nuevos datos
+                    General.gbMode = General.modo.SavedRecord
+                End If
+                MsgBox("Store was successfully updated!", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+
+        End Select
 		Me.Close()
 	End Sub
 	
@@ -213,68 +200,56 @@ Friend Class frmStoreEntry
 		'Store Number
 		nLength = get_column("store", "store_number")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreNumber.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreNumber.Maxlength = nLength
+            txtStoreNumber.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreNumber.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreNumber.Maxlength = 20
+            txtStoreNumber.MaxLength = 20
 		End If
 		
 		'Store Name
 		nLength = get_column("store", "store_name")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreName.Maxlength = nLength
+            txtStoreName.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreName.Maxlength = 30
+            txtStoreName.MaxLength = 30
 		End If
 		
 		'Store Address
 		nLength = get_column("store", "store_address")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreAddress.Maxlength = nLength
+            txtStoreAddress.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreAddress.Maxlength = 80
+            txtStoreAddress.MaxLength = 80
 		End If
 		
 		'Store City
 		nLength = get_column("store", "store_city")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreCity.Maxlength = nLength
+            txtStoreCity.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreCity.Maxlength = 30
+            txtStoreCity.MaxLength = 30
 		End If
 		
 		'Store Folder
 		nLength = get_column("store", "store_folder")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreFolder.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreFolder.Maxlength = nLength
+            txtStoreFolder.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreFolder.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreFolder.Maxlength = 20
+            txtStoreFolder.MaxLength = 20
 		End If
 		
 		'Store Company Code
 		nLength = get_column("store", "store_co_code")
 		If nLength > 0 Then
-			'UPGRADE_WARNING: TextBox property txtStoreCoCode.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreCoCode.Maxlength = nLength
+            txtStoreCoCode.MaxLength = nLength
 		Else
-			'UPGRADE_WARNING: TextBox property txtStoreCoCode.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtStoreCoCode.Maxlength = 20
+            txtStoreCoCode.MaxLength = 20
 		End If
 		
 		
 	End Sub
 	Private Sub init_vars(ByRef sOption As General.modo)
 
-		cmLocal = New ADODB.Command
+        cmLocal = cn.CreateCommand
 		
 		On Error GoTo ErrorHandler
 		
@@ -306,7 +281,7 @@ Friend Class frmStoreEntry
 		txtStoreBillState.ReadOnly = True
 		'jp.E011.end
 		
-		dtStoreSoldDate.CheckBox = True
+        dtStoreSoldDate.ShowCheckBox = True
 		
 		
 		Select Case sOption
@@ -315,8 +290,9 @@ Friend Class frmStoreEntry
 				cbState.SelectedIndex = 0
 				cbStoreStatus.SelectedIndex = 0
 				
-				dtStoreSoldDate.Enabled = False
-				
+                dtStoreSoldDate.Enabled = False
+                txtStoreNumber.Enabled = True
+                set_store_info()
 				
 				
 			Case General.modo.UpdateRecord
@@ -324,7 +300,8 @@ Friend Class frmStoreEntry
 				set_combo(cbState, gStoreRecord.sStateId)
 				set_store_info()
 				'Este campo no se puede Actualizar
-				txtStoreNumber.Enabled = False
+                txtStoreNumber.Enabled = False
+                dtStoreSoldDate.Enabled = True
 		End Select
 		Exit Sub
 		
@@ -362,25 +339,29 @@ ErrorHandler:
 		'End If
 		
 		If Len(gStoreRecord.sStorePhone1) = 0 Then
-			'Nothing
+            'Nothing
+            mtxtStorePhone1.Text = ""
 		Else
 			mtxtStorePhone1.Text = gStoreRecord.sStorePhone1
 		End If
 		
 		If Len(gStoreRecord.sStorePhone2) = 0 Then
-			'Nothing
+            'Nothing
+            mtxtStorePhone2.Text = ""
 		Else
 			mtxtStorePhone2.Text = gStoreRecord.sStorePhone2
 		End If
 		
 		If Len(gStoreRecord.sStoreFax1) = 0 Then
-			'Nothing
+            'Nothing
+            mtxtStoreFax1.Text = ""
 		Else
 			mtxtStoreFax1.Text = gStoreRecord.sStoreFax1
 		End If
 		
 		If Len(gStoreRecord.sStoreFax2) = 0 Then
-			'Nothing
+            'Nothing
+            mtxtStoreFax2.Text = ""
 		Else
 			mtxtStoreFax2.Text = gStoreRecord.sStoreFax2
 		End If
@@ -407,17 +388,19 @@ ErrorHandler:
 		txtStoreMarket.Text = gStoreRecord.sStoreMarket
 		
 		txtStoreSold.Text = gStoreRecord.sStoreSold
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If Not (String.IsNullOrEmpty(gStoreRecord.dtStoreSoldDate.ToString)) Then
-            dtStoreSoldDate.Value = gStoreRecord.dtStoreSoldDate
-        End If
-		
-		set_store_address_info(gStoreRecord.nStoreAddressSeq)
-		
-		
-		
-	End Sub
+
+        Try
+            If Not (String.IsNullOrEmpty(gStoreRecord.dtStoreSoldDate.ToString)) Then
+                dtStoreSoldDate.Value = gStoreRecord.dtStoreSoldDate
+            End If
+        Catch e As Exception
+
+        End Try
+        set_store_address_info(gStoreRecord.nStoreAddressSeq)
+
+
+
+    End Sub
 	Private Sub set_store_address_info(ByRef nStoreAddressSeq As Short)
         Dim cmd As SqlCommand = cn.CreateCommand()
 		sStmt = "SELECT a.address, a.city, a.state_id, a.zip" & " FROM address_catalog a, store_address b " & " WHERE b.store_address_seq = " & Str(nStoreAddressSeq) & " AND b.address_seq = a.address_seq"
@@ -425,10 +408,15 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         If rs.Rows.Count > 0 Then
-            txtStoreBillAddress.Text = rs.Rows(0).Item("address").Value
-            txtStoreBillCity.Text = rs.Rows(0).Item("city").Value
-            txtStoreBillState.Text = rs.Rows(0).Item("state_id").Value
-            txtStoreBillZip.Text = rs.Rows(0).Item("zip").Value
+            txtStoreBillAddress.Text = rs.Rows(0).Item("address")
+            txtStoreBillCity.Text = rs.Rows(0).Item("city")
+            txtStoreBillState.Text = rs.Rows(0).Item("state_id")
+            txtStoreBillZip.Text = rs.Rows(0).Item("zip")
+        Else
+            txtStoreBillAddress.Text = ""
+            txtStoreBillCity.Text = ""
+            txtStoreBillState.Text = ""
+            txtStoreBillZip.Text = ""
         End If
 
 	End Sub
@@ -619,8 +607,7 @@ ErrorHandler:
 	
 	'TRUE if all fields have valid data
 	Private Function val_fields(ByRef sOption As General.modo) As Boolean
-		Dim n As Short
-		
+
 		'Store Number
 		If Len(Trim(txtStoreNumber.Text)) = 0 Or txtStoreNumber.Text = "" Then
 			MsgBox("Store Number should not be null.", MsgBoxStyle.OKOnly, "GLM Warning")
@@ -680,99 +667,94 @@ ErrorHandler:
 		'End If
 		
 		'Phone
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStorePhone1.Text) = 0 And Len(mtxtStorePhone2.Text) = 0 Then
-			MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtStorePhone1.Text) = 0 And getPhoneNumberLen(mtxtStorePhone2.Text) = 0 Then
+            MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStorePhone1.Text) > 0 And Len(mtxtStorePhone1.Text) < 10 Then
-			MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtStorePhone1.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtStorePhone1.Text) >= 0 And getPhoneNumberLen(mtxtStorePhone1.Text) < 10 Then
+            MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtStorePhone1.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStorePhone2.Text) > 0 And Len(mtxtStorePhone2.Text) < 10 Then
-			MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtStorePhone2.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtStorePhone2.Text) >= 0 And getPhoneNumberLen(mtxtStorePhone2.Text) < 10 Then
+            MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtStorePhone2.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStoreFax1.Text) > 0 And Len(mtxtStoreFax1.Text) < 10 Then
-			MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtStoreFax1.Focus()
-			val_fields = False
-			Exit Function
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtStoreFax2.Text) > 0 And Len(mtxtStoreFax2.Text) < 10 Then
-			MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtStoreFax2.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtStoreFax1.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax1.Text) < 10 Then
+            MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtStoreFax1.Focus()
+            val_fields = False
+            Exit Function
+        End If
+
+        If getPhoneNumberLen(mtxtStoreFax2.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax2.Text) < 10 Then
+            MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtStoreFax2.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
 		
 		
 		'Occupants
-		On Error GoTo ErrorHandler
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		Dim nOccupants As Short
-		If Not IsDbNull(txtOccupants.Text) And Len(txtOccupants.Text) > 0 Then
-			nOccupants = Int(CDbl(txtOccupants.Text))
-			If nOccupants < 0 Or nOccupants > 10000 Then
-				MsgBox("Invalid number, the number is either negative or too big.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-				txtOccupants.Focus()
-				val_fields = False
-				Exit Function
-			End If
-			
-		End If
-		
-		'Billing info
-		If Len(txtBillingContact.Text) > 60 Then
-			MsgBox("Billing Contact length exceeded (> 60)", MsgBoxStyle.OKOnly, "GLM Warning")
-			txtBillingContact.Focus()
-			val_fields = False
-			Exit Function
-		End If
-		
-		If Len(txtBillingAccount.Text) > 30 Then
-			MsgBox("Billing Account length exceeded (> 30)", MsgBoxStyle.OKOnly, "GLM Warning")
-			txtBillingAccount.Focus()
-			val_fields = False
-			Exit Function
-		End If
-		
-		
-		val_fields = True 'Exito
-		Exit Function
-		
-ErrorHandler: 
-		
-		If Err.Number = 13 Then
-			MsgBox("Invalid number.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			txtOccupants.Focus()
-		Else
-			MsgBox("Unexpected Error:" & Str(Err.Number) & ":" & Err.Description)
-			write_msg(Me.Name, "val_fields")
-		End If
-		
-		val_fields = False
-		Exit Function
-		
-		
-		
-		
-	End Function
+        Try
+
+            Dim nOccupants As Short
+            If Not IsDBNull(txtOccupants.Text) And Len(txtOccupants.Text) > 0 Then
+                nOccupants = Int(CDbl(txtOccupants.Text))
+                If nOccupants < 0 Or nOccupants > 10000 Then
+                    MsgBox("Invalid number, the number is either negative or too big.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                    txtOccupants.Focus()
+                    val_fields = False
+                    Exit Function
+                End If
+
+            End If
+
+            'Billing info
+            If Len(txtBillingContact.Text) > 60 Then
+                MsgBox("Billing Contact length exceeded (> 60)", MsgBoxStyle.OkOnly, "GLM Warning")
+                txtBillingContact.Focus()
+                val_fields = False
+                Exit Function
+            End If
+
+            If Len(txtBillingAccount.Text) > 30 Then
+                MsgBox("Billing Account length exceeded (> 30)", MsgBoxStyle.OkOnly, "GLM Warning")
+                txtBillingAccount.Focus()
+                val_fields = False
+                Exit Function
+            End If
+
+
+            val_fields = True 'Exito
+            Exit Function
+
+        Catch ex As Exception
+
+            If Err.Number = 13 Then
+                MsgBox("Invalid number.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                txtOccupants.Focus()
+            Else
+
+                MsgBox("Unexpected Error:" & ex.Message)
+                write_msg(Me.Name, "val_fields")
+            End If
+
+            val_fields = False
+            Exit Function
+
+        End Try
+
+
+    End Function
 	'Ubica el combo apuntando al State
 	Private Sub set_combo(ByRef cb As System.Windows.Forms.ComboBox, ByRef sState As String)
 		Dim bOk As Boolean
@@ -802,11 +784,10 @@ ErrorHandler:
 		
         dt = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If dt.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsTmp.Item(0).Value) Then
+            If IsDBNull(dt.Rows(0).Item(0)) Then
                 nStoreId = 1
             Else
-                nStoreId = rsTmp.Item(0).Value + 1
+                nStoreId = dt.Rows(0).Item(0) + 1
             End If
         Else
             MsgBox("There was an error when accesing Store Table.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
@@ -880,7 +861,7 @@ ErrorHandler:
         'rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If dt.Rows.Count > 0 Then
-            nGroupSeq = dt.Rows(0).Item("group_seq").Value
+            nGroupSeq = dt.Rows(0).Item("group_seq")
         Else
             save_error(Me.Name, "insert_store_group: Group ALL not found in Groups , cust:" & sCustId)
             insert_store_group = False
@@ -899,12 +880,10 @@ ErrorHandler:
             'Do nothing store is already part of GroupStore ALL
         Else
             sStmt = "INSERT INTO GroupStore (group_seq, " & "cust_id, store_id) VALUES " & "(" & Str(nGroupSeq) & "," & "'" & Trim(sCustId) & "'," & Str(nStoreId) & ")"
-            With cmLocal
-                .let_ActiveConnection(cn)
-                .CommandType = ADODB.CommandTypeEnum.adCmdText
-                .CommandText = sStmt
-                .Execute(nCount)
-            End With
+            cmLocal.CommandType = CommandType.Text
+            cmLocal.CommandText = sStmt
+            nCount = cmLocal.ExecuteNonQuery()
+            
             If nCount > 0 Then
                 'ok
             Else
@@ -963,7 +942,7 @@ ErrorHandler:
             txtStoreBillState.Text = cbState.Text
             txtStoreBillZip.Text = txtStoreZip.Text
 
-            gStoreRecord.nStoreAddressSeq = rs.Rows(0).Item("store_address_seq").value
+            gStoreRecord.nStoreAddressSeq = rs.Rows(0).Item("store_address_seq")
 
             setBillingAsPhysicalAddress = True
             Exit Function

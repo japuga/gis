@@ -54,29 +54,32 @@ Module DBFunctions
 	'Valores de Retorno: 0 si aplicacion no debe consultar base para obtener esta informacion
 	'                   <0 si no se obtuvo la longitud del campo solicitado.
 	Public Function get_column(ByRef sTabname As String, ByRef sColname As String) As Short
-		On Error GoTo ErrorHandler
-		
-		If gGlobSettings.bFieldsFromDB = False Then
-			get_column = 0
-		End If
-		
-        cmSeed = cn.CreateCommand '.let_ActiveConnection(cn)
-        cmSeed.CommandType = CommandType.StoredProcedure
-		cmSeed.CommandText = "usp_get_column"
-		'Obtengo los parametros del procedure de la base
+        Try
 
-		cmSeed.Parameters("@sTabname").Value = sTabname
-        cmSeed.Parameters("@sColname").Value = sColname
-        cmSeed.Parameters("@nColLength").Direction = ParameterDirection.Output
-        cmSeed.ExecuteNonQuery()
-		get_column = cmSeed.Parameters("@nColLength").Value
-		Exit Function
-		
-ErrorHandler: 
-		get_column = -1
-		save_error("DBFunctions", "get_column")
-		
-	End Function
+            If gGlobSettings.bFieldsFromDB = False Then
+                get_column = 0
+            End If
+
+            cmSeed = cn.CreateCommand
+            cmSeed.CommandType = CommandType.StoredProcedure
+            cmSeed.CommandText = "usp_get_column"
+            SqlCommandBuilder.DeriveParameters(cmSeed)
+
+            cmSeed.Parameters("@sTabname").Value = sTabname
+            cmSeed.Parameters("@sColname").Value = sColname
+            cmSeed.Parameters("@nColLength").Direction = ParameterDirection.Output
+
+            cmSeed.ExecuteNonQuery()
+            get_column = cmSeed.Parameters("@nColLength").Value
+
+            Exit Function
+
+        Catch e As Exception
+            get_column = -1
+            save_error("DBFunctions", "get_column")
+        End Try
+
+    End Function
 	'Retorna el tipo de usuario
 	Public Function get_user_type(ByRef sUserName As String) As String
 		
@@ -181,7 +184,6 @@ ErrorHandler:
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
             If IsDBNull(rs.Rows(0).Item(0)) Then
                 nSeq = 1
             Else
@@ -199,18 +201,23 @@ ErrorHandler:
 		
 	End Function
 	
-	Public Sub create_param_rs(ByRef nombreParametro As String, ByRef tipo As ADODB.DataTypeEnum, ByRef destino As ADODB.ParameterDirectionEnum, ByRef valor As Object, ByRef raCmd As ADODB.Command, Optional ByRef tamanio As Integer = 0)
-		Dim raPrm As ADODB.Parameter
-		
-		If raCmd Is Nothing Then
-			raCmd = New ADODB.Command
-		End If
-		
-		raPrm = raCmd.CreateParameter(nombreParametro, tipo, destino, tamanio)
-		raCmd.Parameters.Append(raPrm)
-		'UPGRADE_WARNING: Couldn't resolve default property of object valor. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		raPrm.value = valor
-	End Sub
+    Public Sub create_param_rs(ByRef nombreParametro As String, ByRef tipo As SqlDbType, ByRef destino As ParameterDirection, ByRef valor As Object, ByRef raCmd As SqlCommand, Optional ByRef tamanio As Integer = 0)
+        Dim raPrm As SqlParameter
+
+        If raCmd Is Nothing Then
+            raCmd = cn.CreateCommand
+        End If
+
+        raPrm = raCmd.CreateParameter()
+        raPrm.ParameterName = nombreParametro
+
+        raPrm.SqlDbType = tipo
+        raPrm.Direction = destino
+        raPrm.Size = tamanio
+        raCmd.Parameters.Add(raPrm)
+
+        raPrm.Value = valor
+    End Sub
 	
 	Public Sub load_cb_customer(ByRef cbCustName As System.Windows.Forms.ComboBox, ByRef cbCustId As System.Windows.Forms.ComboBox, ByRef bShowAll As Boolean)
 		sStmt = "SELECT DISTINCT suser_data.cust_id, customer.cust_name " & "FROM customer, suser_data " & "WHERE customer.cust_id = suser_data.cust_id " & "AND suser_data.suser_name='" & Trim(gsUser) & "'" & " ORDER BY customer.cust_name"
@@ -353,66 +360,67 @@ ErrorHandler:
 	End Sub
 	
 	Public Function insertAddressCatalog(ByRef sCustId As String, ByRef nStoreId As Short, ByRef sAddress As String, ByRef sCity As String, ByRef sStateId As String, ByRef sZip As String) As Short
-		
-		Dim nRecords As Short
-        Dim nDbTran As sqltransaction
-        Dim cmLocal As sqlcommand
-		Dim nAddressSeq As Short
-		Dim nStoreAddressSeq As Short
-		
-		insertAddressCatalog = 0
-		
-		nAddressSeq = get_table_sequence("address_catalog", "address_seq")
-		
-		nStoreAddressSeq = get_table_sequence("store_address", "store_address_seq")
-		
-		sStmt = "INSERT INTO address_catalog (address_seq, context_table, address, " & "   city, state_id, zip) " & " VALUES (?, ?, ?, ?, ?, ?) "
-		
+
+        Dim nRecords As Short
+        Dim nDbTran As SqlTransaction
+        Dim cmLocal As SqlCommand
+        Dim nAddressSeq As Short
+        Dim nStoreAddressSeq As Short
+
+        insertAddressCatalog = 0
+
+        nAddressSeq = get_table_sequence("address_catalog", "address_seq")
+
+        nStoreAddressSeq = get_table_sequence("store_address", "store_address_seq")
+
+        sStmt = "INSERT INTO address_catalog (address_seq, context_table, address, " & "   city, state_id, zip) " & _
+                " VALUES (@address_seq, @context_table, @address, @city, @state_id, @zip) "
+
         nDbTran = cn.BeginTransaction '.BeginTransaction()
-		
+
         cmLocal = cn.CreateCommand
-		
-        create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
-        create_param_rs("context_table", DbType.String, ParameterDirection.Input, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100)
-        create_param_rs("address", DbType.String, ParameterDirection.Input, quotation_mask(Trim(sAddress)), cmLocal, 80)
-        create_param_rs("city", DbType.String, ParameterDirection.Input, quotation_mask(Trim(sCity)), cmLocal, 40)
-        create_param_rs("state_id", SqlDbType.VarChar, ParameterDirection.Input, sStateId, cmLocal, 2)
-        create_param_rs("zip", DbType.String, ParameterDirection.Input, sZip, cmLocal, 20)
-		
-		
-		
-
+        cmLocal.Transaction = nDbTran
         cmLocal.CommandType = CommandType.Text
-		cmLocal.CommandText = sStmt
-		
+        cmLocal.CommandText = sStmt
+
+        create_param_rs("address_seq", SqlDbType.Int, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
+        create_param_rs("context_table", SqlDbType.VarChar, ParameterDirection.Input, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100)
+        create_param_rs("address", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(sAddress)), cmLocal, 80)
+        create_param_rs("city", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(sCity)), cmLocal, 40)
+        create_param_rs("state_id", SqlDbType.VarChar, ParameterDirection.Input, sStateId, cmLocal, 2)
+        create_param_rs("zip", SqlDbType.VarChar, ParameterDirection.Input, sZip, cmLocal, 20)
+
+
+
         nRecords = cmLocal.ExecuteNonQuery()
-		If nRecords > 0 Then
-			
-			sStmt = "INSERT INTO store_address(store_address_seq, cust_id, " & "store_id, address_seq) VALUES (?, ?, ?, ? )"
-			
-			'UPGRADE_NOTE: Object cmLocal may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+        If nRecords > 0 Then
 
-            create_param_rs("store_address_seq", DbType.Int32, ParameterDirection.Input, nStoreAddressSeq, cmLocal, 4)
-            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, sCustId, cmLocal, 2)
-			'jp.begin.2010.02.16 - Address maintenance
-            create_param_rs("store_id", DbType.Int32, ParameterDirection.Input, nStoreId, cmLocal, 4)
-			'create_param_rs "store_id", adInteger, adParamInput, gStoreAddressRecord.nStoreId, cmLocal, 4
-			'jp.end.2010.02.16
-            create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
-			
-			
+            sStmt = "INSERT INTO store_address(store_address_seq, cust_id, store_id, address_seq) " & _
+                                    "VALUES (@store_address_seq, @cust_id , @store_id, @address_seq )"
+            'reinitialize the variable
+            cmLocal = cn.CreateCommand
+            cmLocal.Transaction = nDbTran
             cmLocal.CommandType = CommandType.Text
-			cmLocal.CommandText = sStmt
-            nRecords = cmLocal.ExecuteNonQuery()
-			
-			If nRecords > 0 Then
+            cmLocal.CommandText = sStmt
 
-				
+            create_param_rs("store_address_seq", SqlDbType.Int, ParameterDirection.Input, nStoreAddressSeq, cmLocal, 4)
+            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, sCustId, cmLocal, 2)
+            'jp.begin.2010.02.16 - Address maintenance
+            create_param_rs("store_id", SqlDbType.Int, ParameterDirection.Input, nStoreId, cmLocal, 4)
+            'create_param_rs "store_id", adInteger, adParamInput, gStoreAddressRecord.nStoreId, cmLocal, 4
+            'jp.end.2010.02.16
+            create_param_rs("address_seq", SqlDbType.Int, ParameterDirection.Input, nAddressSeq, cmLocal, 4)
+
+            nRecords = cmLocal.ExecuteNonQuery()
+
+            If nRecords > 0 Then
+
+
                 nDbTran.Commit()
-				insertAddressCatalog = nStoreAddressSeq
-				
-				Exit Function
-			Else
+                insertAddressCatalog = nStoreAddressSeq
+
+                Exit Function
+            Else
 
 
                 nDbTran.Rollback()
@@ -425,10 +433,10 @@ ErrorHandler:
 
             Exit Function
         End If
-			
-			
 
-	End Function
+
+
+    End Function
 	
     Public Function getPeriodDatesStr(ByRef sCustId As String, ByRef nPeriodSeq As Short) As gDumpUDT
         getPeriodDatesStr = New gDumpUDT

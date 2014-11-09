@@ -101,7 +101,7 @@
 		Me.Toolbar1.Size = New System.Drawing.Size(481, 44)
 		Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
 		Me.Toolbar1.TabIndex = 0
-		Me.Toolbar1.ImageList = ImageList2
+        'Me.Toolbar1.ImageList = ImageList2
 		Me.Toolbar1.Name = "Toolbar1"
 		Me._Toolbar1_Button4.Size = New System.Drawing.Size(40, 39)
 		Me._Toolbar1_Button4.AutoSize = False

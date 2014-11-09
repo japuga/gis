@@ -1,8 +1,9 @@
 Option Strict Off
 Option Explicit On
+Imports System.Data.SqlClient
 Friend Class frmStoreAddressEntry
     Inherits System.Windows.Forms.Form
-    Private ImageList2 As New ImageList()
+    'Private ImageList2 As New ImageList()
 	
 	
 	Private Sub frmStoreAddressEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
@@ -23,33 +24,22 @@ Friend Class frmStoreAddressEntry
 		txtCustId.Text = gStoreAddress.sCustId
 		txtStoreNo.Text = gStoreAddress.sStoreNumber
 		
-		'UPGRADE_WARNING: TextBox property txtAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtAddress.Maxlength = get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ADDRESS)
-		'UPGRADE_WARNING: TextBox property txtAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		If txtAddress.Maxlength = 0 Then
-			'UPGRADE_WARNING: TextBox property txtAddress.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtAddress.Maxlength = 80
-		End If
+
+        txtAddress.MaxLength = IIf(get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ADDRESS) < 1, 0, get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ADDRESS))
+        If txtAddress.MaxLength = 0 Then
+            txtAddress.MaxLength = 80
+        End If
 		
-		'UPGRADE_WARNING: TextBox property txtCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtCity.Maxlength = get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_CITY)
-		'UPGRADE_WARNING: TextBox property txtCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		If txtCity.Maxlength = 0 Then
-			'UPGRADE_WARNING: TextBox property txtCity.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtCity.Maxlength = 40
-		End If
+        txtCity.MaxLength = IIf(get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_CITY) < 1, 0, get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_CITY))
+        If txtCity.MaxLength = 0 Then
+            txtCity.MaxLength = 40
+        End If
 		
-		'UPGRADE_WARNING: TextBox property txtZip.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtZip.Maxlength = get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ZIP)
-		'UPGRADE_WARNING: TextBox property txtZip.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		If txtZip.Maxlength = 0 Then
-			'UPGRADE_WARNING: TextBox property txtZip.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtZip.Maxlength = 20
-		End If
-		
-		
-		
-		
+        txtZip.MaxLength = IIf(get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ZIP) < 1, 0, get_column(TABLE_ADDRESS_CATALOG, ADDRESS_CATALOG_ZIP))
+        If txtZip.MaxLength = 0 Then
+            txtZip.MaxLength = 20
+        End If
+
 		'cbState
 		sStmt = "SELECT state_id FROM state ORDER BY state_id"
 		load_cb_query2(cbState, sStmt, 1, True)
@@ -138,132 +128,125 @@ Friend Class frmStoreAddressEntry
 	Private Function save_record() As Boolean
 		Dim nRecords As Short
         'Dim nDbTran As Short
-		Dim cmLocal As ADODB.Command
+        Dim cmLocal As sqlcommand
         'Dim nAddressSeq As Short
 		Dim nStoreAddressSeq As Short
 		
-		
 		save_record = False
 		
-		
-		
-		
 		Select Case gStoreAddress.bFlag
-			Case General.modo.NewRecord
-				If insertAddressCatalog((txtCustId.Text), gStoreAddress.nStoreId, (txtAddress.Text), (txtCity.Text), (cbState.Text), (txtZip.Text)) = True Then
-					save_record = True
-					
-					'load global record to return with new PK
-					set_address_record(nStoreAddressSeq)
-					
-					MsgBox("Address was successfullty saved.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-					Exit Function
-					
-				Else
-					MsgBox("Failed to insert Store-Address reference.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-					Exit Function
-				End If
-				
-				
-				'nAddressSeq = get_table_sequence("address_catalog", "address_seq")
-				
-				'nStoreAddressSeq = get_table_sequence("store_address", "store_address_seq")
-				
-				'sStmt = "INSERT INTO address_catalog (address_seq, context_table, address, " + _
-				''    "   city, state_id, zip) " + _
-				''    " VALUES (?, ?, ?, ?, ?, ?) "
-				
+            Case General.modo.NewRecord
+                nStoreAddressSeq = insertAddressCatalog((txtCustId.Text), gStoreAddress.nStoreId, (txtAddress.Text), (txtCity.Text), (cbState.Text), (txtZip.Text))
+                If nStoreAddressSeq > 0 Then
+                    save_record = True
+
+                    'load global record to return with new PK
+                    set_address_record(nStoreAddressSeq)
+
+                    MsgBox("Address was successfullty saved.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                    Exit Function
+
+                Else
+                    MsgBox("Failed to insert Store-Address reference.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                    Exit Function
+                End If
+
+
+                'nAddressSeq = get_table_sequence("address_catalog", "address_seq")
+
+                'nStoreAddressSeq = get_table_sequence("store_address", "store_address_seq")
+
+                'sStmt = "INSERT INTO address_catalog (address_seq, context_table, address, " + _
+                ''    "   city, state_id, zip) " + _
+                ''    " VALUES (?, ?, ?, ?, ?, ?) "
+
                 'nDbTran = cn.BeginTransaction()
-				
-				'Set cmLocal = New ADODB.Command
-				
-				'create_param_rs "address_seq", adInteger, adParamInput, nAddressSeq, cmLocal, 4
-				'create_param_rs "context_table", adVarChar, adParamInput, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100
-				'create_param_rs "address", adVarChar, adParamInput, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80
-				'create_param_rs "city", adVarChar, adParamInput, quotation_mask(Trim(txtCity.Text)), cmLocal, 40
-				'create_param_rs "state_id", adChar, adParamInput, cbState.Text, cmLocal, 2
-				'create_param_rs "zip", adVarChar, adParamInput, txtZip.Text, cmLocal, 20
-				
-				
-				
-				'cmLocal.ActiveConnection = cn
-				'cmLocal.CommandType = adCmdText
-				'cmLocal.CommandText = sStmt
-				
-				'cmLocal.Execute nRecords
-				'If nRecords > 0 Then
-				
-				'    sStmt = "INSERT INTO store_address(store_address_seq, cust_id, " + _
-				''        "store_id, address_seq) VALUES (?, ?, ?, ? )"
-				
-				'    Set cmLocal = Nothing
-				'    Set cmLocal = New ADODB.Command
-				
-				'    create_param_rs "store_address_seq", adInteger, adParamInput, nStoreAddressSeq, cmLocal, 4
-				'    create_param_rs "cust_id", adChar, adParamInput, txtCustId.Text, cmLocal, 2
-				'jp.begin.2010.02.16 - Address maintenance
-				'    create_param_rs "store_id", adInteger, adParamInput, gStoreAddress.nStoreId, cmLocal, 4
-				'jp.end.2010.02.16
-				'    create_param_rs "address_seq", adInteger, adParamInput, nAddressSeq, cmLocal, 4
-				
-				
-				'    cmLocal.ActiveConnection = cn
-				'    cmLocal.CommandType = adCmdText
-				'    cmLocal.CommandText = sStmt
-				'    cmLocal.Execute nRecords
-				
-				'    If nRecords > 0 Then
-				'        nDbTran = 0
-				
-				'        cn.CommitTrans
-				'        save_record = True
-				
-				'load global record to return with new PK
-				'        set_address_record nStoreAddressSeq
-				
-				'        MsgBox "Address was successfullty saved.", vbOKOnly + vbInformation, "GLM Message"
-				'        Exit Function
-				'    Else
-				'        If nDbTran > 0 Then
-				'            nDbTran = 0
-				'            cn.RollbackTrans
-				'            MsgBox "Failed to insert Store-Address reference.", vbOKOnly + vbCritical, "GLM Message"
-				'            Exit Function
-				'        End If
-				
-				'    End If
-				
-				
-				'Else
-				'    If nDbTran > 0 Then
-				'        nDbTran = 0
-				'        cn.RollbackTrans
-				'        MsgBox "Failed to insert Address in catalog.", vbOKOnly + vbCritical, "GLM Message"
-				'        Exit Function
-				'    End If
-				'End If
+
+                'Set cmLocal = New ADODB.Command
+
+                'create_param_rs "address_seq", adInteger, adParamInput, nAddressSeq, cmLocal, 4
+                'create_param_rs "context_table", adVarChar, adParamInput, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100
+                'create_param_rs "address", adVarChar, adParamInput, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80
+                'create_param_rs "city", adVarChar, adParamInput, quotation_mask(Trim(txtCity.Text)), cmLocal, 40
+                'create_param_rs "state_id", adChar, adParamInput, cbState.Text, cmLocal, 2
+                'create_param_rs "zip", adVarChar, adParamInput, txtZip.Text, cmLocal, 20
+
+
+
+                'cmLocal.ActiveConnection = cn
+                'cmLocal.CommandType = adCmdText
+                'cmLocal.CommandText = sStmt
+
+                'cmLocal.Execute nRecords
+                'If nRecords > 0 Then
+
+                '    sStmt = "INSERT INTO store_address(store_address_seq, cust_id, " + _
+                ''        "store_id, address_seq) VALUES (?, ?, ?, ? )"
+
+                '    Set cmLocal = Nothing
+                '    Set cmLocal = New ADODB.Command
+
+                '    create_param_rs "store_address_seq", adInteger, adParamInput, nStoreAddressSeq, cmLocal, 4
+                '    create_param_rs "cust_id", adChar, adParamInput, txtCustId.Text, cmLocal, 2
+                'jp.begin.2010.02.16 - Address maintenance
+                '    create_param_rs "store_id", adInteger, adParamInput, gStoreAddress.nStoreId, cmLocal, 4
+                'jp.end.2010.02.16
+                '    create_param_rs "address_seq", adInteger, adParamInput, nAddressSeq, cmLocal, 4
+
+
+                '    cmLocal.ActiveConnection = cn
+                '    cmLocal.CommandType = adCmdText
+                '    cmLocal.CommandText = sStmt
+                '    cmLocal.Execute nRecords
+
+                '    If nRecords > 0 Then
+                '        nDbTran = 0
+
+                '        cn.CommitTrans
+                '        save_record = True
+
+                'load global record to return with new PK
+                '        set_address_record nStoreAddressSeq
+
+                '        MsgBox "Address was successfullty saved.", vbOKOnly + vbInformation, "GLM Message"
+                '        Exit Function
+                '    Else
+                '        If nDbTran > 0 Then
+                '            nDbTran = 0
+                '            cn.RollbackTrans
+                '            MsgBox "Failed to insert Store-Address reference.", vbOKOnly + vbCritical, "GLM Message"
+                '            Exit Function
+                '        End If
+
+                '    End If
+
+
+                'Else
+                '    If nDbTran > 0 Then
+                '        nDbTran = 0
+                '        cn.RollbackTrans
+                '        MsgBox "Failed to insert Address in catalog.", vbOKOnly + vbCritical, "GLM Message"
+                '        Exit Function
+                '    End If
+                'End If
 				
 			Case General.modo.UpdateRecord
-				sStmt = "UPDATE address_catalog " & " SET address = ? , city = ?, state_id  = ?, zip = ? " & " WHERE address_seq = ?"
+                sStmt = "UPDATE address_catalog " & " SET address = @address , city = @city, state_id  = @state_id, zip = @zip " _
+                     & " WHERE address_seq = @address_seq"
 				
-				cmLocal = New ADODB.Command
+                cmLocal = cn.CreateCommand
+                cmLocal.CommandType = CommandType.Text
+                cmLocal.CommandText = sStmt
+
+                create_param_rs("address", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80)
+                create_param_rs("city", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtCity.Text)), cmLocal, 40)
+                create_param_rs("state_id", SqlDbType.VarChar, ParameterDirection.Input, (cbState.Text), cmLocal, 2)
+                create_param_rs("zip", SqlDbType.VarChar, ParameterDirection.Input, (txtZip.Text), cmLocal, 20)
 				
-                create_param_rs("address", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtAddress.Text)), cmLocal, 80)
-                create_param_rs("city", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtCity.Text)), cmLocal, 40)
-                create_param_rs("state_id", DbType.String, ParameterDirection.Input, (cbState.Text), cmLocal, 2)
-                create_param_rs("zip", DbType.String, ParameterDirection.Input, (txtZip.Text), cmLocal, 20)
-				
-                create_param_rs("address_seq", DbType.Int32, ParameterDirection.Input, gStoreAddress.nAddressSeq, cmLocal, 4)
+                create_param_rs("address_seq", SqlDbType.Int, ParameterDirection.Input, gStoreAddress.nAddressSeq, cmLocal, 4)
 				'create_param_rs "context_table", adVarChar, adParamInput, ADDRESS_CATALOG_CONTEXT_STORE, cmLocal, 100
-				
-				
-				
-				
-				cmLocal.let_ActiveConnection(cn)
-				cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
-				cmLocal.CommandText = sStmt
-				
-				cmLocal.Execute(nRecords)
+                nRecords = cmLocal.ExecuteNonQuery()
+
 				If nRecords > 0 Then
 					gStoreAddress.bFlag = General.modo.SavedRecord
 					save_record = True
@@ -286,4 +269,16 @@ Friend Class frmStoreAddressEntry
 		gStoreAddress.nStoreAddressSeq = nStoreAddressSeq
 		
 	End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields() Then
+            If save_record() Then
+                Me.Close()
+            End If
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

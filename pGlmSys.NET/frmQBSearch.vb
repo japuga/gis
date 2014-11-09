@@ -54,4 +54,8 @@ Friend Class frmQBSearch
         dgQB.Columns("Addr2").Width = VB6.TwipsToPixelsX(2000)
         dgQB.Columns("City").Width = VB6.TwipsToPixelsX(2000)
 	End Sub
+
+    Private Sub dgQB_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgQB.CellDoubleClick
+        get_data()
+    End Sub
 End Class

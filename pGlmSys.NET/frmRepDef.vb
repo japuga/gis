@@ -3,12 +3,12 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmRepDef
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As sqldatareader
-    Private ImageList2 As New ImageList()
+    Private rsLocal As DataTable
+
 	
-	Private Sub dgRepDef_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgRepDef.DblClick
-		save_repDef((General.modo.UpdateRecord))
-	End Sub
+    Private Sub dgRepDef_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        save_repDef((General.modo.UpdateRecord))
+    End Sub
 	
 	Private Sub frmRepDef_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -21,16 +21,15 @@ Friend Class frmRepDef
 	End Sub
 	Private Sub load_dgRepDef()
         Dim cmd As SqlCommand = cn.CreateCommand()
-		'UPGRADE_NOTE: Object dgRepDef.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+
 		dgRepDef.DataSource = Nothing
 		'Cargar Lista de Reports
 		sStmt = "SELECT rep_no, rep_caption 'Name', " & "rep_sp_name 'Stored Procedure', " & "rep_template_file 'Default Template'," & "table_name " & " FROM repDef " & " ORDER BY rep_caption "
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
             dgRepDef.DataSource = rsLocal
-            'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
             dgRepDef.Refresh()
         Else
             Exit Sub
@@ -84,47 +83,43 @@ Friend Class frmRepDef
 				gRepDef.sTableName = ""
 				
 			Case General.modo.UpdateRecord
-				If dgRepDef.Row < 0 Then
-					MsgBox("You must select a row before attempting this action.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					Exit Function
-				End If
+                If dgRepDef.SelectedRows.Count < 0 Then
+                    MsgBox("You must select a row before attempting this action.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                    Exit Function
+                End If
 				
 				gRepDef.bFlag = General.modo.UpdateRecord
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocal.item("rep_no").Value) Then
-                    gRepDef.nRepNo = rsLocal.item("rep_no").Value
+
+                If Not IsDBNull(rsLocal.Rows(0).Item("rep_no")) Then
+                    gRepDef.nRepNo = rsLocal.Rows(0).Item("rep_no")
                 Else
                     MsgBox("Could not find report number.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 				
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocal.item("Name").Value) Then
-                    gRepDef.sRepCaption = rsLocal.item("Name").Value
+                If Not IsDBNull(rsLocal.Rows(0).Item("Name")) Then
+                    gRepDef.sRepCaption = rsLocal.Rows(0).Item("Name")
                 Else
                     MsgBox("Could not find report name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 				
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocal.item("Stored Procedure").Value) Then
-                    gRepDef.sRepSpName = dgRepDef.Columns("Stored Procedure").Text
+                If Not IsDBNull(rsLocal.Rows(0).Item("Stored Procedure")) Then
+                    gRepDef.sRepSpName = dgRepDef.CurrentRow.Cells("Stored Procedure").Value
                 Else
                     MsgBox("Could not find report stored procedure.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 				
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocal.item("Default Template").Value) Then
-                    gRepDef.sRepTemplateFile = dgRepDef.Columns("Default Template").Text
+                If Not IsDBNull(rsLocal.Rows(0).Item("Default Template")) Then
+                    gRepDef.sRepTemplateFile = dgRepDef.CurrentRow.Cells("Default Template").Value
                 Else
                     MsgBox("Could not find template file.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 				
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocal.item("table_name").Value) Then
-                    gRepDef.sTableName = dgRepDef.Columns("table_name").Text
+                If Not IsDBNull(rsLocal.Rows(0).Item("table_name")) Then
+                    gRepDef.sTableName = dgRepDef.CurrentRow.Cells("table_name").Value
                 Else
                     MsgBox("Could not find data table name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
@@ -143,18 +138,18 @@ ErrorHandler:
 	Private Sub delete_repDef()
         Dim nRecords As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
-		If dgRepDef.SelBookmarks.Count <= 0 Then
-			MsgBox("You must select a row before attempting this action.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		End If
+        If dgRepDef.SelectedRows.Count <= 0 Then
+            MsgBox("You must select a row before attempting this action.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
 		
-		If count_report_template(CShort(dgRepDef.Columns("rep_no").Text)) > 0 Then
-			MsgBox("Found templates for this report, you must delete them " & vbCrLf & "before attempting to delete this record.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-			
-		End If
+        If count_report_template(CShort(dgRepDef.CurrentRow.Cells("rep_no").Value)) > 0 Then
+            MsgBox("Found templates for this report, you must delete them " & vbCrLf & "before attempting to delete this record.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+
+        End If
 		
-		sStmt = "DELETE FROM RepDef WHERE rep_no=" & dgRepDef.Columns("rep_no").Text
+        sStmt = "DELETE FROM RepDef WHERE rep_no=" & dgRepDef.CurrentRow.Cells("rep_no").Value
         cmd.CommandText = sStmt
         nRecords = cmd.ExecuteNonQuery()
 		If nRecords > 0 Then
@@ -174,14 +169,25 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item(0).Value) Then
+            If IsDBNull(rs.Rows(0).Item(0)) Then
                 nRecords = 0
             Else
-                nRecords = rs.Rows(0).Item(0).Value
+                nRecords = rs.Rows(0).Item(0)
             End If
         End If
 
         count_report_template = nRecords
 	End Function
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        save_repDef((General.modo.NewRecord))
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        save_repDef((General.modo.UpdateRecord))
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

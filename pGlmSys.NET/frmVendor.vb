@@ -300,4 +300,12 @@ ErrorHandler:
     Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
         get_data()
     End Sub
+
+
+    Private Sub dgVendor_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgVendor.CellDoubleClick
+        update_vendor()
+        If General.gbVendorMode = General.modo.SavedRecord Then
+            set_dgVendorData(True)
+        End If
+    End Sub
 End Class

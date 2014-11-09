@@ -29,14 +29,11 @@ Friend Class frmInvoicingGroupsEntry
 				
                 rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rs.Rows(0).Item(0).Value) Then
+                If IsDBNull(rs.Rows(0).Item(0)) Then
                     nGroupSeq = 1
                 Else
-                    nGroupSeq = rs.Rows(0).Item(0).Value + 1
+                    nGroupSeq = rs.Rows(0).Item(0) + 1
                 End If
-
-
 
                 sStmt = "INSERT INTO VInvoiceGroup " & " (group_seq, cust_id, group_name, group_status) " & " VALUES (" & Str(nGroupSeq) & "," & "'" & gInvoicingGroup.sCustId & "'," & "'" & Trim(quotation_mask(txtGroupName.Text)) & "'," & "'" & cbGroupStatus.Text & "')"
 
@@ -45,7 +42,6 @@ Friend Class frmInvoicingGroupsEntry
                 cm.CommandText = sStmt
                 nRecords = cm.ExecuteNonQuery()
 
-                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If nRecords > 0 Then
                     gInvoicingGroup.bModo = General.modo.SavedRecord
                     MsgBox("Data was successfully saved.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
@@ -102,8 +98,8 @@ Friend Class frmInvoicingGroupsEntry
 
                 If rs.Rows.Count > 0 Then
                     'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If Not IsDBNull(rs.Rows(0).Item("group_seq").Value) Then
-                        If rs.Rows(0).Item("group_seq").Value > 0 Then
+                    If Not IsDBNull(rs.Rows(0).Item("group_seq")) Then
+                        If rs.Rows(0).Item("group_seq") > 0 Then
                             MsgBox("Group already exists. Please change name.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                             txtGroupName.Focus()
                             Exit Function
