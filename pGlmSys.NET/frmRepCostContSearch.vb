@@ -917,7 +917,7 @@ ErrorHandler:
         'cd.CancelError = True
         'cd.ShowPrinter
 
-        'crysRepCostCont.ProgressDialogEnabled = True
+        ' crysRepCostCont.ProgressDialogEnabled = True
         'crysRepCostCont.Preview()
 
         'ErrorHandler:
