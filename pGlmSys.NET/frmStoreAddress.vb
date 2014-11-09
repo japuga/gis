@@ -38,13 +38,13 @@ Friend Class frmStoreAddress
 	End Sub
 	
 	Private Sub cmdOk_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdOk.Click
-		If dgAddress.SelBookmarks.Count <= 0 Then
-			MsgBox("Select a record before continuing or Press Exit for no selection", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		Else
-			populate_address_var()
-			Me.Close()
-		End If
+        If dgAddress.SelectedRows.Count <= 0 Then
+            MsgBox("Select a record before continuing or Press Exit for no selection", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        Else
+            populate_address_var()
+            Me.Close()
+        End If
 		
 		
 	End Sub
@@ -67,12 +67,12 @@ Friend Class frmStoreAddress
 		gStoreAddress.bAddressFlag = General.addressMode.RecordSelected
 		'gStoreAddress.bFlag = addressMode.RecordSelected
 		
-		gStoreAddress.nStoreAddressSeq = CShort(dgAddress.Columns("store_address_seq").Text)
-		gStoreAddress.nAddressSeq = CShort(dgAddress.Columns("address_seq").Text)
-		gStoreAddress.sAddress = dgAddress.Columns("Address").Text
-		gStoreAddress.sCity = dgAddress.Columns("City").Text
-		gStoreAddress.sState = dgAddress.Columns("State").Text
-		gStoreAddress.sZip = dgAddress.Columns("Zip").Text
+        gStoreAddress.nStoreAddressSeq = CShort(dgAddress.CurrentRow.Cells("store_address_seq").Value)
+        gStoreAddress.nAddressSeq = CShort(dgAddress.CurrentRow.Cells("address_seq").Value)
+        gStoreAddress.sAddress = dgAddress.CurrentRow.Cells("Address").Value
+        gStoreAddress.sCity = dgAddress.CurrentRow.Cells("City").Value
+        gStoreAddress.sState = dgAddress.CurrentRow.Cells("State").Value
+        gStoreAddress.sZip = dgAddress.CurrentRow.Cells("Zip").Value
 		
 		
 		'MsgBox rs("address")
@@ -81,16 +81,16 @@ Friend Class frmStoreAddress
 		
 	End Sub
 	
-	Private Sub dgAddress_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgAddress.ClickEvent
-		
-		Select Case gStoreAddress.bAddressFlag
-			Case General.addressMode.LookupMode
-				cmdOk_Click(cmdOk, New System.EventArgs())
-			Case General.addressMode.InsertUpdateMode
-				edit_address()
-		End Select
-		
-	End Sub
+    Private Sub dgAddress_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+
+        Select Case gStoreAddress.bAddressFlag
+            Case General.addressMode.LookupMode
+                cmdOk_Click(cmdOk, New System.EventArgs())
+            Case General.addressMode.InsertUpdateMode
+                edit_address()
+        End Select
+
+    End Sub
 	
 	Private Sub frmStoreAddress_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -117,14 +117,12 @@ Friend Class frmStoreAddress
 				set_cb_ItemData(cbStoreNo, gStoreAddress.nStoreId)
 				
 				cbCustName.Enabled = False
-				'UPGRADE_ISSUE: ComboBox property cbCustName.Locked was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
                 'cbCustName.Locked = True
 				cbStoreNo.Enabled = False
-				'UPGRADE_ISSUE: ComboBox property cbStoreNo.Locked was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
                 'cbStoreNo.Locked = True
 				
-				Toolbar1.Items.Item("save").Visible = False
-				Toolbar1.Items.Item("search").Visible = False
+                Toolbar1.Items.Item("btSave").Visible = False
+                'Toolbar1.Items.Item("btSearch").Visible = False
 				
 				load_dgAddress(gStoreAddress.sCustId, gStoreAddress.nStoreId)
 			Case General.addressMode.InsertUpdateMode
@@ -149,22 +147,31 @@ Friend Class frmStoreAddress
 	
 	Private Sub load_dgAddress(ByRef sCustId As String, ByRef nStoreId As Short)
 		
-		sStmt = " SELECT b.store_address_seq, a.address_seq, a.address Address, a.city City, a.state_id State, a.zip Zip " & " FROM address_catalog a, store_address b" & " WHERE a.address_seq = b.address_seq " & " AND a.context_table = '" & ADDRESS_CATALOG_CONTEXT_STORE & "' " & " AND b.cust_id = '" & sCustId & "' " & " AND b.store_id = " & Str(nStoreId) & " ORDER BY Address, City, State"
+        sStmt = " SELECT b.store_address_seq, a.address_seq, a.address Address, a.city City, a.state_id State, a.zip Zip " _
+                & " FROM address_catalog a, store_address b" _
+                & " WHERE a.address_seq = b.address_seq " _
+                    & " AND a.context_table = '" & ADDRESS_CATALOG_CONTEXT_STORE & "' " _
+                    & " AND b.cust_id = '" & sCustId & "' " _
+                    & " AND b.store_id = " & Str(nStoreId) _
+                & " ORDER BY Address, City, State"
 		
-		
-		'UPGRADE_NOTE: Object dgAddress.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		dgAddress.DataSource = Nothing
+        dgAddress.DataSource = Nothing
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
 		
 		
         If rsLocal.Rows.Count > 0 Then
+            Toolbar1.Items.Item("btSave").Visible = True
             dgAddress.DataSource = rsLocal
+            dgAddress.Columns("address_seq").Visible = False
+            dgAddress.Columns("store_address_seq").Visible = False
+        Else
+            Toolbar1.Items.Item("btSave").Visible = False
         End If
+
 		
-		dgAddress.Columns("address_seq").Visible = False
-		dgAddress.Columns("store_address_seq").Visible = False
+		
 		
 		
 		
@@ -203,10 +210,10 @@ Friend Class frmStoreAddress
 			Exit Sub
 		End If
 		
-		If dgAddress.SelBookmarks.Count <= 0 Then
-			MsgBox("Select a record before attempting this command", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		End If
+        If dgAddress.SelectedRows.Count <= 0 Then
+            MsgBox("Select a record before attempting this command", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
 		
 		
 		
@@ -253,14 +260,26 @@ Friend Class frmStoreAddress
 				
 				
 				'Details
-				gStoreAddress.nAddressSeq = CShort(dgAddress.Columns("address_seq").Text)
-				gStoreAddress.sAddress = dgAddress.Columns("Address").Text
-				gStoreAddress.sCity = dgAddress.Columns("City").Text
-				gStoreAddress.sState = dgAddress.Columns("State").Text
-				gStoreAddress.sZip = dgAddress.Columns("Zip").Text
+                gStoreAddress.nAddressSeq = CShort(dgAddress.CurrentRow.Cells("address_seq").Value)
+                gStoreAddress.sAddress = dgAddress.CurrentRow.Cells("Address").Value
+                gStoreAddress.sCity = dgAddress.CurrentRow.Cells("City").Value
+                gStoreAddress.sState = dgAddress.CurrentRow.Cells("State").Value
+                gStoreAddress.sZip = dgAddress.CurrentRow.Cells("Zip").Value
 				
 		End Select
 		
 		
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_address()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        edit_address()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

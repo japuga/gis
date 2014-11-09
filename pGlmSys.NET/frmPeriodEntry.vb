@@ -56,7 +56,7 @@ Friend Class frmPeriodEntry
                 nPeriodSeq = get_period_seq()
                 sVisibleFlag = "Y"
 
-                sStmt = "INSERT INTO period ( period_seq," & "cust_id, period_name, period_start_date, " & "period_end_date, visible_flag, period_status_id) " & "VALUES (" & Str(nPeriodSeq) & "," & "'" & Trim(gPeriodRecord.sCustId) & "'," & "'" & quotation_mask(Trim(txtPeriodName.Text)) & "'," & "'" & CStr(dtStartDate._Value) & "'," & "'" & CStr(dtEndDate._Value) & "','" & sVisibleFlag & "'," & "'" & cbPeriodStatusId.Text & "' )"
+                sStmt = "INSERT INTO period ( period_seq," & "cust_id, period_name, period_start_date, " & "period_end_date, visible_flag, period_status_id) " & "VALUES (" & Str(nPeriodSeq) & "," & "'" & Trim(gPeriodRecord.sCustId) & "'," & "'" & quotation_mask(Trim(txtPeriodName.Text)) & "'," & "'" & CStr(dtStartDate.Value) & "'," & "'" & CStr(dtEndDate.Value) & "','" & sVisibleFlag & "'," & "'" & cbPeriodStatusId.Text & "' )"
                 cmLocal = cn.CreateCommand
                 With cmLocal
                     .CommandType = CommandType.Text
@@ -100,7 +100,7 @@ Friend Class frmPeriodEntry
                     'Start-End Date no se pueden modificar cuando existen facturas
                     sStmt = "UPDATE period " & " SET period_status_id = '" & cbPeriodStatusId.Text & "'" & " WHERE period_seq=" & Str(gPeriodRecord.nPeriodSeq)
                 Else
-                    sStmt = "UPDATE period " & " SET period_start_date='" & CStr(dtStartDate._Value) & "'," & " period_end_date ='" & CStr(dtEndDate._Value) & "'," & " period_status_id = '" & cbPeriodStatusId.Text & "'" & " WHERE period_seq=" & Str(gPeriodRecord.nPeriodSeq)
+                    sStmt = "UPDATE period " & " SET period_start_date='" & CStr(dtStartDate.Value) & "'," & " period_end_date ='" & CStr(dtEndDate.Value) & "'," & " period_status_id = '" & cbPeriodStatusId.Text & "'" & " WHERE period_seq=" & Str(gPeriodRecord.nPeriodSeq)
                 End If
                 cmLocal = cn.CreateCommand
                 With cmLocal
@@ -138,17 +138,14 @@ ErrorHandler:
 			Exit Function
 		End If
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If dtStartDate._Value >= dtEndDate._Value Then
-			MsgBox("Invalid Period was entered. Start date should be less than End date", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			val_fields = False
-			Exit Function
-		End If
+        If dtStartDate.Value >= dtEndDate.Value Then
+            MsgBox("Invalid Period was entered. Start date should be less than End date", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            val_fields = False
+            Exit Function
+        End If
 		
 		'Dates: Solapamiento de fechas
-		'UPGRADE_WARNING: Couldn't resolve default property of object gDump. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		gDump = overlap_date(gPeriodRecord.sCustId, dtStartDate._Value, gPeriodRecord.bMode, gPeriodRecord.nPeriodSeq)
+        gDump = overlap_date(gPeriodRecord.sCustId, dtStartDate.Value, gPeriodRecord.bMode, gPeriodRecord.nPeriodSeq)
 		If gDump.str1 = "TRUE" Then
 			MsgBox("Found that Start Date overlaps period:" & gDump.str2, MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
 			dtStartDate.Focus()
@@ -156,8 +153,7 @@ ErrorHandler:
 			Exit Function
 		End If
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object gDump. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		gDump = overlap_date(gPeriodRecord.sCustId, dtEndDate._Value, gPeriodRecord.bMode, gPeriodRecord.nPeriodSeq)
+        gDump = overlap_date(gPeriodRecord.sCustId, dtEndDate.Value, gPeriodRecord.bMode, gPeriodRecord.nPeriodSeq)
 		If gDump.str1 = "TRUE" Then
 			MsgBox("Found that End Date overlaps period:" & gDump.str2, MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
 			dtEndDate.Focus()
@@ -165,11 +161,11 @@ ErrorHandler:
 			Exit Function
 		End If
 		
-		If overlap_period(gPeriodRecord.sCustId, dtStartDate._Value, dtEndDate._Value) Then
-			MsgBox("Period entered overlaps one or more existing periods.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			val_fields = False
-			Exit Function
-		End If
+        If overlap_period(gPeriodRecord.sCustId, dtStartDate.Value, dtEndDate.Value) Then
+            MsgBox("Period entered overlaps one or more existing periods.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            val_fields = False
+            Exit Function
+        End If
 		
 		Exit Function
 		
@@ -193,11 +189,10 @@ ErrorHandler:
 		sStmt = "SELECT period_name FROM period " & " WHERE cust_id = '" & Trim(sCustId) & "'" & " AND period_start_date <= '" & CStr(sDate) & "'" & " AND period_end_date >= '" & CStr(sDate) & "'"
 		
 		If sOption = General.modo.UpdateRecord Then
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-			If IsDbNull(nPeriodSeq) Then
-				overlap_date.str1 = "TRUE"
-				Exit Function
-			End If
+            If IsDBNull(nPeriodSeq) Then
+                overlap_date.str1 = "TRUE"
+                Exit Function
+            End If
 			sStmt = sStmt & " AND period_seq <> " & Str(nPeriodSeq)
 		End If
 		
@@ -206,7 +201,7 @@ ErrorHandler:
 
         If rsLocal.Rows.Count > 0 Then
             overlap_date.str1 = "TRUE"
-            overlap_date.str2 = rsLocal.Rows(0).Item("period_name").Value
+            overlap_date.str2 = rsLocal.Rows(0).Item("period_name")
             Exit Function
         End If
 
@@ -229,7 +224,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            If dStart < rsLocal.Rows(0).Item("minimus").Value And dEnd > rsLocal.Rows(0).Item("maximus").Value Then
+            If dStart < rsLocal.Rows(0).Item("minimus") And dEnd > rsLocal.Rows(0).Item("maximus") Then
                 overlap_period = True
                 Exit Function
             End If
@@ -257,10 +252,10 @@ ErrorHandler:
             rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Rows(0).Item(0).Value) Then
+            If IsDBNull(rsLocal.Rows(0).Item(0)) Then
                 nPeriodSeq = 1
             Else
-                nPeriodSeq = rsLocal.Rows(0).Item(0).Value + 1
+                nPeriodSeq = rsLocal.Rows(0).Item(0) + 1
             End If
             
             get_period_seq = nPeriodSeq
@@ -285,11 +280,9 @@ ErrorHandler:
 		
 		nLen = get_column("period", "period_name")
 		If nLen > 0 Then
-			'UPGRADE_WARNING: TextBox property txtPeriodName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtPeriodName.Maxlength = nLen
+            txtPeriodName.MaxLength = nLen
 		Else
-			'UPGRADE_WARNING: TextBox property txtPeriodName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			txtPeriodName.Maxlength = 40
+            txtPeriodName.MaxLength = 40
 		End If
 		
 	End Sub
@@ -313,8 +306,9 @@ ErrorHandler:
 		
 		Select Case nOption
 			Case General.modo.NewRecord
-				'Defaults
-				dtStartDate.Value = Today
+                'Defaults
+                txtPeriodName.Text = ""
+                dtStartDate.Value = Today
 				dtEndDate.Value = Today
 				If cbPeriodStatusDesc.Items.Count > 0 Then
 					set_cb(cbPeriodStatusDesc, "New")

@@ -1101,6 +1101,12 @@
     <Compile Include="Report.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="rptCostCont.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>rptCostCont.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="tplGridSelector.Designer.vb">
       <SubType>Code</SubType>
       <DependentUpon>tplGridSelector.vb</DependentUpon>
@@ -1623,6 +1629,10 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="rptCostCont.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>rptCostCont.vb</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="tplGridSelector.resX">
       <DependentUpon>tplGridSelector.vb</DependentUpon>

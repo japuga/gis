@@ -15,22 +15,22 @@ Friend Class frmPeriod
 	End Sub
 	
 	
-	Private Sub dgPeriod_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgPeriod.DblClick
-		'Update
-		If dgPeriod.SelBookmarks.Count > 0 Then
-			gPeriodRecord.bMode = General.modo.UpdateRecord
-			If get_period((General.modo.UpdateRecord)) = True Then
-				VB6.ShowForm(frmPeriodEntry, VB6.FormShowConstants.Modal, Me)
-				If gPeriodRecord.bMode = General.modo.SavedRecord Then
-					If cbCustId.SelectedIndex >= 0 Then
+    Private Sub dgPeriod_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'Update
+        If dgPeriod.SelectedRows.Count > 0 Then
+            gPeriodRecord.bMode = General.modo.UpdateRecord
+            If get_period((General.modo.UpdateRecord)) = True Then
+                VB6.ShowForm(frmPeriodEntry, VB6.FormShowConstants.Modal, Me)
+                If gPeriodRecord.bMode = General.modo.SavedRecord Then
+                    If cbCustId.SelectedIndex >= 0 Then
                         set_dgPeriodData(cbCustId.Text)
-					End If
-				End If
-			End If
-			
-		End If
-		
-	End Sub
+                    End If
+                End If
+            End If
+
+        End If
+
+    End Sub
 	
 	Private Sub frmPeriod_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -44,8 +44,7 @@ Friend Class frmPeriod
 		
 		'La opcion de Busqueda en este mantenimiento
 		' no requiere de parametros de seleccion
-		Toolbar1.Items.Item("search").Enabled = False
-		
+
 		clear_record()
 		
 		'Customer
@@ -84,7 +83,6 @@ Friend Class frmPeriod
 
         sStmt = "SELECT p.period_seq , p.cust_id, " & "p.period_name 'Name', " & "p.period_start_date 'Start', p.period_end_date 'End', " & "s.period_status_desc 'Status', p.period_status_id " & "FROM period p, PeriodStatus s" & " WHERE p.period_status_id = s.period_status_id " & " AND cust_id ='" & Trim(sCustId) & "'" & " ORDER BY period_start_date"
 
-        'UPGRADE_NOTE: Object dgPeriod.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         dgPeriod.DataSource = Nothing
 
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
@@ -94,7 +92,7 @@ Friend Class frmPeriod
             'search
             If gPeriodRecord.bMode = General.modo.SavedRecord Then
                 For row As Integer = 0 To rsLocal.Rows.Count - 1
-                    If rsLocal.Rows(row).Item("period_seq").Value = gPeriodRecord.nPeriodSeq Then
+                    If rsLocal.Rows(row).Item("period_seq") = gPeriodRecord.nPeriodSeq Then
                         bFound = True
                         Exit For
                     End If
@@ -165,12 +163,12 @@ ErrorHandler:
 			Case General.modo.NewRecord
 				gPeriodRecord.nPeriodSeq = 0
 			Case General.modo.UpdateRecord
-                gPeriodRecord.nPeriodSeq = rsLocal.Rows(0).Item("period_seq").Value
-                gPeriodRecord.sPeriodStartDate = rsLocal.Rows(0).Item("Start").Value
-                gPeriodRecord.sPeriodEndDate = rsLocal.Rows(0).Item("End").Value
-                gPeriodRecord.sPeriodName = rsLocal.Rows(0).Item("Name").Value
-                gPeriodRecord.sPeriodStatusId = rsLocal.Rows(0).Item("period_status_id").Value
-                gPeriodRecord.sPeriodStatusDesc = rsLocal.Rows(0).Item("Status").Value
+                gPeriodRecord.nPeriodSeq = rsLocal.Rows(0).Item("period_seq")
+                gPeriodRecord.sPeriodStartDate = rsLocal.Rows(0).Item("Start")
+                gPeriodRecord.sPeriodEndDate = rsLocal.Rows(0).Item("End")
+                gPeriodRecord.sPeriodName = rsLocal.Rows(0).Item("Name")
+                gPeriodRecord.sPeriodStatusId = rsLocal.Rows(0).Item("period_status_id")
+                gPeriodRecord.sPeriodStatusDesc = rsLocal.Rows(0).Item("Status")
 		End Select
 		Exit Function
 		
@@ -185,30 +183,59 @@ ErrorHandler:
 		
 		On Error GoTo ErrorHandler
 		nRecords = 0
-		If dgPeriod.SelBookmarks.Count > 0 Then
-			If MsgBox("Do you want to delete this record?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
-				'Verificar que no exista factura usando periodo.
-				If invoice_assigned(cbCustId.Text, CShort(dgPeriod.Columns("period_seq").Text)) > 0 Then
-					MsgBox("Unable to delete Period, one or more invoices " & vbCrLf & "are still assigned to it.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Warning")
-					Exit Sub
-				Else
-                    sStmt = "DELETE FROM period " & "WHERE cust_id ='" & Trim(cbCustId.Text) & "' " & " AND period_seq =" & dgPeriod.Columns("period_seq").Text
+        If dgPeriod.SelectedRows.Count > 0 Then
+            If MsgBox("Do you want to delete this record?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
+                'Verificar que no exista factura usando periodo.
+                If invoice_assigned(cbCustId.Text, CShort(dgPeriod.CurrentRow.Cells("period_seq").Value)) > 0 Then
+                    MsgBox("Unable to delete Period, one or more invoices " & vbCrLf & "are still assigned to it.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Warning")
+                    Exit Sub
+                Else
+                    sStmt = "DELETE FROM period " & "WHERE cust_id ='" & Trim(cbCustId.Text) & "' " & " AND period_seq =" & dgPeriod.CurrentRow.Cells("period_seq").Value
                     cm = cn.CreateCommand
-					With cmLocal
+                    With cmLocal
                         .CommandType = CommandType.Text
                         .CommandText = sStmt
                         nRecords = .ExecuteNonQuery()
                     End With
-					If nRecords = 0 Then
-						MsgBox("There was an error while deleting Period.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					End If
-				End If
-			End If
-		End If
+                    If nRecords = 0 Then
+                        MsgBox("There was an error while deleting Period.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    End If
+                End If
+            End If
+        End If
 		Exit Sub
 		
 ErrorHandler: 
 		save_error(Me.Name, "remove_period")
 		MsgBox("There was an error while deleting Period.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
 	End Sub
+
+    Private Sub ToolStripButton5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        gPeriodRecord.bMode = General.modo.NewRecord
+        If get_period((General.modo.NewRecord)) = True Then
+            VB6.ShowForm(frmPeriodEntry, VB6.FormShowConstants.Modal, Me)
+            If gPeriodRecord.bMode = General.modo.SavedRecord Then
+                If cbCustId.SelectedIndex >= 0 Then
+                    set_dgPeriodData(cbCustId.Text)
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        dgPeriod_DblClick(dgPeriod, New System.EventArgs())
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        remove_period()
+        set_dgPeriodData(cbCustId.Text)
+    End Sub
 End Class

@@ -21,7 +21,9 @@ Friend Class frmStoreSearch
 	End Sub
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
-		gbStoreSearch.bFlag = False
+        If gbStoreSearch.bFlag <> True Then
+            gbStoreSearch.bFlag = False
+        End If
 		Me.Close()
 	End Sub
 	
@@ -39,12 +41,14 @@ Friend Class frmStoreSearch
 	End Sub
 	Private Sub init_vars()
 
-		'Inicializo parametros de retorno
-		gbStoreSearch.bFlag = False
-		gbStoreSearch.sCustId = ""
-		gbStoreSearch.sCustName = ""
-		gbStoreSearch.sStateId = ""
-	End Sub
+        'Inicializo parametros de retorno
+        If gbStoreSearch.bFlag <> True Then
+            gbStoreSearch.bFlag = False
+            gbStoreSearch.sCustId = ""
+            gbStoreSearch.sCustName = ""
+            gbStoreSearch.sStateId = ""
+        End If
+    End Sub
 	Private Sub load_comp()
 		Dim nCounter As Short
 		nCounter = 0
@@ -67,8 +71,8 @@ Friend Class frmStoreSearch
 		cbCustId.Items.Clear()
 		cbCustName.Items.Clear()
         For row As Integer = 0 To rsLocal.Rows.Count - 1
-            cbCustId.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_id").Value)
-            cbCustName.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_name").Value)
+            cbCustId.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_id"))
+            cbCustName.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_name"))
             nCounter = nCounter + 1
         Next row
 		

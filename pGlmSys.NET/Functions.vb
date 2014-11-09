@@ -636,7 +636,16 @@ ErrorHandler:
 		XLApp = Nothing
 		
 	End Sub
-	
+    Public Function getPhoneNumberLen(ByRef sPhoneNumber As String) As Integer
+        'phone number has ( ) - symbols in them, take them out.
+        Dim iLen As Integer
+        sPhoneNumber = Replace(sPhoneNumber, "(", "")
+        sPhoneNumber = Replace(sPhoneNumber, ")", "")
+        sPhoneNumber = Replace(sPhoneNumber, "-", "")
+        sPhoneNumber = Replace(sPhoneNumber, " ", "")
+        iLen = Len(sPhoneNumber)
+        Return iLen
+    End Function
 	'This function Opens an Excel file and
 	'returns the worksheet, also assumes that a status bar
 	'named sbLoad exists in the form.

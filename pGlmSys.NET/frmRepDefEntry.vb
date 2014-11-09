@@ -22,10 +22,10 @@ Friend Class frmRepDefEntry
 		
 		cdFileOpen.InitialDirectory = sDir 'Directorio donde resigen reportes
 		cdFileOpen.DefaultExt = ".rpt"
-		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
+
 		cdFileOpen.Filter = "Reports (*.rpt)|*.rpt"
 		cdFileOpen.FilterIndex = 1
-		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
+
 
         'no se para que es esta linea
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
@@ -48,16 +48,15 @@ Friend Class frmRepDefEntry
 		
 ErrorHandler: 
 		
-		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
-		If Err.Number = DialogResult.Cancel Then
-			'Usuario selecciono cancel en OpenDialog
-			MsgBox("Operation was cancelled by user.", MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		Else
-			save_error(Me.Name, "cmdOk")
-			MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			
-		End If
+        If Err.Number = DialogResult.Cancel Then
+            'Usuario selecciono cancel en OpenDialog
+            MsgBox("Operation was cancelled by user.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        Else
+            save_error(Me.Name, "cmdOk")
+            MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+
+        End If
 		
 	End Sub
 	
@@ -66,19 +65,17 @@ ErrorHandler:
         Dim cmd As SqlCommand = cn.CreateCommand
 		On Error GoTo ErrorHandler
 		
-		If dgRepDefTemplate.SelBookmarks.Count <= 0 Then
-			MsgBox("You must select a Template before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		End If
+        If dgRepDefTemplate.SelectedRows.Count <= 0 Then
+            MsgBox("You must select a Template before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
 		
 		If MsgBox("Do you want to delete this Template?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.No Then
 			Exit Sub
 		End If
 		
 		
-		sStmt = "DELETE FROM RepDefTemplate " & " WHERE rep_no =" & Str(gRepDef.nRepNo) & " AND rep_template_name ='" & dgRepDefTemplate.Columns("Template").Text & "'"
-		
-
+        sStmt = "DELETE FROM RepDefTemplate " & " WHERE rep_no =" & Str(gRepDef.nRepNo) & " AND rep_template_name ='" & dgRepDefTemplate.CurrentRow.Cells("Template").Value & "'"
 
         cmd.CommandText = sStmt
         nRecords = cmd.ExecuteNonQuery()
@@ -478,6 +475,10 @@ ErrorHandler:
         If gRepDef.bFlag = General.modo.SavedRecord Then
             gRepDef.bFlag = General.modo.UpdateRecord
         End If
+
+    End Sub
+
+    Private Sub Label1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label1.Click
 
     End Sub
 End Class

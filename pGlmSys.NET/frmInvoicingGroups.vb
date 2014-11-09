@@ -7,33 +7,32 @@ Friend Class frmInvoicingGroups
     Private rsLocal As DataTable
     Private ImageList2 As New ImageList()
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		cbCustId.SelectedIndex = cbCustName.SelectedIndex
-		load_dgGroups(cbCustId.Text)
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        cbCustId.SelectedIndex = cbCustName.SelectedIndex
+        load_dgGroups(cbCustId.Text)
+    End Sub
 	
-	Private Sub dgGroups_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgGroups.DblClick
-		update_group()
-	End Sub
+    Private Sub dgGroups_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_group()
+    End Sub
 	Private Sub update_group()
-		If dgGroups.SelBookmarks.Count > 0 Then
-			
-			gInvoicingGroup.bModo = General.modo.UpdateRecord
-			gInvoicingGroup.sGroupName = dgGroups.Columns("name").Text
-			gInvoicingGroup.nGroupSeq = CShort(dgGroups.Columns("group_seq").Text)
-			gInvoicingGroup.sCustId = cbCustId.Text
-			gInvoicingGroup.sGroupStatus = dgGroups.Columns("status").Text
-			
-			VB6.ShowForm(frmInvoicingGroupsEntry, VB6.FormShowConstants.Modal, Me)
-			
-			If gInvoicingGroup.bModo = General.modo.SavedRecord Then
-				load_dgGroups(cbCustId.Text)
-			End If
-		Else
-			MsgBox("You must select a group to Update ," & vbCrLf & " before attempting this comand", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-			Exit Sub
-		End If
+        If dgGroups.SelectedRows.Count > 0 Then
+
+            gInvoicingGroup.bModo = General.modo.UpdateRecord
+            gInvoicingGroup.sGroupName = dgGroups.CurrentRow.Cells("name").Value
+            gInvoicingGroup.nGroupSeq = CShort(dgGroups.CurrentRow.Cells("group_seq").Value)
+            gInvoicingGroup.sCustId = cbCustId.Text
+            gInvoicingGroup.sGroupStatus = dgGroups.CurrentRow.Cells("status").Value
+
+            VB6.ShowForm(frmInvoicingGroupsEntry, VB6.FormShowConstants.Modal, Me)
+
+            If gInvoicingGroup.bModo = General.modo.SavedRecord Then
+                load_dgGroups(cbCustId.Text)
+            End If
+        Else
+            MsgBox("You must select a group to Update ," & vbCrLf & " before attempting this comand", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
 		
 	End Sub
 	Private Sub frmInvoicingGroups_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
@@ -124,29 +123,30 @@ ErrorHandler:
 		
 		On Error GoTo ErrorHandler
 		
-		If dgGroups.SelBookmarks.Count > 0 Then
-			If MsgBox("Do you want to delete Group: " & dgGroups.Columns("Name").Text, MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
+        If dgGroups.SelectedRows.Count > 0 Then
+            If MsgBox("Do you want to delete Group: " & dgGroups.CurrentRow.Cells("Name").Value, MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
                 nTran = cn.BeginTransaction()
-				General.bcnStatus = General.cnStatus.BeginTrans
-				sStmt = "DELETE FROM VInvoiceGroup" & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-				'MsgBox sStmt
-				cmLocal.CommandText = sStmt
+                General.bcnStatus = General.cnStatus.BeginTrans
+                sStmt = "DELETE FROM VInvoiceGroup" & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.CurrentRow.Cells("group_seq").Value))
+                'MsgBox sStmt
+                cmLocal.CommandText = sStmt
+                cmLocal.Transaction = nTran
                 nRecords = cmLocal.ExecuteNonQuery()
-				
-				If nRecords > 0 Then
+
+                If nRecords > 0 Then
                     nTran.Commit()
-					General.bcnStatus = General.cnStatus.NoTrans
-					MsgBox("Data was sucessfully deleted.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					load_dgGroups(cbCustId.Text)
-				Else
+                    General.bcnStatus = General.cnStatus.NoTrans
+                    MsgBox("Data was sucessfully deleted.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    load_dgGroups(cbCustId.Text)
+                Else
                     nTran.Rollback()
-					General.bcnStatus = General.cnStatus.NoTrans
-				End If
-			End If
-		Else
-			MsgBox("You must select a record to execute this command.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			Exit Sub
-		End If
+                    General.bcnStatus = General.cnStatus.NoTrans
+                End If
+            End If
+        Else
+            MsgBox("You must select a record to execute this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
 		
 		'load_dgGroups cbCustId
 		Exit Sub
@@ -159,4 +159,20 @@ ErrorHandler:
 		save_error(Me.Name, "delete_group")
 		MsgBox("Unexpected error while deleting groups table." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
 	End Sub
+
+    Private Sub ToolStripButton1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_group()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_group()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_group()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

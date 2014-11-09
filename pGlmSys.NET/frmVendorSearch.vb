@@ -27,7 +27,7 @@ Friend Class frmVendorSearch
 	End Sub
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
-		gVendorSearch.bFlag = False
+        'gVendorSearch.bFlag = False
 		Me.Close()
 	End Sub
 	
@@ -48,12 +48,14 @@ Friend Class frmVendorSearch
         cmLocal = cn.CreateCommand
         cmLocal.CommandType = CommandType.Text
 
-		'**** Inicializo gVendorSearch
-		gVendorSearch.bFlag = False
-		gVendorSearch.nVendId = -1
-		gVendorSearch.sStateId = ""
-		gVendorSearch.sVendName = ""
-	End Sub
+        '**** Inicializo gVendorSearch
+        If (gVendorSearch.bFlag <> True) Then
+            gVendorSearch.bFlag = False
+            gVendorSearch.nVendId = -1
+            gVendorSearch.sStateId = ""
+            gVendorSearch.sVendName = ""
+        End If
+    End Sub
 	Private Sub load_comp()
 		load_vendor()
 		

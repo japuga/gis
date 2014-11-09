@@ -3,29 +3,29 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmStore
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
-    Private rsTmp As SqlDataReader
-    Private ImageList2 As New ImageList()
+    Private rsLocal As DataTable
+    Private rsTmp As DataTable
+
 	Private Sub search_store(ByRef nStoreId As Short)
 		
 	End Sub
 	Private Sub update_store()
-		If dgStore.Row >= 0 Then
-			General.gbMode = General.modo.UpdateRecord
-			If get_store Then
-				VB6.ShowForm(frmStoreEntry, VB6.FormShowConstants.Modal, Me)
-			End If
-		End If
+        If dgStore.SelectedRows.Count > 0 Then
+            General.gbMode = General.modo.UpdateRecord
+            If get_store() Then
+                VB6.ShowForm(frmStoreEntry, VB6.FormShowConstants.Modal, Me)
+            End If
+        End If
 		
 	End Sub
 	
-	Private Sub dgStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStore.DblClick
-		update_store()
-		If General.gbMode = General.modo.SavedRecord Then
-			'Refresca query
+    Private Sub dgStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_store()
+        If General.gbMode = General.modo.SavedRecord Then
+            'Refresca query
             set_dgStoreData(True)
-		End If
-	End Sub
+        End If
+    End Sub
 	
 	Private Sub frmStore_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -40,13 +40,13 @@ Friend Class frmStore
 		VB6.ShowForm(frmStoreSearch, VB6.FormShowConstants.Modal, Me)
 		If gbStoreSearch.bFlag Then 'Usuario ingreso parametros para query
 			'Habilito botones
-			Toolbar1.Items.Item("new").Enabled = True
-			Toolbar1.Items.Item("save").Enabled = True
+            Toolbar1.Items.Item("btNew").Enabled = True
+            Toolbar1.Items.Item("btSave").Enabled = True
 			
 		Else
 			'Deshabilito botones
-			Toolbar1.Items.Item("new").Enabled = False
-			Toolbar1.Items.Item("save").Enabled = False
+            Toolbar1.Items.Item("btNew").Enabled = False
+            Toolbar1.Items.Item("btSave").Enabled = False
 			
 		End If
 		'Corro query y cargo datos al Datagrid
@@ -80,31 +80,31 @@ Friend Class frmStore
 
         End If
 
-        'UPGRADE_NOTE: Object dgStore.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         dgStore.DataSource = Nothing
         cmd.CommandText = sStmt
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
 
         'search
         bFound = False
 
-        If rsLocal.HasRows() Then
-
-            While rsLocal.Read()
-                If rsLocal.Item("store_id").Value = gStoreRecord.nStoreId Then
+        If rsLocal.Rows.Count > 0 Then
+            For row As Integer = 0 To rsLocal.Rows.Count - 1
+                If rsLocal.Rows(row).Item("store_id") = gStoreRecord.nStoreId Then
                     'dgStore.SelBookmarks.Add (rsLocal.Bookmark)
                     bFound = True
-                    Exit While
+                    Exit For
                 End If
-            End While
+            Next row
+
+            
         End If
 
 
 
         dgStore.DataSource = rsLocal
 
-        If rsLocal.HasRows() Then
+        If rsLocal.Rows.Count > 0 Then
             If bFound = False Then
 
             End If
@@ -160,81 +160,103 @@ ErrorHandler:
 		
         Dim dt As DataTable
 		get_store = False
-		gStoreRecord.sStoreNumber = dgStore.Columns("Store").Text
-		gStoreRecord.nStoreId = CShort(dgStore.Columns("store_id").Text)
+        gStoreRecord.sStoreNumber = dgStore.CurrentRow.Cells("Store").Value
+        gStoreRecord.nStoreId = CShort(dgStore.CurrentRow.Cells("store_id").Value)
 		
-		sStmt = "SELECT  store_name, " & "store_address, store_city, store_zip, " & "state_id, store_phone1, store_phone2, " & "store_fax1, store_fax2, store_contact," & "store_status, store_folder, store_co_code, store_occupants, " & "store_address_seq, store_billing_contact, store_billing_account, " & "lf_group, store_market, store_sold, store_sold_date " & " FROM store " & " WHERE cust_id ='" & Trim(gbStoreSearch.sCustId) & "' " & " AND store_id=" & Str(gStoreRecord.nStoreId)
+        sStmt = "SELECT  store_name, " & "store_address, store_city, store_zip, " _
+                                       & "state_id, store_phone1, store_phone2, " _
+                                       & "store_fax1, store_fax2, store_contact," _
+                                       & "store_status, store_folder, store_co_code, store_occupants, " _
+                                       & "store_address_seq, store_billing_contact, store_billing_account, " _
+                                       & "lf_group, store_market, store_sold, store_sold_date " _
+                                       & " FROM store " _
+                                       & " WHERE cust_id ='" & Trim(gbStoreSearch.sCustId) & "' " & " AND store_id=" & Str(gStoreRecord.nStoreId)
         Try
             dt = getDataTable(sStmt)
             'rsTmp.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If dt.Rows.Count > 0 Then
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreName = IIf(IsDBNull(dt.Rows(0).Item("store_name").Value), "", Trim(dt.Rows(0).Item("store_name").Value))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreAddress = IIf(IsDBNull(dt.Rows(0).Item("store_address").Value), "", Trim(dt.Rows(0).Item("store_address").Value))
+                gStoreRecord.sStoreName = IIf(IsDBNull(dt.Rows(0).Item("store_name")), "", Trim(dt.Rows(0).Item("store_name")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreCity = IIf(IsDBNull(dt.Rows(0).Item("store_city").Value), "", Trim(dt.Rows(0).Item("store_city").Value))
+                gStoreRecord.sStoreAddress = IIf(IsDBNull(dt.Rows(0).Item("store_address")), "", Trim(dt.Rows(0).Item("store_address")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreZip = IIf(IsDBNull(dt.Rows(0).Item("store_zip").Value), "", Trim(dt.Rows(0).Item("store_zip").Value))
+                gStoreRecord.sStoreCity = IIf(IsDBNull(dt.Rows(0).Item("store_city")), "", Trim(dt.Rows(0).Item("store_city")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStateId = IIf(IsDBNull(dt.Rows(0).Item("state_id").Value), "", Trim(dt.Rows(0).Item("state_id").Value))
+                gStoreRecord.sStoreZip = IIf(IsDBNull(dt.Rows(0).Item("store_zip")), "", Trim(dt.Rows(0).Item("store_zip")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStorePhone1 = IIf(IsDBNull(dt.Rows(0).Item("store_phone1").Value), "", Trim(dt.Rows(0).Item("store_phone1").Value))
+                gStoreRecord.sStateId = IIf(IsDBNull(dt.Rows(0).Item("state_id")), "", Trim(dt.Rows(0).Item("state_id")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStorePhone2 = IIf(IsDBNull(dt.Rows(0).Item("store_phone2").Value), "", Trim(dt.Rows(0).Item("store_phone2").Value))
+                gStoreRecord.sStorePhone1 = IIf(IsDBNull(dt.Rows(0).Item("store_phone1")), "", Trim(dt.Rows(0).Item("store_phone1")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreFax1 = IIf(IsDBNull(dt.Rows(0).Item("store_fax1").Value), "", Trim(dt.Rows(0).Item("store_fax1").Value))
+                gStoreRecord.sStorePhone2 = IIf(IsDBNull(dt.Rows(0).Item("store_phone2")), "", Trim(dt.Rows(0).Item("store_phone2")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreFax2 = IIf(IsDBNull(dt.Rows(0).Item("store_fax2").Value), "", Trim(dt.Rows(0).Item("store_fax2").Value))
+                gStoreRecord.sStoreFax1 = IIf(IsDBNull(dt.Rows(0).Item("store_fax1")), "", Trim(dt.Rows(0).Item("store_fax1")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreContact = IIf(IsDBNull(dt.Rows(0).Item("store_contact").Value), "", Trim(dt.Rows(0).Item("store_contact").Value))
+                gStoreRecord.sStoreFax2 = IIf(IsDBNull(dt.Rows(0).Item("store_fax2")), "", Trim(dt.Rows(0).Item("store_fax2")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreStatus = IIf(IsDBNull(dt.Rows(0).Item("store_status").Value), "", Trim(dt.Rows(0).Item("store_status").Value))
+                gStoreRecord.sStoreContact = IIf(IsDBNull(dt.Rows(0).Item("store_contact")), "", Trim(dt.Rows(0).Item("store_contact")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreFolder = IIf(IsDBNull(dt.Rows(0).Item("store_folder").Value), "", Trim(dt.Rows(0).Item("store_folder").Value))
+                gStoreRecord.sStoreStatus = IIf(IsDBNull(dt.Rows(0).Item("store_status")), "", Trim(dt.Rows(0).Item("store_status")))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreCoCode = IIf(IsDBNull(dt.Rows(0).Item("store_co_code").Value), "", Trim(dt.Rows(0).Item("store_co_code").Value))
+                gStoreRecord.sStoreFolder = IIf(IsDBNull(dt.Rows(0).Item("store_folder")), "", Trim(dt.Rows(0).Item("store_folder")))
+
+                gStoreRecord.sStoreCoCode = IIf(IsDBNull(dt.Rows(0).Item("store_co_code")), "", Trim(dt.Rows(0).Item("store_co_code")))
 
                 'Bug 35.begin
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.nStoreOccupants = IIf(IsDBNull(dt.Rows(0).Item("store_occupants")), 0, Trim(dt.Rows(0).Item("store_occupants").Value))
+                gStoreRecord.nStoreOccupants = IIf(IsDBNull(dt.Rows(0).Item("store_occupants")), 0, Trim(dt.Rows(0).Item("store_occupants")))
                 'Bug 35.end
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.nStoreAddressSeq = IIf(IsDBNull(dt.Rows(0).Item("store_address_seq").Value), 0, Trim(dt.Rows(0).Item("store_address_seq").Value))
+                Dim expr As Boolean = IsDBNull(dt.Rows(0).Item("store_address_seq"))
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreBillingContact = IIf(IsDBNull(dt.Rows(0).Item("store_billing_contact").Value), "", Trim(dt.Rows(0).Item("store_billing_contact").Value))
+                If IsDBNull(dt.Rows(0).Item("store_address_seq")) Then
+                    gStoreRecord.nStoreAddressSeq = 0
+                Else
+                    gStoreRecord.nStoreAddressSeq = dt.Rows(0).Item("store_address_seq")
+                    Dim aValue As Short = dt.Rows(0).Item("store_address_seq")
+                End If
+                
+                'gStoreRecord.nStoreAddressSeq = IIf(IsDBNull(dt.Rows(0).Item("store_address_seq")), _
+                '                                        0, _
+                '                                        Convert.ToInt16( _
+                '                                            Trim(dt.Rows(0).Item("store_address_seq")) _
+                '                                        ) _
+                '                                    )
+                If IsDBNull(dt.Rows(0).Item("store_billing_contact")) Then
+                    gStoreRecord.sStoreBillingContact = 0
+                Else
+                    gStoreRecord.sStoreBillingContact = Trim(dt.Rows(0).Item("store_billing_contact"))
+                End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreBillingAccount = IIf(IsDBNull(dt.Rows(0).Item("store_billing_account").Value), "", Trim(dt.Rows(0).Item("store_billing_account").Value))
+                If IsDBNull(dt.Rows(0).Item("store_billing_account")) Then
+                    gStoreRecord.sStoreBillingAccount = ""
+                Else
+                    gStoreRecord.sStoreBillingAccount = IIf(IsDBNull(dt.Rows(0).Item("store_billing_account")), "", Trim(dt.Rows(0).Item("store_billing_account")))
+                End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sLfGroup = IIf(IsDBNull(dt.Rows(0).Item("lf_group").Value), "", Trim(dt.Rows(0).Item("lf_group").value))
+                If IsDBNull(dt.Rows(0).Item("lf_group")) Then
+                    gStoreRecord.sLfGroup = ""
+                Else
+                    gStoreRecord.sLfGroup = Trim(dt.Rows(0).Item("lf_group"))
+                End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreMarket = IIf(IsDBNull(dt.Rows(0).Item("store_market").Value), "", Trim(dt.Rows(0).Item("store_market").value))
+                If IsDBNull(dt.Rows(0).Item("store_market")) Then
+                    gStoreRecord.sStoreMarket = ""
+                Else
+                    gStoreRecord.sStoreMarket = Trim(dt.Rows(0).Item("store_market"))
+                End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                gStoreRecord.sStoreSold = IIf(IsDBNull(dt.Rows(0).Item("store_sold").Value), "", Trim(dt.Rows(0).Item("store_sold").value))
+                If IsDBNull(dt.Rows(0).Item("store_sold")) Then
+                    gStoreRecord.sStoreSold = ""
+                Else
+                    gStoreRecord.sStoreSold = Trim(dt.Rows(0).Item("store_sold"))
+                End If
 
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If dt.Rows(0).Item("store_sold_date").value Is System.DBNull.Value Then
-                    gStoreRecord.dtStoreSoldDate = dt.Rows(0).Item("store_sold_date").value
+                If Not IsDBNull(dt.Rows(0).Item("store_sold_date")) Then
+                    gStoreRecord.dtStoreSoldDate = dt.Rows(0).Item("store_sold_date")
+                Else
+
                 End If
 
 
@@ -258,4 +280,50 @@ ErrorHandler:
         save_error("frmStore", "get_store")
         MsgBox("Failed to retrieve Store info." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
     End Function
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+
+        'clear the variable gStoreRecord from any value
+        clear_gStoreRecord()
+
+        General.gbMode = General.modo.NewRecord
+        VB6.ShowForm(frmStoreEntry, VB6.FormShowConstants.Modal, Me)
+        If General.gbMode = General.modo.SavedRecord Then
+            'Refresca query
+            set_dgStoreData(True)
+        End If
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_store()
+        If General.gbMode = General.modo.SavedRecord Then
+            'Refresca query
+            set_dgStoreData(True)
+        End If
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
+        load_comp()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub dgStore_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentDoubleClick
+        dgStore.CurrentRow.Selected = True
+        update_store()
+        If General.gbMode = General.modo.SavedRecord Then
+            'Refresca query
+            set_dgStoreData(True)
+        End If
+    End Sub
+
+    Private Sub dgStore_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellDoubleClick
+
+    End Sub
+    Private Sub clear_gStoreRecord()
+        gStoreRecord = New gStoreRecordUDT()
+       
+    End Sub
 End Class

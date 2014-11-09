@@ -28,7 +28,7 @@
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
         Me.btNew = New System.Windows.Forms.ToolStripButton
-        Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
+        Me.btSave = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
         Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.dgCustomer = New System.Windows.Forms.DataGridView
@@ -39,7 +39,7 @@
         'Toolbar1
         '
         Me.Toolbar1.AutoSize = False
-        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.ToolStripButton2, Me._Toolbar1_Button5, Me.btExit})
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me._Toolbar1_Button5, Me.btExit})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
         Me.Toolbar1.Name = "Toolbar1"
         Me.Toolbar1.Size = New System.Drawing.Size(574, 59)
@@ -55,15 +55,15 @@
         Me.btNew.Size = New System.Drawing.Size(36, 56)
         Me.btNew.Text = "New"
         '
-        'ToolStripButton2
+        'btSave
         '
-        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
-        Me.ToolStripButton2.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
-        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton2.Name = "ToolStripButton2"
-        Me.ToolStripButton2.Size = New System.Drawing.Size(36, 56)
-        Me.ToolStripButton2.Text = "Save"
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 56)
+        Me.btSave.Text = "Save"
         '
         '_Toolbar1_Button5
         '
@@ -110,7 +110,7 @@
 
     End Sub
     Friend WithEvents dgCustomer As System.Windows.Forms.DataGridView
-    Friend WithEvents ToolStripButton2 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSave As System.Windows.Forms.ToolStripButton
     Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
     Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
 #End Region 

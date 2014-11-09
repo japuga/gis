@@ -17,8 +17,7 @@
 	'Required by the Windows Form Designer
 	Private components As System.ComponentModel.IContainer
 	Public ToolTip1 As System.Windows.Forms.ToolTip
-	Public WithEvents dgStore As AxMSDataGridLib.AxDataGrid
-	Public WithEvents _Toolbar1_Button4 As System.Windows.Forms.ToolStripSeparator
+    Public WithEvents _Toolbar1_Button4 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents Toolbar1 As System.Windows.Forms.ToolStrip
 	Public WithEvents lbState As System.Windows.Forms.Label
 	Public WithEvents Label1 As System.Windows.Forms.Label
@@ -26,97 +25,137 @@
 	'It can be modified using the Windows Form Designer.
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-		Dim resources As System.Resources.ResourceManager = New System.Resources.ResourceManager(GetType(frmStore))
-		Me.components = New System.ComponentModel.Container()
-		Me.ToolTip1 = New System.Windows.Forms.ToolTip(components)
-		Me.dgStore = New AxMSDataGridLib.AxDataGrid
-		Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-		Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
-		Me.lbState = New System.Windows.Forms.Label
-		Me.Label1 = New System.Windows.Forms.Label
-		Me.Toolbar1.SuspendLayout()
-		Me.SuspendLayout()
-		Me.ToolTip1.Active = True
-		CType(Me.dgStore, System.ComponentModel.ISupportInitialize).BeginInit()
-		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
-		Me.Text = "Store Maintenance"
-		Me.ClientSize = New System.Drawing.Size(652, 469)
-		Me.Location = New System.Drawing.Point(3, 22)
-		Me.MaximizeBox = False
-		Me.MinimizeBox = False
-		Me.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation
-		Me.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.BackColor = System.Drawing.SystemColors.Control
-		Me.ControlBox = True
-		Me.Enabled = True
-		Me.KeyPreview = False
-		Me.Cursor = System.Windows.Forms.Cursors.Default
-		Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.ShowInTaskbar = True
-		Me.HelpButton = False
-		Me.WindowState = System.Windows.Forms.FormWindowState.Normal
-		Me.Name = "frmStore"
-		dgStore.OcxState = CType(resources.GetObject("dgStore.OcxState"), System.Windows.Forms.AxHost.State)
-		Me.dgStore.Size = New System.Drawing.Size(617, 345)
-		Me.dgStore.Location = New System.Drawing.Point(16, 88)
-		Me.dgStore.TabIndex = 1
-		Me.dgStore.Name = "dgStore"
-		Me.Toolbar1.ShowItemToolTips = True
-		Me.Toolbar1.Dock = System.Windows.Forms.DockStyle.Top
-		Me.Toolbar1.Size = New System.Drawing.Size(652, 44)
-		Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
-		Me.Toolbar1.TabIndex = 0
-        'Me.Toolbar1.ImageList = ImageList2
-		Me.Toolbar1.Name = "Toolbar1"
-		Me._Toolbar1_Button4.Size = New System.Drawing.Size(40, 39)
-		Me._Toolbar1_Button4.AutoSize = False
-		Me._Toolbar1_Button4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText
-		Me._Toolbar1_Button4.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
-		Me._Toolbar1_Button4.ToolTipText = "Print"
-		Me._Toolbar1_Button4.Width = 10
-		Me._Toolbar1_Button4.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-		Me.lbState.Text = "State"
-		Me.lbState.Size = New System.Drawing.Size(137, 17)
-		Me.lbState.Location = New System.Drawing.Point(272, 64)
-		Me.lbState.TabIndex = 3
-		Me.lbState.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.lbState.TextAlign = System.Drawing.ContentAlignment.TopLeft
-		Me.lbState.BackColor = System.Drawing.SystemColors.Control
-		Me.lbState.Enabled = True
-		Me.lbState.ForeColor = System.Drawing.SystemColors.ControlText
-		Me.lbState.Cursor = System.Windows.Forms.Cursors.Default
-		Me.lbState.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.lbState.UseMnemonic = True
-		Me.lbState.Visible = True
-		Me.lbState.AutoSize = False
-		Me.lbState.BorderStyle = System.Windows.Forms.BorderStyle.None
-		Me.lbState.Name = "lbState"
-		Me.Label1.Text = "Customer"
-		Me.Label1.Size = New System.Drawing.Size(241, 17)
-		Me.Label1.Location = New System.Drawing.Point(16, 64)
-		Me.Label1.TabIndex = 2
-		Me.Label1.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopLeft
-		Me.Label1.BackColor = System.Drawing.SystemColors.Control
-		Me.Label1.Enabled = True
-		Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-		Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
-		Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.Label1.UseMnemonic = True
-		Me.Label1.Visible = True
-		Me.Label1.AutoSize = False
-		Me.Label1.BorderStyle = System.Windows.Forms.BorderStyle.None
-		Me.Label1.Name = "Label1"
-		Me.Controls.Add(dgStore)
-		Me.Controls.Add(Toolbar1)
-		Me.Controls.Add(lbState)
-		Me.Controls.Add(Label1)
-		Me.Toolbar1.Items.Add(_Toolbar1_Button4)
-		CType(Me.dgStore, System.ComponentModel.ISupportInitialize).EndInit()
-		Me.Toolbar1.ResumeLayout(False)
-		Me.ResumeLayout(False)
-		Me.PerformLayout()
-	End Sub
+        Me.components = New System.ComponentModel.Container
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmStore))
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
+        Me.lbState = New System.Windows.Forms.Label
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.btNew = New System.Windows.Forms.ToolStripButton
+        Me.btSave = New System.Windows.Forms.ToolStripButton
+        Me.btSearch = New System.Windows.Forms.ToolStripButton
+        Me.btExit = New System.Windows.Forms.ToolStripButton
+        Me.dgStore = New System.Windows.Forms.DataGridView
+        Me.Toolbar1.SuspendLayout()
+        CType(Me.dgStore, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'Toolbar1
+        '
+        Me.Toolbar1.ImageScalingSize = New System.Drawing.Size(32, 32)
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me.btSearch, Me._Toolbar1_Button4, Me.btExit})
+        Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
+        Me.Toolbar1.Name = "Toolbar1"
+        Me.Toolbar1.Size = New System.Drawing.Size(652, 39)
+        Me.Toolbar1.TabIndex = 0
+        '
+        '_Toolbar1_Button4
+        '
+        Me._Toolbar1_Button4.AutoSize = False
+        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
+        Me._Toolbar1_Button4.Size = New System.Drawing.Size(10, 39)
+        '
+        'lbState
+        '
+        Me.lbState.BackColor = System.Drawing.SystemColors.Control
+        Me.lbState.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lbState.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbState.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lbState.Location = New System.Drawing.Point(272, 64)
+        Me.lbState.Name = "lbState"
+        Me.lbState.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lbState.Size = New System.Drawing.Size(137, 17)
+        Me.lbState.TabIndex = 3
+        Me.lbState.Text = "State"
+        '
+        'Label1
+        '
+        Me.Label1.BackColor = System.Drawing.SystemColors.Control
+        Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label1.Location = New System.Drawing.Point(16, 64)
+        Me.Label1.Name = "Label1"
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label1.Size = New System.Drawing.Size(241, 17)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "Customer"
+        '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 36)
+        Me.btNew.Text = "New"
+        '
+        'btSave
+        '
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 36)
+        Me.btSave.Text = "Save"
+        '
+        'btSearch
+        '
+        Me.btSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSearch.Image = CType(resources.GetObject("btSearch.Image"), System.Drawing.Image)
+        Me.btSearch.ImageTransparentColor = System.Drawing.Color.Transparent
+        Me.btSearch.Name = "btSearch"
+        Me.btSearch.Size = New System.Drawing.Size(36, 36)
+        Me.btSearch.Text = "Search"
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
+        '
+        'dgStore
+        '
+        Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgStore.Location = New System.Drawing.Point(19, 84)
+        Me.dgStore.Name = "dgStore"
+        Me.dgStore.Size = New System.Drawing.Size(621, 373)
+        Me.dgStore.TabIndex = 4
+        '
+        'frmStore
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.SystemColors.Control
+        Me.ClientSize = New System.Drawing.Size(652, 469)
+        Me.Controls.Add(Me.dgStore)
+        Me.Controls.Add(Me.Toolbar1)
+        Me.Controls.Add(Me.lbState)
+        Me.Controls.Add(Me.Label1)
+        Me.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.Location = New System.Drawing.Point(3, 22)
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
+        Me.Name = "frmStore"
+        Me.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Text = "Store Maintenance"
+        Me.Toolbar1.ResumeLayout(False)
+        Me.Toolbar1.PerformLayout()
+        CType(Me.dgStore, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub
+    Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSave As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSearch As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
+    Friend WithEvents dgStore As System.Windows.Forms.DataGridView
 #End Region 
 End Class

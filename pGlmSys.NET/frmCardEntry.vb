@@ -77,7 +77,7 @@ Friend Class frmCardEntry
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         If rs.Rows.Count > 0 Then
-            If rs.Rows(0).Item(0).Value = 0 Then
+            If rs.Rows(0).Item(0) = 0 Then
                 'no dup
                 dup_card = False
             Else
@@ -166,15 +166,18 @@ ErrorHandler:
 		
 		
 		Select Case gCreditCard.bFlag
-			Case General.modo.NewRecord
-				If cbBankName.Items.Count > 0 Then
-					cbBankName.SelectedIndex = 0
-				End If
-				If cbCardtype.Items.Count > 0 Then
-					cbCardtype.SelectedIndex = 0
-				End If
-				txtCardBalance.Text = CStr(0)
-				txtCardNumber.Text = ""
+            Case General.modo.NewRecord
+                txtCardNumber.Enabled = True
+                txtCardNumber.ReadOnly = False
+                txtCardNumber.Text = ""
+                If cbBankName.Items.Count > 0 Then
+                    cbBankName.SelectedIndex = 0
+                End If
+                If cbCardtype.Items.Count > 0 Then
+                    cbCardtype.SelectedIndex = 0
+                End If
+                txtCardBalance.Text = CStr(0)
+                txtCardNumber.Text = ""
 			Case General.modo.UpdateRecord
 				set_cb_ItemData(cbBankName, gCreditCard.nBankId)
 				set_cb(cbCardtype, gCreditCard.sCardType)

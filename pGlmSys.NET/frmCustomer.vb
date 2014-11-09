@@ -123,7 +123,13 @@ Friend Class frmCustomer
         Me.Close()
     End Sub
 
-    Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton2.Click
-
+    Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If dgCustomer.SelectedCells.Count() > 0 Then
+            Dim str As String = dgCustomer.CurrentRow.Cells("id").Value
+            update_customer(dgCustomer.CurrentRow.Cells("id").Value)
+        Else
+            MsgBox("You must select a customer before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
     End Sub
 End Class
