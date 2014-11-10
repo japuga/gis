@@ -325,7 +325,6 @@ C:\glm\vbnet\pGlmSys.NET\obj\Release\Interop.VBIDE.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Release\AxInterop.MSComCtl2.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Release\AxInterop.MSDataGridLib.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Release\GIS.vbproj.ResolveComReference.cache
-C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.rptCostCont.rpt
 C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.frmAbout.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.frmAccess.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.frmAccount.resources
@@ -457,7 +456,6 @@ C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.tplGridSelector2.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Release\GIS.vbproj.GenerateResource.Cache
 C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.exe
 C:\glm\vbnet\pGlmSys.NET\obj\Release\pGlmSys.xml
-C:\glm\vbnet\pGlmSys.NET\bin\pGlmSys.pdb
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\ResolveAssemblyReference.cache
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\Interop.AccessibilityCplAdminLib.dll
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\Interop.CRPEAuto.dll
@@ -598,3 +596,4 @@ C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.Resources.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.tplGridSelector.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\pGlmSys.tplGridSelector2.resources
 C:\glm\vbnet\pGlmSys.NET\obj\Debug\GIS.vbproj.GenerateResource.Cache
+C:\glm\vbnet\pGlmSys.NET\bin\pGlmSys.pdb
