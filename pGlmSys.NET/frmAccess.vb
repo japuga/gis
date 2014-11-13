@@ -66,17 +66,18 @@ Friend Class frmAccess
 
             'si esta es la compu de christian (drive E) utiliza esta base de datos
             If ((OSdriveLetter(0) = "E") Or (OSdriveLetter(0) = "e")) Then
-                sStr = "Data Source= CC_DESKTOP2\CCDESKTOP  ;" & _
+                'sStr = "Data Source=" & cbServername.Text CC_DESKTOP2\CCDESKTOP  ;" & _
+                sStr = "Data Source=" & cbServername.Text & ";" & _
                                  "Initial Catalog=GLM;" & _
                                  "Persist Security Info=True;" & _
-                                 "User ID=jp;" & _
-                                 "Password=jp;" & "Connection Timeout = 300"
+                                 "User ID=" & Trim(txtUser.Text) & ";" & _
+                                 "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
             Else 'si esta es la compu de javier
                 sStr = "Data Source= rpt1\rpt1sql  ;" & _
                                  "Initial Catalog=GLM;" & _
                                  "Persist Security Info=True;" & _
-                                 "User ID=jp;" & _
-                                 "Password=jp;" & "Connection Timeout = 300"
+                                 "User ID=" & Trim(txtUser.Text) & ";" & _
+                                 "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
             End If
             cn.ConnectionString = sStr
             'cn.ConnectionTimeout = 300
