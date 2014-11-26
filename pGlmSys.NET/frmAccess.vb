@@ -64,6 +64,7 @@ Friend Class frmAccess
                           "Persist Security Info=True;" & _
                           "Connection Timeout = 30"
 
+            MsgBox(My.Computer.Name)
             'si esta es la compu de christian (drive E) utiliza esta base de datos
             If ((OSdriveLetter(0) = "E") Or (OSdriveLetter(0) = "e")) Then
                 'sStr = "Data Source=" & cbServername.Text CC_DESKTOP2\CCDESKTOP  ;" & _
