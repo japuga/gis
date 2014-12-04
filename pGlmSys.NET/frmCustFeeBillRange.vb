@@ -81,16 +81,16 @@ ErrorHandler:
 	Private Sub update_billingRange()
 		gFeeBillingRangeDet.bFlag = General.modo.UpdateRecord
 		
-		If dgBillingRange.Row >= 0 Then
-			gFeeBillingRangeDet.nFeeId = gFeeBillingRange.nFeeId
-			gFeeBillingRangeDet.nRangeSeq = CShort(dgBillingRange.Columns("range_seq").Text)
-			gFeeBillingRangeDet.nLowerBound = CDbl(dgBillingRange.Columns("From Amount").Text)
-			gFeeBillingRangeDet.nUpperBound = CDbl(dgBillingRange.Columns("To Amount").Text)
-			gFeeBillingRangeDet.nRangeFeeValue = CDbl(dgBillingRange.Columns("Value").Text)
-		Else
-			MsgBox("Please select a record before taking this option.", MsgBoxStyle.Information, "GLM Warning")
-			Exit Sub
-		End If
+        If dgBillingRange.SelectedRows.Count > 0 Then
+            gFeeBillingRangeDet.nFeeId = gFeeBillingRange.nFeeId
+            gFeeBillingRangeDet.nRangeSeq = CShort(dgBillingRange.CurrentRow.Cells("range_seq").Value)
+            gFeeBillingRangeDet.nLowerBound = CDbl(dgBillingRange.CurrentRow.Cells("From Amount").Value)
+            gFeeBillingRangeDet.nUpperBound = CDbl(dgBillingRange.CurrentRow.Cells("To Amount").Value)
+            gFeeBillingRangeDet.nRangeFeeValue = CDbl(dgBillingRange.CurrentRow.Cells("Value").Value)
+        Else
+            MsgBox("Please select a record before taking this option.", MsgBoxStyle.Information, "GLM Warning")
+            Exit Sub
+        End If
 		
 		VB6.ShowForm(frmCustFeeBillRangeDet, VB6.FormShowConstants.Modal, Me)
 		If gFeeBillingRangeDet.bFlag = General.modo.SavedRecord Then
@@ -103,17 +103,17 @@ ErrorHandler:
 		
 		Dim nRecords As Short
         Dim cmd As sqlcommand = cn.CreateCommand()
-		If dgBillingRange.Row >= 0 Then
-			'Delete from FeeBillingRange
-			sStmt = "DELETE FROM FeeBillingRange " & " WHERE fee_id=" & Str(gFeeBillingRange.nFeeId) & " AND range_seq =" & Str(CDbl(dgBillingRange.Columns("range_seq").Text))
+        If dgBillingRange.SelectedRows.Count > 0 Then
+            'Delete from FeeBillingRange
+            sStmt = "DELETE FROM FeeBillingRange " & " WHERE fee_id=" & Str(gFeeBillingRange.nFeeId) & " AND range_seq =" & Str(CDbl(dgBillingRange.CurrentRow.Cells("range_seq").Value))
             cmd.CommandText = sStmt
             nRecords = cmd.ExecuteNonQuery()
-			If nRecords > 0 Then
-				MsgBox("Record was successfully removed.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			End If
-		Else
-			MsgBox("Please select a record before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-		End If
+            If nRecords > 0 Then
+                MsgBox("Record was successfully removed.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            End If
+        Else
+            MsgBox("Please select a record before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        End If
 		
 		load_dgBillingRange()
 	End Sub

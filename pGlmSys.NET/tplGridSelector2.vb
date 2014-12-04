@@ -9,7 +9,6 @@ Friend Class tplGridSelector2
     Private rsHeader As DataTable
     Private cmLocal As SqlCommand = cn.CreateCommand()
     Private rsLocal As DataTable
-    Private ImageList2 As New ImageList()
 	
 	
 	'UPGRADE_WARNING: Event cbHeader.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -54,13 +53,13 @@ Friend Class tplGridSelector2
 		move_right()
 	End Sub
 	
-	Private Sub dgLeft_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgLeft.DblClick
-		move_right()
-	End Sub
+    Private Sub dgLeft_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        move_right()
+    End Sub
 	
-	Private Sub dgRight_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgRight.DblClick
-		move_left()
-	End Sub
+    Private Sub dgRight_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        move_left()
+    End Sub
 	
 	Private Sub tplGridSelector2_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -100,8 +99,7 @@ Friend Class tplGridSelector2
 		
 	End Sub
 	Private Sub init_rsRight()
-		'UPGRADE_NOTE: Object rsRight may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		rsRight = Nothing
+        rsRight = Nothing
     End Sub
 	Private Sub header_settings()
 		Dim i As Short
@@ -156,7 +154,7 @@ Friend Class tplGridSelector2
 	End Sub
 	Private Sub load_dgLeft(ByRef sQuery As String)
 		Dim gridRecord As gItplGridSelectorFieldUDT
-		Dim i As Short
+        Dim i As Short
 		
         rsLeft = getDataTable(sQuery) '.Open(sQuery, cn)
         If rsLeft.Rows.Count > 0 Then
@@ -187,10 +185,9 @@ Friend Class tplGridSelector2
 		Dim i As Short
 		
         rsRight = getDataTable(sQuery) '.Open(sQuery, cn)
-        If rsRight.Rows.Count > 0 Then
-            dgRight.DataSource = rsRight
-        Else
-            Exit Sub
+        dgRight.DataSource = rsRight
+        If rsRight.Rows.Count >= 0 Then
+            'Exit Sub
         End If
 		
 		
@@ -198,118 +195,134 @@ Friend Class tplGridSelector2
 		dgRight.Text = gItplGridSelector2.sRightCaption
 		
 		For i = 0 To 10
-			'UPGRADE_WARNING: Couldn't resolve default property of object gridRecord. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			gridRecord = gItplGridSelector2.aFields(i)
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-			If Not IsDbNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
-				dgRight.Columns(gridRecord.sFieldName).Visible = gridRecord.bVisible
-				dgRight.Columns(gridRecord.sFieldName).Width = VB6.TwipsToPixelsX(gridRecord.nWidth)
-			Else
-				Exit For
-			End If
+            gridRecord = gItplGridSelector2.aFields(i)
+            If Not IsDBNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
+                dgRight.Columns(gridRecord.sFieldName).Visible = gridRecord.bVisible
+                dgRight.Columns(gridRecord.sFieldName).Width = VB6.TwipsToPixelsX(gridRecord.nWidth)
+            Else
+                Exit For
+            End If
 		Next i
 		
 	End Sub
 	
 	Private Sub move_right()
-		Dim i As Short
-		Dim vRow As Object
-		Dim gridRecord As gItplGridSelectorFieldUDT
-		
-		On Error GoTo ErrorHandler
-		
-        If rsRight.Rows.Count <= 0 Then
-            init_rsRight()
-            load_dgRight(gItplGridSelector2.sQueryInit)
-            'rsRight.Open gItplGridSelector2.sQueryInit, cn
-            'If rsRight.State = adStateOpen Then
-            '    Set dgRight.DataSource = rsRight
-            'End If
-        End If
-		
-		For	Each vRow In dgLeft.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'rsLeft.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
-			
-            'MsgBox "before:" + Str(rsRight.RecordCount)
-            Dim drow As DataRow = rsRight.NewRow
-            'rsRight.AddNew()
-			'Copio todos los campos del registro
-			For i = 0 To 10
-				'UPGRADE_WARNING: Couldn't resolve default property of object gridRecord. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				gridRecord = gItplGridSelector2.aFields(i)
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
-                    drow.Item(gridRecord.sFieldName).Value = rsLeft.Rows(vRow).Item(gridRecord.sFieldName).Value
-				Else
-					Exit For
-				End If
-			Next i
-			
-			
-            'rsRight.Update()
-            rsRight.Rows.Add(drow)
-            rsRight.Select("", gItplGridSelector2.sOrderBy)
-			'rsRight.MoveFirst
-			'MsgBox "after:" + Str(rsRight.RecordCount)
-            rsLeft.Rows.Remove(vRow)
-		Next vRow
-		Exit Sub
-		
-ErrorHandler: 
-		If Err.Number = 3021 Then
-			MsgBox("Error found.")
-		End If
-		'save_error Me.name, "add_member"
-		MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-		
-		
-	End Sub
+        Dim vRow As DataGridViewRow
+        Try
+
+            If rsRight.Rows.Count <= 0 Then
+                init_rsRight()
+                load_dgRight(gItplGridSelector2.sQueryInit)
+                'rsRight.Open gItplGridSelector2.sQueryInit, cn
+                'If rsRight.State = adStateOpen Then
+                '    Set dgRight.DataSource = rsRight
+                'End If
+            End If
+
+            If dgLeft.SelectedRows.Count <= 0 Then
+                For Each aCell As DataGridViewCell In dgLeft.SelectedCells()
+                    dgLeft.Rows(aCell.RowIndex).Selected = True
+                Next aCell
+            End If
+
+            For Each vRow In dgLeft.SelectedRows
+                'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                'rsLeft.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
+
+                'MsgBox "before:" + Str(rsRight.RecordCount)
+                'Dim drow As DataRow = rsRight.NewRow()
+
+                rsRight.ImportRow(rsLeft.Rows(vRow.Index))
+
+                'rsRight.AddNew()
+                'Copio todos los campos del registro
+
+                'For i = 0 To 10
+                '    gridRecord = gItplGridSelector2.aFields(i)
+                '    If Not IsDBNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
+                '        Dim aval As String = drow.Item(gridRecord.sFieldName).Value()
+                '        aval = drow.Item(0)
+                '        aval = drow.Item(1)
+                '        aval = drow.Item(2)
+                '        aval = drow.Item(3)
+                '        aval = drow.Item(4)
+                '        drow.Item(gridRecord.sFieldName).Value = vRow.Cells(gridRecord.sFieldName).Value
+                '    Else
+                '        Exit For
+                '    End If
+                'Next i
+
+
+                'rsRight.Update()
+                'rsRight.Rows.Add(drow)
+                rsRight.Select("", gItplGridSelector2.sOrderBy)
+                dgRight.Sort(dgRight.Columns(gItplGridSelector2.sOrderBy), System.ComponentModel.ListSortDirection.Ascending)
+                'rsRight.MoveFirst
+                'MsgBox "after:" + Str(rsRight.RecordCount)
+                rsLeft.Rows.RemoveAt(vRow.Index)
+            Next vRow
+            Exit Sub
+
+        Catch ex As Exception
+            If Err.Number = 3021 Then
+                MsgBox("Error found.")
+            End If
+            'save_error Me.name, "add_member"
+            MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        End Try
+
+    End Sub
 	
 	
 	Private Sub move_left()
 		Dim i As Short
-		Dim vRow As Object
+        Dim vRow As DataGridViewRow
 		Dim gridRecord As gItplGridSelectorFieldUDT
 		
 		On Error GoTo ErrorHandler
-		
-		For	Each vRow In dgRight.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
+        If (dgRight.SelectedRows.Count <= 0) Then
+            For Each aCell As DataGridViewCell In dgRight.SelectedCells
+                dgRight.Rows(aCell.RowIndex).Selected = True
+            Next
+        End If
+
+
+
+        For Each vRow In dgRight.SelectedRows
             'rsRight.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
-			
+            rsLeft.ImportRow(rsRight.Rows(vRow.Index))
             'rsLeft.AddNew()
-            Dim drow As DataRow = rsLeft.NewRow
-			'Copio todos los campos del registro
-			For i = 0 To 10
-				'UPGRADE_WARNING: Couldn't resolve default property of object gridRecord. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-				gridRecord = gItplGridSelector2.aFields(i)
-				'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-				If Not IsDbNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
-                    drow.Item(gridRecord.sFieldName).Value = rsRight.Rows(vRow).Item(gridRecord.sFieldName).Value
-				Else
-					Exit For
-				End If
-			Next i
-			
+            'Dim drow As DataRow = rsLeft.NewRow()
+            'Copio todos los campos del registro
+            'For i = 0 To 10
+            '    gridRecord = gItplGridSelector2.aFields(i)
+            '    If Not IsDBNull(gridRecord.sFieldName) And Len(gridRecord.sFieldName) > 0 Then
+            '        drow.Item(gridRecord.sFieldName).Value = rsRight.Rows(vRow).Item(gridRecord.sFieldName).Value
+            '    Else
+            '        Exit For
+            '    End If
+            'Next i
+
             'rsLeft.Update()
-            rsLeft.Rows.Add(drow)
+            'rsLeft.Rows.Add(drow)
             rsLeft.Select("", gItplGridSelector2.sOrderBy)
-			
-            rsRight.Rows.Remove(vRow) '.Delete(ADODB.AffectEnum.adAffectCurrent)
-			
-		Next vRow
-		Exit Sub
-		
-ErrorHandler: 
-		If Err.Number = 3021 Then
-			MsgBox("Error found.")
-		End If
-		'save_error Me.name, "add_member"
-		MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-		
-		
-	End Sub
+            dgLeft.Sort(dgLeft.Columns(gItplGridSelector2.sOrderBy), System.ComponentModel.ListSortDirection.Ascending)
+
+            rsRight.Rows.RemoveAt(vRow.Index) '.Delete(ADODB.AffectEnum.adAffectCurrent)
+
+        Next vRow
+        Exit Sub
+
+ErrorHandler:
+        If Err.Number = 3021 Then
+            MsgBox("Error found.")
+        End If
+        'save_error Me.name, "add_member"
+        MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+
+
+    End Sub
 	
 	
 	
@@ -388,17 +401,17 @@ ErrorHandler:
 		val_fields = True
 	End Function
 	Private Sub delete_record(ByRef sPrimaryKey As String)
-		Dim cmDelete As ADODB.Command
+        Dim cmDelete As SqlCommand
 		Dim nRecords As Short
 		
-		cmDelete = New ADODB.Command
+        cmDelete = cn.CreateCommand
 		
-		cmDelete.let_ActiveConnection(cn)
-		cmDelete.CommandText = gItplGridSelector2.sDeleteStmt
-		cmDelete.CommandType = ADODB.CommandTypeEnum.adCmdText
-		cmDelete.Parameters.Refresh()
+        cmDelete.CommandText = gItplGridSelector2.sDeleteStmt
+        cmDelete.CommandType = CommandType.Text
+        SqlCommandBuilder.DeriveParameters(cmDelete)
+
 		cmDelete.Parameters(0).Value = sPrimaryKey
-		cmDelete.Execute(nRecords)
+        nRecords = cmDelete.ExecuteNonQuery()
 		If nRecords > 0 Then
 			MsgBox("Record was successfully removed", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
 		Else
@@ -443,49 +456,57 @@ ErrorHandler:
 	Private Sub save_record(ByRef nOption As General.modo)
 		Dim nRecords As Short
 		
-		On Error GoTo ErrorHandler
-		
-		
-		cmLocal.CommandType = ADODB.CommandTypeEnum.adCmdText
-		'cm.Parameters.Append cm.CreateParameter("group_id", adChar, adParamInput, 20)
-		
-		Select Case nOption
-			Case General.modo.NewRecord
-				
-			Case General.modo.UpdateRecord
-				cmLocal.CommandText = gItplGridSelector2.sDeleteStmt
+        Try
+            cmLocal = cn.CreateCommand
+            cmLocal.CommandType = CommandType.Text
+            cmLocal.CommandText = gItplGridSelector2.sInsertStmt
+            'cm.Parameters.Append cm.CreateParameter("group_id", adChar, adParamInput, 20)
 
-				cmLocal.Parameters(0).Value = cbHeader.Text
+            Select Case nOption
+                Case General.modo.NewRecord
+
+                Case General.modo.UpdateRecord
+                    cmLocal.CommandText = gItplGridSelector2.sDeleteStmt
+
+                    cmLocal.Parameters(0).Value = cbHeader.Text
+                    nRecords = cmLocal.ExecuteNonQuery()
+            End Select
+
+
+            'cmLocal.Parameters.Refresh()
+
+            'cm.Parameters.Append cm.CreateParameter("serv_id", adChar, adParamInput, 20)
+
+            Select Case nOption
+                Case General.modo.NewRecord
+                    'cmLocal.Parameters(0).Value = quotation_mask(txtHeader.Text)
+                    cmLocal.Parameters.AddWithValue("@group_id", txtHeader.Text)
+                    cmLocal.Parameters.Add("@serv_id", SqlDbType.Int, 60)
+                Case General.modo.UpdateRecord
+                    cmLocal.Parameters(0).Value = quotation_mask(cbHeader.Text)
+            End Select
+
+            For row As Integer = 0 To rsRight.Rows.Count - 1
+                Dim aval As Integer = rsRight.Rows(row).Item("serv_id")
+                cmLocal.Parameters(1).Value = rsRight.Rows(row).Item("serv_id")
                 nRecords = cmLocal.ExecuteNonQuery()
-		End Select
-		
-		cmLocal.CommandText = gItplGridSelector2.sInsertStmt
-        'cmLocal.Parameters.Refresh()
-		
-		'cm.Parameters.Append cm.CreateParameter("serv_id", adChar, adParamInput, 20)
-		
-		Select Case nOption
-			Case General.modo.NewRecord
-				cmLocal.Parameters(0).Value = quotation_mask(txtHeader.Text)
-			Case General.modo.UpdateRecord
-				cmLocal.Parameters(0).Value = quotation_mask(cbHeader.Text)
-		End Select
+                If nRecords <= 0 Then
+                    Exit For
+                End If
+            Next row
 
-        For row As Integer = 0 To rsRight.Rows.Count - 1
-            cmLocal.Parameters(1).Value = rsRight.Rows(row).Item("serv_id").Value
-            nRecords = cmLocal.ExecuteNonQuery()
-            If nRecords <= 0 Then
-                Exit For
+
+            MsgBox("Data was successfully saved.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        Catch ex As SqlException
+            If ex.ErrorCode = -2146232060 Then
+                MsgBox("Cannot add because the report to which this is associated with does not exist yet.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
             End If
-        Next row
-        
 
-        MsgBox("Data was successfully saved.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-        Exit Sub
-
-ErrorHandler:
-        save_error(Me.Name, "save_record")
-        MsgBox("Unexpected error occurred while saving data.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        Catch ex As Exception
+            save_error(Me.Name, "save_record")
+            MsgBox("Unexpected error occurred while saving data.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        End Try
     End Sub
 	
 	Private Sub txtHeader_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles txtHeader.KeyPress
@@ -500,4 +521,34 @@ ErrorHandler:
 			eventArgs.Handled = True
 		End If
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        cbHeader.SelectedIndex = 0 '<New>
+        new_record()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields(gItplGridSelector2.bModo) Then
+            save_record(gItplGridSelector2.bModo)
+            gItplGridSelector2.bModo = General.modo.UpdateRecord
+            load_header(gItplGridSelector2.sQueryHeader)
+            set_visible(gItplGridSelector2.bModo)
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        If gItplGridSelector2.bModo = General.modo.NewRecord Then
+            MsgBox("Can not perform this action until record is saved.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        Else
+            If MsgBox("Do you want to delete this record?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
+                delete_record(cbHeader.Text)
+                load_header(gItplGridSelector2.sQueryHeader)
+                set_visible(gItplGridSelector2.bModo)
+            End If
+        End If
+    End Sub
 End Class

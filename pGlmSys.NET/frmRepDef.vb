@@ -82,50 +82,53 @@ Friend Class frmRepDef
 				gRepDef.sRepTemplateFile = ""
 				gRepDef.sTableName = ""
 				
-			Case General.modo.UpdateRecord
+            Case General.modo.UpdateRecord
+                Dim localIndex As Integer = dgRepDef.CurrentRow.Index
+
+                'rsLocal.LoadDataRow(dgRepDef.CurrentRow., True)
                 If dgRepDef.SelectedRows.Count < 0 Then
                     MsgBox("You must select a row before attempting this action.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                     Exit Function
                 End If
-				
-				gRepDef.bFlag = General.modo.UpdateRecord
 
-                If Not IsDBNull(rsLocal.Rows(0).Item("rep_no")) Then
-                    gRepDef.nRepNo = rsLocal.Rows(0).Item("rep_no")
+                gRepDef.bFlag = General.modo.UpdateRecord
+
+                If Not IsDBNull(rsLocal.Rows(localIndex).Item("rep_no")) Then
+                    gRepDef.nRepNo = rsLocal.Rows(localIndex).Item("rep_no")
                 Else
                     MsgBox("Could not find report number.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
-				
-                If Not IsDBNull(rsLocal.Rows(0).Item("Name")) Then
-                    gRepDef.sRepCaption = rsLocal.Rows(0).Item("Name")
+
+                If Not IsDBNull(rsLocal.Rows(localIndex).Item("Name")) Then
+                    gRepDef.sRepCaption = rsLocal.Rows(localIndex).Item("Name")
                 Else
                     MsgBox("Could not find report name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
-				
-                If Not IsDBNull(rsLocal.Rows(0).Item("Stored Procedure")) Then
+
+                If Not IsDBNull(rsLocal.Rows(localIndex).Item("Stored Procedure")) Then
                     gRepDef.sRepSpName = dgRepDef.CurrentRow.Cells("Stored Procedure").Value
                 Else
                     MsgBox("Could not find report stored procedure.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
-				
-                If Not IsDBNull(rsLocal.Rows(0).Item("Default Template")) Then
+
+                If Not IsDBNull(rsLocal.Rows(localIndex).Item("Default Template")) Then
                     gRepDef.sRepTemplateFile = dgRepDef.CurrentRow.Cells("Default Template").Value
                 Else
                     MsgBox("Could not find template file.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
-				
-                If Not IsDBNull(rsLocal.Rows(0).Item("table_name")) Then
+
+                If Not IsDBNull(rsLocal.Rows(localIndex).Item("table_name")) Then
                     gRepDef.sTableName = dgRepDef.CurrentRow.Cells("table_name").Value
                 Else
                     MsgBox("Could not find data table name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
-				
-		End Select
+
+        End Select
 		set_RepDef = True
 		Exit Function
 		

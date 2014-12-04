@@ -27,7 +27,7 @@ Friend Class frmVendorSearch
 	End Sub
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
-        'gVendorSearch.bFlag = False
+        gVendorSearch.bFlag = False
 		Me.Close()
 	End Sub
 	

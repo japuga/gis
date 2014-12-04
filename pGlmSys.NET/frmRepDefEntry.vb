@@ -3,8 +3,8 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmRepDefEntry
 	Inherits System.Windows.Forms.Form
-    Private rsRepDefTemplate As SqlDataReader
-    Private ImageList2 As New ImageList()
+    Private rsRepDefTemplate As DataTable
+
 	
 	Private Sub cmdBrowse_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdBrowse.Click
 		Dim sDir As String
@@ -96,20 +96,22 @@ ErrorHandler:
 	
 	Private Sub cmdEditTemplate_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEditTemplate.Click
 		If gRepDef.bFlag = General.modo.SavedRecord Then
-			'Header was saved
-			set_RepDefTemplate((General.modo.UpdateRecord))
-			VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
-			load_dgRepDefTemplate()
-		Else
-			If val_fields Then
-				save_repDef_record((gRepDef.bFlag)) 'Header just saved ok
-				If gRepDef.bFlag = General.modo.SavedRecord Then
-					set_RepDefTemplate((General.modo.UpdateRecord))
-					VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
-					load_dgRepDefTemplate()
-				End If
-			End If
-		End If
+            'Header was saved
+            If dgRepDefTemplate.SelectedRows.Count > 0 Or dgRepDefTemplate.SelectedCells.Count > 0 Then
+                set_RepDefTemplate((General.modo.UpdateRecord))
+                VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
+                load_dgRepDefTemplate()
+            End If
+        Else
+            If val_fields() Then
+                save_repDef_record((gRepDef.bFlag)) 'Header just saved ok
+                If gRepDef.bFlag = General.modo.SavedRecord Then
+                    set_RepDefTemplate((General.modo.UpdateRecord))
+                    VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
+                    load_dgRepDefTemplate()
+                End If
+            End If
+        End If
 		
 	End Sub
 	
@@ -142,12 +144,33 @@ ErrorHandler:
 				gRepDefTemplate.sRepTemplateFile = ""
 				gRepDefTemplate.nColOrder = 1
 			Case General.modo.UpdateRecord
-				gRepDefTemplate.nRepNo = gRepDef.nRepNo
-                gRepDefTemplate.sRepTemplateFile = rsRepDefTemplate.Item("File").Value
-                gRepDefTemplate.sRepTemplateName = rsRepDefTemplate.Item("Template").Value
-                gRepDefTemplate.sRepTemplateDesc = rsRepDefTemplate.Item("Description").Value
-                gRepDefTemplate.nColOrder = rsRepDefTemplate.Item("Order Seq").Value
-		End Select
+                gRepDefTemplate.nRepNo = gRepDef.nRepNo
+
+                'gRepDefTemplate.sRepTemplateFile = rsRepDefTemplate.Rows(0).Item("File")
+                'gRepDefTemplate.sRepTemplateName = rsRepDefTemplate.Rows(0).Item("Template")
+                'gRepDefTemplate.sRepTemplateDesc = rsRepDefTemplate.Rows(0).Item("Description")
+                'gRepDefTemplate.nColOrder = rsRepDefTemplate.Rows(0).Item("Order Seq")
+                If dgRepDefTemplate.SelectedRows.Count = 0 Then
+                    For Each aCell As DataGridViewCell In dgRepDefTemplate.SelectedCells
+                        dgRepDefTemplate.Rows(aCell.RowIndex).Selected = True
+                    Next
+                End If
+
+                If dgRepDefTemplate.SelectedRows.Count > 0 Then
+                    gRepDefTemplate.sRepTemplateFile = dgRepDefTemplate.SelectedRows(0).Cells("File").Value
+                    gRepDefTemplate.sRepTemplateName = dgRepDefTemplate.SelectedRows(0).Cells("Template").Value
+                    gRepDefTemplate.sRepTemplateDesc = dgRepDefTemplate.SelectedRows(0).Cells("Description").Value
+                    gRepDefTemplate.nColOrder = dgRepDefTemplate.SelectedRows(0).Cells("Order Seq").Value
+                ElseIf dgRepDefTemplate.Rows.Count > 0 Then
+                    gRepDefTemplate.sRepTemplateFile = dgRepDefTemplate.Rows(0).Cells("File").Value
+                    gRepDefTemplate.sRepTemplateName = dgRepDefTemplate.Rows(0).Cells("Template").Value
+                    gRepDefTemplate.sRepTemplateDesc = dgRepDefTemplate.Rows(0).Cells("Description").Value
+                    gRepDefTemplate.nColOrder = dgRepDefTemplate.Rows(0).Cells("Order Seq").Value
+
+                End If
+
+
+        End Select
 		
 	End Sub
 	
@@ -235,15 +258,15 @@ ErrorHandler:
 		build_query_header = "SELECT DISTINCT group_id " & " FROM RepDefService " & " WHERE RepDefService.rep_no = " & Str(gRepDef.nRepNo) & " ORDER BY group_id "
 	End Function
 	Private Function build_insert() As String
-		build_insert = "INSERT INTO RepDefService (rep_no, group_id, serv_id )" & " VALUES ( " & Str(gRepDef.nRepNo) & ",? ,?)"
+        build_insert = "INSERT INTO RepDefService (rep_no, group_id, serv_id )" & " VALUES ( " & Str(gRepDef.nRepNo) & ",@group_id ,@serv_id)"
 		
 		
 	End Function
 	Private Function build_delete() As String
-		build_delete = "DELETE FROM RepDefService " & " WHERE rep_no = " & Str(gRepDef.nRepNo) & " AND group_id = ?"
+        build_delete = "DELETE FROM RepDefService " & " WHERE rep_no = " & Str(gRepDef.nRepNo) & " AND group_id = @group_id"
 	End Function
 	Private Function build_query_count() As String
-		build_query_count = "SELECT COUNT(*) FROM RepDefService " & " WHERE rep_no = " & Str(gRepDef.nRepNo) & " AND group_id = ?"
+        build_query_count = "SELECT COUNT(*) FROM RepDefService " & " WHERE rep_no = " & Str(gRepDef.nRepNo) & " AND group_id = @group_id"
 		
 	End Function
 	Private Sub frmRepDefEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
@@ -276,16 +299,17 @@ ErrorHandler:
         sStmt = "SELECT rep_template_name Template, " & " rep_template_desc 'Description', " & " rep_template_file 'File', col_order 'Order Seq'" & " FROM repDefTemplate " & " WHERE rep_no = " & Str(gRepDef.nRepNo)
         cmd.CommandText = sStmt
         
-        rsRepDefTemplate = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsRepDefTemplate.HasRows() Then
+        rsRepDefTemplate = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsRepDefTemplate.Rows.Count > 0 Then
             dgRepDefTemplate.DataSource = rsRepDefTemplate
+            'format
+            dgRepDefTemplate.Columns("Template").Width = VB6.TwipsToPixelsX(1500)
+            dgRepDefTemplate.Columns("Description").Width = VB6.TwipsToPixelsX(3000)
+            dgRepDefTemplate.Columns("File").Width = VB6.TwipsToPixelsX(4000)
+            dgRepDefTemplate.Columns("Order Seq").Width = VB6.TwipsToPixelsX(300)
+        Else
+            dgRepDefTemplate.DataSource = Nothing
         End If
-
-        'format
-        dgRepDefTemplate.Columns("Template").Width = VB6.TwipsToPixelsX(1500)
-        dgRepDefTemplate.Columns("Description").Width = VB6.TwipsToPixelsX(3000)
-        dgRepDefTemplate.Columns("File").Width = VB6.TwipsToPixelsX(4000)
-        dgRepDefTemplate.Columns("Order Seq").Width = VB6.TwipsToPixelsX(300)
 
     End Sub
 	
@@ -341,7 +365,7 @@ ErrorHandler:
             rs = getDataTable(sStmt) ' cmd.ExecuteReader() '[.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rs.Rows.Count > 0 Then
-                If gRepDef.bFlag = General.modo.NewRecord Or (gRepDef.bFlag = General.modo.UpdateRecord And rs.Rows(0).Item(0).Value <> txtRepNo.Text) Then
+                If gRepDef.bFlag = General.modo.NewRecord Or (gRepDef.bFlag = General.modo.UpdateRecord And rs.Rows(0).Item(0) <> txtRepNo.Text) Then
                     val_fields = False
                     MsgBox("Duplicate Report Name, try another.", MsgBoxStyle.Critical + MsgBoxStyle.Exclamation, "GLM Warning")
                     txtRepCaption.Focus()
@@ -415,6 +439,7 @@ ErrorHandler:
 
         nTran = cn.BeginTransaction()
         cmd.CommandText = sStmt
+        cmd.Transaction = nTran
         Select Case nOption
             Case General.modo.NewRecord
                 nRecords = cmd.ExecuteNonQuery()
@@ -478,7 +503,14 @@ ErrorHandler:
 
     End Sub
 
-    Private Sub Label1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label1.Click
 
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields() Then
+            save_repDef_record(gRepDef.bFlag)
+        End If
     End Sub
 End Class
