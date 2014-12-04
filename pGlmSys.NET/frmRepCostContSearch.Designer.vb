@@ -620,6 +620,7 @@
         Me.ListView1.Size = New System.Drawing.Size(121, 97)
         Me.ListView1.TabIndex = 37
         Me.ListView1.UseCompatibleStateImageBehavior = False
+        Me.ListView1.Visible = False
         '
         'frmRepCostContSearch
         '

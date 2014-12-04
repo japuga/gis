@@ -21,7 +21,7 @@ Module BusinessFunctions
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         If rs.Rows.Count > 0 Then
-            If Trim(rs.Rows(0).Item("period_status_id").Value) = "O" Then
+            If Trim(rs.Rows(0).Item("period_status_id")) = "O" Then
                 sStmt = "UPDATE period " & " SET period_status_id = 'C' " & " WHERE cust_id ='" & sCustId & "' " & " AND period_seq = " & Str(nPeriodSeq)
                 cm.CommandText = sStmt
                 nRecords = cm.ExecuteNonQuery()
@@ -53,9 +53,8 @@ ErrorHandler:
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
 
         If rs.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rs.Rows(0).Item(0).Value) Then
-                If rs.Rows(0).Item(0).Value = "T" Then
+            If Not IsDBNull(rs.Rows(0).Item(0)) Then
+                If rs.Rows(0).Item(0) = "T" Then
                     isFeeRange = True
                 End If
             End If
@@ -492,7 +491,7 @@ ErrorHandler:
 		
         If rsLocal.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            get_percent = IIf(IsDBNull(rsLocal.Rows(0).Item("percent_value").value), 0, rsLocal.Rows(0).Item("percent_value").value)
+            get_percent = IIf(IsDBNull(rsLocal.Rows(0).Item("percent_value")), 0, rsLocal.Rows(0).Item("percent_value"))
         Else
             get_percent = CStr(0)
         End If
@@ -527,11 +526,11 @@ ErrorHandler:
             bValid = True
             sValidationComments = ""
 
-            sCustId = rs.Rows(row).Item("cust_id").value
-            nStoreId = rs.Rows(row).Item("store_id").value
-            nVendSeq = rs.Rows(row).Item("vend_seq").value
-            sAccountNo = rs.Rows(row).Item("account_no").value
-            sInvoiceNo = rs.Rows(row).Item("invoice_no").value
+            sCustId = rs.Rows(row).Item("cust_id")
+            nStoreId = rs.Rows(row).Item("store_id")
+            nVendSeq = rs.Rows(row).Item("vend_seq")
+            sAccountNo = rs.Rows(row).Item("account_no")
+            sInvoiceNo = rs.Rows(row).Item("invoice_no")
 
             'Store
             If Not valid_store(sCustId, nStoreId) Then
@@ -566,7 +565,7 @@ ErrorHandler:
         rsStore = cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 		
         If rsStore.HasRows() Then
-            If rsStore.Item(0).value = 0 Then
+            If rsStore.Item(0) = 0 Then
                 valid_store = False
             End If
         End If
@@ -577,38 +576,36 @@ ErrorHandler:
 	Public Function valid_vendor(ByRef nVendSeq As Short) As Boolean
 		Dim stmt As Object
         Dim cmd As SqlCommand = cn.CreateCommand()
-        Dim rsVendor As SqlDataReader
+        Dim rsVendor As DataTable
 		
 		valid_vendor = True
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object stmt. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         stmt = "SELECT count(*) FROM vbranch WHERE vend_seq =" & Str(nVendSeq)
         cmd.CommandText = stmt
-        rsVendor = cmd.ExecuteReader()
+        rsVendor = getDataTable(stmt) ' cmd.ExecuteReader()
 
-        If rsVendor.HasRows() Then
-            If rsVendor.Item(0).value = 0 Then
+        If rsVendor.Rows.Count > 0 Then
+            If rsVendor.Rows(0).Item(0) = 0 Then
                 valid_vendor = False
             End If
         End If
 		
-		rsVendor.Close()
+        'rsVendor.Close()
 		
 	End Function
 	
 	Public Sub update_lf2gis_vinvoice(ByRef sCustId As String, ByRef nStoreId As Short, ByRef sAccountNo As String, ByRef nVendSeq As Short, ByRef sInvoiceNo As String, ByRef sStatusFlag As String, ByRef sValidationComments As String)
 		Dim stmt As Object
-		Dim cmInvoice As New ADODB.Command
+        Dim cmInvoice As New SqlCommand
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object stmt. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		stmt = "UPDATE lf2gis_vinvoice SET status_flag ='" & sStatusFlag & "', " & " validation_comments ='" & sValidationComments & "' " & " WHERE cust_id = '" & sCustId & "'" & " AND store_id = " & Str(nStoreId) & " AND account_no ='" & sAccountNo & "' " & " AND vend_seq = " & Str(nVendSeq) & " AND invoice_no = '" & sInvoiceNo & "' "
-		
-		
-		cmInvoice.let_ActiveConnection(cn)
-		cmInvoice.CommandType = ADODB.CommandTypeEnum.adCmdText
-		'UPGRADE_WARNING: Couldn't resolve default property of object stmt. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        stmt = "UPDATE lf2gis_vinvoice SET status_flag ='" & sStatusFlag & "', " & " validation_comments ='" & sValidationComments & "' " & " WHERE cust_id = '" & sCustId & "'" & " AND store_id = " & Str(nStoreId) & " AND account_no ='" & sAccountNo & "' " & " AND vend_seq = " & Str(nVendSeq) & " AND invoice_no = '" & sInvoiceNo & "' "
+
+        cmInvoice = cn.CreateCommand '.let_ActiveConnection(cn)
+        cmInvoice.CommandType = CommandType.Text
+
 		cmInvoice.CommandText = stmt
-		cmInvoice.Execute()
+		cmInvoice.Executenonquery()
 		
 	End Sub
 	

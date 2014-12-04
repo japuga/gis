@@ -44,7 +44,7 @@ Partial Class frmRepCostContSearchViewer
         Me.ClientSize = New System.Drawing.Size(1145, 681)
         Me.Controls.Add(Me.CrystalReportViewer1)
         Me.Name = "frmRepCostContSearchViewer"
-        Me.Text = "Form1"
+        Me.Text = "Report Cost Containment Viewer"
         Me.ResumeLayout(False)
 
     End Sub

@@ -3,13 +3,13 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmCustFeeEntry
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
-	Private cmLocal As ADODB.Command
+    Private rsLocal As DataTable
+    Private cmLocal As SqlCommand
 	Private bPercentFlag As Boolean
 	Private nLocalFeeId As Short
 	Private bPreviousFlag As General.modo
 	
-	'UPGRADE_WARNING: Event cbFeeDesc.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
+
 	Private Sub cbFeeDesc_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbFeeDesc.SelectedIndexChanged
 		'Options button just available for Savings Service Fee
 		'or Billing range Fee
@@ -25,10 +25,10 @@ Friend Class frmCustFeeEntry
 		sStmt = "SELECT percent_flag FROM FeeType " & "WHERE fee_type_id = " & Str(VB6.GetItemData(cbFeeDesc, cbFeeDesc.SelectedIndex))
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.HasRows() Then
-            If rsLocal.Item("percent_flag").Value = "T" Then
+        If rsLocal.Rows.Count > 0 Then
+            If rsLocal.Rows(0).Item("percent_flag") = "T" Then
                 bPercentFlag = True
             Else
                 bPercentFlag = False
@@ -164,6 +164,7 @@ Friend Class frmCustFeeEntry
         Dim ds As DataSet = New DataSet("tmpDataSet")
         Dim da As SqlDataAdapter = New SqlDataAdapter()
         Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim dt As DataTable
 
 		
 		'FeeID
@@ -180,19 +181,20 @@ Friend Class frmCustFeeEntry
 		
 		Select Case gCustFeeRecord.bFlag
 			Case General.modo.NewRecord
-				sStmt = "SELECT MAX(fee_id) FROM fee "
-                cmd.CommandText = sStmt
-                da.SelectCommand = cmd
+                sStmt = "SELECT MAX(fee_id) FROM fee "
+                dt = getDataTable(sStmt, nTran)
+                'cmd.CommandText = sStmt
+                'cmd.Transaction = nTran
+                'da.SelectCommand = cmd
                 Try
-                    da.Fill(ds)
+                    'da.Fill(ds)
                     'rsLocal.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                    'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    'If rsLocal.RecordCount = 0 Or IsDBNull(rsLocal.Fields(0).Value) Then
-                    If ds.Tables(0).Rows.Count = 0 Or IsDBNull(ds.Tables(0).Rows(0).Item(0)) Then
+                    'If rsLocal.RecordCount = 0 Or IsDBNull(rsLocal.Fields(0)) Then
+                    If dt.Rows.Count = 0 Or IsDBNull(dt.Rows(0).Item(0)) Then
                         nFeeId = 1
                     Else
-                        nFeeId = ds.Tables(0).Rows(0).Item(0).Value + 1
+                        nFeeId = dt.Rows(0).Item(0) + 1
                     End If
                 Catch e As Exception
                     nTran.Rollback()
@@ -207,7 +209,8 @@ Friend Class frmCustFeeEntry
                 sStmt = "INSERT INTO fee (fee_id, cust_id, " & " active_flag, fee_value, fee_type_id) " & " VALUES (" & Str(nFeeId) & ",'" & Trim(gCustFeeRecord.sCustId) & "'," & "'" & sActiveFlag & "'," & txtFeeValue.Text & "," & Str(VB6.GetItemData(cbFeeDesc, cbFeeDesc.SelectedIndex)) & ")"
 
                 cmLocal.CommandText = sStmt
-                cmLocal.Execute(nRecords)
+                cmLocal.Transaction = nTran
+                nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
                     nLocalFeeId = nFeeId
@@ -226,11 +229,13 @@ Friend Class frmCustFeeEntry
                 sStmt = "UPDATE Fee " & " SET fee_value = " & txtFeeValue.Text & "," & "  active_flag ='" & Trim(sActiveFlag) & "'" & " WHERE fee_id =" & Str(gCustFeeRecord.nFeeId)
 
                 cmLocal.CommandText = sStmt
-                cmLocal.Execute(nRecords)
+                cmLocal.Transaction = nTran
+                nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
 
                 Else
+                    nTran.Rollback()
                     MsgBox("Failed to update into Fee table." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
                     save_fee = False
                     Exit Function
@@ -242,9 +247,10 @@ Friend Class frmCustFeeEntry
 			'Check for details
             sStmt = "DELETE FROM FeeService " & " WHERE fee_id =" & Str(nFeeId)
             cmd.CommandText = sStmt
+            cmd.Transaction = nTran
             nRecords = cmd.ExecuteNonQuery()
             For row As Integer = 0 To gItplGridSelector.rsResult.Rows.Count - 1
-                nServId = gItplGridSelector.rsResult.Rows(row).Item("serv_id").Value
+                nServId = gItplGridSelector.rsResult.Rows(row).Item("serv_id")
 
                 sStmt = " INSERT INTO FeeService (fee_id, serv_id) " & " VALUES (" & Str(nFeeId) & "," & Str(nServId) & ")"
                 cmd.CommandText = sStmt
@@ -348,19 +354,17 @@ ErrorHandler:
 	
 	Private Sub init_vars()
 		
-		cmLocal = New ADODB.Command
+        cmLocal = cn.CreateCommand
 		
 		cmdOptions.Enabled = False
 		clear_gItplGridSelector()
 		
 		bPercentFlag = False
 		With cmLocal
-			.let_ActiveConnection(cn)
-			.CommandType = ADODB.CommandTypeEnum.adCmdText
+            .CommandType = CommandType.Text
 		End With
 		
-		'UPGRADE_WARNING: TextBox property txtFeeValue.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtFeeValue.Maxlength = 5
+        txtFeeValue.MaxLength = 5
 		nLocalFeeId = 0
 		bPreviousFlag = gCustFeeRecord.bFlag
 		

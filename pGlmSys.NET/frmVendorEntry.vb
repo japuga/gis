@@ -226,16 +226,15 @@ Friend Class frmVendorEntry
 		On Error GoTo ErrorHandler
 		
 		'Vendor Area
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If Len(txtVendArea.Text) = 0 Or IsDbNull(txtVendArea.Text) Then
-			MsgBox("Vendor Area should not be null.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Warning")
-			val_fields = False
-			Exit Function
-		Else
-			If General.gbVendorMode = General.modo.NewRecord Then
-				'Verificar que esta area no sea repetida
+        If Len(txtVendArea.Text) = 0 Or IsDBNull(txtVendArea.Text) Then
+            MsgBox("Vendor Area should not be null.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
+            val_fields = False
+            Exit Function
+        Else
+            If General.gbVendorMode = General.modo.NewRecord Then
+                'Verificar que esta area no sea repetida
                 sStmt = "SELECT count(*) FROM vbranch " & "WHERE vend_id=" & Str(gVendorSearch.nVendId) & " AND vend_area='" & Trim(txtVendArea.Text) & "' "
-				
+
                 rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rsLocal.Rows(0).Item(0) > 0 Then
@@ -244,7 +243,7 @@ Friend Class frmVendorEntry
                     Exit Function
                 End If
             End If
-		End If
+        End If
 		
 		'Address
 		If Len(txtVendAddress.Text) = 0 Then
@@ -276,46 +275,43 @@ Friend Class frmVendorEntry
 		End If
 		
 		'Phone
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPhone1.Text) = 0 And Len(mtxtVendPhone2.Text) = 0 Then
-			MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendPhone1.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        'getPhoneNumberLen()
+        If getPhoneNumberLen(mtxtVendPhone1.Text) <> 10 Then
+            MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendPhone1.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPhone1.Text) > 0 And Len(mtxtVendPhone1.Text) < 10 Then
-			MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendPhone1.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtVendPhone1.Text) <> 10 Then
+            MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendPhone1.Focus()
+            val_fields = False
+            Exit Function
+        End If
+        Dim alen As Integer = getPhoneNumberLen(mtxtVendPhone2.Text)
+        alen = getPhoneNumberLen(mtxtVendPhone1.Text)
+        If getPhoneNumberLen(mtxtVendPhone2.Text) <> 10 Then
+            MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendPhone2.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPhone2.Text) > 0 And Len(mtxtVendPhone2.Text) < 10 Then
-			MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendPhone2.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtVendFax1.Text) <> 10 Then
+            MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendFax1.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendFax1.Text) > 0 And Len(mtxtVendFax1.Text) < 10 Then
-			MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendFax1.Focus()
-			val_fields = False
-			Exit Function
-		End If
-		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendFax2.Text) > 0 And Len(mtxtVendFax2.Text) < 10 Then
-			MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendFax2.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtVendFax2.Text) <> 10 Then
+            MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendFax2.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
 		'Payment Info
 		If Len(txtVendPayAddress.Text) = 0 Then
@@ -348,13 +344,12 @@ Friend Class frmVendorEntry
 		End If
 		
 		'Payment Phone
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtVendPayPhone1.Text) > 0 And Len(mtxtVendPayPhone1.Text) < 10 Then
-			MsgBox("Payment Phone: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtVendPayPhone1.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If getPhoneNumberLen(mtxtVendPayPhone1.Text) <> 10 Then
+            MsgBox("Payment Phone: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtVendPayPhone1.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
 		If cbVendPayState.SelectedIndex < 0 Then
 			MsgBox("Please choose an State for Payment Info.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
@@ -529,22 +524,24 @@ ErrorHandler:
 		
 		'Defaults
 		Select Case bFlag
-			Case General.modo.NewRecord
-				For i = 0 To 100
-					asQBName(i) = ""
-				Next i
-				
-				set_cb(cbState, gVendorSearch.sStateId)
-				If cbState.SelectedIndex < 0 Then
-					cbState.SelectedIndex = 0
-				End If
-				
-				cbVendPayState.SelectedIndex = cbState.SelectedIndex
-				
-				cbQBGroupDesc.SelectedIndex = 0
-				'Allow ANY User to set initial QB Settings
-				enable_QB(True)
-			Case General.modo.UpdateRecord
+            Case General.modo.NewRecord
+
+                clearFields()
+                For i = 0 To 100
+                    asQBName(i) = ""
+                Next i
+
+                set_cb(cbState, gVendorSearch.sStateId)
+                If cbState.SelectedIndex < 0 Then
+                    cbState.SelectedIndex = 0
+                End If
+
+                cbVendPayState.SelectedIndex = cbState.SelectedIndex
+
+                cbQBGroupDesc.SelectedIndex = 0
+                'Allow ANY User to set initial QB Settings
+                enable_QB(True)
+            Case General.modo.UpdateRecord
 				
 				set_vendor_info()
 				'Solo administradores pueden modificar
@@ -568,7 +565,39 @@ ErrorHandler:
 		txtQBName.Enabled = bOption
 		
 	End Sub
-	
+    Private Sub clearFields()
+        cbState.SelectedIndex = 0
+        txtVendArea.Text = ""
+        txtVendRepre.Text = ""
+        txtVendAddress.Text = ""
+        txtVendCity.Text = ""
+        txtVendZip.Text = ""
+        txtVendPayAddress.Text = ""
+        txtVendPayCity.Text = ""
+        txtVendPayZip.Text = ""
+        'asQBName(0) = gVBranchRecord.sQBNameCS
+        'asQBName(1) = gVBranchRecord.sQBNameTR
+
+        'Esto es solo para actualizacion
+        'cbQBGroupDesc.ListIndex = 0
+        cbQBGroupId.SelectedIndex = 0
+        
+        cbQBGroupDesc.SelectedIndex = 0
+
+        'Phone1
+
+        mtxtVendPhone1.Text = ""
+
+        mtxtVendPhone2.Text = ""
+
+        mtxtVendFax1.Text = ""
+
+        mtxtVendFax2.Text = ""
+
+        mtxtVendPayPhone1.Text = ""
+        cbVendPayState.SelectedIndex = 0
+        'set_cb(cbVendPayState, gVBranchRecord.sVendPayState)
+    End Sub
 	Private Sub set_vendor_info()
 		Dim i As Short
 		Dim nFound As Short

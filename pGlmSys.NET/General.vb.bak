@@ -2309,7 +2309,7 @@ ErrorHandler:
 
     Public Sub clear_gItplGridSelector()
         Dim i As Short
-        gItplGridSelector.Initialize()
+
         gItplGridSelector.bFlag = False
         'Set gItplGridSelector.rsResult = Nothing
         gItplGridSelector.sLeftCaption = ""
@@ -2332,7 +2332,6 @@ ErrorHandler:
     Public Sub clear_gItplGridSelector2()
         Dim i As Short
 
-        gItplGridSelector2.Initialize()
         gItplGridSelector2.bFlag = False
         'Set gItplGridSelector.rsResult = Nothing
         'If gItplGridSelector2.rsResult.State <> adStateClosed Then
@@ -2349,12 +2348,9 @@ ErrorHandler:
 
 
         For i = 0 To 10
-            Try
-                gItplGridSelector2.aFields(i).sFieldName = ""
-                gItplGridSelector2.aFields(i).bVisible = False
-                gItplGridSelector2.aFields(i).nWidth = 1000
-            Catch
-            End Try
+            gItplGridSelector2.aFields(i).sFieldName = ""
+            gItplGridSelector2.aFields(i).bVisible = False
+            gItplGridSelector2.aFields(i).nWidth = 1000
         Next i
 
     End Sub

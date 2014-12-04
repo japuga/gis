@@ -72,7 +72,7 @@
         Me.txtTableName.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtTableName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtTableName.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtTableName.Location = New System.Drawing.Point(480, 104)
+        Me.txtTableName.Location = New System.Drawing.Point(489, 94)
         Me.txtTableName.MaxLength = 0
         Me.txtTableName.Name = "txtTableName"
         Me.txtTableName.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -85,10 +85,10 @@
         Me.cmdOption.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdOption.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdOption.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdOption.Location = New System.Drawing.Point(544, 168)
+        Me.cmdOption.Location = New System.Drawing.Point(544, 154)
         Me.cmdOption.Name = "cmdOption"
         Me.cmdOption.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdOption.Size = New System.Drawing.Size(89, 25)
+        Me.cmdOption.Size = New System.Drawing.Size(89, 39)
         Me.cmdOption.TabIndex = 13
         Me.cmdOption.Text = "Service Options"
         Me.cmdOption.UseVisualStyleBackColor = False
@@ -100,7 +100,7 @@
         Me.txtRepNo.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtRepNo.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtRepNo.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtRepNo.Location = New System.Drawing.Point(472, 72)
+        Me.txtRepNo.Location = New System.Drawing.Point(473, 69)
         Me.txtRepNo.MaxLength = 0
         Me.txtRepNo.Name = "txtRepNo"
         Me.txtRepNo.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -128,7 +128,7 @@
         Me.cmdBrowse.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdBrowse.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdBrowse.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdBrowse.Location = New System.Drawing.Point(544, 136)
+        Me.cmdBrowse.Location = New System.Drawing.Point(544, 123)
         Me.cmdBrowse.Name = "cmdBrowse"
         Me.cmdBrowse.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdBrowse.Size = New System.Drawing.Size(89, 25)
@@ -171,7 +171,7 @@
         Me.txtRepTemplateFile.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtRepTemplateFile.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtRepTemplateFile.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtRepTemplateFile.Location = New System.Drawing.Point(136, 136)
+        Me.txtRepTemplateFile.Location = New System.Drawing.Point(136, 154)
         Me.txtRepTemplateFile.MaxLength = 0
         Me.txtRepTemplateFile.Name = "txtRepTemplateFile"
         Me.txtRepTemplateFile.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -185,7 +185,7 @@
         Me.txtRepSpName.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtRepSpName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtRepSpName.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtRepSpName.Location = New System.Drawing.Point(136, 104)
+        Me.txtRepSpName.Location = New System.Drawing.Point(137, 95)
         Me.txtRepSpName.MaxLength = 0
         Me.txtRepSpName.Name = "txtRepSpName"
         Me.txtRepSpName.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -199,7 +199,7 @@
         Me.txtRepCaption.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtRepCaption.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtRepCaption.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtRepCaption.Location = New System.Drawing.Point(136, 72)
+        Me.txtRepCaption.Location = New System.Drawing.Point(137, 66)
         Me.txtRepCaption.MaxLength = 0
         Me.txtRepCaption.Name = "txtRepCaption"
         Me.txtRepCaption.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -245,7 +245,7 @@
         Me.label4.Cursor = System.Windows.Forms.Cursors.Default
         Me.label4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.label4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.label4.Location = New System.Drawing.Point(376, 104)
+        Me.label4.Location = New System.Drawing.Point(376, 97)
         Me.label4.Name = "label4"
         Me.label4.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.label4.Size = New System.Drawing.Size(107, 20)
@@ -258,10 +258,10 @@
         Me.Label3.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label3.Location = New System.Drawing.Point(12, 136)
+        Me.Label3.Location = New System.Drawing.Point(12, 154)
         Me.Label3.Name = "Label3"
         Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label3.Size = New System.Drawing.Size(129, 20)
+        Me.Label3.Size = New System.Drawing.Size(118, 20)
         Me.Label3.TabIndex = 3
         Me.Label3.Text = "Default Template File"
         '
@@ -271,7 +271,7 @@
         Me.Label2.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label2.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label2.Location = New System.Drawing.Point(12, 104)
+        Me.Label2.Location = New System.Drawing.Point(13, 97)
         Me.Label2.Name = "Label2"
         Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label2.Size = New System.Drawing.Size(117, 20)
@@ -284,7 +284,7 @@
         Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label1.Location = New System.Drawing.Point(12, 72)
+        Me.Label1.Location = New System.Drawing.Point(13, 66)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label1.Size = New System.Drawing.Size(106, 20)

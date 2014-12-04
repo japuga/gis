@@ -221,10 +221,10 @@ ErrorHandler:
         cmReport = cn.CreateCommand() '.let_ActiveConnection(cn)
         cmReport.CommandType = CommandType.StoredProcedure
 		'cmReport.Parameters.Refresh
-		
-		
-		cmReport.CommandText = "usp_copy_repCostCont"
-        'cmReport.Parameters.Refresh()
+
+        cmReport.CommandText = "usp_copy_repCostCont"
+        SqlCommandBuilder.DeriveParameters(cmReport)
+
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptCostContParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptCostContParam.sStateId
@@ -837,7 +837,7 @@ ErrorHandler:
         Try
             rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
         Catch ex As Exception
-            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            MsgBox("Err: " & ex.Message & vbCrLf & "Please install: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
 
         rptDoc.SetDataSource(dstReport)

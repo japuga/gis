@@ -1069,16 +1069,16 @@ ErrorHandler:
 
         getCCRFinalVersion = 0
 
-        Dim rsCCR As SqlDataReader
+        Dim rsCCR As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim query As String
         query = "SELECT report_id FROM rptCriteriaCostCont " & " WHERE  cust_id = '" & sCustId & "' " & " AND period_seq = " & Str(nPeriodSeq) & " AND group_seq = " & Str(nGroupSeq) & " AND is_final_version = 'TRUE' "
         cmd.CommandText = query
 
-        rsCCR = cmd.ExecuteReader()
+        rsCCR = getDataTable(query) 'cmd.ExecuteReader()
 
-        If rsCCR.HasRows Then
-            getCCRFinalVersion = rsCCR.Item("report_id").Value
+        If rsCCR.Rows.Count > 0 Then
+            getCCRFinalVersion = rsCCR.Rows(0).Item("report_id")
         End If
 
 

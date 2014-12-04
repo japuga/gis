@@ -73,6 +73,9 @@ ErrorHandler:
         If gRepDefTemplate.bFlag = General.modo.UpdateRecord Then
             txtRepTemplateName.Enabled = False
             txtRepTemplateName.ReadOnly = True
+        Else 'if new record
+            txtRepTemplateName.Enabled = True
+            txtRepTemplateName.ReadOnly = False
         End If
 
     End Sub
@@ -108,15 +111,16 @@ ErrorHandler:
                 Exit Sub
         End Select
 
-        'UPGRADE_WARNING: Couldn't resolve default property of object nTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         nTran = cn.BeginTransaction()
         cmd.CommandText = sStmt
+        cmd.Transaction = nTran
         nRecords = cmd.ExecuteNonQuery()
-        'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
         If nRecords > 0 Then
             gRepDefTemplate.bFlag = General.modo.SavedRecord
             nTran.Commit()
             MsgBox("Template was successfully updated.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Me.Close()
             Exit Sub
         Else
             nTran.Rollback()
@@ -156,7 +160,7 @@ ErrorHandler:
             rs = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rs.Rows.Count > 0 Then
-                If (gRepDefTemplate.bFlag = General.modo.NewRecord And rs.Rows(0).Item(0).Value = gRepDefTemplate.nRepNo) Or (gRepDefTemplate.bFlag = General.modo.UpdateRecord And rs.Rows(0).Item("rep_no").Value = gRepDefTemplate.nRepNo And UCase(Trim(rs.Rows(0).Item("rep_template_name").Value)) <> UCase(Trim(gRepDefTemplate.sRepTemplateName))) Then
+                If (gRepDefTemplate.bFlag = General.modo.NewRecord And rs.Rows(0).Item(0) = gRepDefTemplate.nRepNo) Or (gRepDefTemplate.bFlag = General.modo.UpdateRecord And rs.Rows(0).Item("rep_no") = gRepDefTemplate.nRepNo And UCase(Trim(rs.Rows(0).Item("rep_template_name"))) <> UCase(Trim(gRepDefTemplate.sRepTemplateName))) Then
                     val_fields = False
                     MsgBox("Duplicate Template Name, try another.", MsgBoxStyle.Critical + MsgBoxStyle.Exclamation, "GLM Warning")
                     txtRepTemplateName.Focus()
@@ -167,7 +171,6 @@ ErrorHandler:
         End If
 
         'Template Desc
-        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(txtRepTemplateDesc.Text) Then
             MsgBox("You must enter Template Description.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
             txtRepTemplateDesc.Focus()
@@ -181,7 +184,6 @@ ErrorHandler:
         End If
 
         'Template File
-        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If IsDBNull(txtRepTemplateFile.Text) Then
             MsgBox("You must enter Template File.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
             txtRepTemplateFile.Focus()
@@ -199,6 +201,7 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "val_fields")
         MsgBox("Unexpected error was found. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        Return False
     End Function
 
     'UPGRADE_WARNING: Event txtRepTemplateDesc.TextChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -223,5 +226,16 @@ ErrorHandler:
             gRepDefTemplate.bFlag = General.modo.UpdateRecord
         End If
 
+    End Sub
+
+    Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields() Then
+            save_template(gRepDefTemplate.bFlag)
+
+        End If
     End Sub
 End Class
