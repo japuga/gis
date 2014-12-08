@@ -41,26 +41,31 @@ Friend Class frmCustFeeEntry
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		Dim nRecords As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim tmpDt As DataTable
 		'User cancelled action, so we remove this Fee
 		If bPreviousFlag = General.modo.NewRecord And Trim(cbFeeDesc.Text) = "Billing Range Fee" Then
 			'Delete from Fee and FeeBillingRange
-			sStmt = "DELETE FROM FeeBillingRange " & " WHERE fee_id=" & Str(nLocalFeeId)
-            cmd.CommandText = sStmt
-            nRecords = cm.ExecuteNonQuery()
-			
-			'Delete from Fee
-            sStmt = "DELETE FROM Fee " & " WHERE fee_id=" & Str(nLocalFeeId)
-            cmd.CommandText = sStmt
-            nRecords = cmd.ExecuteNonQuery()
-			If nRecords > 0 Then
-				'ok
-			Else
-				MsgBox("Error occurred while removing temporary Fee data." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-			End If
-			
-		End If
-		
-		
+            'check if it exists first
+            sStmt = "SELECT * FROM FeeBillingRange " & " WHERE fee_id=" & Str(nLocalFeeId)
+            tmpDt = getDataTable(sStmt)
+            If tmpDt.Rows.Count > 0 Then
+                sStmt = "DELETE FROM FeeBillingRange " & " WHERE fee_id=" & Str(nLocalFeeId)
+                cmd.CommandText = sStmt
+                nRecords = cm.ExecuteNonQuery()
+
+                'Delete from Fee
+                sStmt = "DELETE FROM Fee " & " WHERE fee_id=" & Str(nLocalFeeId)
+                cmd.CommandText = sStmt
+                nRecords = cmd.ExecuteNonQuery()
+
+                If nRecords > 0 Then
+                    'ok
+                Else
+                    MsgBox("Error occurred while removing temporary Fee data." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                End If
+            End If
+        End If
+
 		Me.Close()
 	End Sub
 	
@@ -254,7 +259,7 @@ Friend Class frmCustFeeEntry
 
                 sStmt = " INSERT INTO FeeService (fee_id, serv_id) " & " VALUES (" & Str(nFeeId) & "," & Str(nServId) & ")"
                 cmd.CommandText = sStmt
-
+                cmd.Transaction = nTran
                 nRecords = cmd.ExecuteNonQuery()
                 If nRecords <= 0 Then
                     nTran.Rollback()
