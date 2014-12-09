@@ -15,12 +15,12 @@ Friend Class frmInvoiceBooking
     Private rsLocal As DataTable
 	Private bClearAll As Boolean
 	Private bInvoiceSaved As Boolean
-	Private WithEvents sdfService As StdFormat.StdDataFormat
-	Private WithEvents sdfEquipment As StdFormat.StdDataFormat
-	Private WithEvents sdfDate As StdFormat.StdDataFormat
-	Private WithEvents sdfTons As StdFormat.StdDataFormat
-	Private WithEvents sdfUnits As StdFormat.StdDataFormat
-	Private WithEvents sdfTimes As StdFormat.StdDataFormat
+    Private WithEvents sdfService As DataGridViewCellStyle 'StdFormat.StdDataFormat
+    Private WithEvents sdfEquipment As DataGridViewCellStyle 'StdFormat.StdDataFormat
+    Private WithEvents sdfDate As DataGridViewCellStyle 'StdFormat.StdDataFormat
+    Private WithEvents sdfTons As DataGridViewCellStyle 'StdFormat.StdDataFormat
+    Private WithEvents sdfUnits As DataGridViewCellStyle 'StdFormat.StdDataFormat
+    Private WithEvents sdfTimes As DataGridViewCellStyle 'StdFormat.StdDataFormat
 	Private bRates As Boolean 'TRUE si la informacion de tarifas se cargo exitosa..
 	Private nClicks As Short
 	Private nClicksVendor As Short
@@ -117,7 +117,7 @@ Friend Class frmInvoiceBooking
             rs = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rs.Rows.Count > 0 Then
-                set_cb_ItemData(cbPeriod, rs.Rows(0).Item("period_seq").Value)
+                set_cb_ItemData(cbPeriod, rs.Rows(0).Item("period_seq"))
             Else
                 cbPeriod.SelectedIndex = 0
             End If
@@ -188,8 +188,8 @@ EventExitSub:
 			load_combo2(cbService, VB6.GetItemData(cbEquipment, cbEquipment.SelectedIndex))
 			'Rel 1.3 - Begin
 			'dgDetail.Columns("Equipment").Value = cbEquipment.ItemData(cbEquipment.ListIndex)
-			dgDetail.Columns("Equipment").value = VB6.GetItemData(cbEquipment, cbEquipment.SelectedIndex)
-			dgDetail.Columns("Equip").value = cbEquipment
+            dgDetail.Columns("Equipment").HeaderText = VB6.GetItemData(cbEquipment, cbEquipment.SelectedIndex)
+            dgDetail.Columns("Equip").HeaderText = cbEquipment.Text
 			'Rel 1.3 - End
 			
 			
@@ -228,8 +228,8 @@ EventExitSub:
 		
 
         If rsLocal.Rows.Count > 0 Then
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -239,87 +239,84 @@ ErrorHandler:
         Exit Sub
 	End Sub
 	
-	'UPGRADE_WARNING: Event cbService.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbService_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbService.SelectedIndexChanged
-		If cbService.SelectedIndex >= 0 Then
-			'Rel 1.3 - Begin ********************
-			'dgDetail.Columns("Service").Value = cbService.ItemData(cbService.ListIndex)
-			dgDetail.Columns("Service").value = VB6.GetItemData(cbService, cbService.SelectedIndex)
-			dgDetail.Columns("Serv").value = cbService
-			'Rel 1.3 - End **********************
-			If bCbSet Then
-				'No fue Usuario
-			Else
-				getRateVal()
-				enable_col(("Rate"))
-			End If
-			bCbSet = False
-			getSubtotal()
-			'Rel 1.3
-			calc_total()
-		End If
-	End Sub
+    Private Sub cbService_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbService.SelectedIndexChanged
+        If cbService.SelectedIndex >= 0 Then
+            'Rel 1.3 - Begin ********************
+            'dgDetail.Columns("Service").Value = cbService.ItemData(cbService.ListIndex)
+            dgDetail.Columns("Service").HeaderText = VB6.GetItemData(cbService, cbService.SelectedIndex)
+            dgDetail.Columns("Serv").HeaderText = cbService.Text
+            'Rel 1.3 - End **********************
+            If bCbSet Then
+                'No fue Usuario
+            Else
+                getRateVal()
+                enable_col(("Rate"))
+            End If
+            bCbSet = False
+            getSubtotal()
+            'Rel 1.3
+            calc_total()
+        End If
+    End Sub
 	'Valida los datos antes de llamar a la funcion getRate
-	Private Function getRateVal() As Boolean
-		'Dim nRate As Double
-		Dim rates As rateUDT
-		Dim sService As String
-		Dim sEquipment As String
-		
-		'Listindex = -1 si el combo no esta seleccionando
-		'If cbService.ListIndex >= 0 Then
-		If dgDetail.Columns("Service").Text <> "" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dgDetail.Columns().value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sService = dgDetail.Columns("Service").value
-		Else
-			getRateVal = False
-			Exit Function
-		End If
-		
-		'If cbEquipment.ListIndex >= 0 Then
-		If dgDetail.Columns("Equipment").Text <> "" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dgDetail.Columns().value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sEquipment = dgDetail.Columns("Equipment").value
-		Else
-			getRateVal = False
-			Exit Function
-		End If
-		
-		
-		If sService <> "" And sEquipment <> "" Then
-			'nRate = getRate(CInt(sService), CInt(sEquipment))
-			'Verifico si el servicio esta relacionado con un equipo para obtener su
-			'tarifa. Ex: Taxes
-			'If Not serv_4_eqpt(CInt(sService)) Then
-			'    Exit Function
-			'End If
-			
-			'Verifico si la tarifa de servicio-equipo requiere obtenerse de
-			'VContract, Ex: Wash
-			'If Not serv_4_rate_contract(CInt(sService)) Then
-			'    Exit Function
-			'End If
-			
-			'UPGRADE_WARNING: Couldn't resolve default property of object rates. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			rates = getRate(CShort(sService), CShort(sEquipment))
-			
-			'dgDetail.Columns("Old Rate") = Str(rates.old_rate)
-			'Ambas columnas se inicializan con el mismo valor.
-			dgDetail.Columns("Old Rate").Text = Str(rates.old_rate)
-			dgDetail.Columns("Rate").Text = Str(rates.Rate_Renamed)
-			getRateVal = True
-		End If
-		
-	End Function
+    Private Function getRateVal() As Boolean
+        'Dim nRate As Double
+        Dim rates As rateUDT
+        Dim sService As String
+        Dim sEquipment As String
+
+        'Listindex = -1 si el combo no esta seleccionando
+        'If cbService.ListIndex >= 0 Then
+        If dgDetail.CurrentRow.Cells("Service").Value <> "" Then
+            sService = dgDetail.CurrentRow.Cells("Service").Value
+        Else
+            getRateVal = False
+            Exit Function
+        End If
+
+        'If cbEquipment.ListIndex >= 0 Then
+        If dgDetail.CurrentRow.Cells("Equipment").Value <> "" Then
+            sEquipment = dgDetail.CurrentRow.Cells("Equipment").Value
+        Else
+            getRateVal = False
+            Exit Function
+        End If
+
+
+        If sService <> "" And sEquipment <> "" Then
+            'nRate = getRate(CInt(sService), CInt(sEquipment))
+            'Verifico si el servicio esta relacionado con un equipo para obtener su
+            'tarifa. Ex: Taxes
+            'If Not serv_4_eqpt(CInt(sService)) Then
+            '    Exit Function
+            'End If
+
+            'Verifico si la tarifa de servicio-equipo requiere obtenerse de
+            'VContract, Ex: Wash
+            'If Not serv_4_rate_contract(CInt(sService)) Then
+            '    Exit Function
+            'End If
+
+            'UPGRADE_WARNING: Couldn't resolve default property of object rates. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            rates = getRate(CShort(sService), CShort(sEquipment))
+
+            'dgDetail.Columns("Old Rate") = Str(rates.old_rate)
+            'Ambas columnas se inicializan con el mismo valor.
+            dgDetail.CurrentRow.Cells("Old Rate").Value = Str(rates.old_rate)
+            dgDetail.CurrentRow.Cells("Rate").Value = Str(rates.Rate_Renamed)
+            getRateVal = True
+        End If
+
+    End Function
 	'Habilita una columna del datagrid
 	Private Sub enable_col(ByRef sCol As String)
 		Select Case sCol
 			Case "Rate"
-				If Trim(dgDetail.Columns("Equip").Text) = "<None>" Then
-					dgDetail.Columns("Rate").Locked = False
-				Else
-					dgDetail.Columns("Rate").Locked = True
-				End If
+                If Trim(dgDetail.Columns("Equip").HeaderText) = "<None>" Then
+                    dgDetail.Columns("Rate").ReadOnly = False
+                Else
+                    dgDetail.Columns("Rate").ReadOnly = True
+                End If
 		End Select
 	End Sub
 	'Muestra un valor por defecto en columna Subtotal
@@ -331,19 +328,17 @@ ErrorHandler:
 		
 		'On Error GoTo ErrorHandler
 		
-		If dgDetail.Columns("Service").Text <> "" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dgDetail.Columns().value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sService = dgDetail.Columns("Service").value
-		Else
-			Exit Sub
-		End If
+        If dgDetail.Columns("Service").HeaderText <> "" Then
+            sService = dgDetail.CurrentRow.Cells("Service").Value
+        Else
+            Exit Sub
+        End If
 		
-		If dgDetail.Columns("Equipment").Text <> "" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dgDetail.Columns().value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sEquipment = dgDetail.Columns("Equipment").value
-		Else
-			Exit Sub
-		End If
+        If dgDetail.Columns("Equipment").HeaderText <> "" Then
+            sEquipment = dgDetail.CurrentRow.Cells("Equipment").Value
+        Else
+            Exit Sub
+        End If
 		
 		
 		If sService <> "" And sEquipment <> "" Then
@@ -357,15 +352,15 @@ ErrorHandler:
 			'rsLocal.Open sStmt, cn, adOpenStatic, adLockReadOnly
 			'If rsLocal("serv_ton") = "F" Then
 			
-			If dgDetail.Columns("Rate").Text <> "" And dgDetail.Columns("Usage").Text <> "" Then
-				'jp.bug58.begin - Round up
-				'dgDetail.Columns("Subtotal") = _
-				'Round(dgDetail.Columns("Rate") * dgDetail.Columns("Usage"), 2)
-				
-				dgDetail.Columns("Subtotal").Text = CStr(roundUpOne(CDbl(dgDetail.Columns("Rate").Text) * CDbl(dgDetail.Columns("Usage").Text)))
-				'jp.bug58.end
-				
-			End If
+            If dgDetail.CurrentRow.Cells("Rate").Value <> "" And dgDetail.CurrentRow.Cells("Usage").Value <> "" Then
+                'jp.bug58.begin - Round up
+                'dgDetail.Columns("Subtotal") = _
+                'Round(dgDetail.Columns("Rate") * dgDetail.Columns("Usage"), 2)
+
+                dgDetail.CurrentRow.Cells("Subtotal").Value = CStr(roundUpOne(CDbl(dgDetail.CurrentRow.Cells("Rate").Value) * CDbl(dgDetail.CurrentRow.Cells("Usage").Value)))
+                'jp.bug58.end
+
+            End If
 			'Else
 			'    dgDetail.Columns("Subtotal") = 0
 			'End If
@@ -473,7 +468,7 @@ EventExitSub:
 		
         rs = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rs.Rows(0).Item(0).Value = 0 Then
+        If rs.Rows(0).Item(0) = 0 Then
             verify_qb_vendor = False
         End If
 
@@ -545,25 +540,25 @@ ErrorHandler:
 		
 		
 		If Trim(gInvDetRecord.sType) <> "" Then
-            rsDetail.Rows(0).Item("Type").Value = Trim(gInvDetRecord.sType)
+            rsDetail.Rows(0).Item("Type") = Trim(gInvDetRecord.sType)
 		End If
 		
 		If Trim(gInvDetRecord.sEquipment) <> "" Then
-            rsDetail.Rows(0).Item("Equip").Value = Trim(gInvDetRecord.sEquipment)
+            rsDetail.Rows(0).Item("Equip") = Trim(gInvDetRecord.sEquipment)
 		End If
 		
 		If Trim(gInvDetRecord.sService) <> "" Then
-            rsDetail.Rows(0).Item("Serv").Value = Trim(gInvDetRecord.sService)
+            rsDetail.Rows(0).Item("Serv") = Trim(gInvDetRecord.sService)
 		End If
 		
-        rsDetail.Rows(0).Item("equipment").Value = gInvDetRecord.nEquipment
-        rsDetail.Rows(0).Item("Date").Value = gInvDetRecord.dServDate
-        rsDetail.Rows(0).Item("Service").Value = gInvDetRecord.nService
-        rsDetail.Rows(0).Item("Usage").Value = gInvDetRecord.nUsage
-        rsDetail.Rows(0).Item("Units").Value = gInvDetRecord.nUnits
-        rsDetail.Rows(0).Item("Old Rate").Value = gInvDetRecord.nOldRate
-        rsDetail.Rows(0).Item("Rate").Value = gInvDetRecord.nRate
-        rsDetail.Rows(0).Item("GLM Rate").Value = gInvDetRecord.nGlmRate
+        rsDetail.Rows(0).Item("equipment") = gInvDetRecord.nEquipment
+        rsDetail.Rows(0).Item("Date") = gInvDetRecord.dServDate
+        rsDetail.Rows(0).Item("Service") = gInvDetRecord.nService
+        rsDetail.Rows(0).Item("Usage") = gInvDetRecord.nUsage
+        rsDetail.Rows(0).Item("Units") = gInvDetRecord.nUnits
+        rsDetail.Rows(0).Item("Old Rate") = gInvDetRecord.nOldRate
+        rsDetail.Rows(0).Item("Rate") = gInvDetRecord.nRate
+        rsDetail.Rows(0).Item("GLM Rate") = gInvDetRecord.nGlmRate
 		
 		'Service Rate
 		sStmt = "SELECT serv_credit FROM service WHERE serv_id =" & Str(gInvDetRecord.nService)
@@ -585,14 +580,14 @@ ErrorHandler:
 		'jp.bug58.begin - Round up
         'rsDetail.item("Subtotal") = gInvDetRecord.nUsage * gInvDetRecord.nRate * nSign
         'rsDetail.item("Subtotal") = Round(gInvDetRecord.nUsage * gInvDetRecord.nRate * nSign, 2)
-        rsDetail.Rows(0).Item("Subtotal").Value = roundUpOne(gInvDetRecord.nUsage * gInvDetRecord.nRate) * nSign
-        'rsDetail.item("GLM Subtotal").value = gInvDetRecord.nUsage * gInvDetRecord.nGlmRate * nSign
-        'rsDetail.item("GLM Subtotal").value = Round(gInvDetRecord.nUsage * gInvDetRecord.nGlmRate * nSign, 2)
-        rsDetail.Rows(0).Item("GLM Subtotal").value = roundUpOne(gInvDetRecord.nUsage * gInvDetRecord.nGlmRate) * nSign
+        rsDetail.Rows(0).Item("Subtotal") = roundUpOne(gInvDetRecord.nUsage * gInvDetRecord.nRate) * nSign
+        'rsDetail.item("GLM Subtotal") = gInvDetRecord.nUsage * gInvDetRecord.nGlmRate * nSign
+        'rsDetail.item("GLM Subtotal") = Round(gInvDetRecord.nUsage * gInvDetRecord.nGlmRate * nSign, 2)
+        rsDetail.Rows(0).Item("GLM Subtotal") = roundUpOne(gInvDetRecord.nUsage * gInvDetRecord.nGlmRate) * nSign
 		'jp.bug58.end
 		'jp.bug56.end
-        rsDetail.Rows(0).Item("Comments").Value = gInvDetRecord.sComments
-        rsDetail.Rows(0).Item("Billable").Value = gInvDetRecord.sBillSavingFlag
+        rsDetail.Rows(0).Item("Comments") = gInvDetRecord.sComments
+        rsDetail.Rows(0).Item("Billable") = gInvDetRecord.sBillSavingFlag
 		Exit Sub
 		
 ErrorHandler: 
@@ -613,17 +608,15 @@ ErrorHandler:
 		dTotal = 0
 		dGlmTotal = 0
 		
-        rsClone = rsDetail 'rsDetail.Clone(ADODB.LockTypeEnum.adLockReadOnly)
+        rsClone = rsDetail.Clone 'rsDetail.Clone(ADODB.LockTypeEnum.adLockReadOnly)
         'While rsClone.Read()
         For row As Integer = 0 To rsClone.Rows.Count - 1
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rsClone.Rows(row).Item("Subtotal").Value) Then
-                dSub = rsClone.Rows(row).Item("Subtotal").Value
+            If Not IsDBNull(rsClone.Rows(row).Item("Subtotal")) Then
+                dSub = rsClone.Rows(row).Item("Subtotal")
                 'Verifico que el subtotal este correcto
                 'es decir sub =  qty * rate
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsClone.Rows(row).Item("Qty").Value) And Not IsDBNull(rsClone.Rows(row).Item("Rate").Value) Then
-                    dSubTmp = rsClone.Rows(row).Item("Qty").Value * rsClone.Rows(row).Item("Rate").Value
+                If Not IsDBNull(rsClone.Rows(row).Item("Qty")) And Not IsDBNull(rsClone.Rows(row).Item("Rate")) Then
+                    dSubTmp = rsClone.Rows(row).Item("Qty") * rsClone.Rows(row).Item("Rate")
                     If dSubTmp <> dSub Then
                         dSub = dSubTmp
                         'Actualizo el datagrid
@@ -634,14 +627,12 @@ ErrorHandler:
                 dTotal = dTotal + dSub
             End If
 
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rsClone.Rows(row).Item("GLM Subtotal").Value) Then
-                dSub = rsClone.Rows(row).Item("GLM Subtotal").Value
+            If Not IsDBNull(rsClone.Rows(row).Item("GLM Subtotal")) Then
+                dSub = rsClone.Rows(row).Item("GLM Subtotal")
                 'Verifico que el subtotal este correcto
                 'es decir sub =  qty * rate
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsClone.Rows(row).Item("Qty").Value) And Not IsDBNull(rsClone.Rows(row).Item("GLM Rate").Value) Then
-                    dSubTmp = rsClone.Rows(row).Item("Qty").Value * rsClone.Rows(row).Item("GLM Rate").Value
+                If Not IsDBNull(rsClone.Rows(row).Item("Qty")) And Not IsDBNull(rsClone.Rows(row).Item("GLM Rate")) Then
+                    dSubTmp = rsClone.Rows(row).Item("Qty") * rsClone.Rows(row).Item("GLM Rate")
                     If dSubTmp <> dSub Then
                         dSub = dSubTmp
                         'Actualizo el datagrid
@@ -682,8 +673,8 @@ ErrorHandler:
         'Do While Not rsClone.EOF
         For row As Integer = 0 To rsClone.Rows.Count - 1
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rsDetail.Rows(row).Item("Subtotal").Value) Then
-                dSub = rsClone.Rows(row).Item("Subtotal").Value
+            If Not IsDBNull(rsDetail.Rows(row).Item("Subtotal")) Then
+                dSub = rsClone.Rows(row).Item("Subtotal")
                 'Verifico que el subtotal este correcto
                 'es decir sub =  qty * rate
                 'If Not IsNull(rsDetail("Qty")) _
@@ -701,8 +692,8 @@ ErrorHandler:
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rsDetail.Rows(row).Item("GLM Subtotal").Value) Then
-                dSub = rsClone.Rows(row).Item("GLM Subtotal").Value
+            If Not IsDBNull(rsDetail.Rows(row).Item("GLM Subtotal")) Then
+                dSub = rsClone.Rows(row).Item("GLM Subtotal")
                 'Verifico que el subtotal este correcto
                 'es decir sub =  qty * rate
                 'If Not IsNull(rsDetail("Qty")) _
@@ -731,20 +722,20 @@ ErrorHandler:
 		Dim i As Short
 		
 		
-		If dgDetail.SelBookmarks.Count > 0 Then
-			If MsgBox("Do you want to delete this record?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.No Then
-				Exit Sub
-			End If
-		End If
+        If dgDetail.SelectedRows.Count > 0 Then
+            If MsgBox("Do you want to delete this record?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.No Then
+                Exit Sub
+            End If
+        End If
 		
 		
 		On Error GoTo ErrorHandler
 		
 		bRequiresUpdate = True
-		'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
 		vRow = 0
 		i = 0
-		For	Each vRow In dgDetail.SelBookmarks			
+        For Each vRow In dgDetail.SelectedRows
             del_dg_rows(i) = vRow 'Guardo el bookmark del datagrid del registro eliminado
             Dim drow As DataRow = rsDetail.NewRow()
             'Artificio para resolver bug en recorset al eliminar ultimo registro
@@ -754,20 +745,18 @@ ErrorHandler:
                 bLastDeleted = True
             End If
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsDetail.Bookmark = vRow
             'rsDetail.Delete(ADODB.AffectEnum.adAffectCurrent)
             If bLastDeleted Then
-                'UPGRADE_WARNING: Couldn't resolve default property of object vMark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 'rsDetail.Bookmark = vMark
             End If
             i = i + 1
         Next vRow
 		
 		'Remueve los bookmarks de los registros eliminados (los que usuario sombreo)
-		Do While dgDetail.SelBookmarks.Count
-			dgDetail.SelBookmarks.Remove(0)
-		Loop 
+        For Each aRow As DataGridViewRow In dgDetail.SelectedRows
+            dgDetail.Rows(aRow.Index).Selected = False
+        Next aRow
 		
 		calc_total2()
 		'cbService.Move -10000
@@ -781,10 +770,10 @@ ErrorHandler:
 	End Sub
 	'Edita detalles de un servicio en la factura
 	Private Sub cmdEdit_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEdit.Click
-		If dgDetail.Row < 0 Then
-			MsgBox("Please select a record to edit.", MsgBoxStyle.Information, "GLM Message")
-			Exit Sub
-		End If
+        If dgDetail.CurrentRow.Index < 0 Then
+            MsgBox("Please select a record to edit.", MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
 		
 		'edit_detail
 		detail((General.detmode.UpdateRecord))
@@ -792,8 +781,6 @@ ErrorHandler:
 	'Carga la form frmInvoiceDet con los datos del servicio a actualizar
 	Private Sub edit_detail()
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object rsDetail.Bookmark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		'UPGRADE_WARNING: Couldn't resolve default property of object vBookmark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         'vBookmark = rsDetail.Bookmark 'Guardo Posicion de registro en recordset
 		'Guardo la cabecera
 		If Not get_header Then
@@ -802,41 +789,37 @@ ErrorHandler:
 		
 		'Guardo los detalles en el arreglo global
 		'gInvDetRecord.bMode = detmode.UpdateRecord
-		gInvDetRecord.dServDate = CDate(dgDetail.Columns("Date").Text)
-		gInvDetRecord.sEquipment = dgDetail.Columns("Equip").Text
-		gInvDetRecord.nEquipment = CShort(dgDetail.Columns("Equipment").Text)
-		gInvDetRecord.sService = dgDetail.Columns("Serv").Text
-		gInvDetRecord.nService = CShort(dgDetail.Columns("Service").Text)
+        gInvDetRecord.dServDate = CDate(dgDetail.CurrentRow.Cells("Date").Value)
+        gInvDetRecord.sEquipment = dgDetail.CurrentRow.Cells("Equip").Value
+        gInvDetRecord.nEquipment = CShort(dgDetail.CurrentRow.Cells("Equipment").Value)
+        gInvDetRecord.sService = dgDetail.CurrentRow.Cells("Serv").Value
+        gInvDetRecord.nService = CShort(dgDetail.CurrentRow.Cells("Service").Value)
 		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(dgDetail.Columns("Usage").value) Then
-			gInvDetRecord.nUsage = 0
-		Else
-			gInvDetRecord.nUsage = CDbl(dgDetail.Columns("Usage").Text)
-		End If
+        If IsDBNull(dgDetail.CurrentRow.Cells("Usage").Value) Then
+            gInvDetRecord.nUsage = 0
+        Else
+            gInvDetRecord.nUsage = CDbl(dgDetail.CurrentRow.Cells("Usage").Value)
+        End If
 		
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(dgDetail.Columns("Units").value) Then
-			gInvDetRecord.nUnits = 0
-		Else
-			gInvDetRecord.nUnits = CDbl(dgDetail.Columns("Units").Text)
-		End If
+        If IsDBNull(dgDetail.CurrentRow.Cells("Units").Value) Then
+            gInvDetRecord.nUnits = 0
+        Else
+            gInvDetRecord.nUnits = CDbl(dgDetail.CurrentRow.Cells("Units").Value)
+        End If
 		
 		
-		gInvDetRecord.sType = dgDetail.Columns("Type").Text
-		gInvDetRecord.nOldRate = CDbl(dgDetail.Columns("Old Rate").Text)
-		gInvDetRecord.nRate = CDbl(dgDetail.Columns("Rate").Text)
-		gInvDetRecord.nGlmRate = CDbl(dgDetail.Columns("GLM Rate").Text)
-		gInvDetRecord.sComments = dgDetail.Columns("Comments").Text
-		gInvDetRecord.sBillSavingFlag = dgDetail.Columns("Billable").Text
+        gInvDetRecord.sType = dgDetail.CurrentRow.Cells("Type").Value
+        gInvDetRecord.nOldRate = CDbl(dgDetail.CurrentRow.Cells("Old Rate").Value)
+        gInvDetRecord.nRate = CDbl(dgDetail.CurrentRow.Cells("Rate").Value)
+        gInvDetRecord.nGlmRate = CDbl(dgDetail.CurrentRow.Cells("GLM Rate").Value)
+        gInvDetRecord.sComments = dgDetail.CurrentRow.Cells("Comments").Value
+        gInvDetRecord.sBillSavingFlag = dgDetail.CurrentRow.Cells("Billable").Value
 		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(dgDetail.Columns("invoice_det_no").value) Or Len(Trim(dgDetail.Columns("invoice_det_no").value)) = 0 Then
-			gInvDetRecord.nInvoiceDetNo = 0
-		Else
-			gInvDetRecord.nInvoiceDetNo = CShort(dgDetail.Columns("invoice_det_no").Text)
-		End If
+        If IsDBNull(dgDetail.CurrentRow.Cells("invoice_det_no").Value) Or Len(Trim(dgDetail.CurrentRow.Cells("invoice_det_no").Value)) = 0 Then
+            gInvDetRecord.nInvoiceDetNo = 0
+        Else
+            gInvDetRecord.nInvoiceDetNo = CShort(dgDetail.CurrentRow.Cells("invoice_det_no").Value)
+        End If
 		
 		
 		
@@ -869,14 +852,13 @@ ErrorHandler:
 			Exit Function
 		End If
 		
-		If dtDate._Value <> "" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			gInvHeaderRecord.dInvoiceDate = dtDate._Value
-		Else
-			MsgBox("An Invoice Date must be entered.")
-			get_header = False
-			Exit Function
-		End If
+        If dtDate.Value <> "" Then
+            gInvHeaderRecord.dInvoiceDate = dtDate.Value
+        Else
+            MsgBox("An Invoice Date must be entered.")
+            get_header = False
+            Exit Function
+        End If
 		
 		If Len(Trim(txtInvoice.Text)) > 0 Then
 			gInvHeaderRecord.sInvoiceNo = Trim(txtInvoice.Text)
@@ -899,24 +881,25 @@ ErrorHandler:
 	'Muestra listado de tiendas por Customer-State
 	Private Sub cmdHelpCustomer_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdHelpCustomer.Click
 		
-		On Error GoTo ErrorHandler
-		
-		sStmt = "SELECT s.cust_id AS Customer," & "s.state_id AS State," & "RTRIM(s.store_number)  AS 'Store Number'," & "RTRIM(s.store_name) AS 'Store Name'," & "RTRIM(s.store_co_code) AS Code," & "a.account_mask AS 'Account', " & "v.vend_name AS 'Vendor', " & "s.store_address AS 'Store Address', " & "s.store_city AS City," & "s.store_zip AS Zip ," & "s.store_id  AS StoreID " & "FROM Store s, VAccount a, VBranch v " & " WHERE s.cust_id = a.cust_id " & " AND s.store_id = a.store_id " & " AND a.vend_seq = v.vend_seq " & " AND s.cust_id ='" & cbCustomer.Text & "' " & " AND s.state_id ='" & cbState.Text & "' "
-		gInvoiceHelp.sSql = sStmt
-		
-		sStmt = "ORDER BY 'Store Number'"
-		gInvoiceHelp.sOrderBy = sStmt
-		
-		frmHelpCustomer.nMode = frmHelpCustomer.options.adStoreHelp
-		VB6.ShowForm(frmHelpCustomer, VB6.FormShowConstants.Modal, Me)
-		txtStore.Focus()
-		
-		Exit Sub
-		
-ErrorHandler: 
-		save_error("frmInvoiceBooking", "cmdHelpCustomer_Click")
-		MsgBox("An unexpected error has ocurred, check log file for details", MsgBoxStyle.Critical, "GLM Error")
-	End Sub
+        Try
+
+            sStmt = "SELECT s.cust_id AS Customer," & "s.state_id AS State," & "RTRIM(s.store_number)  AS 'Store Number'," & "RTRIM(s.store_name) AS 'Store Name'," & "RTRIM(s.store_co_code) AS Code," & "a.account_mask AS 'Account', " & "v.vend_name AS 'Vendor', " & "s.store_address AS 'Store Address', " & "s.store_city AS City," & "s.store_zip AS Zip ," & "s.store_id  AS StoreID " & "FROM Store s, VAccount a, VBranch v " & " WHERE s.cust_id = a.cust_id " & " AND s.store_id = a.store_id " & " AND a.vend_seq = v.vend_seq " & " AND s.cust_id ='" & cbCustomer.Text & "' " & " AND s.state_id ='" & cbState.Text & "' "
+            gInvoiceHelp.sSql = sStmt
+
+            sStmt = "ORDER BY 'Store Number'"
+            gInvoiceHelp.sOrderBy = sStmt
+
+            frmHelpCustomer.nMode = frmHelpCustomer.options.adStoreHelp
+            VB6.ShowForm(frmHelpCustomer, VB6.FormShowConstants.Modal, Me)
+            txtStore.Focus()
+
+            Exit Sub
+
+        Catch
+            save_error("frmInvoiceBooking", "cmdHelpCustomer_Click")
+            MsgBox("An unexpected error has ocurred, check log file for details", MsgBoxStyle.Critical, "GLM Error")
+        End Try
+    End Sub
 	
 	
 	
@@ -940,31 +923,31 @@ ErrorHandler:
 		nUpdateRate = 0
 		'If serv_4_rate_contract(dgDetail.Columns("Service")) Then
 		'And serv_4_eqpt(dgDetail.Columns("Service"))
-		If serv_4_eqpt(CShort(dgDetail.Columns("Service").Text)) Then
-			'Verifica que el equipo-servicio existan en VContract
-			If check_contract_item(CShort(dgDetail.Columns("Equipment").Text), CShort(dgDetail.Columns("Service").Text)) Then
-				
-				'Verifica que el usuario disponga de privilegios para esta tarea
-				If check_permission Then
-					'Permite actualizar
-					nUpdateRate = 1
-				Else
-					nUpdateRate = 0
-					MsgBox("Your Account does not have privileges," & vbCrLf & "to update the Contract Rate Info", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "Warning")
-				End If
-			Else
-				nUpdateRate = 2
-			End If
-			
-			
-		Else
-			If CDbl(dgDetail.Columns("equipment").Text) = 0 Then
-				nUpdateRate = 2
-			Else
-				nUpdateRate = 0
-				MsgBox("Unable to set new rate for such Service and Equipment." & vbCrLf & "They have not been found in the contract.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "Warning")
-			End If
-		End If
+        If serv_4_eqpt(CShort(dgDetail.CurrentRow.Cells("Service").Value)) Then
+            'Verifica que el equipo-servicio existan en VContract
+            If check_contract_item(CShort(dgDetail.CurrentRow.Cells("Equipment").Value), CShort(dgDetail.CurrentRow.Cells("Service").Value)) Then
+
+                'Verifica que el usuario disponga de privilegios para esta tarea
+                If check_permission() Then
+                    'Permite actualizar
+                    nUpdateRate = 1
+                Else
+                    nUpdateRate = 0
+                    MsgBox("Your Account does not have privileges," & vbCrLf & "to update the Contract Rate Info", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
+                End If
+            Else
+                nUpdateRate = 2
+            End If
+
+
+        Else
+            If CDbl(dgDetail.CurrentRow.Cells("equipment").Value) = 0 Then
+                nUpdateRate = 2
+            Else
+                nUpdateRate = 0
+                MsgBox("Unable to set new rate for such Service and Equipment." & vbCrLf & "They have not been found in the contract.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
+            End If
+        End If
 		'Else
 		'    nUpdateRate = 2
 		'End If 'serv_4_rate_contract
@@ -975,13 +958,13 @@ ErrorHandler:
 		
 	End Sub
 	
-	Private Sub dgDetail_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgDetail.DblClick
-		cmdEdit_Click(cmdEdit, New System.EventArgs())
-	End Sub
+    Private Sub dgDetail_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        cmdEdit_Click(cmdEdit, New System.EventArgs())
+    End Sub
 	
 	'Solo numeros
-	Private Sub dgDetail_KeyPressEvent(ByVal eventSender As System.Object, ByVal eventArgs As AxMSDataGridLib.DDataGridEvents_KeyPressEvent) Handles dgDetail.KeyPressEvent
-	End Sub
+    Private Sub dgDetail_KeyPressEvent(ByVal eventSender As System.Object, ByVal eventArgs As AxMSDataGridLib.DDataGridEvents_KeyPressEvent)
+    End Sub
 	'Muestra las tarifa para el servicio/equipo
 	Private Function getRate(Optional ByRef nService As Short = 0, Optional ByRef nEquipment As Short = 0) As rateUDT
 		
@@ -1005,20 +988,19 @@ ErrorHandler:
 		'Busca
         rsTmp.Select("eqpt_seq = " & Str(nEquipment))
 		DataGrid1.DataSource = rsTmp
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         DataGrid1.Refresh()
 		
         'Do While Not rsTmp.EOF
         For row As Integer = 0 To rsTmp.Rows.Count - 1
-            If rsTmp.Rows(row).Item("serv_id").Value = nService Then
+            If rsTmp.Rows(row).Item("serv_id") = nService Then
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsTmp.Rows(row).Item("old_rate").Value) Then
+                If Not IsDBNull(rsTmp.Rows(row).Item("old_rate")) Then
                     'getRate = rsTmp("old_rate")
-                    getRate.old_rate = rsTmp.Rows(row).Item("old_rate").Value
+                    getRate.old_rate = rsTmp.Rows(row).Item("old_rate")
                 End If
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsTmp.Rows(row).Item("curr_rate").Value) Then
-                    getRate.Rate_Renamed = rsTmp.Rows(row).Item("curr_rate").Value
+                If Not IsDBNull(rsTmp.Rows(row).Item("curr_rate")) Then
+                    getRate.Rate_Renamed = rsTmp.Rows(row).Item("curr_rate")
                 End If
                 Exit For
             End If
@@ -1049,12 +1031,12 @@ ErrorHandler:
 		nMode = mode.adInsert
 		
 		
-		sdfService = New StdFormat.StdDataFormat
-		sdfEquipment = New StdFormat.StdDataFormat
-		sdfDate = New StdFormat.StdDataFormat
-		sdfTons = New StdFormat.StdDataFormat
-		sdfUnits = New StdFormat.StdDataFormat
-		sdfTimes = New StdFormat.StdDataFormat
+        sdfService = New DataGridViewCellStyle() 'StdFormat.StdDataFormat
+        sdfEquipment = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
+        sdfDate = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
+        sdfTons = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
+        sdfUnits = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
+        sdfTimes = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
 
         cmTmp = cn.CreateCommand
         'cmDetail = New ADODB.Command
@@ -1114,27 +1096,30 @@ ErrorHandler:
 			'Busco los detalles de la factura
 			
 			'Rel 1.3 - Begin
-			sStr = "SELECT serv_date as Date," & "eqpt_desc as Equip, " & "serv_desc as Serv, " & "times as Qty, " & "serv_usage as Usage ," & "units as Units ," & "unit_type as 'Type', " & "tons as Tons," & "old_rate as 'Old Rate'," & "rate as Rate, " & "comment as Comments ," & "cust_id, store_id, vend_seq, account_no," & "invoice_no, invoice_det_no, " & "eqpt_seq as Equipment, " & "serv_id as Service, glm_rate as 'GLM Rate', subtotal as Subtotal, " & " bill_saving_flag as Billable, glm_subtotal 'GLM Subtotal'  " & " FROM VInvoiceDet " & " WHERE cust_id = ? " & " AND invoice_no= ? " & " AND vend_seq = ? " & " AND account_no =? " & " AND store_id=" & "(SELECT store_id FROM store " & " WHERE store.cust_id = VInvoiceDet.cust_id " & " AND store_number= ? ) "
+            sStr = "SELECT serv_date as Date," & "eqpt_desc as Equip, " & "serv_desc as Serv, " & "times as Qty, " & "serv_usage as Usage ," & "units as Units ," & "unit_type as 'Type', " & "tons as Tons," & "old_rate as 'Old Rate'," & "rate as Rate, " & "comment as Comments ," & "cust_id, store_id, vend_seq, account_no," & "invoice_no, invoice_det_no, " & "eqpt_seq as Equipment, " & "serv_id as Service, glm_rate as 'GLM Rate', subtotal as Subtotal, " & " bill_saving_flag as Billable, glm_subtotal 'GLM Subtotal'  " & _
+                   " FROM VInvoiceDet " & _
+                   " WHERE cust_id = @customer " & " AND invoice_no= @invoice " & " AND vend_seq = @vendor " & " AND account_no =@account " & " AND store_id=" & _
+                                                        "(SELECT store_id FROM store " & " WHERE store.cust_id = VInvoiceDet.cust_id " & " AND store_number= @store ) "
 			
 			'Rel 1.3 - End
-			
+            cmDetail = cn.CreateCommand
             cmDetail.CommandText = sStr
             Dim sqlparam As SqlParameter ' = New SqlParameter("customer", SqlDbType.VarChar, 10, ParameterDirection.Input)
             With cmDetail.Parameters
                 '.Append(cmDetail.CreateParameter("customer", SqlDbType.VarChar, ParameterDirection.Input, 10))
-                sqlparam = New SqlParameter("customer", SqlDbType.VarChar, 10, ParameterDirection.Input)
+                sqlparam = New SqlParameter("@customer", SqlDbType.VarChar, 10, ParameterDirection.Input)
                 .Add(sqlparam)
                 '.Append(cmDetail.CreateParameter("invoice", SqlDbType.VarChar, ParameterDirection.Input, 30))
-                sqlparam = New SqlParameter("invoice", SqlDbType.VarChar, 30, ParameterDirection.Input)
+                sqlparam = New SqlParameter("@invoice", SqlDbType.VarChar, 30, ParameterDirection.Input)
                 .Add(sqlparam)
                 '.Append(cmDetail.CreateParameter("vendor", DbType.Int32, ParameterDirection.Input))
-                sqlparam = New SqlParameter("vendor", SqlDbType.Int, 30, ParameterDirection.Input)
+                sqlparam = New SqlParameter("@vendor", SqlDbType.Int, 30, ParameterDirection.Input)
                 .Add(sqlparam)
                 '.Append(cmDetail.CreateParameter("account", SqlDbType.VarChar, ParameterDirection.Input, 30))
-                sqlparam = New SqlParameter("account", SqlDbType.VarChar, 30, ParameterDirection.Input)
+                sqlparam = New SqlParameter("@account", SqlDbType.VarChar, 30, ParameterDirection.Input)
                 .Add(sqlparam)
                 '.Append(cmDetail.CreateParameter("store", SqlDbType.VarChar, ParameterDirection.Input, 20))
-                sqlparam = New SqlParameter("store", SqlDbType.VarChar, 30, ParameterDirection.Input)
+                sqlparam = New SqlParameter("@store", SqlDbType.VarChar, 30, ParameterDirection.Input)
                 .Add(sqlparam)
             End With
 		End If
@@ -1146,118 +1131,127 @@ ErrorHandler:
 		cmDetail.Parameters(3).Value = cbAccount.Text
 		cmDetail.Parameters(4).Value = txtStore.Text
 		
-		
-        'rsDetail.Open sStr, cn, adOpenStatic, adLockBatchOptimistic
-        da.SelectCommand = cmDetail
-        da.Fill(ds)
+        Try
+            'rsDetail.Open sStr, cn, adOpenStatic, adLockBatchOptimistic
+            da.SelectCommand = cmDetail
+            da.Fill(ds)
 
-        rsDetail = ds.Tables(0) '.Open(cmDetail, , ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-		
-		dgDetail.ClearFields()
-		dgDetail.DataSource = rsDetail
-		
-		'Escondo los campos de la llave primaria PK
-		dgDetail.Columns("Tons").Visible = False
-		dgDetail.Columns("cust_id").Visible = False
-		dgDetail.Columns("vend_seq").Visible = False
-		dgDetail.Columns("invoice_no").Visible = False
-		dgDetail.Columns("store_id").Visible = False
-		dgDetail.Columns("account_no").Visible = False
-		dgDetail.Columns("invoice_det_no").Visible = False
-		dgDetail.Columns("Service").Visible = False
-		dgDetail.Columns("Equipment").Visible = False
-		dgDetail.Columns("Qty").Visible = False
-		dgDetail.Columns("Comments").Visible = False
-		dgDetail.Columns("GLM Subtotal").Visible = False
-		
-		'Rel 1.3 - Begin
-		'Set dgDetail.Columns("Service").DataFormat = sdfService
-		'Set dgDetail.Columns("Equipment").DataFormat = sdfEquipment
-		'Rel 1.3 - End
-		
-		
-		
-		'Columns Format ***************************
-		dgDetail.Columns("Date").Width = VB6.TwipsToPixelsX(1000)
-		'dgDetail.Columns("Qty").Width = 600
-		dgDetail.Columns("Usage").Width = VB6.TwipsToPixelsX(600)
-		dgDetail.Columns("Units").Width = VB6.TwipsToPixelsX(600)
-		dgDetail.Columns("Type").Width = VB6.TwipsToPixelsX(600)
-		'dgDetail.Columns("Comments").Width = 1200
-		
-		'Rel 1.3 - Begin
-		'dgDetail.Columns("Tons").Width = 1000
-		dgDetail.Columns("Service").Width = VB6.TwipsToPixelsX(250)
-		dgDetail.Columns("Equipment").Width = VB6.TwipsToPixelsX(250)
-		dgDetail.Columns("Serv").Width = VB6.TwipsToPixelsX(1900)
-		dgDetail.Columns("Equip").Width = VB6.TwipsToPixelsX(1200)
-		
-		'Rel 1.3 End
-		
-		dgDetail.Columns("Old Rate").Width = VB6.TwipsToPixelsX(900)
-		dgDetail.Columns("Rate").Width = VB6.TwipsToPixelsX(900)
-		dgDetail.Columns("GLM Rate").Width = VB6.TwipsToPixelsX(900)
-		dgDetail.Columns("Subtotal").Width = VB6.TwipsToPixelsX(1000)
-		
-		
-		'*******************************************
-		'Alignment
-		dgDetail.Columns("Qty").Alignment = MSDataGridLib.AlignmentConstants.dbgLeft
-		dgDetail.Columns("Old Rate").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		dgDetail.Columns("Rate").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		dgDetail.Columns("GLM Rate").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		dgDetail.Columns("Subtotal").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		dgDetail.Columns("Usage").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		dgDetail.Columns("Units").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		
-		sdfDate.Format = "mm/dd/yyyy"
-		sdfTons.Format = "###0.0000"
-		'jp DecimalIncrease Begin
-		sdfUnits.Format = "###0.0000"
-		'jp DecimalIncrease End
-		'Rel 1.3
-		'Set dgDetail.Columns("Tons").DataFormat = sdfTons
-		
-		Dim sdfText As StdFormat.StdDataFormat
-		sdfText = New StdFormat.StdDataFormat
-		sdfText.Type = StdFormat.FormatType.fmtGeneral
-		
-		dgDetail.Columns("Date").DataFormat = sdfDate
-		dgDetail.Columns("Usage").DataFormat = sdfTons
-		dgDetail.Columns("Units").DataFormat = sdfUnits
-		dgDetail.Columns("Old Rate").DataFormat = sdfTons
-		dgDetail.Columns("Rate").DataFormat = sdfTons
-		dgDetail.Columns("GLM Rate").DataFormat = sdfTons
-		dgDetail.Columns("Subtotal").DataFormat = sdfTons
-		dgDetail.Columns("Comments").DataFormat = sdfText
-		
-		dgDetail.Columns("Comments").WrapText = True
-		dgDetail.Columns("Old Rate").Locked = True
-		dgDetail.Columns("Rate").Locked = True
-		dgDetail.Columns("GLM Rate").Locked = True
-		dgDetail.Columns("Type").Locked = True
-		
-		'sdfTimes.Format = "####.##"
-		
-		
-		dgDetail.Columns("Subtotal").Locked = True
-		
-		calc_total()
-		'Inicializo esta variable cada vez que se cargan detalles para
-		'recargar el recordset con informacion de equipos y tarifas (vcontract)
-		nClicks = 0
-		dgDetail.AllowRowSizing = False
-		dgDetail.RowHeight = VB6.PixelsToTwipsY(cbService.Height)
-		dgDetail.TabAction = MSDataGridLib.TabActionConstants.dbgColumnNavigation
-		
-		'dgDetail.Columns("Service").Visible = True
-		'dgDetail.Columns("Equipment").Visible = True
-		'dgDetail.ScrollBars = dbgAutomatic
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-        dgDetail.Refresh()
-		
-		
-	End Sub
+            rsDetail = ds.Tables(0) '.Open(cmDetail, , ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+
+            'dgDetail.ClearFields()
+            'dgDetail.Rows.Clear()
+            dgDetail.DataSource = rsDetail
+
+            'Escondo los campos de la llave primaria PK
+            dgDetail.Columns("Tons").Visible = False
+            dgDetail.Columns("cust_id").Visible = False
+            dgDetail.Columns("vend_seq").Visible = False
+            dgDetail.Columns("invoice_no").Visible = False
+            dgDetail.Columns("store_id").Visible = False
+            dgDetail.Columns("account_no").Visible = False
+            dgDetail.Columns("invoice_det_no").Visible = False
+            dgDetail.Columns("Service").Visible = False
+            dgDetail.Columns("Equipment").Visible = False
+            dgDetail.Columns("Qty").Visible = False
+            dgDetail.Columns("Comments").Visible = False
+            dgDetail.Columns("GLM Subtotal").Visible = False
+
+            'Rel 1.3 - Begin
+            'Set dgDetail.Columns("Service").DataFormat = sdfService
+            'Set dgDetail.Columns("Equipment").DataFormat = sdfEquipment
+            'Rel 1.3 - End
+
+
+
+            'Columns Format ***************************
+            dgDetail.Columns("Date").Width = VB6.TwipsToPixelsX(1000)
+            'dgDetail.Columns("Qty").Width = 600
+            dgDetail.Columns("Usage").Width = VB6.TwipsToPixelsX(600)
+            dgDetail.Columns("Units").Width = VB6.TwipsToPixelsX(600)
+            dgDetail.Columns("Type").Width = VB6.TwipsToPixelsX(600)
+            'dgDetail.Columns("Comments").Width = 1200
+
+            'Rel 1.3 - Begin
+            'dgDetail.Columns("Tons").Width = 1000
+            dgDetail.Columns("Service").Width = VB6.TwipsToPixelsX(250)
+            dgDetail.Columns("Equipment").Width = VB6.TwipsToPixelsX(250)
+            dgDetail.Columns("Serv").Width = VB6.TwipsToPixelsX(1900)
+            dgDetail.Columns("Equip").Width = VB6.TwipsToPixelsX(1200)
+
+            'Rel 1.3 End
+
+            dgDetail.Columns("Old Rate").Width = VB6.TwipsToPixelsX(900)
+            dgDetail.Columns("Rate").Width = VB6.TwipsToPixelsX(900)
+            dgDetail.Columns("GLM Rate").Width = VB6.TwipsToPixelsX(900)
+            dgDetail.Columns("Subtotal").Width = VB6.TwipsToPixelsX(1000)
+
+
+            '*******************************************
+            'Alignment
+            dgDetail.Columns("Qty").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft '.Alignment = MSDataGridLib.AlignmentConstants.dbgLeft
+            dgDetail.Columns("Old Rate").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight ' MSDataGridLib.AlignmentConstants.dbgRight
+            dgDetail.Columns("Rate").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight '= MSDataGridLib.AlignmentConstants.dbgRight
+            dgDetail.Columns("GLM Rate").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight 'MSDataGridLib.AlignmentConstants.dbgRight
+            dgDetail.Columns("Subtotal").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight 'MSDataGridLib.AlignmentConstants.dbgRight
+            dgDetail.Columns("Usage").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight 'MSDataGridLib.AlignmentConstants.dbgRight
+            dgDetail.Columns("Units").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight 'MSDataGridLib.AlignmentConstants.dbgRight
+
+            sdfDate.Format = "mm/dd/yyyy"
+            sdfTons.Format = "###0.0000"
+            'jp DecimalIncrease Begin
+            sdfUnits.Format = "###0.0000"
+            'jp DecimalIncrease End
+            'Rel 1.3
+            'Set dgDetail.Columns("Tons").DataFormat = sdfTons
+
+            Dim sdfText As StdFormat.StdDataFormat
+            sdfText = New StdFormat.StdDataFormat
+            sdfText.Type = StdFormat.FormatType.fmtGeneral
+
+            dgDetail.Columns("Date").DefaultCellStyle.Format = sdfDate.Format.ToString '.DataFormat = sdfDate
+            dgDetail.Columns("Usage").DefaultCellStyle.Format = sdfTons.Format.ToString
+            dgDetail.Columns("Units").DefaultCellStyle.Format = sdfUnits.Format.ToString
+            dgDetail.Columns("Old Rate").DefaultCellStyle.Format = sdfTons.Format.ToString
+            dgDetail.Columns("Rate").DefaultCellStyle.Format = sdfTons.Format.ToString
+            dgDetail.Columns("GLM Rate").DefaultCellStyle.Format = sdfTons.Format.ToString
+            dgDetail.Columns("Subtotal").DefaultCellStyle.Format = sdfTons.Format.ToString
+            dgDetail.Columns("Comments").DefaultCellStyle.Format = Nothing 'sdfText
+
+            dgDetail.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+            'dgDetail.AutoSizeRowsMode =DataGridViewAutoSizeRowsMode.AllCells' DataGridViewAutoSizeRowsMode.AllCells
+            dgDetail.Columns("Comments").DefaultCellStyle.WrapMode = DataGridViewTriState.True '.WrapText = True
+            dgDetail.Columns("Old Rate").ReadOnly = True
+            dgDetail.Columns("Rate").ReadOnly = True
+            dgDetail.Columns("GLM Rate").ReadOnly = True
+            dgDetail.Columns("Type").ReadOnly = True
+
+            'sdfTimes.Format = "####.##"
+
+
+            dgDetail.Columns("Subtotal").ReadOnly = True
+
+            calc_total()
+            'Inicializo esta variable cada vez que se cargan detalles para
+            'recargar el recordset con informacion de equipos y tarifas (vcontract)
+            nClicks = 0
+            'dgDetail.AutoSizeColumnsMode.AllCells = .Columns.a.AllowRowSizing = False
+            dgDetail.AllowUserToResizeColumns = False
+            dgDetail.Height = VB6.PixelsToTwipsY(cbService.Height)
+            'dgDetail.TabAction = MSDataGridLib.TabActionConstants.dbgColumnNavigation
+            dgDetail.StandardTab = False
+
+
+            'dgDetail.Columns("Service").Visible = True
+            'dgDetail.Columns("Equipment").Visible = True
+            'dgDetail.ScrollBars = dbgAutomatic
+            'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+            dgDetail.Refresh()
+        Catch ex As Exception
+            Dim errMsg As String = ex.Message
+        End Try
+
+
+    End Sub
 	'Carga rsTmp con informacion de tarifas por equipo/servicio del store
 	Public Sub load_rs()
 		
@@ -1342,7 +1336,7 @@ ErrorHandler:
 				'con este Hauler. y servicios que no necesitan de un equipo
 				'para ser definidos
 				'Esto no esta activo, solo load_combo2 carga cbService
-				sStr = " SELECT serv_desc, serv_id FROM service " & " WHERE serv_eqpt ='F' " & " UNION" & " SELECT DISTINCT s.serv_desc, s.serv_id " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate._Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex))
+                sStr = " SELECT serv_desc, serv_id FROM service " & " WHERE serv_eqpt ='F' " & " UNION" & " SELECT DISTINCT s.serv_desc, s.serv_id " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate.Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex))
 			Case "cbEquipment"
 				cb.Items.Clear()
 				'sStr = "SELECT eqpt_desc,eqpt_seq FROM StoreEqpt " + _
@@ -1353,11 +1347,11 @@ ErrorHandler:
 				'Listado de equipos de esta TIENDA que tienen
 				'uno o mas contratos NO EXPIRADOS con este hauler
 				'y cuyos equipos estan ACTIVOS.
-				sStr = " SELECT DISTINCT e.eqpt_desc, e.eqpt_seq " & " FROM VContract c, StoreEqpt e" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate._Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex))
+                sStr = " SELECT DISTINCT e.eqpt_desc, e.eqpt_seq " & " FROM VContract c, StoreEqpt e" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate.Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex))
 				'MsgBox sStr
 		End Select
 		
-
+        rs = getDataTable(sStr)
         If rs.Rows.Count = 0 Then
             Exit Sub
         End If
@@ -1374,20 +1368,21 @@ ErrorHandler:
 		
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            sItem = rs.Rows(row).Item(0).value
+            sItem = rs.Rows(row).Item(0)
             cb.Items.Insert(nCounter, Trim(sItem))
             Select Case cb.Name
                 Case "cbVendor"
-                    VB6.SetItemString(cb, nCounter, Trim(rs.Rows(row).Item(0).value) & " - " & Trim(rs.Rows(row).Item(2).value))
-                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1).value) 'vend_seq
+                    VB6.SetItemString(cb, nCounter, Trim(rs.Rows(row).Item(0)) & " - " & Trim(rs.Rows(row).Item(2)))
+                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1)) 'vend_seq
+                    'cb.Items(nCounter)
                 Case "cbService"
-                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1).value) 'serv_id
+                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1)) 'serv_id
                 Case "cbEquipment"
-                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1).value) 'eqpt_seq
+                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1)) 'eqpt_seq
             End Select
             'If cb.Name = "cbVendor" Or cb.Name = "cbService" _
             ''    Or cb.Name = "cbEquipment" Then
-            '    cb.ItemData(nCounter) = rs.item(1).Value 'vend_id, serv_id, eqpt_seq
+            '    cb.ItemData(nCounter) = rs.item(1) 'vend_id, serv_id, eqpt_seq
             'End If
             nCounter = nCounter + 1
 
@@ -1416,7 +1411,7 @@ ErrorHandler:
 					sStmt = " SELECT serv_desc, serv_id FROM service " & " WHERE serv_eqpt ='F' "
 				Else
 					'Solo los servicios de este equipo
-					sStmt = " SELECT DISTINCT s.serv_desc, s.serv_id " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate._Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " AND c.eqpt_seq = " & Str(nEqptSeq)
+                    sStmt = " SELECT DISTINCT s.serv_desc, s.serv_id " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND c.expiration_date >= '" & Str(dtDate.Value) & "' " & " AND c.cust_id = '" & cbCustomer.Text & "' " & " AND c.store_id = '" & txtStoreId.Text & "' " & " AND c.vend_seq = " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " AND c.eqpt_seq = " & Str(nEqptSeq)
 				End If
 		End Select
 		
@@ -1431,11 +1426,11 @@ ErrorHandler:
 		
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            sItem = rs.Rows(row).Item(0).value
+            sItem = rs.Rows(row).Item(0)
             cb.Items.Insert(nCounter, Trim(sItem))
             Select Case cb.Name
                 Case "cbService"
-                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1).value) 'serv_id
+                    VB6.SetItemData(cb, nCounter, rs.Rows(row).Item(1)) 'serv_id
             End Select
             nCounter = nCounter + 1
         Next row
@@ -1444,12 +1439,11 @@ ErrorHandler:
         'Se muestra por defecto el primer elemento de la lista
 
         If cb.Items.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If (dgDetail.Columns("Serv").Text = "" Or IsDBNull(dgDetail.Columns("Serv").Text)) Then
+            If (dgDetail.CurrentRow.Cells("Serv").Value = "" Or IsDBNull(dgDetail.CurrentRow.Cells("Serv").Value)) Then
                 cb.SelectedIndex = 0
             Else
                 'Si la fila del datagrid tiene un servicio,Buscar servicio en el combo
-                cb_set(cbService, dgDetail.Columns("Serv").Text)
+                cb_set(cbService, dgDetail.CurrentRow.Cells("Serv").Value)
             End If
         End If
         Exit Sub
@@ -1484,18 +1478,18 @@ ErrorHandler:
 		
 		
 	End Function
-	
-	Private Sub sdfService_Format(ByVal DataValue As StdFormat.StdDataValue) Handles sdfService.Format
-		Dim i As Short
-		
-		'DataValue es el codigo del servicio
-		For i = 0 To cbService.Items.Count - 1
-			If VB6.GetItemData(cbService, i) = DataValue.Value Then
-				DataValue.Value = VB6.GetItemString(cbService, i)
-				Exit For
-			End If
-		Next 
-	End Sub
+    'StdFormat.StdDataValue
+    Private Sub sdfService_Format(ByVal DataValue As System.Windows.Forms.DataGridViewCellStyle)
+        Dim i As Short
+
+        'DataValue es el codigo del servicio
+        For i = 0 To cbService.Items.Count - 1
+            If VB6.GetItemData(cbService, i) = DataValue.Format.ToString Then
+                'DataValue.Value = VB6.GetItemString(cbService, i)
+                Exit For
+            End If
+        Next
+    End Sub
 	'Rel 1.3
 	'Nueva version de move_combo para mover ambos combos simultaneamente
 	Private Sub move_combo_to()
@@ -1507,46 +1501,53 @@ ErrorHandler:
 			Exit Sub
 		End If
 		
-		If dgDetail.Col = -1 Then
-			Exit Sub
-		End If
+        If dgDetail.SelectedColumns(0).Index < 0 Then
+            Exit Sub
+        End If
 		
 		'El recordset apunta una fila sin datos
-		If dgDetail.Row = -1 Then
-			Exit Sub
-		End If
+        If dgDetail.SelectedRows(0).Index < 0 Then
+            Exit Sub
+        End If
 		
 		'Equipment
 		gcol = dgDetail.Columns("Equip")
 		
-		If gcol.Caption = "Equip" And dgDetail.CurrentCellVisible Then
-			cbEquipment.SetBounds(VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(dgDetail.Left) + gcol.Left), VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top) + dgDetail.RowTop(dgDetail.Row)), VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(gcol.Width)), 0, Windows.Forms.BoundsSpecified.X Or Windows.Forms.BoundsSpecified.Y Or Windows.Forms.BoundsSpecified.Width)
-			cbEquipment.BringToFront()
-			cbEquipment.Focus()
-			'Rel 1.3
-			'cb_set cbEquipment, gcol.Text
-			cb_set(cbEquipment, (dgDetail.Columns("Equip").Text))
-		End If
-		
-		'Service
-		gcol = dgDetail.Columns("Serv")
-		
-		If gcol.Caption = "Serv" And dgDetail.CurrentCellVisible Then
-			cbService.SetBounds(VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(dgDetail.Left) + gcol.Left), VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top) + dgDetail.RowTop(dgDetail.Row)), VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(gcol.Width)), 0, Windows.Forms.BoundsSpecified.X Or Windows.Forms.BoundsSpecified.Y Or Windows.Forms.BoundsSpecified.Width)
-			cbService.BringToFront()
-			cbService.Focus()
-			'Rel 1.3
-			'cb_set cbService, gcol.Text
-			cb_set(cbService, dgDetail.Columns("Serv").Text)
-		End If
-		
-		Exit Sub
-ErrorHandler: 
-		cbService.SetBounds(VB6.TwipsToPixelsX(-10000), 0, 0, 0, Windows.Forms.BoundsSpecified.X)
-		cbEquipment.SetBounds(VB6.TwipsToPixelsX(-10000), 0, 0, 0, Windows.Forms.BoundsSpecified.X)
-		If dgDetail.Visible Then dgDetail.Focus()
-		
-	End Sub
+        'If gcol.Caption = "Equip" And dgDetail.CurrentCell.Visible.CurrentCellVisible Then
+        If gcol.Caption = "Equip" And dgDetail.CurrentCell.Visible Then
+            'VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top) + dgDetail.RowTop(dgDetail.Row)), _
+            cbEquipment.SetBounds(VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(dgDetail.Left) + gcol.Left), _
+                                  VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top)), _
+                                  VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(gcol.Width)), 0, Windows.Forms.BoundsSpecified.X Or Windows.Forms.BoundsSpecified.Y Or Windows.Forms.BoundsSpecified.Width)
+            cbEquipment.BringToFront()
+            cbEquipment.Focus()
+            'Rel 1.3
+            'cb_set cbEquipment, gcol.Text
+            cb_set(cbEquipment, (dgDetail.CurrentRow.Cells("Equip").Value))
+        End If
+
+        'Service
+        gcol = dgDetail.Columns("Serv")
+
+        If gcol.Caption = "Serv" And dgDetail.CurrentCell.Visible Then
+            'VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top) + dgDetail.RowTop(dgDetail.Row)), _
+            cbService.SetBounds(VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(dgDetail.Left) + gcol.Left), _
+                                VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(dgDetail.Top)), _
+                                VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(gcol.Width)), 0, Windows.Forms.BoundsSpecified.X Or Windows.Forms.BoundsSpecified.Y Or Windows.Forms.BoundsSpecified.Width)
+            cbService.BringToFront()
+            cbService.Focus()
+            'Rel 1.3
+            'cb_set cbService, gcol.Text
+            cb_set(cbService, dgDetail.CurrentRow.Cells("Serv").Value)
+        End If
+
+        Exit Sub
+ErrorHandler:
+        cbService.SetBounds(VB6.TwipsToPixelsX(-10000), 0, 0, 0, Windows.Forms.BoundsSpecified.X)
+        cbEquipment.SetBounds(VB6.TwipsToPixelsX(-10000), 0, 0, 0, Windows.Forms.BoundsSpecified.X)
+        If dgDetail.Visible Then dgDetail.Focus()
+
+    End Sub
 	
 	'Busca el texto en el combo
 	Private Sub cb_set(ByRef cb As System.Windows.Forms.ComboBox, ByRef sValue As String)
@@ -1573,25 +1574,26 @@ ErrorHandler:
 	
 	
 	
-	Private Sub sdfTimes_Format(ByVal DataValue As StdFormat.StdDataValue) Handles sdfTimes.Format
-		
-		'If Not IsNumeric(DataValue) Then
-		'    DataValue = 1
-		'    dgDetail.Columns("Qty") = 1
-		'End If
-		
-		If DataValue.Value <= 0 Then
-			DataValue.Value = 1#
-			dgDetail.Columns("Usage").Text = CStr(1#)
-			'Else
-			'    If IsNumeric(DataValue) Then
-			'        getRateVal
-			'getSubtotal
-			'calc_total
-			'    End If
-		End If
-		
-	End Sub
+    Private Sub sdfTimes_Format(ByVal DataValue As StdFormat.StdDataValue) 'Handles sdfTimes.Format
+
+        'If Not IsNumeric(DataValue) Then
+        '    DataValue = 1
+        '    dgDetail.Columns("Qty") = 1
+        'End If
+
+        If DataValue.Value <= 0 Then
+            DataValue.Value = 1.0#
+            dgDetail.CurrentRow.Cells("Usage").Value = CStr(1.0#)
+
+            'Else
+            '    If IsNumeric(DataValue) Then
+            '        getRateVal
+            'getSubtotal
+            'calc_total
+            '    End If
+        End If
+
+    End Sub
 	
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _Toolbar1_Button5.Click
         Dim Button As System.Windows.Forms.ToolStripItem = CType(eventSender, System.Windows.Forms.ToolStripItem)
@@ -1639,7 +1641,7 @@ ErrorHandler:
 				cbAccount.Items.Clear()
 				txtInvoice.Text = ""
 				dtDate.value = Today
-				dtDate.Day = 1 ' Defaulting Day to first day of current month
+                'dtDate.Value.Day = 1 ' Defaulting Day to first day of current month
 				
 				'dtStartPeriod.Value = Date
 				'dtEndPeriod.Value = Date
@@ -1701,7 +1703,7 @@ ErrorHandler:
             dt = getDataTable(sStmt)
 
             If dt.Rows.Count > 0 Then
-                If rsLocal.Rows(0).Item("vinvoice_status").Value = "CRE" Then
+                If rsLocal.Rows(0).Item("vinvoice_status") = "CRE" Then
                     'ok
                     nTran = cn.BeginTransaction()
                     'Detail
@@ -1813,11 +1815,11 @@ ErrorHandler:
                     'If IsNull(rsDetailClone("Equipment")) _
                     ''Or rsDetailClone("Equipment") = 0 Then
 
-                    If (IsDBNull(rsDetail.Rows(row).Item("Equipment").Value) Or rsDetail.Rows(row).Item("Equipment").Value = 0) Then
+                    If (IsDBNull(rsDetail.Rows(row).Item("Equipment")) Or rsDetail.Rows(row).Item("Equipment") = 0) Then
                         'Equipment = NULL/0   Service=NULL
                         'If IsNull(rsDetailClone("Service")) Then
 
-                        If IsDBNull(rsDetail.Rows(row).Item("Service").Value) Then
+                        If IsDBNull(rsDetail.Rows(row).Item("Service")) Then
                             MsgBox("Both Equipment/Service information can not be null.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
                             Exit Sub
                         End If
@@ -1828,7 +1830,7 @@ ErrorHandler:
                         'no se relacionan a un equipo
                         'If rsDetail("Service") = "Taxes" Then
                         'If Not serv_4_eqpt(rsDetailClone("Service")) Then
-                        If Not serv_4_eqpt(rsDetail.Rows(row).Item("Service").Value) Then
+                        If Not serv_4_eqpt(rsDetail.Rows(row).Item("Service")) Then
                             nFlag = 0
                         Else
                             MsgBox("Equipment must be defined for this Service.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
@@ -1838,7 +1840,7 @@ ErrorHandler:
                         'Equipment = NOT NULL   Service = NULL
                         'If IsNull(rsDetailClone("Service")) Then
                         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                        If IsDBNull(rsDetail.Rows(row).Item("Service").Value) Then
+                        If IsDBNull(rsDetail.Rows(row).Item("Service")) Then
                             MsgBox("Service information is required", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
                             Exit Sub
                         Else
@@ -1846,9 +1848,9 @@ ErrorHandler:
                             'Si el equipo-servicio no require tarifa de VContract
                             'y el servicio no depende de un equipo
                             'If serv_4_rate_contract(rsDetailClone("Service")) = False Then
-                            If serv_4_rate_contract(rsDetail.Rows(row).Item("Service").Value) = False Then
+                            If serv_4_rate_contract(rsDetail.Rows(row).Item("Service")) = False Then
                                 'If serv_4_eqpt(rsDetailClone("Service")) = True Then
-                                If serv_4_eqpt(rsDetail.Rows(row).Item("Service").Value) = True Then
+                                If serv_4_eqpt(rsDetail.Rows(row).Item("Service")) = True Then
                                     nFlag = 0 'Tarifa no debe ser verifcada en VContract
                                 End If
                             End If
@@ -1858,7 +1860,7 @@ ErrorHandler:
                     If nFlag = -1 Then
                         'nFlag = check_detail(rsDetailClone("Equipment"), _
                         ''              rsDetailClone("Service"))
-                        nFlag = check_detail(rsDetail.Rows(row).Item("Equipment").Value, rsDetail.Rows(row).Item("Service").Value)
+                        nFlag = check_detail(rsDetail.Rows(row).Item("Equipment"), rsDetail.Rows(row).Item("Service"))
                     End If
 
                     Select Case nFlag
@@ -1870,13 +1872,13 @@ ErrorHandler:
                             'rsDetailClone("account_no") = cbAccount
                             'rsDetailClone("invoice_det_no") = nInvoiceDetSeq
 
-                            rsDetail.Rows(row).Item("cust_id").Value = cbCustomer.Text
-                            rsDetail.Rows(row).Item("vend_seq").Value = VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)
-                            rsDetail.Rows(row).Item("store_id").Value = txtStoreId.Text
-                            rsDetail.Rows(row).Item("invoice_no").Value = txtInvoice.Text
-                            rsDetail.Rows(row).Item("account_no").Value = cbAccount.Text
+                            rsDetail.Rows(row).Item("cust_id") = cbCustomer.Text
+                            rsDetail.Rows(row).Item("vend_seq") = VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)
+                            rsDetail.Rows(row).Item("store_id") = txtStoreId.Text
+                            rsDetail.Rows(row).Item("invoice_no") = txtInvoice.Text
+                            rsDetail.Rows(row).Item("account_no") = cbAccount.Text
                             If nMode = mode.adInsert Then
-                                rsDetail.Rows(row).Item("invoice_det_no").Value = nInvoiceDetSeq
+                                rsDetail.Rows(row).Item("invoice_det_no") = nInvoiceDetSeq
                             End If
 
                             'If rsDetail("Equipment") = 0 Then
@@ -1893,7 +1895,7 @@ ErrorHandler:
                             Exit Sub
                     End Select 'Correct equipment and service
                     'rsDetailClone.MoveNext
-                    MsgBox("DEBUG:" & Str(rsDetail.Rows(row).Item("invoice_det_no").Value))
+                    MsgBox("DEBUG:" & Str(rsDetail.Rows(row).Item("invoice_det_no")))
 
 
                     nCounter = nCounter + 1
@@ -1918,11 +1920,12 @@ ErrorHandler:
                     cmTmp = cn.CreateCommand()
 
                     If nMode = mode.adInsert Then
-                        sStr = "INSERT INTO VInvoice " & "(cust_id, store_id, vend_seq, account_no, " & "invoice_no, vinvoice_date, " & "month_period, year_period, " & "total, vinvoice_status,notes)  VALUES " & "('" & Trim(cbCustomer.Text) & "'," & txtStoreId.Text & ", " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & "', " & "'" & CStr(dtDate._Value) & "', '" & CStr(cbMonthPeriod.Text) & "', '" & CStr(txtYearPeriod.Text) & "', " & txtTotal.Text & " ,'CRE'," & "'" & Trim(sNotes) & "')"
+                        sStr = "INSERT INTO VInvoice " & "(cust_id, store_id, vend_seq, account_no, " & "invoice_no, vinvoice_date, " & "month_period, year_period, " & "total, vinvoice_status,notes)  VALUES " & _
+                                                         "('" & Trim(cbCustomer.Text) & "'," & txtStoreId.Text & ", " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & "', " & "'" & CStr(dtDate.Value) & "', '" & CStr(cbMonthPeriod.Text) & "', '" & CStr(txtYearPeriod.Text) & "', " & txtTotal.Text & " ,'CRE'," & "'" & Trim(sNotes) & "')"
                     End If
 
                     If nMode = mode.adUpdate Then
-                        sStr = "UPDATE VInvoice SET  " & "vinvoice_date = '" & CStr(dtDate._Value) & "', " & "month_period = '" & CStr(cbMonthPeriod.Text) & "'," & "year_period = '" & CStr(txtYearPeriod.Text) & "', " & "notes = '" & Trim(sNotes) & "' " & "WHERE cust_id ='" & Trim(cbCustomer.Text) & "' " & "AND store_id=" & txtStoreId.Text & " " & "AND vend_seq=" & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND invoice_no='" & Trim(txtInvoice.Text) & "' "
+                        sStr = "UPDATE VInvoice SET  " & "vinvoice_date = '" & CStr(dtDate.Value) & "', " & "month_period = '" & CStr(cbMonthPeriod.Text) & "'," & "year_period = '" & CStr(txtYearPeriod.Text) & "', " & "notes = '" & Trim(sNotes) & "' " & "WHERE cust_id ='" & Trim(cbCustomer.Text) & "' " & "AND store_id=" & txtStoreId.Text & " " & "AND vend_seq=" & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND invoice_no='" & Trim(txtInvoice.Text) & "' "
                     End If
 
                     cmTmp.CommandText = sStr
@@ -2069,11 +2072,11 @@ ErrorHandler:
                     'If IsNull(rsDetailClone("Equipment")) _
                     ''Or rsDetailClone("Equipment") = 0 Then
 
-                    If (IsDBNull(rsDetail.Rows(row).Item("Equipment").Value) Or rsDetail.Rows(row).Item("Equipment").Value = 0) Then
+                    If (IsDBNull(rsDetail.Rows(row).Item("Equipment")) Or rsDetail.Rows(row).Item("Equipment") = 0) Then
                         'Equipment = NULL/0   Service=NULL
                         'If IsNull(rsDetailClone("Service")) Then
 
-                        If IsDBNull(rsDetail.Rows(row).Item("Service").Value) Then
+                        If IsDBNull(rsDetail.Rows(row).Item("Service")) Then
                             MsgBox("Both Equipment/Service information can not be null.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
                             Exit Sub
                         End If
@@ -2093,7 +2096,7 @@ ErrorHandler:
                     Else
                         'Equipment = NOT NULL   Service = NULL
 
-                        If IsDBNull(rsDetail.Rows(row).Item("Service").Value) Then
+                        If IsDBNull(rsDetail.Rows(row).Item("Service")) Then
                             MsgBox("Service information is required", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
                             Exit Sub
                         Else
@@ -2116,14 +2119,14 @@ ErrorHandler:
 
                     Select Case nFlag
                         Case 0 ' Ok
-                            rsDetail.Rows(row).Item("cust_id").Value = cbCustomer.Text
-                            rsDetail.Rows(row).Item("vend_seq").Value = VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)
-                            rsDetail.Rows(row).Item("store_id").Value = txtStoreId.Text
-                            rsDetail.Rows(row).Item("invoice_no").Value = txtInvoice.Text
-                            rsDetail.Rows(row).Item("account_no").Value = cbAccount.Text
+                            rsDetail.Rows(row).Item("cust_id") = cbCustomer.Text
+                            rsDetail.Rows(row).Item("vend_seq") = VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)
+                            rsDetail.Rows(row).Item("store_id") = txtStoreId.Text
+                            rsDetail.Rows(row).Item("invoice_no") = txtInvoice.Text
+                            rsDetail.Rows(row).Item("account_no") = cbAccount.Text
                             'If nMode = adInsert Then
-                            If rsDetail.Rows(row).Item("invoice_det_no").Value = "" Then
-                                rsDetail.Rows(row).Item("invoice_det_no").Value = nInvoiceDetSeq
+                            If rsDetail.Rows(row).Item("invoice_det_no") = "" Then
+                                rsDetail.Rows(row).Item("invoice_det_no") = nInvoiceDetSeq
                             End If
                             nInvoiceDetSeq = nInvoiceDetSeq + 1
                         Case 1 'Uno o mas registros sin datos
@@ -2162,13 +2165,13 @@ ErrorHandler:
                     End If
 
                     If nMode = mode.adInsert Then
-                        sStr = "INSERT INTO VInvoice " & "(cust_id, store_id, vend_seq, account_no, " & "invoice_no, vinvoice_date, " & "period_seq,  " & "total, vinvoice_status,notes, " & "create_user, group_seq, work_order, glm_total, sc, extc)  VALUES " & "('" & Trim(cbCustomer.Text) & "'," & txtStoreId.Text & ", " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & "', " & "'" & CStr(dtDate._Value) & "', " & CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & ", " & txtTotal.Text & " ,'CRE'," & "'" & Trim(sNotes) & "', " & "'" & Trim(gsUser) & "'," & sGroupName & "," & "'" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & txtGlmTotal.Text & ", " & "'" & Trim(quotation_mask((txtSc.Text))) & "'," & "'" & Trim(quotation_mask((txtExtc.Text))) & "')"
+                        sStr = "INSERT INTO VInvoice " & "(cust_id, store_id, vend_seq, account_no, " & "invoice_no, vinvoice_date, " & "period_seq,  " & "total, vinvoice_status,notes, " & "create_user, group_seq, work_order, glm_total, sc, extc)  VALUES " & "('" & Trim(cbCustomer.Text) & "'," & txtStoreId.Text & ", " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & "', " & "'" & CStr(dtDate.Value) & "', " & CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & ", " & txtTotal.Text & " ,'CRE'," & "'" & Trim(sNotes) & "', " & "'" & Trim(gsUser) & "'," & sGroupName & "," & "'" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & txtGlmTotal.Text & ", " & "'" & Trim(quotation_mask((txtSc.Text))) & "'," & "'" & Trim(quotation_mask((txtExtc.Text))) & "')"
 
 
                     End If
 
                     If nMode = mode.adUpdate Then
-                        sStr = "UPDATE VInvoice SET  " & "vinvoice_date = '" & CStr(dtDate._Value) & "', " & "period_seq = '" & CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & "'," & "notes = '" & Trim(sNotes) & "', " & "change_user ='" & Trim(gsUser) & "', " & "change_time = getdate() , " & "total = " & txtTotal.Text & ", " & "group_seq = " & sGroupName & ", " & "work_order ='" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & "glm_total = " & txtGlmTotal.Text & ", " & "sc = '" & Trim(quotation_mask((txtSc.Text))) & "'," & "extc = '" & Trim(quotation_mask((txtExtc.Text))) & "' " & "WHERE cust_id ='" & Trim(cbCustomer.Text) & "' " & "AND store_id=" & txtStoreId.Text & " " & "AND vend_seq=" & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND invoice_no='" & Trim(txtInvoice.Text) & "' "
+                        sStr = "UPDATE VInvoice SET  " & "vinvoice_date = '" & CStr(dtDate.Value) & "', " & "period_seq = '" & CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & "'," & "notes = '" & Trim(sNotes) & "', " & "change_user ='" & Trim(gsUser) & "', " & "change_time = getdate() , " & "total = " & txtTotal.Text & ", " & "group_seq = " & sGroupName & ", " & "work_order ='" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & "glm_total = " & txtGlmTotal.Text & ", " & "sc = '" & Trim(quotation_mask((txtSc.Text))) & "'," & "extc = '" & Trim(quotation_mask((txtExtc.Text))) & "' " & "WHERE cust_id ='" & Trim(cbCustomer.Text) & "' " & "AND store_id=" & txtStoreId.Text & " " & "AND vend_seq=" & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND invoice_no='" & Trim(txtInvoice.Text) & "' "
                     End If
 
                     cmTmp.CommandText = sStr
@@ -2254,7 +2257,7 @@ ErrorHandler:
 		sStmt = "SELECT count(*) FROM service WHERE serv_eqpt='F'" & "AND serv_id =" & Str(nService)
 		
         rsLocal = getDataTable(sStmt) ' .Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.Rows(0).Item(0).Value >= 1 Then
+        If rsLocal.Rows(0).Item(0) >= 1 Then
             serv_4_eqpt = False 'Servicio no asociado a equipo
         Else
             serv_4_eqpt = True 'Servicio asociado a equipo
@@ -2278,7 +2281,7 @@ ErrorHandler:
 		sStmt = "SELECT serv_rate_contract FROM Service " & "WHERE serv_id =" & CStr(nService)
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If Trim(rsLocal.Rows(0).Item("serv_rate_contract").Value) = "F" Then
+        If Trim(rsLocal.Rows(0).Item("serv_rate_contract")) = "F" Then
             serv_4_rate_contract = False 'Servicio es independiente de tabla VContract
         Else
             serv_4_rate_contract = True 'Servicio esta definido en tabla VContract
@@ -2321,8 +2324,8 @@ ErrorHandler:
                 check_header = False
                 Exit Function
             Else
-                txtStore.Tag = rs.Rows(0).Item("store_id").Value
-                txtStoreId.Text = rs.Rows(0).Item("store_id").Value
+                txtStore.Tag = rs.Rows(0).Item("store_id")
+                txtStoreId.Text = rs.Rows(0).Item("store_id")
             End If
 			
 		End If
@@ -2360,7 +2363,7 @@ ErrorHandler:
 			Exit Function
 		End If
 		
-		'If dtStartPeriod.Value > dtEndPeriod Then
+        'If dtStartPeriod > dtEndPeriod Then
 		'    MsgBox "Start date should not be higher than End date period", vbInformation + vbOKOnly, "Message"
 		'    check_header = False
 		'    Exit Function
@@ -2401,7 +2404,7 @@ ErrorHandler:
 
 
             For row As Integer = 0 To rsTmp.Rows.Count - 1
-                If rsTmp.Rows(row).Item("eqpt_seq").Value = nEquipment And rsTmp.Rows(row).Item("serv_id").Value = nService Then
+                If rsTmp.Rows(row).Item("eqpt_seq") = nEquipment And rsTmp.Rows(row).Item("serv_id") = nService Then
                     check_detail = 0
                     Exit For
                 End If
@@ -2475,9 +2478,9 @@ EventExitSub:
         rs = getDataTable(sStr) '.Open(sStr, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
         If rs.Rows.Count = 1 Then
-            txtStore.Tag = rs.Rows(0).Item("store_id").Value
-            txtStoreId.Text = rs.Rows(0).Item("store_id").Value
-            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address").value) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_city").value) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip").value)
+            txtStore.Tag = rs.Rows(0).Item("store_id")
+            txtStoreId.Text = rs.Rows(0).Item("store_id")
+            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_city")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip"))
         Else
             If rs.Rows.Count = 0 And bUserCancel = False Then
                 MsgBox("Could not find Store. Please check Customer, State or Store Number" & vbCrLf & "Click Help button for further assistance.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "Warning")
@@ -2512,7 +2515,7 @@ EventExitSub:
         rs = getDataTable(sStr) '.Open(sStr, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
         If rs.Rows.Count = 1 Then
-            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address").value) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_city").value) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip").value)
+            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_city")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip"))
         End If
 		Exit Sub
 		
@@ -2558,7 +2561,7 @@ ErrorHandler:
 		
 		cbMonthPeriod.SelectedIndex = CShort(Month(Today)) - 1
 		'jp.20110103.begin
-		'UpDown1.value = Year(Date)
+        'UpDown1 = Year(Date)
 		'jp.20110103.end
 	End Sub
 	Private Sub InitMonth()
@@ -2624,7 +2627,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) ' exec_sql(sStmt)
 
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item("type_id").Value = "A" Or rsLocal.Rows(0).Item("type_id").Value = "C" Then
+            If rsLocal.Rows(0).Item("type_id") = "A" Or rsLocal.Rows(0).Item("type_id") = "C" Then
                 'You can do it
                 check_permission = True
             Else
@@ -2657,7 +2660,7 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) ' exec_sql(sStmt)
 
-        If rsLocal.Rows(0).Item(0).Value > 0 Then
+        If rsLocal.Rows(0).Item(0) > 0 Then
             check_contract_item = True
         Else
             check_contract_item = False
@@ -2773,4 +2776,27 @@ ErrorHandler:
 		
 		
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        new_invoice()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        save_invoice2()
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
+        search_invoice()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_invoice()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class
+
+
+            

@@ -2023,7 +2023,9 @@ ErrorHandler:
         cache_error()
 
 
-        sError = "*************************************" & vbCrLf & "Date:     " & CStr(Now) & vbCrLf & "Form:     " & sForm & vbCrLf & "Function: " & sFunction & vbCrLf & "Error:    " & Str(Err.Number) & vbCrLf & "Desc:     " & Err.Description & vbCrLf & "Source:   " & Err.Source & vbCrLf & "*************************************"
+        sError = "*************************************" & vbCrLf & "Date:     " & CStr(Now) & vbCrLf & _
+                "Form:     " & sForm & vbCrLf & "Function: " & sFunction & vbCrLf & "Error:    " & Str(Err.Number) & vbCrLf & _
+                "Desc:     " & Err.Description & vbCrLf & "Source:   " & Err.Source & vbCrLf & "*************************************"
         write_error(sError, sLogfile, False)
     End Sub
 

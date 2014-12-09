@@ -73,17 +73,17 @@ Friend Class frmHelpCustomer
     End Sub
 
 
-    Private Sub dgStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStore.DblClick
-        Dim vRow As Object
-        Dim nRow As Short
+    Private Sub dgStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        Dim vRow As DataGridViewRow
+        Dim nRow As DataGridViewRow
         Dim i As Short
 
         On Error GoTo ErrorHandler
 
-        nRow = 0
+        'nRow = 0
         'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        vRow = 0
-        For Each vRow In dgStore.SelBookmarks
+        'vRow = 0
+        For Each vRow In dgStore.SelectedRows
             'Selecciona el primer registro marcado
             'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nRow = vRow
@@ -91,7 +91,7 @@ Friend Class frmHelpCustomer
         Next vRow
 
         'Si no ha marcado ningun registro no hace nada
-        If nRow = 0 Then
+        If dgStore.SelectedRows.Count = 0 Then
             Exit Sub
         End If
 
@@ -99,10 +99,10 @@ Friend Class frmHelpCustomer
         'Asigna los valores de seleccion a los componentes de la forma padre
         Select Case nMode
             Case options.adStoreHelp
-                frmInvoiceBooking.txtStore.Text = dgStore.Columns(2).Text
-                frmInvoiceBooking.txtStore.Tag = dgStore.Columns("StoreId").Text
-                frmInvoiceBooking.txtStoreId.Text = dgStore.Columns("StoreId").Text
-                frmInvoiceBooking.lVendorAddress.Text = Trim(dgStore.Columns(3).Text) & " " & vbCrLf & Trim(dgStore.Columns(4).Text) & " " & vbCrLf & Trim(dgStore.Columns(5).Text)
+                frmInvoiceBooking.txtStore.Text = dgStore.CurrentRow.Cells(2).Value
+                frmInvoiceBooking.txtStore.Tag = dgStore.CurrentRow.Cells("StoreId").Value
+                frmInvoiceBooking.txtStoreId.Text = dgStore.CurrentRow.Cells("StoreId").Value
+                frmInvoiceBooking.lVendorAddress.Text = Trim(dgStore.CurrentRow.Cells(3).Value) & " " & vbCrLf & Trim(dgStore.CurrentRow.Cells(4).Value) & " " & vbCrLf & Trim(dgStore.CurrentRow.Cells(5).Value)
 
 
                 'Rel 1.4 -Evita que cbVendor y cbAccount permanezcan
@@ -120,7 +120,7 @@ Friend Class frmHelpCustomer
 
                 'Save customer
                 For i = 0 To frmInvoiceBooking.cbCustomer.Items.Count - 1
-                    If dgStore.Columns("cust_id").Text = VB6.GetItemString(frmInvoiceBooking.cbCustomer, i) Then
+                    If dgStore.CurrentRow.Cells("cust_id").Value = VB6.GetItemString(frmInvoiceBooking.cbCustomer, i) Then
                         frmInvoiceBooking.cbCustomer.SelectedIndex = i
                         Exit For
                     End If
@@ -128,71 +128,70 @@ Friend Class frmHelpCustomer
 
                 'Save State
                 For i = 0 To frmInvoiceBooking.cbState.Items.Count - 1
-                    If dgStore.Columns("State").Text = VB6.GetItemString(frmInvoiceBooking.cbState, i) Then
+                    If dgStore.CurrentRow.Cells("State").Value = VB6.GetItemString(frmInvoiceBooking.cbState, i) Then
                         frmInvoiceBooking.cbState.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
-                frmInvoiceBooking.txtStore.Text = dgStore.Columns("Store").Text
-                frmInvoiceBooking.txtStore.Tag = dgStore.Columns("store_id").Text
-                frmInvoiceBooking.txtStoreId.Text = dgStore.Columns("store_id").Text
+                frmInvoiceBooking.txtStore.Text = dgStore.CurrentRow.Cells("Store").Value
+                frmInvoiceBooking.txtStore.Tag = dgStore.CurrentRow.Cells("store_id").Value
+                frmInvoiceBooking.txtStoreId.Text = dgStore.CurrentRow.Cells("store_id").Value
 
                 'Save Vendor
                 frmInvoiceBooking.load_combo((frmInvoiceBooking.cbVendor))
 
                 For i = 0 To frmInvoiceBooking.cbVendor.Items.Count - 1
                     'If Trim(dgStore.Columns("Vendor")) = frmInvoiceBooking.cbVendor.List(i) Then
-                    If CDbl(dgStore.Columns("vend_seq").Text) = VB6.GetItemData(frmInvoiceBooking.cbVendor, i) Then
+                    If CDbl(dgStore.CurrentRow.Cells("vend_seq").Value) = VB6.GetItemData(frmInvoiceBooking.cbVendor, i) Then
                         frmInvoiceBooking.cbVendor.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
                 'Save address label
-                frmInvoiceBooking.load_address(dgStore.Columns("cust_id").Text, dgStore.Columns("Store").Text, dgStore.Columns("State").Text)
+                frmInvoiceBooking.load_address(dgStore.CurrentRow.Cells("cust_id").Value, dgStore.CurrentRow.Cells("Store").Value, dgStore.CurrentRow.Cells("State").Value)
 
                 'Save account
                 frmInvoiceBooking.load_combo((frmInvoiceBooking.cbAccount))
 
                 For i = 0 To frmInvoiceBooking.cbAccount.Items.Count - 1
-                    If Trim(dgStore.Columns("Account").Text) = VB6.GetItemString(frmInvoiceBooking.cbAccount, i) Then
+                    If Trim(dgStore.CurrentRow.Cells("Account").Value) = VB6.GetItemString(frmInvoiceBooking.cbAccount, i) Then
                         frmInvoiceBooking.cbAccount.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
                 'Save Invoice
-                frmInvoiceBooking.txtInvoice.Text = dgStore.Columns("Invoice").Text
-                frmInvoiceBooking.dtDate._Value = dgStore.Columns("Date").Text
+                frmInvoiceBooking.txtInvoice.Text = dgStore.CurrentRow.Cells("Invoice").Value
+                frmInvoiceBooking.dtDate.Value = dgStore.CurrentRow.Cells("Date").Value
                 'frmInvoiceBooking.dtStartPeriod = dgStore.Columns("start_period")
                 'frmInvoiceBooking.dtEndPeriod = dgStore.Columns("end_period")
                 For i = 0 To frmInvoiceBooking.cbMonthPeriod.Items.Count - 1
-                    If Trim(dgStore.Columns("month_period").Text) = VB6.GetItemString(frmInvoiceBooking.cbMonthPeriod, i) Then
+                    If Trim(dgStore.CurrentRow.Cells("month_period").Value) = VB6.GetItemString(frmInvoiceBooking.cbMonthPeriod, i) Then
                         frmInvoiceBooking.cbMonthPeriod.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
                 For i = 0 To frmInvoiceBooking.cbPeriod.Items.Count - 1
-                    If CDbl(dgStore.Columns("period_seq").Text) = VB6.GetItemData(frmInvoiceBooking.cbPeriod, i) Then
+                    If CDbl(dgStore.CurrentRow.Cells("period_seq").Value) = VB6.GetItemData(frmInvoiceBooking.cbPeriod, i) Then
                         frmInvoiceBooking.cbPeriod.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
-                frmInvoiceBooking.txtYearPeriod.Text = dgStore.Columns("year_period").Text
-                frmInvoiceBooking.txtWorkOrderNo.Text = dgStore.Columns("work_order").Text
+                frmInvoiceBooking.txtYearPeriod.Text = dgStore.CurrentRow.Cells("year_period").Value
+                frmInvoiceBooking.txtWorkOrderNo.Text = dgStore.CurrentRow.Cells("work_order").Value
 
-                frmInvoiceBooking.txtSc.Text = dgStore.Columns("sc").Text
-                frmInvoiceBooking.txtExtc.Text = dgStore.Columns("extc").Text
+                frmInvoiceBooking.txtSc.Text = dgStore.CurrentRow.Cells("sc").Value
+                frmInvoiceBooking.txtExtc.Text = dgStore.CurrentRow.Cells("extc").Value
 
                 'cbGroupName
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(dgStore.Columns("group_seq").Text) Or dgStore.Columns("group_seq").Text = "" Then
+                If IsDBNull(dgStore.CurrentRow.Cells("group_seq").Value) Or dgStore.CurrentRow.Cells("group_seq").Value = "" Then
                     'Do not set index
                 Else
-                    set_cb_ItemData2((frmInvoiceBooking.cbGroupName), CShort(dgStore.Columns("group_seq").Text))
+                    set_cb_ItemData2((frmInvoiceBooking.cbGroupName), CShort(dgStore.CurrentRow.Cells("group_seq").Value))
                 End If
 
                 frmInvoiceBooking.enable_pk(False)
@@ -210,14 +209,14 @@ ErrorHandler:
         MsgBox("An unexpected error has occurred. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
     End Sub
 
-    Private Sub dgStore_HeadClick(ByVal eventSender As System.Object, ByVal eventArgs As AxMSDataGridLib.DDataGridEvents_HeadClickEvent) Handles dgStore.HeadClick
+    Private Sub dgStore_HeadClick(ByVal eventSender As System.Object, ByVal eventArgs As AxMSDataGridLib.DDataGridEvents_HeadClickEvent)
 
         Dim sMsg As String
         Dim sColname As String
 
         On Error GoTo ErrorHandler
 
-        sColname = dgStore.Columns(eventArgs.colIndex).Caption
+        sColname = dgStore.Columns(eventArgs.colIndex).HeaderText '..CurrentRow.Cells(eventArgs.colIndex)
         rsHelp.Select("", sColname)
         Exit Sub
 
@@ -298,8 +297,8 @@ ErrorHandler:
             Case options.adStoreHelp
                 'Formateo de columnas
                 dgStore.Text = " Store Information"
-                dgStore.Columns("Store Number").Caption = "Store#"
-                dgStore.Columns("Store Name").Caption = "Name"
+                dgStore.Columns("Store Number").HeaderText = "Store#"
+                dgStore.Columns("Store Name").HeaderText = "Name"
                 dgStore.Columns("Customer").Width = VB6.TwipsToPixelsX(500)
                 dgStore.Columns("Code").Width = VB6.TwipsToPixelsX(900)
                 dgStore.Columns("Store Address").Width = VB6.TwipsToPixelsX(4000)

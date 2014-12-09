@@ -20,19 +20,19 @@ Friend Class frmCustFee
         cmd.CommandText = sStmt
 		
         rsFee = getDataTable(sStmt) 'md.ExecuteReader()
-        If rsFee.Rows.Count > 0 Then
-            dgFee.DataSource = rsFee
-        End If
-		
-		'Formato
-		dgFee.Columns("fee_id").Visible = False
-		dgFee.Columns("cust_id").Visible = False
-		dgFee.Columns("fee_type_id").Visible = False
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "load_dgFee")
-		MsgBox("An error found while loading fee info." & "Check log file for details.")
+        'If rsFee.Rows.Count > 0 Then
+        dgFee.DataSource = rsFee
+        'End If
+
+        'Formato
+        dgFee.Columns("fee_id").Visible = False
+        dgFee.Columns("cust_id").Visible = False
+        dgFee.Columns("fee_type_id").Visible = False
+        Exit Sub
+
+ErrorHandler:
+        save_error(Me.Name, "load_dgFee")
+        MsgBox("An error found while loading fee info." & "Check log file for details.")
 		
 	End Sub
 	
@@ -154,72 +154,83 @@ ErrorHandler:
 	End Sub
 	Private Sub update_fee()
 		gCustFeeRecord.bFlag = General.modo.UpdateRecord
-		set_fee_record((General.modo.UpdateRecord))
-		VB6.ShowForm(frmCustFeeEntry, VB6.FormShowConstants.Modal, Me)
-		If gCustFeeRecord.bFlag = General.modo.SavedRecord Then
-			load_dgFee()
-		End If
-	End Sub
+        set_fee_record((General.modo.UpdateRecord))
+        If dgFee.SelectedRows.Count > 0 Then
+            VB6.ShowForm(frmCustFeeEntry, VB6.FormShowConstants.Modal, Me)
+            If gCustFeeRecord.bFlag = General.modo.SavedRecord Then
+                load_dgFee()
+            End If
+        Else
+            MsgBox(" You must select a record to update.")
+            Exit Sub
+        End If
+    End Sub
 	Private Function delete_fee() As Boolean
 		Dim nRecords As Short
         Dim nTran As SqlTransaction
 		Dim nDetailCount As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim nNumFeeServices As Integer = 0
 		delete_fee = False
 		nRecords = 0
 
-		
-		On Error GoTo ErrorHandler
-        If dgFee.SelectedRows.Count = 0 Then
-            MsgBox("You must select a row before atempting this command.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
-            delete_fee = False
+        nTran = cn.BeginTransaction()
+        Try
+            If dgFee.SelectedRows.Count = 0 Then
+                MsgBox("You must select a row before atempting this command.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                delete_fee = False
+                Exit Function
+            End If
+
+            If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
+
+
+                'Borrar detalles primero
+                sStmt = "SELECT fee_id FROM FeeService " & " WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
+                cmd.CommandText = sStmt
+                rsLocal = getDataTable(sStmt, nTran) 'cmd.ExecuteReader()
+                nNumFeeServices = rsLocal.Rows.Count
+
+                sStmt = "DELETE FROM FeeService " & " WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
+                cmLocal = cn.CreateCommand
+                cmLocal.CommandText = sStmt
+                cmLocal.Transaction = nTran
+                nRecords = cmLocal.ExecuteNonQuery()
+
+                If nRecords <> nDetailCount Then
+                    nTran.Rollback()
+                    MsgBox("Failed to delete Fee Details." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                    Exit Function
+                End If
+
+                'Header
+                sStmt = "DELETE FROM Fee " & "WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
+                cmLocal = cn.CreateCommand
+                cmLocal.Transaction = nTran
+                cmLocal.CommandText = sStmt
+                nRecords = cmLocal.ExecuteNonQuery()
+                If (nRecords > 0) Or (nNumFeeServices = 0 And nRecords = 0) Then
+                    'ok
+                    nTran.Commit()
+                    delete_fee = True
+                Else
+                    nTran.Rollback()
+
+                    MsgBox("Failed to delete record." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                    delete_fee = False
+                    Exit Function
+                End If
+            End If
             Exit Function
-        End If
-		
-		If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
-            nTran = cn.BeginTransaction()
-			
-			'Borrar detalles primero
-            sStmt = "SELECT fee_id FROM FeeService " & " WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
-            cmd.CommandText = sStmt
-            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
-			
-            sStmt = "DELETE FROM FeeService " & " WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
-			cmLocal.CommandText = sStmt
-            nRecords = cmLocal.ExecuteNonQuery()
-			
-			If nRecords <> nDetailCount Then
-                nTran.Rollback()
-				MsgBox("Failed to delete Fee Details." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-				Exit Function
-			End If
-			
-			'Header
-            sStmt = "DELETE FROM Fee " & "WHERE fee_id =" & Str(CDbl(dgFee.CurrentRow.Cells("fee_id").Value))
-            cmd.CommandText = sStmt
-            nRecords = cmd.ExecuteNonQuery()
-			If nRecords > 0 Then
-				'ok
-                nTran.Commit()
-				delete_fee = True
-			Else
-                nTran.Rollback()
-				
-				MsgBox("Failed to delete record." & vbCrLf & "Check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				delete_fee = False
-				Exit Function
-			End If
-		End If
-		Exit Function
-		
-ErrorHandler: 
 
-        nTran.Rollback()
+        Catch ex As Exception
 
-        save_error(Me.Name, "delete_fee")
-        MsgBox("Unexpected error while deleting from Fee table." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
-		
-	End Function
+            nTran.Rollback()
+
+            save_error(Me.Name, "delete_fee")
+            MsgBox("Unexpected error while deleting from Fee table." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+        End Try
+    End Function
 
     Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
         If count_to_insert() > 0 Then
