@@ -81,11 +81,9 @@ Friend Class frmHelpCustomer
         On Error GoTo ErrorHandler
 
         'nRow = 0
-        'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         'vRow = 0
         For Each vRow In dgStore.SelectedRows
             'Selecciona el primer registro marcado
-            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nRow = vRow
             Exit For
         Next vRow
@@ -120,12 +118,16 @@ Friend Class frmHelpCustomer
 
                 'Save customer
                 For i = 0 To frmInvoiceBooking.cbCustomer.Items.Count - 1
+
                     If dgStore.CurrentRow.Cells("cust_id").Value = VB6.GetItemString(frmInvoiceBooking.cbCustomer, i) Then
                         frmInvoiceBooking.cbCustomer.SelectedIndex = i
                         Exit For
                     End If
                 Next i
 
+                Dim numrows As Integer = frmInvoiceBooking.cbCustomer.SelectedIndex
+                Dim sCustomer As String = frmInvoiceBooking.cbCustomer.Items(numrows).ToString
+                sCustomer = frmInvoiceBooking.cbCustomer.SelectedItem.ToString
                 'Save State
                 For i = 0 To frmInvoiceBooking.cbState.Items.Count - 1
                     If dgStore.CurrentRow.Cells("State").Value = VB6.GetItemString(frmInvoiceBooking.cbState, i) Then
@@ -167,8 +169,13 @@ Friend Class frmHelpCustomer
                 frmInvoiceBooking.dtDate.Value = dgStore.CurrentRow.Cells("Date").Value
                 'frmInvoiceBooking.dtStartPeriod = dgStore.Columns("start_period")
                 'frmInvoiceBooking.dtEndPeriod = dgStore.Columns("end_period")
-                For i = 0 To frmInvoiceBooking.cbMonthPeriod.Items.Count - 1
-                    If Trim(dgStore.CurrentRow.Cells("month_period").Value) = VB6.GetItemString(frmInvoiceBooking.cbMonthPeriod, i) Then
+                Dim cbMonthPeriod_Items_Count As Integer = frmInvoiceBooking.cbMonthPeriod.Items.Count
+                For i = 0 To cbMonthPeriod_Items_Count - 1
+                    Dim sMonthPeriod_value As String = VB6.GetItemString(frmInvoiceBooking.cbMonthPeriod, i).ToString
+                    sMonthPeriod_value = frmInvoiceBooking.cbMonthPeriod.Items(i).ToString
+                    Dim sCurrRow_value As String = dgStore.CurrentRow.Cells("month_period").Value.ToString
+                    'If Trim(dgStore.CurrentRow.Cells("month_period").Value) = VB6.GetItemString(frmInvoiceBooking.cbMonthPeriod, i) Then
+                    If Trim(sMonthPeriod_value) = sCurrRow_value Then
                         frmInvoiceBooking.cbMonthPeriod.SelectedIndex = i
                         Exit For
                     End If
@@ -181,14 +188,17 @@ Friend Class frmHelpCustomer
                     End If
                 Next i
 
-                frmInvoiceBooking.txtYearPeriod.Text = dgStore.CurrentRow.Cells("year_period").Value
-                frmInvoiceBooking.txtWorkOrderNo.Text = dgStore.CurrentRow.Cells("work_order").Value
+                Dim astr As String = dgStore.CurrentRow.Cells("year_period").Value.ToString
 
-                frmInvoiceBooking.txtSc.Text = dgStore.CurrentRow.Cells("sc").Value
-                frmInvoiceBooking.txtExtc.Text = dgStore.CurrentRow.Cells("extc").Value
+                frmInvoiceBooking.txtYearPeriod.Text = dgStore.CurrentRow.Cells("year_period").Value.ToString
+                frmInvoiceBooking.txtWorkOrderNo.Text = dgStore.CurrentRow.Cells("work_order").Value.ToString
+
+                frmInvoiceBooking.txtSc.Text = dgStore.CurrentRow.Cells("sc").Value.ToString
+                frmInvoiceBooking.txtExtc.Text = dgStore.CurrentRow.Cells("extc").Value.ToString
 
                 'cbGroupName
-                If IsDBNull(dgStore.CurrentRow.Cells("group_seq").Value) Or dgStore.CurrentRow.Cells("group_seq").Value = "" Then
+
+                If dgStore.CurrentRow.Cells("group_seq").Value.ToString = "" Then
                     'Do not set index
                 Else
                     set_cb_ItemData2((frmInvoiceBooking.cbGroupName), CShort(dgStore.CurrentRow.Cells("group_seq").Value))
@@ -302,7 +312,7 @@ ErrorHandler:
                 dgStore.Columns("Customer").Width = VB6.TwipsToPixelsX(500)
                 dgStore.Columns("Code").Width = VB6.TwipsToPixelsX(900)
                 dgStore.Columns("Store Address").Width = VB6.TwipsToPixelsX(4000)
-                'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+
                 dgStore.Refresh()
                 dgStore.Columns("StoreId").Visible = False
 

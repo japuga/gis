@@ -95,10 +95,19 @@ ErrorHandler:
                     cm.CommandType = CommandType.StoredProcedure
 					cm.CommandText = "usp_sys_create_user"
 
-					cm.Parameters("@sUserName").Value = Trim(txtUserName.Text)
-					cm.Parameters("@sPassword").Value = Trim(txtUserName.Text)
+                    'agregar parametros
+
+                    'cm.Parameters("@sUserName").Value = Trim(txtUserName.Text)
+                    cm.Parameters.AddWithValue("@sUserName", Trim(txtUserName.Text))
+                    'cm.Parameters("@sPassword").Value = Trim(txtUserName.Text)
+                    cm.Parameters.AddWithValue("@sPassword", Trim(txtUserName.Text))
 					
-					cm.Parameters("@sDatabase").Value = gsDatabase
+                    'cm.Parameters("@sDatabase").Value = gsDatabase
+                    cm.Parameters.AddWithValue("@sDatabase", gsDatabase)
+
+                    cm.Parameters.Add("@nResult", SqlDbType.Int, 10)
+                    cm.Parameters("@nResult").Direction = ParameterDirection.Output
+
                     cm.ExecuteNonQuery()
 					If cm.Parameters("@nResult").Value = 0 Then
 						'ok
@@ -110,7 +119,7 @@ ErrorHandler:
 						If bInserted = True Then
 							
 							sStmt = "DELETE FROM suser " & "WHERE suser_name='" & Trim(txtUserName.Text) & "'"
-							cm.CommandType = ADODB.CommandTypeEnum.adCmdText
+                            cm.CommandType = CommandType.Text
 							cm.CommandText = sStmt
                             nRecords = cm.ExecuteNonQuery()
 							If nRecords > 0 Then
@@ -154,7 +163,7 @@ ErrorHandler:
 		'Rollback para insercion
 		If bInserted = True Then
 			sStmt = "DELETE FROM suser " & "WHERE suser_name='" & Trim(txtUserName.Text) & "'"
-			cm.CommandType = ADODB.CommandTypeEnum.adCmdText
+            cm.CommandType = CommandType.Text
 			cm.CommandText = sStmt
             nRecords = cm.ExecuteNonQuery()
 			If nRecords > 0 Then
@@ -202,9 +211,7 @@ ErrorHandler:
 	End Sub
 	
 	Private Sub set_limits()
-		'UPGRADE_WARNING: TextBox property txtUserName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtUserName.Maxlength = 10
-		'UPGRADE_WARNING: TextBox property txtUserDesc.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtUserDesc.Maxlength = 50
+        txtUserName.MaxLength = 10
+        txtUserDesc.MaxLength = 50
 	End Sub
 End Class

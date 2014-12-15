@@ -6,22 +6,24 @@ Friend Class frmInvoiceBookingDet
 	Inherits System.Windows.Forms.Form
 	'Option Base 1
 	Private bError As Boolean 'Error en el modulo
-    Private rsLocal As SqlDataReader
-    Private rsLocalRate As SqlDataReader
-    Private rsLocalService As SqlDataReader
-	'UPGRADE_NOTE: Rate was upgraded to Rate_Renamed. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-	Private Rate_Renamed As gRateUDT
-	'UPGRADE_WARNING: Arrays in structure aService may need to be initialized before they can be used. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="814DF224-76BD-4BB4-BFFB-EA359CB9FC48"'
-	Private aService As gTableUDT
+    Private rsLocal As DataTable
+    Private rsLocalRate As DataTable
+    Private rsLocalService As DataTable
+    Private Rate_Renamed As gRateUDT
+    Private aService As gTableUDT
+
 	Const MAXDECIMALS As Short = 4
 	
 	
 	'Carga combo de equipos
 	Private Sub load_combo_eqpt()
-		'Equipos disponibles para esta tienda y vendor
-		'UPGRADE_WARNING: Str has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		sStmt = " SELECT DISTINCT e.eqpt_desc, e.eqpt_seq " & " FROM VContract c, StoreEqpt e" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND e.eqpt_status = 'A' " & " AND (c.expiration_date >= '" & Str(gInvHeaderRecord.dInvoiceDate.ToOADate) & "' " & "    OR c.override_exp_flag ='YES') " & " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " ORDER BY e.eqpt_desc "
-		
+        'Equipos disponibles para esta tienda y vendor
+        Dim sExpirationDate As String = gInvHeaderRecord.dInvoiceDate.ToShortDateString
+        sStmt = " SELECT DISTINCT e.eqpt_desc, e.eqpt_seq " & " FROM VContract c, StoreEqpt e" & _
+                " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND e.eqpt_status = 'A' " & _
+                        " AND (c.expiration_date >= '" & sExpirationDate & "' " & "    OR c.override_exp_flag ='YES') " & _
+                        " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " ORDER BY e.eqpt_desc "
+        cbEquipDet.Items.Clear()
 		cbEquipDet.Items.Insert(0, "<None>")
 		load_cb_query2(cbEquipDet, sStmt, 2, False)
 		
@@ -29,12 +31,11 @@ Friend Class frmInvoiceBookingDet
 		
 	End Sub
 	
-	'UPGRADE_WARNING: Event cbEquipDet.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbEquipDet_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbEquipDet.SelectedIndexChanged
-		lookup_eqpt(gInvHeaderRecord.sCustId, gInvHeaderRecord.nStoreId, VB6.GetItemData(cbEquipDet, cbEquipDet.SelectedIndex))
-		'Actualizo servicios para este equipo
-		load_combo_service(cbServDet, VB6.GetItemData(cbEquipDet, cbEquipDet.SelectedIndex))
-	End Sub
+    Private Sub cbEquipDet_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbEquipDet.SelectedIndexChanged
+        lookup_eqpt(gInvHeaderRecord.sCustId, gInvHeaderRecord.nStoreId, VB6.GetItemData(cbEquipDet, cbEquipDet.SelectedIndex))
+        'Actualizo servicios para este equipo
+        load_combo_service(cbServDet, VB6.GetItemData(cbEquipDet, cbEquipDet.SelectedIndex))
+    End Sub
 	'Busca informacion de equipo
 	Private Sub lookup_eqpt(ByRef sCustId As String, ByRef nStoreId As Short, ByRef nEqptSeq As Short)
 		
@@ -44,10 +45,10 @@ Friend Class frmInvoiceBookingDet
 		sStmt = "SELECT content_desc FROM StoreEqpt,Content " & "WHERE StoreEqpt.content_id = Content.content_id " & " AND StoreEqpt.cust_id = '" & sCustId & "' " & " AND StoreEqpt.store_id = " & Str(nStoreId) & " " & " AND StoreEqpt.eqpt_seq = " & Str(nEqptSeq)
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.HasRows() Then
-            lbContent.Text = rsLocal.Item("content_desc").Value
+        If rsLocal.Rows.Count > 0 Then
+            lbContent.Text = rsLocal.Rows(0).Item("content_desc")
         End If
 
         Exit Sub
@@ -65,17 +66,31 @@ ErrorHandler:
 		On Error GoTo ErrorHandler
 		
 		If nEqptSeq <= 0 Then 'Equipo <None>
-			sStmt = " SELECT serv_desc, serv_id , " & " serv_measure_unit, serv_rate_contract " & " FROM service " & " WHERE serv_eqpt ='F' " & " ORDER BY serv_desc "
+            sStmt = " SELECT serv_desc, serv_id , " & " serv_measure_unit, serv_rate_contract " & " FROM service " & " WHERE serv_eqpt ='F' " & _
+                    " ORDER BY serv_desc "
 			
-			sStmtService = " SELECT  serv_id , serv_desc," & " serv_measure_unit, serv_rate_contract " & " FROM service " & " WHERE serv_eqpt ='F' " & " ORDER BY serv_desc"
+            sStmtService = " SELECT  serv_id , serv_desc," & " serv_measure_unit, serv_rate_contract " & _
+                " FROM service " & " WHERE serv_eqpt ='F' " & " ORDER BY serv_desc"
 		Else
-			
+            Dim sExpDate As String = gInvHeaderRecord.dInvoiceDate.ToShortDateString
 			'Just services for this equipment
-			'UPGRADE_WARNING: Str has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-			sStmt = " SELECT DISTINCT s.serv_desc, s.serv_id, " & " s.serv_measure_unit, s.serv_rate_contract " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND (c.expiration_date >= '" & Str(gInvHeaderRecord.dInvoiceDate.ToOADate) & "' " & "    OR c.override_exp_flag ='YES') " & " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " AND c.eqpt_seq = " & Str(nEqptSeq) & " ORDER BY s.serv_desc"
+            sStmt = " SELECT DISTINCT s.serv_desc, s.serv_id, " & " s.serv_measure_unit, s.serv_rate_contract " & _
+                " FROM VContract c, StoreEqpt e, Service s" & _
+                " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & _
+                    " AND (c.expiration_date >= '" & sExpDate & "' " & "    OR c.override_exp_flag ='YES') " & _
+                    " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & _
+                    " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " AND c.eqpt_seq = " & Str(nEqptSeq) & _
+                " ORDER BY s.serv_desc"
 			
-			'UPGRADE_WARNING: Str has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-			sStmtService = " SELECT DISTINCT  s.serv_id, s.serv_desc," & " s.serv_measure_unit, s.serv_rate_contract " & " FROM VContract c, StoreEqpt e, Service s" & " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & " AND (c.expiration_date >= '" & Str(gInvHeaderRecord.dInvoiceDate.ToOADate) & "' " & "    OR c.override_exp_flag ='YES') " & " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " AND c.eqpt_seq = " & Str(nEqptSeq) & " ORDER BY s.serv_desc"
+            sStmtService = " SELECT DISTINCT  s.serv_id, s.serv_desc," & " s.serv_measure_unit, s.serv_rate_contract " & _
+                            " FROM VContract c, StoreEqpt e, Service s" & _
+                            " WHERE e.cust_id = c.cust_id " & " AND e.store_id = c.store_id " & " AND e.eqpt_seq = c.eqpt_seq " & _
+                                " AND c.serv_id = s.serv_id " & " AND e.eqpt_status = 'A' " & _
+                                " AND (c.expiration_date >= '" & sExpDate & "' " & _
+                                    "    OR c.override_exp_flag ='YES') " & _
+                                " AND c.cust_id = '" & gInvHeaderRecord.sCustId & "' " & " AND c.store_id = '" & Str(gInvHeaderRecord.nStoreId) & "' " & _
+                                " AND c.vend_seq = " & Str(gInvHeaderRecord.nVendSeq) & " AND c.eqpt_seq = " & Str(nEqptSeq) & _
+                            " ORDER BY s.serv_desc"
 			
 		End If
 		
@@ -99,19 +114,19 @@ ErrorHandler:
 	'UPGRADE_WARNING: Event cbServDet.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbServDet_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbServDet.SelectedIndexChanged
 		
-		'lbServTypeDet = aService.aRecord(cbServDet.ListIndex).str_field2
+        'lbServTypeDet = aService.aRecord(cbServDet.ListIndex).str_field2
+        lbServTypeDet.Text = aService.aRecord(cbServDet.SelectedIndex).str_field2
 		'Mapping : serv_measure_unit= str_field2
 		If cbServDet.SelectedIndex > MAX_MEM_RECORD Then
 			MsgBox("Attempt to access element not existing in array. MAX_MEM_RECORD exceeded.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
 			Exit Sub
 		End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(aService.aRecord(cbServDet.SelectedIndex).str_field2) Or aService.aRecord(cbServDet.SelectedIndex).str_field2 = "" Then
-			lbServTypeDet.Text = "N/A"
-		Else
-			lbServTypeDet.Text = aService.aRecord(cbServDet.SelectedIndex).str_field2
-		End If
+        'aService.Initialize()
+        If IsDBNull(aService.aRecord(cbServDet.SelectedIndex).str_field2) Or aService.aRecord(cbServDet.SelectedIndex).str_field2 = "" Then
+            lbServTypeDet.Text = "N/A"
+        Else
+            lbServTypeDet.Text = aService.aRecord(cbServDet.SelectedIndex).str_field2
+        End If
 		
 		'Enable Benchmark and Current Rate
 		'Mapping : serv_rate_contract = str_field3
@@ -172,36 +187,33 @@ ErrorHandler:
 
         'rsLocalRate.Filter = "eqpt_seq = " & Str(nEquipment)
         'rsLocalRate.
-		
-        While rsLocalRate.Read()
-
-            If (rsLocalRate.Item("serv_id").Value = nService) And (rsLocalRate.Item("eqpt_seq").Value = nEquipment) Then
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocalRate.Item("old_rate").Value) Then
-                    Rate_Renamed.old_rate = rsLocalRate.Item("old_rate").Value
-                End If
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocalRate.Item("curr_rate").Value) Then
-                    Rate_Renamed.Rate_Renamed = rsLocalRate.Item("curr_rate").Value
-                End If
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsLocalRate.Item("glm_rate").Value) Then
-                    Rate_Renamed.GlmRate = rsLocalRate.Item("glm_rate").Value
+        For row As Integer = 0 To rsLocalRate.Rows.Count - 1
+            If (rsLocalRate.Rows(row).Item("serv_id") = nService) And (rsLocalRate.Rows(row).Item("eqpt_seq") = nEquipment) Then
+                If Not IsDBNull(rsLocalRate.Rows(row).Item("old_rate")) Then
+                    Rate_Renamed.old_rate = rsLocalRate.Rows(row).Item("old_rate")
                 End If
 
-                Exit While
+                If Not IsDBNull(rsLocalRate.Rows(row).Item("curr_rate")) Then
+                    Rate_Renamed.Rate_Renamed = rsLocalRate.Rows(row).Item("curr_rate")
+                End If
+
+                If Not IsDBNull(rsLocalRate.Rows(row).Item("glm_rate")) Then
+                    Rate_Renamed.GlmRate = rsLocalRate.Rows(row).Item("glm_rate")
+                End If
+
+                Exit For
             End If
+        Next row
 
-        End While
         'rsLocalRate.Filter = ADODB.FilterGroupEnum.adFilterNone
-		
-		Exit Function
-		
-ErrorHandler: 
-		save_error("frmInvoiceBooking", "getRate")
-		MsgBox("An error has ocurred while retrieving rate info.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-		Resume Next
-	End Function
+
+        Exit Function
+
+ErrorHandler:
+        save_error("frmInvoiceBooking", "getRate")
+        MsgBox("An error has ocurred while retrieving rate info.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        Resume Next
+    End Function
 	
 	
 	Private Sub cmdClose_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdClose.Click
@@ -276,35 +288,33 @@ ErrorHandler:
 	Private Function check_info() As Boolean
 		check_info = True
 		'Usage
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(txtUsageDet.Text) Or txtUsageDet.Text = "" Then
-			MsgBox("Usage should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
-			check_info = False
-			Exit Function
-		Else
-			If CDbl(txtUsageDet.Text) <= 0# Then
-				MsgBox("Usage should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
-				check_info = False
-				Exit Function
-			End If
-		End If
+        If IsDBNull(txtUsageDet.Text) Or txtUsageDet.Text = "" Then
+            MsgBox("Usage should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
+            check_info = False
+            Exit Function
+        Else
+            If CDbl(txtUsageDet.Text) <= 0.0# Then
+                MsgBox("Usage should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
+                check_info = False
+                Exit Function
+            End If
+        End If
 		If max_fraction2(txtUsageDet.Text, MAXDECIMALS) Then
 			txtUsageDet.Text = VB.Left(txtUsageDet.Text, InStr(1, txtUsageDet.Text, ".", CompareMethod.Text) + MAXDECIMALS)
 		End If
 		
 		'Units
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(txtUnitsDet.Text) Or txtUnitsDet.Text = "" Then
-			MsgBox("Units should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
-			check_info = False
-			Exit Function
-		Else
-			If CDbl(txtUnitsDet.Text) <= 0# Then
-				MsgBox("Units should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
-				check_info = False
-				Exit Function
-			End If
-		End If
+        If IsDBNull(txtUnitsDet.Text) Or txtUnitsDet.Text = "" Then
+            MsgBox("Units should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
+            check_info = False
+            Exit Function
+        Else
+            If CDbl(txtUnitsDet.Text) <= 0.0# Then
+                MsgBox("Units should be greater than zero.", MsgBoxStyle.Information, "GLM Warning")
+                check_info = False
+                Exit Function
+            End If
+        End If
 		If max_fraction2(txtUnitsDet.Text, MAXDECIMALS) Then
 			txtUnitsDet.Text = VB.Left(txtUnitsDet.Text, InStr(1, txtUnitsDet.Text, ".", CompareMethod.Text) + MAXDECIMALS)
 		End If
@@ -323,16 +333,41 @@ ErrorHandler:
 		
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtServDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		gInvDetRecord.dServDate = dtServDate._Value
+        gInvDetRecord.dServDate = dtServDate.Value
 		
-		save_info = True
-		'PENDIENTE: Verificar datos antes de asignar a cada campo
-		gInvDetRecord.nOldRate = CDbl(txtOldRateDet.Text)
-		gInvDetRecord.nUnits = CDbl(txtUnitsDet.Text)
-		gInvDetRecord.nUsage = CDbl(txtUsageDet.Text)
-		gInvDetRecord.nRate = CDbl(txtRateDet.Text)
-		gInvDetRecord.nGlmRate = CDbl(txtGlmRateDet.Text)
+        save_info = True
+        Dim output As Double = 0
+        'PENDIENTE: Verificar datos antes de asignar a cada campo
+        If Double.TryParse(txtOldRateDet.Text, output) Then
+            gInvDetRecord.nOldRate = Convert.ToDouble(txtOldRateDet.Text)
+        Else
+            gInvDetRecord.nOldRate = 0
+        End If
+        'gInvDetRecord.nUnits = CDbl(txtUnitsDet.Text)
+        If Double.TryParse(txtUnitsDet.Text, output) Then
+            gInvDetRecord.nUnits = Convert.ToDouble(txtUnitsDet.Text)
+        Else
+            gInvDetRecord.nUnits = 0
+        End If
+        'gInvDetRecord.nUsage = CDbl(txtUsageDet.Text)
+        If Double.TryParse(txtUsageDet.Text, output) Then
+            gInvDetRecord.nUsage = Convert.ToDouble(txtUsageDet.Text)
+        Else
+            gInvDetRecord.nUsage = 0
+        End If
+        'gInvDetRecord.nRate = CDbl(txtRateDet.Text)
+        If Double.TryParse(txtRateDet.Text, output) Then
+            gInvDetRecord.nRate = Convert.ToDouble(txtRateDet.Text)
+        Else
+            gInvDetRecord.nRate = 0
+        End If
+        'gInvDetRecord.nGlmRate = CDbl(txtGlmRateDet.Text)
+        If Double.TryParse(txtGlmRateDet.Text, output) Then
+            gInvDetRecord.nGlmRate = Convert.ToDouble(txtGlmRateDet.Text)
+        Else
+            gInvDetRecord.nGlmRate = 0
+        End If
+
 		
 		If cbServDet.SelectedIndex >= 0 Then
 			gInvDetRecord.nService = CShort(VB6.GetItemData(cbServDet, cbServDet.SelectedIndex))
@@ -374,7 +409,7 @@ ErrorHandler:
 	Private Sub init_vars()
 		'Init Variables
 		bError = False
-		
+        aService.Initialize()
 		txtUnitsDet.Text = VB6.Format(0#, "##,##0.0000")
 		txtUsageDet.Text = VB6.Format(0#, "##,##0.0000")
 
@@ -418,9 +453,9 @@ ErrorHandler:
 		
 		Select Case nOption
 			Case General.detmode.NewRecord
-				dtServDate._Value = gInvHeaderRecord.dInvoiceDate
+                dtServDate.Value = gInvHeaderRecord.dInvoiceDate
 			Case General.detmode.UpdateRecord
-				dtServDate._Value = gInvDetRecord.dServDate
+                dtServDate.Value = gInvDetRecord.dServDate
 				set_cb_ItemData(cbEquipDet, gInvDetRecord.nEquipment)
 				txtUsageDet.Text = CStr(gInvDetRecord.nUsage)
 				txtUnitsDet.Text = CStr(gInvDetRecord.nUnits)
@@ -443,8 +478,8 @@ ErrorHandler:
 		
 		sStmt = "SELECT * FROM vcontract " & "WHERE cust_id ='" & gInvHeaderRecord.sCustId & "' " & "AND store_id =" & Str(gInvHeaderRecord.nStoreId) & " " & "AND vend_seq =" & Str(gInvHeaderRecord.nVendSeq)
         cmd.CommandText = sStmt
-        rsLocalRate = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockOptimistic)
-        If Not rsLocalRate.HasRows() Then
+        rsLocalRate = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockOptimistic)
+        If Not rsLocalRate.Rows.Count > 0 Then
             bRates = False
         End If
 		

@@ -6,9 +6,9 @@ Friend Class frmUser
     Private rsUser As DataTable
     Private ImageList2 As New ImageList()
 	
-	Private Sub dgUser_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgUser.DblClick
-		update_user()
-	End Sub
+    Private Sub dgUser_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_user()
+    End Sub
 	
 	Private Sub frmUser_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -44,7 +44,7 @@ Friend Class frmUser
 
 
             For row As Integer = 0 To rsUser.Rows.Count - 1
-                If Trim(rsUser.Rows(row).Item("ID").Value) = Trim(gUserRecord.sUserName) Then
+                If Trim(rsUser.Rows(row).Item("ID")) = Trim(gUserRecord.sUserName) Then
                     bFound = True
                     Exit For
                 End If
@@ -105,45 +105,45 @@ ErrorHandler:
 		End If
 	End Sub
 	Private Sub update_user()
-		If dgUser.SelBookmarks.Count > 0 Then
-			gUserRecord.bFlag = General.modo.UpdateRecord
-			set_user()
-			
-			VB6.ShowForm(frmUserEntry, VB6.FormShowConstants.Modal, Me)
-			If gUserRecord.bFlag = General.modo.SavedRecord Then
-				load_dgUser()
-			End If
-		Else
-			MsgBox("You must select a user before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-		End If
+        If dgUser.SelectedRows.Count > 0 Then
+            gUserRecord.bFlag = General.modo.UpdateRecord
+            set_user()
+
+            VB6.ShowForm(frmUserEntry, VB6.FormShowConstants.Modal, Me)
+            If gUserRecord.bFlag = General.modo.SavedRecord Then
+                load_dgUser()
+            End If
+        Else
+            MsgBox("You must select a user before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+        End If
 	End Sub
 	Private Sub set_user()
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("ID").Value) Then
+        If IsDBNull(rsUser.Rows(0).Item("ID")) Then
             gUserRecord.sUserName = ""
         Else
-            gUserRecord.sUserName = Trim(rsUser.Rows(0).Item("ID").Value)
+            gUserRecord.sUserName = Trim(rsUser.Rows(0).Item("ID"))
         End If
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("Description").Value) Then
+        If IsDBNull(rsUser.Rows(0).Item("Description")) Then
             gUserRecord.sUserDesc = ""
         Else
-            gUserRecord.sUserDesc = Trim(rsUser.Rows(0).Item("Description").Value)
+            gUserRecord.sUserDesc = Trim(rsUser.Rows(0).Item("Description"))
         End If
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("type_id").Value) Then
+        If IsDBNull(rsUser.Rows(0).Item("type_id")) Then
             gUserRecord.sTypeId = ""
         Else
-            gUserRecord.sTypeId = Trim(rsUser.Rows(0).Item("type_id").Value)
+            gUserRecord.sTypeId = Trim(rsUser.Rows(0).Item("type_id"))
         End If
 		
 		
 	End Sub
 	Private Sub delete_user()
 		Dim nRecords As Short
-        Dim nTran As Sqltransaction
+        Dim nTran As SqlTransaction = Nothing
 		
 		On Error GoTo ErrorHandler
 		
@@ -151,18 +151,19 @@ ErrorHandler:
         cm = cn.CreateCommand() '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
 		
-		If dgUser.SelBookmarks.Count > 0 Then
-			If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.Yes Then
+        If dgUser.SelectedRows.Count > 0 Then
+            If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.Yes Then
                 nTran = cn.BeginTransaction()
-				'Primero se eliminan privilegios en suser_data
-                sStmt = "SELECT suser_name FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID").Value) & "'"
-				
-                rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                'Primero se eliminan privilegios en suser_data
+                sStmt = "SELECT suser_name FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+
+                rs = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rs.Rows.Count > 0 Then
-                    sStmt = "DELETE FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID").Value) & "'"
+                    sStmt = "DELETE FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
 
                     cm.CommandText = sStmt
+                    cm.Transaction = nTran
                     nRecords = cm.ExecuteNonQuery()
                     If nRecords > 0 Then
                         'ok elminado suser_data
@@ -175,14 +176,15 @@ ErrorHandler:
 
 
                 'suser_options
-                sStmt = "SELECT suser_name FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID").Value) & "'"
+                sStmt = "SELECT suser_name FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
 
-                
-                rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+                rs = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rs.Rows.Count > 0 Then
-                    sStmt = "DELETE FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID").Value) & "'"
+                    sStmt = "DELETE FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
                     cm.CommandText = sStmt
+                    cm.Transaction = nTran
                     nRecords = cm.ExecuteNonQuery()
 
                     If nRecords > 0 Then
@@ -196,9 +198,10 @@ ErrorHandler:
 
 
                 'suser
-                sStmt = "DELETE FROM suser " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID").Value) & "'"
+                sStmt = "DELETE FROM suser " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
 
                 cm.CommandText = sStmt
+                cm.Transaction = nTran
                 nRecords = cm.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
@@ -221,13 +224,15 @@ ErrorHandler:
 
 ErrorHandler:
 
-        nTran.Rollback()
+        If Not IsNothing(nTran) Then
+            nTran.Rollback()
+        End If
 
         save_error(Me.Name, "delete_user")
         If Not show_db_error() Then
             MsgBox("Unexpected error occurred while deleting User info." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End If
-	End Sub
+    End Sub
 	'Borrar usuario de SqlServer
 	Private Sub del_sql_user()
         Dim rsTmp As DataTable
@@ -239,13 +244,13 @@ ErrorHandler:
             'Verifico que el usuario exista en SqlServer
             cm.CommandType = CommandType.StoredProcedure
             cm.CommandText = "usp_sys_user_info"
-            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID").Value)
+            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID"))
             da.SelectCommand = cm
             da.Fill(ds)
             rsTmp = ds.Tables(0)
 
             cm.CommandText = "usp_sys_delete_user"
-            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID").Value)
+            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID"))
             cm.Parameters("@nResult").Direction = ParameterDirection.Output
             cm.ExecuteNonQuery()
             If cm.Parameters("@nResult").Value = 0 Then
@@ -262,5 +267,21 @@ ErrorHandler:
             'User does not exist on SqlServer
             'End If
         End Try
+    End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_user()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_user()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_user()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
     End Sub
 End Class

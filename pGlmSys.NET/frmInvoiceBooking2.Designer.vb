@@ -220,7 +220,7 @@
         Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me.btSearch, Me.btDelete, Me._Toolbar1_Button5, Me.btExit})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
         Me.Toolbar1.Name = "Toolbar1"
-        Me.Toolbar1.Size = New System.Drawing.Size(1236, 39)
+        Me.Toolbar1.Size = New System.Drawing.Size(698, 39)
         Me.Toolbar1.TabIndex = 22
         '
         'btNew
@@ -918,7 +918,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1236, 498)
+        Me.ClientSize = New System.Drawing.Size(698, 498)
         Me.Controls.Add(Me.Toolbar1)
         Me.Controls.Add(Me.frHeader)
         Me.Controls.Add(Me.Frame1)
