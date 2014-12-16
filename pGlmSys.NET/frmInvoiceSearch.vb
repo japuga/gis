@@ -31,13 +31,12 @@ Friend Class frmInvoiceSearch
 		End If
 	End Sub
 	
-	'UPGRADE_WARNING: Event ckDates.CheckStateChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub ckDates_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles ckDates.CheckStateChanged
-		
-		dtStart.Enabled = Not frDates.Enabled
-		dtEnd.Enabled = Not frDates.Enabled
-		frDates.Enabled = Not frDates.Enabled
-	End Sub
+    Private Sub ckDates_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles ckDates.CheckStateChanged
+
+        dtStart.Enabled = Not frDates.Enabled
+        dtEnd.Enabled = Not frDates.Enabled
+        frDates.Enabled = ckDates.Checked 'Not frDates.Enabled
+    End Sub
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		Me.Close()
@@ -89,9 +88,9 @@ Friend Class frmInvoiceSearch
 		End If
 		
 		If frDates.Enabled Then
-			If (IsDate(dtStart._Value) And IsDate(dtEnd._Value)) Then
-				sWhere = sWhere & "AND VInvoice.vinvoice_date  BETWEEN '" & CStr(dtStart._Value) & "' AND '" & CStr(dtEnd._Value) & "'  "
-			End If
+            If (IsDate(dtStart.Value) And IsDate(dtEnd.Value)) Then
+                sWhere = sWhere & "AND VInvoice.vinvoice_date  BETWEEN '" & CStr(dtStart.Value) & "' AND '" & CStr(dtEnd.Value) & "'  "
+            End If
 		End If
 		
 		sStr = "SELECT Customer.cust_name as Customer, " & "Store.state_id as State," & "Store.store_number as Store, " & "Store.store_address as Address," & "VInvoice.invoice_no as Invoice, " & "VInvoice.vinvoice_date as Date, " & "VBranch.vend_name as Vendor, " & "VInvoice.account_no as Account, " & "VInvoice.cust_id, VInvoice.store_id, VInvoice.vend_seq, " & "VInvoice.month_period , VInvoice.year_period, VInvoice.period_seq, " & " Period.period_name Period, " & " VInvoice.group_seq, VInvoice.work_order, VInvoice.sc, VInvoice.extc " & "FROM VInvoice, Customer, Store, VBranch, Period " & "WHERE VInvoice.cust_id = Customer.cust_id " & "AND VInvoice.store_id = Store.store_id " & "AND VInvoice.cust_id = Store.cust_id " & "AND VInvoice.vend_seq = VBranch.vend_seq " & "AND vInvoice.period_seq = Period.period_seq " & Trim(sWhere)
@@ -115,8 +114,8 @@ ErrorHandler:
 	
 	Private Sub frmInvoiceSearch_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		'Inicializo componentes
-		dtStart._Value = Today
-		dtEnd._Value = Today
+        dtStart.Value = Today
+        dtEnd.Value = Today
 		
 		init_vars()
 		'load_vendor
@@ -152,11 +151,10 @@ ErrorHandler:
 		
 		sStr = "SELECT DISTINCT VBranch.vend_seq, " & "RTRIM(VBranch.vend_name)+' - '+" & "RTRIM(VBranch.vend_area)AS vname " & "FROM VAccount, VBranch " & "WHERE VAccount.vend_seq = VBranch.vend_seq "
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object sCustId. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If sCustId <> "<All>" Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object sCustId. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			sStr = sStr & "AND VAccount.cust_id ='" + sCustId + "' "
-		End If
+
+        If sCustId.ToString <> "<All>" Then
+            sStr = sStr & "AND VAccount.cust_id ='" + sCustId.ToString + "' "
+        End If
 		
 		sStr = sStr & " ORDER BY vname"
 		
@@ -164,8 +162,8 @@ ErrorHandler:
         rs = getDataTable(sStr) '.Open(sStr, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockOptimistic)
         nCounter = 1
         For row As Integer = 0 To rs.Rows.Count - 1
-            cbVendor.Items.Add(rs.Rows(row).Item("vname").Value)
-            VB6.SetItemData(cbVendor, nCounter, rs.Rows(row).Item("vend_seq").Value)
+            cbVendor.Items.Add(rs.Rows(row).Item("vname"))
+            VB6.SetItemData(cbVendor, nCounter, rs.Rows(row).Item("vend_seq"))
             nCounter = nCounter + 1
         Next row
 		

@@ -462,4 +462,12 @@ ErrorHandler:
         Dim Index As Short = mniVendors.GetIndex(sender)
         VB6.ShowForm(frmVendor, VB6.FormShowConstants.Modal, Me)
     End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btInvoiceBooking_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btInvoiceBooking.Click
+        VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
+    End Sub
 End Class

@@ -144,7 +144,7 @@
         Me.cmdEdit.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdEdit.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdEdit.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdEdit.Location = New System.Drawing.Point(80, 432)
+        Me.cmdEdit.Location = New System.Drawing.Point(74, 222)
         Me.cmdEdit.Name = "cmdEdit"
         Me.cmdEdit.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdEdit.Size = New System.Drawing.Size(57, 25)
@@ -175,7 +175,7 @@
         Me.cmdNotes.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdNotes.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdNotes.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdNotes.Location = New System.Drawing.Point(192, 224)
+        Me.cmdNotes.Location = New System.Drawing.Point(200, 222)
         Me.cmdNotes.Name = "cmdNotes"
         Me.cmdNotes.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdNotes.Size = New System.Drawing.Size(57, 25)
@@ -190,7 +190,7 @@
         Me.cmdDrop.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdDrop.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdDrop.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdDrop.Location = New System.Drawing.Point(128, 224)
+        Me.cmdDrop.Location = New System.Drawing.Point(137, 222)
         Me.cmdDrop.Name = "cmdDrop"
         Me.cmdDrop.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdDrop.Size = New System.Drawing.Size(57, 25)
@@ -205,7 +205,7 @@
         Me.cmdAdd.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdAdd.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdAdd.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdAdd.Location = New System.Drawing.Point(0, 224)
+        Me.cmdAdd.Location = New System.Drawing.Point(11, 222)
         Me.cmdAdd.Name = "cmdAdd"
         Me.cmdAdd.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdAdd.Size = New System.Drawing.Size(57, 25)
@@ -220,7 +220,7 @@
         Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me.btSearch, Me.btDelete, Me._Toolbar1_Button5, Me.btExit})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
         Me.Toolbar1.Name = "Toolbar1"
-        Me.Toolbar1.Size = New System.Drawing.Size(1236, 39)
+        Me.Toolbar1.Size = New System.Drawing.Size(698, 39)
         Me.Toolbar1.TabIndex = 22
         '
         'btNew
@@ -763,6 +763,7 @@
         'frDetail
         '
         Me.frDetail.BackColor = System.Drawing.SystemColors.Control
+        Me.frDetail.Controls.Add(Me.cmdEdit)
         Me.frDetail.Controls.Add(Me.DataGrid1)
         Me.frDetail.Controls.Add(Me.txtGlmTotal)
         Me.frDetail.Controls.Add(Me.Text1)
@@ -789,7 +790,7 @@
         'DataGrid1
         '
         Me.DataGrid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGrid1.Location = New System.Drawing.Point(409, 59)
+        Me.DataGrid1.Location = New System.Drawing.Point(417, 112)
         Me.DataGrid1.Name = "DataGrid1"
         Me.DataGrid1.Size = New System.Drawing.Size(240, 81)
         Me.DataGrid1.TabIndex = 36
@@ -895,20 +896,21 @@
         Me.lblTotal.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblTotal.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTotal.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblTotal.Location = New System.Drawing.Point(480, 192)
+        Me.lblTotal.Location = New System.Drawing.Point(489, 92)
         Me.lblTotal.Name = "lblTotal"
         Me.lblTotal.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblTotal.Size = New System.Drawing.Size(33, 17)
         Me.lblTotal.TabIndex = 17
         Me.lblTotal.Text = "Total:"
         Me.lblTotal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.lblTotal.Visible = False
         '
         'dgDetail
         '
         Me.dgDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgDetail.Location = New System.Drawing.Point(0, 39)
+        Me.dgDetail.Location = New System.Drawing.Point(6, 39)
         Me.dgDetail.Name = "dgDetail"
-        Me.dgDetail.Size = New System.Drawing.Size(657, 170)
+        Me.dgDetail.Size = New System.Drawing.Size(659, 166)
         Me.dgDetail.TabIndex = 35
         '
         'frmInvoiceBooking
@@ -916,8 +918,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1236, 498)
-        Me.Controls.Add(Me.cmdEdit)
+        Me.ClientSize = New System.Drawing.Size(698, 498)
         Me.Controls.Add(Me.Toolbar1)
         Me.Controls.Add(Me.frHeader)
         Me.Controls.Add(Me.Frame1)

@@ -194,11 +194,11 @@
         Me._sbMain_Panel1 = New System.Windows.Forms.ToolStripStatusLabel
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-        Me.ToolStripButton2 = New System.Windows.Forms.ToolStripButton
+        Me.btInvoiceBooking = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button10 = New System.Windows.Forms.ToolStripSeparator
         Me.ToolStripButton1 = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
-        Me.ToolStripButton3 = New System.Windows.Forms.ToolStripButton
+        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button6 = New System.Windows.Forms.ToolStripSeparator
         Me.Image1 = New System.Windows.Forms.PictureBox
         Me.mniArea = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
@@ -471,21 +471,21 @@
         Me.Toolbar1.Dock = System.Windows.Forms.DockStyle.Left
         Me.Toolbar1.ImageList = Me.ImageList1
         Me.Toolbar1.ImageScalingSize = New System.Drawing.Size(64, 64)
-        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripButton2, Me._Toolbar1_Button10, Me.ToolStripButton1, Me._Toolbar1_Button4, Me.ToolStripButton3, Me._Toolbar1_Button6})
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btInvoiceBooking, Me._Toolbar1_Button10, Me.ToolStripButton1, Me._Toolbar1_Button4, Me.btExit, Me._Toolbar1_Button6})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 24)
         Me.Toolbar1.Name = "Toolbar1"
         Me.Toolbar1.Size = New System.Drawing.Size(76, 398)
         Me.Toolbar1.TabIndex = 0
         '
-        'ToolStripButton2
+        'btInvoiceBooking
         '
-        Me.ToolStripButton2.AutoSize = False
-        Me.ToolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), System.Drawing.Image)
-        Me.ToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton2.Name = "ToolStripButton2"
-        Me.ToolStripButton2.Size = New System.Drawing.Size(50, 45)
-        Me.ToolStripButton2.Text = "ToolStripButton2"
+        Me.btInvoiceBooking.AutoSize = False
+        Me.btInvoiceBooking.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btInvoiceBooking.Image = CType(resources.GetObject("btInvoiceBooking.Image"), System.Drawing.Image)
+        Me.btInvoiceBooking.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btInvoiceBooking.Name = "btInvoiceBooking"
+        Me.btInvoiceBooking.Size = New System.Drawing.Size(50, 45)
+        Me.btInvoiceBooking.Text = "Invoice Booking"
         '
         '_Toolbar1_Button10
         '
@@ -508,15 +508,15 @@
         Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
         Me._Toolbar1_Button4.Size = New System.Drawing.Size(166, 39)
         '
-        'ToolStripButton3
+        'btExit
         '
-        Me.ToolStripButton3.AutoSize = False
-        Me.ToolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.ToolStripButton3.Image = CType(resources.GetObject("ToolStripButton3.Image"), System.Drawing.Image)
-        Me.ToolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.ToolStripButton3.Name = "ToolStripButton3"
-        Me.ToolStripButton3.Size = New System.Drawing.Size(50, 50)
-        Me.ToolStripButton3.Text = "ToolStripButton3"
+        Me.btExit.AutoSize = False
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(50, 50)
+        Me.btExit.Text = "ToolStripButton3"
         '
         '_Toolbar1_Button6
         '
@@ -1408,8 +1408,8 @@
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents ToolStripButton2 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btInvoiceBooking As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripButton1 As System.Windows.Forms.ToolStripButton
-    Friend WithEvents ToolStripButton3 As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
 #End Region 
 End Class
