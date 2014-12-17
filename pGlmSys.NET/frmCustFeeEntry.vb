@@ -382,7 +382,8 @@ ErrorHandler:
 				If cbFeeDesc.Items.Count > 0 Then
 					cbFeeDesc.SelectedIndex = 0
 				End If
-				
+                cbFeeDesc.Enabled = True
+
 				ckActive.CheckState = System.Windows.Forms.CheckState.Checked
 				txtFeeValue.Text = CStr(0)
 			Case General.modo.UpdateRecord

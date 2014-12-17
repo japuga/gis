@@ -1361,9 +1361,8 @@ ErrorHandler:
         For Each store In stores
             'Debug.Print store(0) + " " + store(1)
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
             sCustId = store(CUST_IDX)
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nStoreId = store(STORE_IDX)
 
             sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & " WHERE a.cust_id = '" & sCustId & "'" & " AND a.store_id= " & Str(nStoreId) & " AND a.content_id = c.content_id " & " AND b.content_group_id = c.content_group_id " & " AND b.content_group_name ='RPTRECYCLETONGEN_RECYCLE' " & " AND c.content_id = d.content_id " & " AND a.eqpt_id = e.eqpt_id " & " ORDER BY a.store_id "
@@ -1373,29 +1372,25 @@ ErrorHandler:
             rs = getDataTable(sStmt) 'cmd.ExecuteReader()
 
             For row As Integer = 0 To rs.Rows.Count - 1
-                sContentDesc = Trim(rs.Rows(row).Item("content_desc").Value)
-                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc").Value)
-                nEqptSeq = rs.Rows(row).Item("eqpt_seq").Value
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                sEqptType = Trim(rs.Rows(row).Item("eqpt_type").Value)
+                sContentDesc = Trim(rs.Rows(row).Item("content_desc"))
+                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc"))
+                nEqptSeq = rs.Rows(row).Item("eqpt_seq")
+                sEqptType = Trim(rs.Rows(row).Item("eqpt_type"))
 
 
                 Debug.Print("--EqptDesc:" & sEqptDesc & "   Content:" & sContentDesc)
                 'Debug.Print "Content:" + sContentDesc
 
                 'Recycle Balers
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If sContentDesc = RPTRECYCLETONGEN_OCC_BALES And sEqptType = RPTRECYCLETONGEN_EQPT_BALER Then
                     nBalerWgt = rrtg_process_bale(sCustId, nStoreId, nEqptSeq, params, nPoundsPerBaler)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(BALERWGT_IDX) = store(BALERWGT_IDX) + System.Math.Round(nBalerWgt, 2)
 
                     Debug.Print("---Baler wgt Tons:" & Str(nBalerWgt))
                 End If
 
                 'Recycle Compactors PKR
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If sContentDesc = RPTRECYCLETONGEN_RECYCLE And sEqptType = RPTRECYCLETONGEN_EQPT_PKR Then
 
                     'nPkrWgt = rrtg_process_pkr(sCustId, nStoreId, _
@@ -1404,7 +1399,6 @@ ErrorHandler:
 
                     nPkrWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInPKR, "RPTRECYCLETONGEN_PKR_TON", "RPTRECYCLETONGEN_PKR_PU", RPTRECYCLETONGEN_PU_FREQUENCY)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(PKRWGT_IDX) = store(PKRWGT_IDX) + System.Math.Round(nPkrWgt, 2)
 
                     Debug.Print("---Recycle PKR wgt Tons:" & Str(nPkrWgt))
@@ -1413,11 +1407,9 @@ ErrorHandler:
 
 
                 'Recycle Dumpsters
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or sContentDesc = RPTRECYCLETONGEN_OCC) And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
                     nDumWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUM, RPTRECYCLETONGEN_DUM_TON, RPTRECYCLETONGEN_DUM_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(DUMWGT_IDX) = store(DUMWGT_IDX) + System.Math.Round(nDumWgt, 2)
 
                     Debug.Print("---DUM wgt Tons:" & Str(nDumWgt))
@@ -1425,11 +1417,9 @@ ErrorHandler:
 
 
                 'Recycle Tote
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or sContentDesc = RPTRECYCLETONGEN_PAPER) And sEqptType = RPTRECYCLETONGEN_EQPT_TOTE Then
                     nTotWgt = rrtg_process_tote(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInTOT, RPTRECYCLETONGEN_SERV_TOTE, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(TOTWGT_IDX) = store(TOTWGT_IDX) + System.Math.Round(nTotWgt, 2)
 
                     Debug.Print("---Recycle Tote wgt Tons:" & Str(nTotWgt))
@@ -1439,33 +1429,26 @@ ErrorHandler:
 
 
                 'Recycle Composting
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
                     nDumCompWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUMCompost, RPTRECYCLETONGEN_COMPOST_TON, RPTRECYCLETONGEN_COMPOST_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(DUMWGTCOMPOST_IDX) = store(DUMWGTCOMPOST_IDX) + System.Math.Round(nDumCompWgt, 2)
 
                     Debug.Print("---DUM wgt Composting Tons:" & Str(nDumWgt))
                 End If
 
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And sEqptType = RPTRECYCLETONGEN_EQPT_TOTE Then
                     nTotCompWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInTOTCompost, RPTRECYCLETONGEN_COMPOST_TON, RPTRECYCLETONGEN_COMPOST_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(TOTWGTCOMPOST_IDX) = store(TOTWGTCOMPOST_IDX) + System.Math.Round(nTotCompWgt, 2)
 
                     Debug.Print("---TOT wgt Composting Tons:" & Str(nTotCompWgt))
                 End If
 
                 'Recycle Open Top
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If (sContentDesc = RPTRECYCLETONGEN_CONDEMO Or sContentDesc = RPTRECYCLETONGEN_CONCRETE) And sEqptType = RPTRECYCLETONGEN_EQPT_OT Then
                     nOtCondemoWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInOTCondemo, RPTRECYCLETONGEN_CONDEMO_TON, RPTRECYCLETONGEN_CONDEMO_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(OTWGTDCONDEMO_IDX) = store(OTWGTDCONDEMO_IDX) + System.Math.Round(nOtCondemoWgt, 2)
 
                     Debug.Print("---OT wgt Const Demo Tons:" & Str(nOtCondemoWgt))
@@ -1473,13 +1456,6 @@ ErrorHandler:
 
 
                 'Total Store Recycle
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(OTWGTDCONDEMO_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(TOTWGTCOMPOST_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(DUMWGTCOMPOST_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(TOTWGT_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(DUMWGT_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(PKRWGT_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 store(STORE_RECYCLE_IDX) = store(BALERWGT_IDX) + store(PKRWGT_IDX) + store(DUMWGT_IDX) + store(TOTWGT_IDX) + store(DUMWGTCOMPOST_IDX) + store(TOTWGTCOMPOST_IDX) + store(OTWGTDCONDEMO_IDX)
 
             Next
@@ -1489,7 +1465,6 @@ ErrorHandler:
 
             'stores.Remove idx
             'stores.Add store, store(CUST_IDX) + Str(store(STORE_IDX))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             recycleStores.Add(store, store(CUST_IDX) + Str(store(STORE_IDX)))
 
             idx = idx + 1
@@ -1504,9 +1479,8 @@ ErrorHandler:
         For Each store In stores
             'Debug.Print store(0) + " " + store(1)
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
             sCustId = store(CUST_IDX)
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nStoreId = store(STORE_IDX)
 
             sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & " WHERE a.cust_id = '" & sCustId & "'" & " AND a.store_id= " & Str(nStoreId) & " AND a.content_id = c.content_id " & " AND b.content_group_id = c.content_group_id " & " AND b.content_group_name ='RPTRECYCLETONGEN_TRASH' " & " AND c.content_id = d.content_id " & " AND a.eqpt_id = e.eqpt_id " & " ORDER BY a.store_id "
@@ -1517,17 +1491,16 @@ ErrorHandler:
             rs = getDataTable(sStmt) 'cmd.ExecuteReader()
 
             For row As Integer = 0 To rs.Rows.Count - 1
-                sContentDesc = Trim(rs.Rows(row).Item("content_desc").Value)
-                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc").Value)
-                nEqptSeq = rs.Rows(row).Item("eqpt_seq").Value
-                sEqptType = Trim(rs.Rows(row).Item("eqpt_type").Value)
+                sContentDesc = Trim(rs.Rows(row).Item("content_desc"))
+                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc"))
+                nEqptSeq = rs.Rows(row).Item("eqpt_seq")
+                sEqptType = Trim(rs.Rows(row).Item("eqpt_type"))
 
 
                 Debug.Print("--EqptDesc:" & sEqptDesc & "   Content:" & sContentDesc)
 
 
                 'Trash Dumpster
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
                     'Test Case 8D.begin
                     'nDumTrashWgt = rrtg_process_trash(sCustId, nStoreId, nEqptSeq,
@@ -1535,19 +1508,15 @@ ErrorHandler:
                     nDumTrashWgt = rrtg_process_trash(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUMTrash, RPTRECYCLETONGEN_TRASH_TON, RPTRECYCLETONGEN_TRASH_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
                     'Test Case 8D.end
 
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(DUMWGTTRASH_IDX) = store(DUMWGTTRASH_IDX) + System.Math.Round(nDumTrashWgt, 2)
 
                     Debug.Print("---Dumpster Trash wgt Tons:" & Str(nDumTrashWgt))
                 End If
 
                 'Trash Compactor
-                'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_PKR Then
                     nPkrTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInPKRTrash, RPTRECYCLETONGEN_TRASH_PKR_TON, RPTRECYCLETONGEN_TRASH_PKR_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
-
-                    'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     store(PKRWGTTRASH_IDX) = store(PKRWGTTRASH_IDX) + System.Math.Round(nPkrTrashWgt, 2)
 
                     Debug.Print("---Compactor Trash wgt Tons:" & Str(nPkrTrashWgt))
@@ -1608,7 +1577,6 @@ ErrorHandler:
 
             'stores.Remove idx
             'stores.Add store, store(CUST_IDX) + Str(store(STORE_IDX))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             trashStores.Add(store, store(CUST_IDX) + Str(store(STORE_IDX)))
             idx = idx + 1
 
@@ -1619,16 +1587,9 @@ ErrorHandler:
 
         'showStoresContents
         For idx = 1 To stores.Count()
-            'UPGRADE_WARNING: Couldn't resolve default property of object recycleStores(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Couldn't resolve default property of object recycleStore. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             recycleStore = recycleStores.Item(idx)
-            'UPGRADE_WARNING: Couldn't resolve default property of object trashStores(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Couldn't resolve default property of object trashStore. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             trashStore = trashStores.Item(idx)
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object recycleStore(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Couldn't resolve default property of object recycleStore(CUST_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Array has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
             allStores.Add(New Object() {recycleStore(CUST_IDX), recycleStore(STORE_IDX), recycleStore(STORE_NUMBER_IDX), recycleStore(STORE_NAME_IDX), recycleStore(BALERWGT_IDX), recycleStore(PKRWGT_IDX), recycleStore(DUMWGT_IDX), recycleStore(TOTWGT_IDX), recycleStore(DUMWGTCOMPOST_IDX), recycleStore(TOTWGTCOMPOST_IDX), recycleStore(OTWGTDCONDEMO_IDX), trashStore(DUMWGTTRASH_IDX), trashStore(PKRWGTTRASH_IDX), trashStore(TOTWGTTRASH_IDX), trashStore(VIPWGTTRASH_IDX), trashStore(OTWGTTRASH_IDX), recycleStore(STORE_RECYCLE_IDX), trashStore(STORE_TRASH_IDX)}, recycleStore(CUST_IDX) + Str(recycleStore(STORE_IDX)))
 
         Next
@@ -1648,41 +1609,23 @@ ErrorHandler:
         Dim store As Object
 
         For Each store In stores
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(CUST_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("CustId=" + store(CUST_IDX))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("store=" & Str(store(STORE_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(STORE_NUMBER_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Store Number=" + store(STORE_NUMBER_IDX))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(STORE_NAME_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Store Name=" + store(STORE_NAME_IDX))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Baler wgt=" & Str(store(BALERWGT_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("PKR wgt=" & Str(store(PKRWGT_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Dumspter wgt=" & Str(store(DUMWGT_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Tote wgt=" & Str(store(TOTWGT_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Dumpster Comp wgt=" & Str(store(DUMWGTCOMPOST_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Tote Comp wgt=" & Str(store(TOTWGTCOMPOST_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Open Top wgt=" & Str(store(OTWGTDCONDEMO_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Dumpster trash wgt=" & Str(store(DUMWGTTRASH_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Pkr trash wgt=" & Str(store(PKRWGTTRASH_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Tote trash wgt=" & Str(store(TOTWGTTRASH_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Vip trash wgt=" & Str(store(VIPWGTTRASH_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Open Top trash wgt=" & Str(store(OTWGTTRASH_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Store Recycle=" & Str(store(STORE_RECYCLE_IDX)))
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             Debug.Print("Store Trash=" & Str(store(STORE_TRASH_IDX)))
         Next store
 
@@ -1690,7 +1633,6 @@ ErrorHandler:
     'Reads stores array and inserts data into report table
     Private Sub saveReportData(ByVal stores As Collection, ByRef params As gRptRecycleTonGenParamUDT)
         Dim store As Object
-
         Dim storeTotalTons As Double
         Dim storeCompostingTons As Double
         Dim landfillPercent As Double
@@ -1700,19 +1642,14 @@ ErrorHandler:
 
 
         For Each store In stores
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(STORE_RECYCLE_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            
             storeTotalTons = store(STORE_TRASH_IDX) + store(STORE_RECYCLE_IDX)
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(TOTWGTCOMPOST_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             storeCompostingTons = store(DUMWGTCOMPOST_IDX) + store(TOTWGTCOMPOST_IDX)
             If storeTotalTons = 0 Then
                 landfillPercent = 0
                 recyclePercent = 0
             Else
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 landfillPercent = System.Math.Round((store(STORE_TRASH_IDX) / storeTotalTons) * 100, 2)
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 recyclePercent = System.Math.Round((store(STORE_RECYCLE_IDX) / storeTotalTons) * 100, 2)
             End If
 
@@ -1730,23 +1667,30 @@ ErrorHandler:
 
 
         Dim wgt As Double
-        Dim rsBale As SqlDataReader
+        Dim rsBale As DataTable
         Dim numBales As Double
         Dim cmd As SqlCommand = cn.CreateCommand()
 
 
 
-        sStmt = " SELECT SUM(b.units) " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = 'RPTRECYCLETONGEN_BALER' )"
+        sStmt = " SELECT SUM(b.units) " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & _
+            " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & _
+            " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & _
+            " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & _
+            " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+            "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = 'RPTRECYCLETONGEN_BALER' )"
         cmd.CommandText = sStmt
-        rsBale = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsBale = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsBale.Item(0).Value) Then
-            numBales = 0
+        If rsBale.Rows.Count > 0 Then
+            If IsDBNull(rsBale.Rows(0).Item(0)) Then
+                numBales = 0
+            Else
+                numBales = rsBale.Rows(0).Item(0)
+            End If
         Else
-            numBales = rsBale.Item(0).Value
+            numBales = 0
         End If
-
 
         wgt = numBales * nPoundsPerBaler / POUNDS_PER_TON
 
@@ -1811,7 +1755,7 @@ ErrorHandler:
 
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim wgt As Double
-        Dim rsPU As SqlDataReader
+        Dim rsPU As DataTable
         Dim numPU As Double
         Dim eqptQty As Short
         Dim eqptSizeCapacity As Double
@@ -1828,13 +1772,13 @@ ErrorHandler:
         'if not found then look for "Service Rate per Haul"
         sStmt = " SELECT sum(b.units)  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNameTon & "' )"
         cmd.CommandText = sStmt
-        rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsPU.HasRows() Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rsPU.Item(0).Value) Then
-                tons = rsPU.Item(0).Value
+        rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsPU.Rows.Count > 0 Then
+            If Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+                tons = rsPU.Rows(0).Item(0)
             End If
         End If
+
 
 
 
@@ -1843,33 +1787,31 @@ ErrorHandler:
             sStmt = " SELECT COUNT(b.units), SUM(b.units),d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period,  " & " c.serv_ton " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNamePu & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period, c.serv_ton  "
             cmd.CommandText = sStmt
 
-            rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsPU.HasRows() Then
-                While rsPU.Read()
+            If rsPU.Rows.Count > 0 Then
+                For Each row As DataRow In rsPU.Rows
                     'If rsPU.RecordCount > 0 Then
 
-                    numPU = rsPU.Item(0).Value
-                    sumPU = rsPU.Item(1).Value
-                    eqptQty = rsPU.Item(2).Value
-                    eqptSizeCapacity = rsPU.Item(3).Value
+                    numPU = row.Item(0)
+                    sumPU = row.Item(1)
+                    eqptQty = row.Item(2)
+                    eqptSizeCapacity = row.Item(3)
 
-                    'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rsPU.Item(4).Value) Then
+                    If IsDBNull(row.Item(4)) Then
                         'This only happens if ActualQty has not been updated
                         eqptActualQty = eqptQty
                     Else
-                        eqptActualQty = rsPU.Item(4).Value
+                        eqptActualQty = row.Item(4)
                     End If
 
-                    freqPeriod = Trim(rsPU.Item(5).Value)
+                    freqPeriod = Trim(row.Item(5))
 
                     'IF service has not set tonnage flag then default to no-tonnage
-                    'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rsPU.Item(6).Value) Then
+                    If IsDBNull(row.Item(6)) Then
                         servTon = "F"
                     Else
-                        servTon = Trim(rsPU.Item(6).Value)
+                        servTon = Trim(row.Item(6))
                     End If
 
                     nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
@@ -1883,7 +1825,7 @@ ErrorHandler:
 
                     'End If
 
-                End While
+                Next row
             End If
 
         Else
@@ -1906,7 +1848,7 @@ ErrorHandler:
 
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim wgt As Double
-        Dim rsPU As SqlDataReader
+        Dim rsPU As DataTable
         Dim numPU As Double
         Dim eqptQty As Short
         Dim eqptSizeCapacity As Double
@@ -1926,24 +1868,23 @@ ErrorHandler:
         'Test Case 8D.end
         sStmt = " SELECT sum(b.units), d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, " & " e.freq_times, e.freq_period " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d , vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNameTon & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY  d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_times, e.freq_period"
         cmd.CommandText = sStmt
-        rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsPU.HasRows() Then
-            numPU = rsPU.Item(0).Value
-            eqptQty = rsPU.Item(1).Value
-            eqptSizeCapacity = rsPU.Item(2).Value
-            'eqptActualQty = rsPU.item(3).value
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsPU.Item(3).Value) Then
+        If rsPU.Rows.Count > 0 Then
+            numPU = rsPU.Rows(0).Item(0)
+            eqptQty = rsPU.Rows(0).Item(1)
+            eqptSizeCapacity = rsPU.Rows(0).Item(2)
+            'eqptActualQty = rsPU.item(3)
+            If IsDBNull(rsPU.Rows(0).Item(3)) Then
                 'This only happens if ActualQty has not been updated
                 eqptActualQty = eqptQty
             Else
-                eqptActualQty = rsPU.Item(3).Value
+                eqptActualQty = rsPU.Rows(0).Item(3)
             End If
 
 
-            freqTimes = rsPU.Item(4).Value
-            freqPeriod = rsPU.Item(5).Value
+            freqTimes = rsPU.Rows(0).Item(4)
+            freqPeriod = rsPU.Rows(0).Item(5)
 
             nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
             'When service is O/C , freq_times is zero thus change it to 1
@@ -1964,25 +1905,25 @@ ErrorHandler:
             sStmt = " SELECT sum(b.units), d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period,  " & " e.freq_times " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNamePu & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period, e.freq_times  "
             cmd.CommandText = sStmt
 
-            rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsPU.HasRows() Then
-                While rsPU.Read()
+            If rsPU.Rows.Count > 0 Then
+                For Each row As DataRow In rsPU.Rows
 
-                    numPU = rsPU.Item(0).Value
-                    eqptQty = rsPU.Item(1).Value
-                    eqptSizeCapacity = rsPU.Item(2).Value
-                    'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rsPU.Item(3).Value) Then
+
+                    numPU = row.Item(0)
+                    eqptQty = row.Item(1)
+                    eqptSizeCapacity = row.Item(2)
+                    If IsDBNull(row.Item(3)) Then
                         'This only happens if ActualQty has not been updated
                         eqptActualQty = eqptQty
                     Else
-                        eqptActualQty = rsPU.Item(3).Value
+                        eqptActualQty = row.Item(3)
                     End If
 
-                    'eqptActualQty = rsPU.item(3).value
-                    freqPeriod = rsPU.Item(4).Value
-                    freqTimes = rsPU.Item(5).Value
+                    'eqptActualQty = rsPU.item(3)
+                    freqPeriod = row.Item(4)
+                    freqTimes = row.Item(5)
 
                     nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
                     If freqPeriod = "O/C" Then
@@ -1995,7 +1936,7 @@ ErrorHandler:
                     wgt = wgt + eqptActualQty * eqptSizeCapacity * numPU * nMonthlyFrequency * nPoundsPerUOMInContainer * freqTimes / POUNDS_PER_TON
 
                     'End If
-                End While
+                Next row
             End If
 
         End If
@@ -2012,7 +1953,7 @@ ErrorHandler:
 
         Dim cmd As SqlCommand = cn.CreateCommand
         Dim wgt As Double
-        Dim rsTote As SqlDataReader
+        Dim rsTote As DataTable
         Dim numTotes As Double
         Dim eqptQty As Short
         Dim eqptSizeCapacity As Double
@@ -2021,13 +1962,13 @@ ErrorHandler:
         sStmt = " SELECT SUM(b.units), d.eqpt_qty, d.eqpt_size_capacity, e.freq_period  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupName & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, e.freq_period  "
         cmd.CommandText = sStmt
 
-        rsTote = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsTote = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsTote.HasRows() Then
-            numTotes = rsTote.Item(0).Value
-            eqptQty = rsTote.Item(1).Value
-            eqptSizeCapacity = rsTote.Item(2).Value
-            freqPeriod = rsTote.Item(3).Value
+        If rsTote.Rows.Count > 0 Then
+            numTotes = rsTote.Rows(0).Item(0)
+            eqptQty = rsTote.Rows(0).Item(1)
+            eqptSizeCapacity = rsTote.Rows(0).Item(2)
+            freqPeriod = rsTote.Rows(0).Item(3)
 
             nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
 
@@ -2049,7 +1990,7 @@ ErrorHandler:
         
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            getPoundsPerBaler = rs.Rows(0).Item(0).Value
+            getPoundsPerBaler = rs.Rows(0).Item(0)
         End If
 
 
@@ -2063,7 +2004,7 @@ ErrorHandler:
         
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            getPoundsPerYdInPKR = rs.Rows(0).Item(0).Value
+            getPoundsPerYdInPKR = rs.Rows(0).Item(0)
         End If
 
 
@@ -2077,7 +2018,7 @@ ErrorHandler:
         
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            getPoundsPer = rs.Rows(0).Item(0).Value
+            getPoundsPer = rs.Rows(0).Item(0)
         End If
 
 
