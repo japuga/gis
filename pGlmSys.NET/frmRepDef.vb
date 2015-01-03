@@ -58,13 +58,21 @@ Friend Class frmRepDef
         End Select
 
     End Sub
-	Private Sub save_repDef(ByRef nOption As General.modo)
-		If set_RepDef(nOption) Then
-			VB6.ShowForm(frmRepDefEntry, VB6.FormShowConstants.Modal, Me)
-			load_dgRepDef()
-		End If
-		
-	End Sub
+    Private Sub save_repDef(ByRef nOption As General.modo)
+        If nOption = modo.UpdateRecord Then
+            If dgRepDef.SelectedRows.Count < 1 Then
+                MsgBox("No rows selected. Please select a row.", MsgBoxStyle.Information, "Report Definition Error")
+                Exit Sub
+            End If
+        End If
+
+        If set_RepDef(nOption) Then
+            VB6.ShowForm(frmRepDefEntry, VB6.FormShowConstants.Modal, Me)
+            load_dgRepDef()
+        End If
+
+
+    End Sub
 	'Alimenta gRepDef con los datos del datagrid
 	Private Function set_RepDef(ByRef bFlag As General.modo) As Boolean
 		
@@ -192,5 +200,9 @@ ErrorHandler:
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgRepDef_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgRepDef.CellContentDoubleClick
+        save_repDef((General.modo.UpdateRecord))
     End Sub
 End Class

@@ -168,7 +168,7 @@ ErrorHandler:
 	Private Function delete_fee() As Boolean
 		Dim nRecords As Short
         Dim nTran As SqlTransaction
-		Dim nDetailCount As Short
+        'Dim nDetailCount As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim nNumFeeServices As Integer = 0
 		delete_fee = False
@@ -197,7 +197,7 @@ ErrorHandler:
                 cmLocal.Transaction = nTran
                 nRecords = cmLocal.ExecuteNonQuery()
 
-                If nRecords <> nDetailCount Then
+                If nRecords <> nNumFeeServices Then
                     nTran.Rollback()
                     MsgBox("Failed to delete Fee Details." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                     Exit Function
@@ -257,5 +257,9 @@ ErrorHandler:
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgFee_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgFee.CellDoubleClick
+        update_fee()
     End Sub
 End Class

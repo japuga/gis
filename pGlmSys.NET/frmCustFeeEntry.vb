@@ -36,7 +36,15 @@ Friend Class frmCustFeeEntry
         End If
 
 		
-	End Sub
+    End Sub
+
+    Private Sub setOptionsButton()
+        If Trim(cbFeeDesc.Text) = "Savings Service Fee" Or isFeeRange(Trim(cbFeeDesc.Text)) Then
+            cmdOptions.Enabled = True
+        Else
+            cmdOptions.Enabled = False
+        End If
+    End Sub
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		Dim nRecords As Short
@@ -388,7 +396,8 @@ ErrorHandler:
 				txtFeeValue.Text = CStr(0)
 			Case General.modo.UpdateRecord
 				cbFeeDesc.Items.Insert(0, gCustFeeRecord.sFeeDesc)
-				VB6.SetItemData(cbFeeDesc, 0, gCustFeeRecord.nFeeTypeId)
+                VB6.SetItemData(cbFeeDesc, 0, gCustFeeRecord.nFeeTypeId)
+                setOptionsButton()
 				cbFeeDesc.SelectedIndex = 0
 				cbFeeDesc.Enabled = False
 				

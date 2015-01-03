@@ -105,16 +105,6 @@ Friend Class frmCustomer
 		
 	End Sub
 
-    Private Sub dgCustomer_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgCustomer.CellContentClick
-        If dgCustomer.SelectedCells.Count() > 0 Then
-            Dim str As String = dgCustomer.CurrentRow.Cells("id").Value
-            update_customer(dgCustomer.CurrentRow.Cells("id").Value)
-        Else
-            MsgBox("You must select a customer before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
-            Exit Sub
-        End If
-    End Sub
-
     Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
         add_customer()
     End Sub
@@ -124,6 +114,16 @@ Friend Class frmCustomer
     End Sub
 
     Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If dgCustomer.SelectedCells.Count() > 0 Then
+            Dim str As String = dgCustomer.CurrentRow.Cells("id").Value
+            update_customer(dgCustomer.CurrentRow.Cells("id").Value)
+        Else
+            MsgBox("You must select a customer before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
+    End Sub
+
+    Private Sub dgCustomer_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgCustomer.CellDoubleClick
         If dgCustomer.SelectedCells.Count() > 0 Then
             Dim str As String = dgCustomer.CurrentRow.Cells("id").Value
             update_customer(dgCustomer.CurrentRow.Cells("id").Value)

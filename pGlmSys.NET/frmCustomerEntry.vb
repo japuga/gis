@@ -83,37 +83,33 @@ ErrorHandler:
 		End If
 		
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone1.Text) > 0 And Len(mtxtCustPhone1.Text) < 10 Then
-			MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtCustPhone1.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If Len(mtxtCustPhone1.Text) > 0 And Len(mtxtCustPhone1.Text) < 10 Then
+            MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtCustPhone1.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone2.Text) > 0 And Len(mtxtCustPhone2.Text) < 10 Then
-			MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtCustPhone2.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If Len(mtxtCustPhone2.Text) > 0 And Len(mtxtCustPhone2.Text) < 10 Then
+            MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtCustPhone2.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		If Len(mtxtCustPhone3.Text) > 0 And Len(mtxtCustPhone3.Text) < 10 Then
-			MsgBox("Phone3: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			mtxtCustPhone3.Focus()
-			val_fields = False
-			Exit Function
-		End If
+        If Len(mtxtCustPhone3.Text) > 0 And Len(mtxtCustPhone3.Text) < 10 Then
+            MsgBox("Phone3: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            mtxtCustPhone3.Focus()
+            val_fields = False
+            Exit Function
+        End If
 		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If Not IsDbNull(txtBillingAccountNo.Text) Then
-			If Len(txtBillingAccountNo.Text) > MAXBILLINGACCOUNTNO Then
-				MsgBox("Billing Account exceeds max length. Operation was cancelled.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Warning")
-				val_fields = False
-			End If
-		End If
+        If Not IsDBNull(txtBillingAccountNo.Text) Then
+            If Len(txtBillingAccountNo.Text) > MAXBILLINGACCOUNTNO Then
+                MsgBox("Billing Account exceeds max length. Operation was cancelled.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Warning")
+                val_fields = False
+            End If
+        End If
 		
 		If cbQBGroupId.SelectedIndex < 0 Then
 			MsgBox("A company Group must be assigned to this customer.")
@@ -169,22 +165,18 @@ ErrorHandler:
             cm = cn.CreateCommand()
             cm.CommandType = CommandType.Text
 
-            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
             If mtxtCustPhone1.Text(1) <> " " Then
                 sCustPhone1 = mtxtCustPhone1.Text
             Else
                 sCustPhone1 = ""
             End If
 
-            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
             If mtxtCustPhone2.Text(1) <> " " Then
-                Dim s As String = mtxtCustPhone2.Text(1)
-                sCustPhone2 = mtxtCustPhone2.Text(2) 'mtxtCustPhone2.Text
+                sCustPhone2 = mtxtCustPhone2.Text 'mtxtCustPhone2.Text
             Else
                 sCustPhone2 = ""
             End If
 
-            'UPGRADE_WARNING: ClipText has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
             If mtxtCustPhone3.Text(1) <> " " Then
                 sCustPhone3 = mtxtCustPhone3.Text
             Else
@@ -422,6 +414,8 @@ ErrorHandler:
                     cbQBGroupDesc.SelectedIndex = 0
                 End If
 
+                clearFields()
+                txtCustId.Enabled = True
                 enable_QB(True)
             Case General.modo.UpdateRecord
                 txtCustId.Text = gCustomerRecord.sCustId
@@ -745,5 +739,31 @@ ErrorHandler:
 		If KeyAscii = 0 Then
 			eventArgs.Handled = True
 		End If
-	End Sub
+    End Sub
+
+    Private Sub clearFields()
+
+        txtCustId.Text = ""
+        txtCustName.Text = ""
+        txtCustContact.Text = ""
+        txtContactTitle.Text = ""
+        txtCustReportName.Text = ""
+        txtCustAddress.Text = ""
+        txtCustCity.Text = ""
+        txtCustZip.Text = ""
+        txtCustEmail.Text = ""
+
+        cbState.SelectedIndex = 0
+        mtxtCustPhone1.Text = ""
+        mtxtCustPhone2.Text = ""
+        mtxtCustPhone3.Text = ""
+
+        chkPayInvoices.CheckState = System.Windows.Forms.CheckState.Unchecked
+
+        cbNegativeSavingsFlag.SelectedIndex = 0
+        
+        txtBillingAccountNo.Text = ""
+
+    End Sub
+
 End Class
