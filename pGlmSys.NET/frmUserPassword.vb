@@ -42,9 +42,15 @@ Friend Class frmUserPassword
             cm.CommandType = CommandType.StoredProcedure
             cm.CommandText = "usp_sys_change_password"
 
-            cm.Parameters("@sUserName").Value = Trim(gUserRecord.sUserName)
-            cm.Parameters("@sPassword").Value = Trim(txtPassword.Text)
+            'cm.Parameters("@sUserName").Value = Trim(gUserRecord.sUserName)
+            cm.Parameters.AddWithValue("@sUserName", Trim(gUserRecord.sUserName))
+
+            'cm.Parameters("@sPassword").Value = Trim(txtPassword.Text)
+            cm.Parameters.AddWithValue("@sPassword", Trim(txtPassword.Text))
+
+            cm.Parameters.Add("@nResult", SqlDbType.Int)
             cm.Parameters("@nResult").Direction = ParameterDirection.Output
+
             cm.ExecuteNonQuery()
             If cm.Parameters("@nResult").Value = 0 Then
                 MsgBox("Password was successfully updated.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")

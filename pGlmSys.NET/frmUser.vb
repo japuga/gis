@@ -32,8 +32,7 @@ Friend Class frmUser
 		'Si un usuario tiene type_id nulo, se le asigna AccountManager por defecto
 		sStmt = "SELECT suser_name 'ID', suser_desc 'Description', " & " ISNULL(suser_type.type_name,'')  'Type', " & " ISNULL(suser.type_id,'C')  type_id " & " FROM suser LEFT OUTER JOIN suser_type " & " ON suser.type_id = suser_type.type_id " & " ORDER BY suser_name "
 		
-		'UPGRADE_NOTE: Object dgUser.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		dgUser.DataSource = Nothing
+        dgUser.DataSource = Nothing
 		
 		
         rsUser = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
@@ -117,30 +116,32 @@ ErrorHandler:
             MsgBox("You must select a user before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
         End If
 	End Sub
-	Private Sub set_user()
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("ID")) Then
+    Private Sub set_user()
+        If dgUser.SelectedRows.Count <= 0 Then
+            For Each aCell As DataGridViewCell In dgUser.SelectedCells
+                dgUser.Rows(aCell.RowIndex).Selected = True
+            Next
+        End If
+        If IsDBNull(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) Then
             gUserRecord.sUserName = ""
         Else
-            gUserRecord.sUserName = Trim(rsUser.Rows(0).Item("ID"))
+            gUserRecord.sUserName = Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID"))
         End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("Description")) Then
+
+        If IsDBNull(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("Description")) Then
             gUserRecord.sUserDesc = ""
         Else
-            gUserRecord.sUserDesc = Trim(rsUser.Rows(0).Item("Description"))
+            gUserRecord.sUserDesc = Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("Description"))
         End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsUser.Rows(0).Item("type_id")) Then
+
+        If IsDBNull(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("type_id")) Then
             gUserRecord.sTypeId = ""
         Else
-            gUserRecord.sTypeId = Trim(rsUser.Rows(0).Item("type_id"))
+            gUserRecord.sTypeId = Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("type_id"))
         End If
-		
-		
-	End Sub
+
+
+    End Sub
 	Private Sub delete_user()
 		Dim nRecords As Short
         Dim nTran As SqlTransaction = Nothing
@@ -155,12 +156,12 @@ ErrorHandler:
             If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.Yes Then
                 nTran = cn.BeginTransaction()
                 'Primero se eliminan privilegios en suser_data
-                sStmt = "SELECT suser_name FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+                sStmt = "SELECT suser_name FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) & "'"
 
                 rs = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rs.Rows.Count > 0 Then
-                    sStmt = "DELETE FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+                    sStmt = "DELETE FROM suser_data " & " WHERE suser_name ='" & Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) & "'"
 
                     cm.CommandText = sStmt
                     cm.Transaction = nTran
@@ -176,13 +177,13 @@ ErrorHandler:
 
 
                 'suser_options
-                sStmt = "SELECT suser_name FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+                sStmt = "SELECT suser_name FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) & "'"
 
 
                 rs = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                 If rs.Rows.Count > 0 Then
-                    sStmt = "DELETE FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+                    sStmt = "DELETE FROM suser_options " & " WHERE suser_name ='" & Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) & "'"
                     cm.CommandText = sStmt
                     cm.Transaction = nTran
                     nRecords = cm.ExecuteNonQuery()
@@ -198,7 +199,7 @@ ErrorHandler:
 
 
                 'suser
-                sStmt = "DELETE FROM suser " & " WHERE suser_name ='" & Trim(rsUser.Rows(0).Item("ID")) & "'"
+                sStmt = "DELETE FROM suser " & " WHERE suser_name ='" & Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) & "'"
 
                 cm.CommandText = sStmt
                 cm.Transaction = nTran
@@ -244,13 +245,16 @@ ErrorHandler:
             'Verifico que el usuario exista en SqlServer
             cm.CommandType = CommandType.StoredProcedure
             cm.CommandText = "usp_sys_user_info"
-            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID"))
+            cm.Parameters.AddWithValue("@sUserName", Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")))
             da.SelectCommand = cm
             da.Fill(ds)
             rsTmp = ds.Tables(0)
 
+            cm = cn.CreateCommand
+            cm.CommandType = CommandType.StoredProcedure
             cm.CommandText = "usp_sys_delete_user"
-            cm.Parameters("@sUserName").Value = Trim(rsUser.Rows(0).Item("ID"))
+            cm.Parameters.AddWithValue("@sUserName", Trim(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")))
+            cm.Parameters.Add("@nResult", SqlDbType.Int)
             cm.Parameters("@nResult").Direction = ParameterDirection.Output
             cm.ExecuteNonQuery()
             If cm.Parameters("@nResult").Value = 0 Then

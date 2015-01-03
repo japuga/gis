@@ -114,8 +114,7 @@ Friend Class frmRepRecycleTonGen
 		
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
 		log_parameters(sLocalReport)
 		
@@ -150,8 +149,7 @@ Friend Class frmRepRecycleTonGen
 		'Set DataGrid1.DataSource = rsReport
 		'End If
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 		'Cargo la plantilla de Crystal Reports con los datos
         load_report(rsReport)
 		
@@ -184,10 +182,15 @@ ErrorHandler:
 
         rptDoc.SetDataSource(dstReport)
 
-        frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc
-        frmRepCostContSearchViewer.CrystalReportViewer1.Visible = True
-        frmRepCostContSearchViewer.CrystalReportViewer1.Show()
-        frmRepCostContSearchViewer.Show()
+        frmRepRecycleTonGenViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepRecycleTonGenViewer.CrystalReportViewer1.Visible = True
+        frmRepRecycleTonGenViewer.CrystalReportViewer1.Show()
+        frmRepRecycleTonGenViewer.Show()
+
+        'frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc
+        'frmRepCostContSearchViewer.CrystalReportViewer1.Visible = True
+        'frmRepCostContSearchViewer.CrystalReportViewer1.Show()
+        'frmRepCostContSearchViewer.Show()
         Exit Function
 
         'On Error GoTo ErrorHandler
