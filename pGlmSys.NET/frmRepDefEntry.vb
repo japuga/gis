@@ -201,7 +201,7 @@ ErrorHandler:
 		
 		gItplGridSelector2.sQueryOrderBy = " ORDER BY serv_desc "
 		
-		gItplGridSelector2.sInsertStmt = build_insert
+        gItplGridSelector2.sInsertStmt = build_insert()
 		
 		gItplGridSelector2.sDeleteStmt = build_delete
 		

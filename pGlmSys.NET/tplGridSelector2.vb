@@ -100,6 +100,8 @@ Friend Class tplGridSelector2
 	End Sub
 	Private Sub init_rsRight()
         rsRight = Nothing
+        dgRight.DataSource = rsRight
+        dgRight.Refresh()
     End Sub
 	Private Sub header_settings()
 		Dim i As Short
@@ -408,17 +410,22 @@ ErrorHandler:
 		
         cmDelete.CommandText = gItplGridSelector2.sDeleteStmt
         cmDelete.CommandType = CommandType.Text
-        SqlCommandBuilder.DeriveParameters(cmDelete)
+        Try
+            'try 
+            SqlCommandBuilder.DeriveParameters(cmDelete)
+            cmDelete.Parameters(0).Value = sPrimaryKey
+        Catch
+            cmDelete.Parameters.AddWithValue("@group_id", sPrimaryKey)
+        End Try
 
-		cmDelete.Parameters(0).Value = sPrimaryKey
         nRecords = cmDelete.ExecuteNonQuery()
-		If nRecords > 0 Then
-			MsgBox("Record was successfully removed", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-		Else
-			MsgBox("Failed to remove record.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-		End If
-		
-	End Sub
+        If nRecords > 0 Then
+            MsgBox("Record was successfully removed", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+        Else
+            MsgBox("Failed to remove record.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End If
+
+    End Sub
 	Private Function has_details(ByRef sGroupId As String) As Boolean
         Dim cmCount As sqlcommand = cn.CreateCommand()
         Dim rsCount As DataTable
@@ -441,7 +448,7 @@ ErrorHandler:
 		
 		
         If rsCount.Rows.Count > 0 Then
-            If rsCount.Rows(0).Item(0).Value > 0 Then
+            If rsCount.Rows(0).Item(0) > 0 Then
                 has_details = True
             End If
         End If
@@ -460,6 +467,11 @@ ErrorHandler:
             cmLocal = cn.CreateCommand
             cmLocal.CommandType = CommandType.Text
             cmLocal.CommandText = gItplGridSelector2.sInsertStmt
+
+            If cmLocal.Parameters.Count = 0 Then
+                cmLocal.Parameters.AddWithValue("group_id", cbHeader.Text)
+            End If
+
             'cm.Parameters.Append cm.CreateParameter("group_id", adChar, adParamInput, 20)
 
             Select Case nOption
@@ -483,10 +495,14 @@ ErrorHandler:
                     cmLocal.Parameters.AddWithValue("@group_id", txtHeader.Text)
                     cmLocal.Parameters.Add("@serv_id", SqlDbType.Int, 60)
                 Case General.modo.UpdateRecord
+                    cmLocal.CommandText = gItplGridSelector2.sInsertStmt
                     cmLocal.Parameters(0).Value = quotation_mask(cbHeader.Text)
             End Select
 
             For row As Integer = 0 To rsRight.Rows.Count - 1
+                If (cmLocal.Parameters.Count < 2) Then
+                    cmLocal.Parameters.AddWithValue("serv_id", 0)
+                End If
                 Dim aval As Integer = rsRight.Rows(row).Item("serv_id")
                 cmLocal.Parameters(1).Value = rsRight.Rows(row).Item("serv_id")
                 nRecords = cmLocal.ExecuteNonQuery()
@@ -501,6 +517,7 @@ ErrorHandler:
         Catch ex As SqlException
             If ex.ErrorCode = -2146232060 Then
                 MsgBox("Cannot add because the report to which this is associated with does not exist yet.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                save_error(Me.Name, "save_record")
             End If
 
         Catch ex As Exception
@@ -548,7 +565,16 @@ ErrorHandler:
                 delete_record(cbHeader.Text)
                 load_header(gItplGridSelector2.sQueryHeader)
                 set_visible(gItplGridSelector2.bModo)
+                init_rsRight()
             End If
         End If
+    End Sub
+
+    Private Sub dgLeft_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgLeft.CellContentDoubleClick
+        move_right()
+    End Sub
+
+    Private Sub dgRight_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgRight.CellContentDoubleClick
+        move_left()
     End Sub
 End Class

@@ -221,4 +221,12 @@ ErrorHandler:
 
 
     End Sub
+
+    Private Sub dgLeft_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgLeft.CellDoubleClick
+        move_right()
+    End Sub
+
+    Private Sub dgRight_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgRight.CellDoubleClick
+        move_left()
+    End Sub
 End Class
