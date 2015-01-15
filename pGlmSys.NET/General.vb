@@ -1631,6 +1631,7 @@ ErrorHandler:
         On Error GoTo ErrorHandler
         'Limpia Arreglo
         If bClear Then
+            aTable.Initialize()
             For i = 0 To MAX_MEM_RECORD
                 aTable.aRecord(i).Index = -1
                 aTable.aRecord(i).int_field1 = -1

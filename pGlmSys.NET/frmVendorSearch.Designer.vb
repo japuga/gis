@@ -141,7 +141,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(465, 415)
+        Me.ClientSize = New System.Drawing.Size(465, 204)
         Me.Controls.Add(Me.Frame1)
         Me.Controls.Add(Me.cmOk)
         Me.Controls.Add(Me.cmdCancel)

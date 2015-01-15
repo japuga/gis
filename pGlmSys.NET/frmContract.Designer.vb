@@ -17,10 +17,7 @@
 	'Required by the Windows Form Designer
 	Private components As System.ComponentModel.IContainer
 	Public ToolTip1 As System.Windows.Forms.ToolTip
-	Public WithEvents dgContract As AxMSDataGridLib.AxDataGrid
-	Public WithEvents dgEquipment As AxMSDataGridLib.AxDataGrid
-	Public WithEvents dgStore As AxMSDataGridLib.AxDataGrid
-	Public WithEvents Label6 As System.Windows.Forms.Label
+    Public WithEvents Label6 As System.Windows.Forms.Label
 	Public WithEvents Label5 As System.Windows.Forms.Label
 	Public WithEvents Frame2 As System.Windows.Forms.GroupBox
 	Public WithEvents cmdSearch As System.Windows.Forms.Button
@@ -42,10 +39,9 @@
         Me.components = New System.ComponentModel.Container
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmContract))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.dgContract = New AxMSDataGridLib.AxDataGrid
         Me.Frame2 = New System.Windows.Forms.GroupBox
-        Me.dgEquipment = New AxMSDataGridLib.AxDataGrid
-        Me.dgStore = New AxMSDataGridLib.AxDataGrid
+        Me.dgEquipment = New System.Windows.Forms.DataGridView
+        Me.dgStore = New System.Windows.Forms.DataGridView
         Me.Label6 = New System.Windows.Forms.Label
         Me.Label5 = New System.Windows.Forms.Label
         Me.frame1 = New System.Windows.Forms.GroupBox
@@ -58,24 +54,21 @@
         Me.Label3 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me.btNew = New System.Windows.Forms.ToolStripButton
+        Me.btSave = New System.Windows.Forms.ToolStripButton
+        Me.btSearch = New System.Windows.Forms.ToolStripButton
+        Me.btDelete = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
+        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.Label2 = New System.Windows.Forms.Label
-        CType(Me.dgContract, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.dgContract = New System.Windows.Forms.DataGridView
         Me.Frame2.SuspendLayout()
         CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgStore, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.frame1.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
+        CType(Me.dgContract, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'dgContract
-        '
-        Me.dgContract.DataSource = Nothing
-        Me.dgContract.Location = New System.Drawing.Point(16, 376)
-        Me.dgContract.Name = "dgContract"
-        Me.dgContract.OcxState = CType(resources.GetObject("dgContract.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.dgContract.Size = New System.Drawing.Size(681, 177)
-        Me.dgContract.TabIndex = 3
         '
         'Frame2
         '
@@ -95,21 +88,19 @@
         '
         'dgEquipment
         '
-        Me.dgEquipment.DataSource = Nothing
-        Me.dgEquipment.Location = New System.Drawing.Point(16, 168)
+        Me.dgEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgEquipment.Location = New System.Drawing.Point(16, 172)
         Me.dgEquipment.Name = "dgEquipment"
-        Me.dgEquipment.OcxState = CType(resources.GetObject("dgEquipment.OcxState"), System.Windows.Forms.AxHost.State)
         Me.dgEquipment.Size = New System.Drawing.Size(417, 105)
-        Me.dgEquipment.TabIndex = 15
+        Me.dgEquipment.TabIndex = 18
         '
         'dgStore
         '
-        Me.dgStore.DataSource = Nothing
+        Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(16, 32)
         Me.dgStore.Name = "dgStore"
-        Me.dgStore.OcxState = CType(resources.GetObject("dgStore.OcxState"), System.Windows.Forms.AxHost.State)
         Me.dgStore.Size = New System.Drawing.Size(321, 97)
-        Me.dgStore.TabIndex = 13
+        Me.dgStore.TabIndex = 17
         '
         'Label6
         '
@@ -199,7 +190,7 @@
         Me.txtVendName.Name = "txtVendName"
         Me.txtVendName.ReadOnly = True
         Me.txtVendName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendName.Size = New System.Drawing.Size(145, 21)
+        Me.txtVendName.Size = New System.Drawing.Size(145, 20)
         Me.txtVendName.TabIndex = 9
         '
         'cbStateId
@@ -269,17 +260,63 @@
         '
         'Toolbar1
         '
-        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Toolbar1_Button5})
+        Me.Toolbar1.ImageScalingSize = New System.Drawing.Size(32, 32)
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me.btSearch, Me.btDelete, Me._Toolbar1_Button5, Me.btExit})
         Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
         Me.Toolbar1.Name = "Toolbar1"
         Me.Toolbar1.Size = New System.Drawing.Size(718, 39)
         Me.Toolbar1.TabIndex = 12
+        '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 36)
+        Me.btNew.Text = "New"
+        '
+        'btSave
+        '
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 36)
+        Me.btSave.Text = "Save"
+        '
+        'btSearch
+        '
+        Me.btSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSearch.Image = CType(resources.GetObject("btSearch.Image"), System.Drawing.Image)
+        Me.btSearch.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSearch.Name = "btSearch"
+        Me.btSearch.Size = New System.Drawing.Size(36, 36)
+        Me.btSearch.Text = "Search"
+        '
+        'btDelete
+        '
+        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
+        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btDelete.Name = "btDelete"
+        Me.btDelete.Size = New System.Drawing.Size(36, 36)
+        Me.btDelete.Text = "Delete"
         '
         '_Toolbar1_Button5
         '
         Me._Toolbar1_Button5.AutoSize = False
         Me._Toolbar1_Button5.Name = "_Toolbar1_Button5"
         Me._Toolbar1_Button5.Size = New System.Drawing.Size(10, 39)
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
         '
         'Label2
         '
@@ -293,6 +330,14 @@
         Me.Label2.Size = New System.Drawing.Size(129, 17)
         Me.Label2.TabIndex = 4
         Me.Label2.Text = "Contract Info"
+        '
+        'dgContract
+        '
+        Me.dgContract.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgContract.Location = New System.Drawing.Point(16, 380)
+        Me.dgContract.Name = "dgContract"
+        Me.dgContract.Size = New System.Drawing.Size(681, 177)
+        Me.dgContract.TabIndex = 13
         '
         'frmContract
         '
@@ -314,16 +359,25 @@
         Me.Name = "frmContract"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text = "Contract Info"
-        CType(Me.dgContract, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Frame2.ResumeLayout(False)
         CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgStore, System.ComponentModel.ISupportInitialize).EndInit()
         Me.frame1.ResumeLayout(False)
+        Me.frame1.PerformLayout()
         Me.Toolbar1.ResumeLayout(False)
         Me.Toolbar1.PerformLayout()
+        CType(Me.dgContract, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
+    Friend WithEvents dgStore As System.Windows.Forms.DataGridView
+    Friend WithEvents dgEquipment As System.Windows.Forms.DataGridView
+    Friend WithEvents dgContract As System.Windows.Forms.DataGridView
+    Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSave As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSearch As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btDelete As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
 #End Region 
 End Class
