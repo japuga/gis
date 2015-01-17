@@ -3,8 +3,8 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmAccountEntry
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
-	Private cmLocal As ADODB.Command
+    Private rsLocal As DataTable
+    Private cmLocal As SqlCommand
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		Me.Close()
@@ -39,7 +39,7 @@ Friend Class frmAccountEntry
 		
 		'MsgBox sStmt
 		cmLocal.CommandText = sStmt
-		cmLocal.Execute(nCount)
+        nCount = cmLocal.ExecuteNonQuery()
 		If nCount > 0 Then
 			gAccountRecord.bFlag = General.modo.SavedRecord
 			gAccountRecord.sAccountNo = sAccountNo 'Esto retorna
@@ -66,10 +66,10 @@ Friend Class frmAccountEntry
         cmd.CommandText = sStmt
         'MsgBox sStmt
         Try
-            rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsLocal.HasRows() Then
-                If rsLocal.Item(0).Value = 0 Then
+            If rsLocal.Rows.Count > 0 Then
+                If rsLocal.Rows(0).Item(0) = 0 Then
                     account_assigned = False
                     Exit Function
                 Else

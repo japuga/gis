@@ -167,9 +167,11 @@ Friend Class frmContractEntry
 					
 					sStmt = sStmt & sDays
 				End If
-				
-				
-				sStmt = sStmt & txtCurrRate.Text & "," & " " & txtOldRate.Text & "," & "'" & Str(dtOpening._Value) & "'," & "'" & Str(dtExpiration._Value) & "', " & "'" & quotation_mask(txtFreqComments.Text) & "', " & "'" & quotation_mask(txtContractComments.Text) & "', " & "'" & Trim(cbRateStatus.Text) & "', " & "'" & Trim(sDefaultService) & "', " & "'" & Trim(sOverrideExpFlag) & "'," & " " & txtGlmRate.Text & ")"
+
+                sStmt = sStmt & txtCurrRate.Text & "," & " " & txtOldRate.Text & "," & "'" & dtOpening.Value & "'," & _
+                    "'" & dtExpiration.Value & "', " & "'" & quotation_mask(txtFreqComments.Text) & "', " & _
+                    "'" & quotation_mask(txtContractComments.Text) & "', " & "'" & Trim(cbRateStatus.Text) & "', " & _
+                    "'" & Trim(sDefaultService) & "', " & "'" & Trim(sOverrideExpFlag) & "'," & " " & txtGlmRate.Text & ")"
 				'MsgBox sStmt
 				cmLocal.CommandText = sStmt
                 nRecords = cmLocal.ExecuteNonQuery()
@@ -224,7 +226,16 @@ Friend Class frmContractEntry
 					sStmt = sStmt & sDays
 				End If
 				
-				sStmt = sStmt & "curr_rate = " & txtCurrRate.Text & ", " & " old_rate = " & txtOldRate.Text & ", " & " opening_date = '" & Str(dtOpening._Value) & "', " & " expiration_date = '" & Str(dtExpiration._Value) & "', " & " contract_comments = '" & quotation_mask(txtContractComments.Text) & "', " & " freq_comments ='" & quotation_mask(txtFreqComments.Text) & "', " & " freq_id =" & Str(VB6.GetItemData(cbFreqPeriod, cbFreqPeriod.SelectedIndex)) & "," & " rate_status = '" & Trim(cbRateStatus.Text) & "'," & " default_service ='" & Trim(sDefaultService) & "'," & " override_exp_flag ='" & Trim(sOverrideExpFlag) & "'," & " glm_rate = " & txtGlmRate.Text & " WHERE cust_id = '" & gContractRecord.sCustId & "' " & " AND vend_seq = " & Str(gContractRecord.nVendSeq) & " " & " AND store_id = " & Str(gContractRecord.nStoreId) & " " & " AND eqpt_seq = " & Str(gContractRecord.nEqptSeq) & " " & " AND serv_id = " & Str(gContractRecord.nServId)
+                sStmt = sStmt & "curr_rate = " & txtCurrRate.Text & ", " & " old_rate = " & txtOldRate.Text & ", " & _
+                    " opening_date = '" & dtOpening.Value & "', " & " expiration_date = '" & dtExpiration.Value & "', " & " contract_comments = '" & _
+                    quotation_mask(txtContractComments.Text) & "', " & _
+                    " freq_comments ='" & quotation_mask(txtFreqComments.Text) & "', " & _
+                    " freq_id =" & Str(VB6.GetItemData(cbFreqPeriod, cbFreqPeriod.SelectedIndex)) & "," & _
+                    " rate_status = '" & Trim(cbRateStatus.Text) & "'," & " default_service ='" & Trim(sDefaultService) & "'," & _
+                    " override_exp_flag ='" & Trim(sOverrideExpFlag) & "'," & " glm_rate = " & txtGlmRate.Text & _
+                    " WHERE cust_id = '" & gContractRecord.sCustId & "' " & " AND vend_seq = " & Str(gContractRecord.nVendSeq) & " " & _
+                    " AND store_id = " & Str(gContractRecord.nStoreId) & " " & " AND eqpt_seq = " & Str(gContractRecord.nEqptSeq) & " " & _
+                    " AND serv_id = " & Str(gContractRecord.nServId)
 				'MsgBox sStmt
 				cmLocal.CommandText = sStmt
                 nRecords = cmLocal.ExecuteNonQuery()
@@ -283,7 +294,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item("vend_seq").Value <> nVendSeq Then
+            If rsLocal.Rows(0).Item("vend_seq") <> nVendSeq Then
                 'Otro vendor ya provee este servicio
                 If (MsgBox("Another Vendor was found for this " & vbCrLf & "service and equipment." & vbCrLf & "Do you still want to create this contract?", MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation, "GLM Warning") = MsgBoxResult.No) Then
                     'Usuario decidio no crear otro vendor para este serv-eqpt
@@ -321,21 +332,19 @@ ErrorHandler:
 		
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtExpiration._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtOpening._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If dtOpening._Value > dtExpiration._Value Then
-			MsgBox("Expiration date should be greater than Opening date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Message")
-			val_fields = False
-			Exit Function
-		End If
+        If dtOpening.Value > dtExpiration.Value Then
+            MsgBox("Expiration date should be greater than Opening date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Message")
+            val_fields = False
+            Exit Function
+        End If
 		
 		'Expiration Date
-		If dtExpiration._Value = Today Then
-			If MsgBox("Expiration date for this contract is today, " & vbCrLf & " Do you still want to continue ?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.No Then
-				val_fields = False
-				Exit Function
-			End If
-		End If
+        If dtExpiration.Value = Today Then
+            If MsgBox("Expiration date for this contract is today, " & vbCrLf & " Do you still want to continue ?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.No Then
+                val_fields = False
+                Exit Function
+            End If
+        End If
 		
 		'OldRate
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
@@ -353,12 +362,11 @@ ErrorHandler:
 		End If
 		
 		'CurrRate
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If Len(txtCurrRate.Text) = 0 Or IsDbNull(txtCurrRate.Text) Then
-			MsgBox("Rate is required.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Warning")
-			val_fields = False
-			Exit Function
-		End If
+        If Len(txtCurrRate.Text) = 0 Or IsDBNull(txtCurrRate.Text) Then
+            MsgBox("Rate is required.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
+            val_fields = False
+            Exit Function
+        End If
 		If CDbl(txtCurrRate.Text) = 0 Then
 			If (MsgBox("Rate is zero, do you still want to continue?. ", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.No) Then
 				txtCurrRate.Focus()
@@ -425,11 +433,11 @@ ErrorHandler:
                         'a este eqpt-vendor. Verifico el estado
                         nInactive = 0
                         For row As Integer = 0 To rsLocal.Rows.Count - 1
-                            If rsLocal.Rows(row).Item("account_status").Value = "A" Then
+                            If rsLocal.Rows(row).Item("account_status") = "A" Then
                                 nInactive = -1
                                 Exit For
                             End If
-                            If rsLocal.Rows(row).Item("account_status").Value = "I" Then
+                            If rsLocal.Rows(row).Item("account_status") = "I" Then
                                 nInactive = nInactive + 1
                             End If
                         Next row
@@ -612,8 +620,7 @@ ErrorHandler:
 		'Default Frequency
 		ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Unchecked
 		'If a default service was found
-		'UPGRADE_WARNING: Couldn't resolve default property of object gDump. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		gDump = set_ckb_service(gContractRecord.bFlag, gContractRecord.nServId)
+        gDump = set_ckb_service(gContractRecord.bFlag, gContractRecord.nServId)
 		If gDump.str1 = "T" Then
 			'If such service is current contract record
 			If gDump.str2 = "T" Then
@@ -654,8 +661,8 @@ ErrorHandler:
 				cbFreqPeriod.SelectedIndex = 0
 				
 				'dtOpening, dtExpiration
-				dtOpening._Value = Today
-				dtExpiration._Value = Today
+                dtOpening.Value = Today
+                dtExpiration.Value = Today
 				
 				txtOldRate.Text = CStr(0)
 				txtCurrRate.Text = CStr(0)
@@ -722,22 +729,22 @@ ErrorHandler:
 				set_service(gContractRecord.sFreqDay7)
 				
 				'Opening , Expiration Dates
-				dtOpening._Value = gContractRecord.sOpeningDate
+                dtOpening.Value = gContractRecord.sOpeningDate
 				
 				If Len(gContractRecord.sExpirationDate) = 0 Then
-					dtExpiration._Value = Today
+                    dtExpiration.Value = Today
 				Else
-					dtExpiration._Value = gContractRecord.sExpirationDate
+                    dtExpiration.Value = gContractRecord.sExpirationDate
 				End If
 				
 				txtOldRate.Text = CStr(gContractRecord.nOldRate)
 				txtCurrRate.Text = CStr(gContractRecord.nCurrRate)
 				txtGlmRate.Text = CStr(gContractRecord.nGlmRate)
 				
-				If dtExpiration._Value < Today Then
-					lbExpiration.Font = VB6.FontChangeBold(lbExpiration.Font, True)
-					lbExpiration.ForeColor = System.Drawing.Color.Red
-				End If
+                If dtExpiration.Value < Today Then
+                    lbExpiration.Font = VB6.FontChangeBold(lbExpiration.Font, True)
+                    lbExpiration.ForeColor = System.Drawing.Color.Red
+                End If
 				
 				txtFreqTimes.Text = gContractRecord.sFreqTimes
 				txtContractComments.Text = gContractRecord.sContractComments
@@ -782,7 +789,7 @@ ErrorHandler:
 
         If rsLocal.Rows.Count > 0 Then
             set_ckb_service.str1 = "T"
-            If rsLocal.Rows(0).Item("serv_id").Value = nServId Then
+            If rsLocal.Rows(0).Item("serv_id") = nServId Then
                 set_ckb_service.str2 = "T"
             End If
         End If
@@ -816,7 +823,7 @@ ErrorHandler:
 		End If
 		
 		txtFreqTimes.Enabled = bFreqTimesFlag
-		udFreqTimes.Enabled = bFreqTimesFlag
+        'udFreqTimes.Enabled = bFreqTimesFlag
 		
 		For i = 0 To 6
 			ckbFreqDay(i).Enabled = bFreqSchedFlag
@@ -878,19 +885,19 @@ ErrorHandler:
 		End If
 	End Sub
 	
-	Private Sub txtFreqTimes_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles txtFreqTimes.KeyPress
-		Dim KeyAscii As Short = Asc(eventArgs.KeyChar)
-		If (KeyAscii >= 48 And KeyAscii <= 57) Or KeyAscii = 8 Then
-			'Es numero
-		Else
-			KeyAscii = 0
-		End If
-		
-		eventArgs.KeyChar = Chr(KeyAscii)
-		If KeyAscii = 0 Then
-			eventArgs.Handled = True
-		End If
-	End Sub
+    Private Sub txtFreqTimes_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs)
+        Dim KeyAscii As Short = Asc(eventArgs.KeyChar)
+        If (KeyAscii >= 48 And KeyAscii <= 57) Or KeyAscii = 8 Then
+            'Es numero
+        Else
+            KeyAscii = 0
+        End If
+
+        eventArgs.KeyChar = Chr(KeyAscii)
+        If KeyAscii = 0 Then
+            eventArgs.Handled = True
+        End If
+    End Sub
 	
 	Private Sub txtOldRate_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles txtOldRate.KeyPress
 		Dim KeyAscii As Short = Asc(eventArgs.KeyChar)
@@ -923,4 +930,8 @@ ErrorHandler:
 			eventArgs.Handled = True
 		End If
 	End Sub
+
+    Private Sub fmService_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles fmService.Enter
+
+    End Sub
 End Class

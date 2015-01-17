@@ -90,12 +90,12 @@ Friend Class frmHelpCommon
 		dgStore.DataSource = rsHelp
 		
 		dgStore.Text = " Store Information"
-		dgStore.Columns("Store Number").Caption = "Store#"
-		dgStore.Columns("Store Name").Caption = "Name"
+        dgStore.Columns("Store Number").HeaderText = "Store#"
+        dgStore.Columns("Store Name").HeaderText = "Name"
 		dgStore.Columns("Customer").Width = VB6.TwipsToPixelsX(500)
 		dgStore.Columns("Code").Width = VB6.TwipsToPixelsX(900)
 		dgStore.Columns("Store Address").Width = VB6.TwipsToPixelsX(4000)
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+
         dgStore.Refresh()
 		dgStore.Columns("StoreId").Visible = False
 		

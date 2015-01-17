@@ -3,24 +3,23 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmAccount
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 
 	
-	'UPGRADE_WARNING: Event cbAccount.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbAccount_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbAccount.SelectedIndexChanged
+    Private Sub cbAccount_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbAccount.SelectedIndexChanged
         Dim cmd As SqlCommand = cn.CreateCommand()
-		If cbAccount.SelectedIndex >= 0 Then
-			cbAccountNo.SelectedIndex = cbAccount.SelectedIndex
-		End If
-		'Determino el status para la cuenta seleccionada
-		sStmt = "SELECT account_status FROM VAccountEqpt " & "WHERE cust_id='" & gStoreEqptRecord.sCustId & "' " & "AND store_id =" & Str(gStoreEqptRecord.nStoreId) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND vend_seq =" & Str(gVendorSearch.nVendSeq) & " " & "AND eqpt_seq =" & Str(gStoreEqptRecord.nEqptSeq) & " "
+        If cbAccount.SelectedIndex >= 0 Then
+            cbAccountNo.SelectedIndex = cbAccount.SelectedIndex
+        End If
+        'Determino el status para la cuenta seleccionada
+        sStmt = "SELECT account_status FROM VAccountEqpt " & "WHERE cust_id='" & gStoreEqptRecord.sCustId & "' " & "AND store_id =" & Str(gStoreEqptRecord.nStoreId) & " " & "AND account_no='" & Trim(cbAccount.Text) & "' " & "AND vend_seq =" & Str(gVendorSearch.nVendSeq) & " " & "AND eqpt_seq =" & Str(gStoreEqptRecord.nEqptSeq) & " "
         cmd.CommandText = sStmt
 
         Try
-            rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsLocal.HasRows() Then
-                If Trim(rsLocal.Item("account_status").Value) = "A" Then
+            If rsLocal.Rows.Count > 0 Then
+                If Trim(rsLocal.Rows(0).Item("account_status")) = "A" Then
                     cbStatus.SelectedIndex = 0
                 Else
                     cbStatus.SelectedIndex = 1
@@ -177,10 +176,10 @@ Friend Class frmAccount
 		
 		'MsgBox sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         Try
-            If rsLocal.HasRows() Then
-                If rsLocal.Item(0).Value > 0 Then
+            If rsLocal.Rows.Count > 0 Then
+                If rsLocal.Rows(0).Item(0) > 0 Then
                     prev_assigned = True
                 Else
                     prev_assigned = False
@@ -220,9 +219,9 @@ ErrorHandler:
 		sStmt = "SELECT count(*) FROM VAccountEqpt " & " WHERE VAccountEqpt.cust_id = '" & gAccountEqptRecord.sCustId & "' " & " AND VAccountEqpt.store_id = " & Str(gAccountEqptRecord.nStoreId) & " AND VAccountEqpt.eqpt_seq = " & Str(gAccountEqptRecord.nEqptSeq) & " " & " AND VAccountEqpt.vend_seq = " & Str(nVendSeq) & " AND VAccountEqpt.account_status = 'A' "
         cmd.CommandText = sStmt
 		'MsgBox sStmt
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
-            num_active_account = rsLocal.Item(0).Value
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
+            num_active_account = rsLocal.Rows(0).Item(0)
             Exit Function
         End If
 		
@@ -243,9 +242,9 @@ ErrorHandler:
         cmd.CommandText = sStmt
 		
         Try
-            rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-            If rsLocal.HasRows() Then
-                eqpt_assigned = rsLocal.Item("eqpt_desc").Value
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rsLocal.Rows.Count > 0 Then
+                eqpt_assigned = rsLocal.Rows(0).Item("eqpt_desc")
                 Exit Function
             Else
                 eqpt_assigned = ""

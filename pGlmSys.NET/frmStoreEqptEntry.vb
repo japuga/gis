@@ -30,7 +30,7 @@ Friend Class frmStoreEqptEntry
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            nEqptSize = rsLocal.Rows(0).Item("eqpt_size").Value
+            nEqptSize = rsLocal.Rows(0).Item("eqpt_size")
             txtEqptSize.Text = CStr(nEqptSize)
 
         End If
@@ -80,11 +80,11 @@ Friend Class frmStoreEqptEntry
 		gAccountEqptRecord.nEqptSeq = gStoreEqptRecord.nEqptSeq
 		
 		If bFlag = General.modo.UpdateRecord Then
-            gAccountEqptRecord.sAccountNo = rsAccountEqpt.Rows(0).Item("Account").Value
-            gAccountEqptRecord.sAccountMask = rsAccountEqpt.Rows(0).Item("Account No").Value
-            gAccountEqptRecord.sAccountStatus = rsAccountEqpt.Rows(0).Item("Status").Value
-            gAccountEqptRecord.nVendSeq = rsAccountEqpt.Rows(0).Item("vend_seq").Value
-            gAccountEqptRecord.sVendor = rsAccountEqpt.Rows(0).Item("Vendor").Value
+            gAccountEqptRecord.sAccountNo = rsAccountEqpt.Rows(0).Item("Account")
+            gAccountEqptRecord.sAccountMask = rsAccountEqpt.Rows(0).Item("Account No")
+            gAccountEqptRecord.sAccountStatus = rsAccountEqpt.Rows(0).Item("Status")
+            gAccountEqptRecord.nVendSeq = rsAccountEqpt.Rows(0).Item("vend_seq")
+            gAccountEqptRecord.sVendor = rsAccountEqpt.Rows(0).Item("Vendor")
 		End If
 	End Sub
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
@@ -207,11 +207,10 @@ Friend Class frmStoreEqptEntry
             '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rsLocal.Rows.Count > 0 Then
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsLocal.Rows(0).Item(0).Value) Then
+                If IsDBNull(rsLocal.Rows(0).Item(0)) Then
                     get_eqptSeq = 1
                 Else
-                    get_eqptSeq = rsLocal.Rows(0).Item(0).Value + 1
+                    get_eqptSeq = rsLocal.Rows(0).Item(0) + 1
                 End If
             Else
                 MsgBox("Unable to get Equipment Sequence.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
@@ -229,15 +228,15 @@ Friend Class frmStoreEqptEntry
 		update_accountEqpt()
 	End Sub
 	
-	Private Sub dgAccountEqpt_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgAccountEqpt.DblClick
-		update_accountEqpt()
-	End Sub
+    Private Sub dgAccountEqpt_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_accountEqpt()
+    End Sub
 	Private Sub update_accountEqpt()
 		
-		If dgAccountEqpt.Row < 0 Then
-			MsgBox("Please select an Account to Update.", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Warning")
-			Exit Sub
-		End If
+        If dgAccountEqpt.SelectedRows.Count < 1 Then
+            MsgBox("Please select an Account to Update.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
+            Exit Sub
+        End If
 		General.gbAccountEqptMode = General.modo.UpdateRecord
 		
 		set_accountEqpt((General.modo.UpdateRecord))
@@ -359,7 +358,12 @@ Friend Class frmStoreEqptEntry
 
         Select Case bFlag
             Case General.modo.NewRecord
-                sStmt = "SELECT  VAccount.account_mask AS 'Account No'," & "RTRIM(Vendor.vend_name) + ' - ' + RTRIM(VBranch.vend_area) AS Vendor," & " VAccountEqpt.account_status  AS Status, " & " VAccountEqpt.vend_seq, VAccountEqpt.account_no as Account " & " FROM VAccountEqpt, VBranch, Vendor, VAccount " & " WHERE Vendor.vend_id = VBranch.vend_id " & " AND VBranch.vend_seq = -1"
+                sStmt = "SELECT  VAccount.account_mask AS 'Account No'," & _
+                "RTRIM(Vendor.vend_name) + ' - ' + RTRIM(VBranch.vend_area) AS Vendor," & _
+                " VAccountEqpt.account_status  AS Status, " & _
+                " VAccountEqpt.vend_seq, VAccountEqpt.account_no as Account " & _
+                " FROM VAccountEqpt, VBranch, Vendor, VAccount " & " WHERE Vendor.vend_id = VBranch.vend_id " & _
+                " AND VBranch.vend_seq = -1"
             Case General.modo.UpdateRecord
                 sStmt = "SELECT  VAccount.account_mask AS 'Account No'," & "RTRIM(Vendor.vend_name) + ' - ' + RTRIM(VBranch.vend_area) AS Vendor," & " VAccountEqpt.account_status  AS Status, " & " VAccountEqpt.vend_seq, VAccountEqpt.account_no as Account " & " FROM VAccountEqpt, VBranch, Vendor, VAccount " & " WHERE Vendor.vend_id = VBranch.vend_id " & " AND VBranch.vend_seq = VAccountEqpt.vend_seq " & " AND VAccountEqpt.cust_id = '" & gStoreEqptRecord.sCustId & "' " & " AND VAccountEqpt.store_id = " & Str(gStoreEqptRecord.nStoreId) & " " & " AND VAccountEqpt.eqpt_seq = " & Str(gStoreEqptRecord.nEqptSeq) & " AND VAccountEqpt.cust_id = VAccount.cust_id  " & " AND VAccountEqpt.store_id = VAccount.store_id " & " AND VAccountEqpt.account_no = VAccount.account_no " & " AND VAccountEqpt.vend_seq = VAccount.vend_seq "
 
@@ -388,11 +392,11 @@ Friend Class frmStoreEqptEntry
 
         rsAccountEqpt = getDataTable(sStmt) '
         '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsAccountEqpt.Rows.Count > 0 Then
-            dgAccountEqpt.DataSource = rsAccountEqpt
-        Else
-            MsgBox("Error while accesing Account Equipment table.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-        End If
+
+        dgAccountEqpt.DataSource = rsAccountEqpt
+
+        'MsgBox("Error while accesing Account Equipment table.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+
 
         'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgAccountEqpt.Refresh()

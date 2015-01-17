@@ -3,21 +3,20 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmContract
 	Inherits System.Windows.Forms.Form
-    Public ImageList2 As New ImageList()
-    Private rsLocal As SqlDataReader
-    Private rsLocalDet As SqlDataReader
-    Private rsStore As SqlDataReader
-    Private rsEquipment As SqlDataReader
-    Private rsContract As SqlDataReader
+
+    Private rsLocal As DataTable
+    Private rsLocalDet As DataTable
+    Private rsStore As DataTable
+    Private rsEquipment As DataTable
+    Private rsContract As DataTable
     Private cmLocal As SqlCommand
 
 	
-	'UPGRADE_WARNING: Event cbCustId.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustId_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustId.SelectedIndexChanged
-		If cbCustId.SelectedIndex >= 0 Then
-			load_state(cbCustId.Text)
-		End If
-	End Sub
+    Private Sub cbCustId_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustId.SelectedIndexChanged
+        If cbCustId.SelectedIndex >= 0 Then
+            load_state(cbCustId.Text)
+        End If
+    End Sub
 	'Refresca combo de State
 	Private Sub load_state(ByRef sCustId As String)
 		
@@ -46,46 +45,52 @@ Friend Class frmContract
 		End If
 	End Sub
 	
-	Private Sub dgContract_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgContract.DblClick
-		data_entry((General.modo.UpdateRecord))
-	End Sub
+    Private Sub dgContract_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        data_entry((General.modo.UpdateRecord))
+    End Sub
 	'Calls frmContractEntry to insert or update contracts
 	Private Sub data_entry(ByRef bFlag As General.modo)
 		'Verify that user has selected store and equipment
 		Select Case bFlag
 			Case General.modo.NewRecord
-				If dgStore.Row >= 0 Then
-					'Se escogio una tienda. OK
-					If dgEquipment.Row >= 0 Then
-						'OK Equipment
-					Else
-						MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-						Exit Sub
-					End If
-				Else
-					MsgBox("Please choose an Store before entering Contract Info.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-					Exit Sub
-				End If
-			Case General.modo.UpdateRecord
-				If dgStore.Row >= 0 Then
-					'OK Store
-					If dgEquipment.Row >= 0 Then
-						'OK Equipment
-						If dgContract.Row >= 0 Then
-							'OK Contract
-						Else
-							MsgBox("Please choose a Contract to Update.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-							Exit Sub
-						End If
-					Else
-						MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-						Exit Sub
-					End If
-					
-				Else
-					MsgBox("Please choose an Store before entering Contract Info.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-					Exit Sub
-				End If
+                If dgStore.SelectedRows.Count > 0 Then
+                    'Se escogio una tienda. OK
+                    If dgEquipment.SelectedRows(0).Index >= 0 Then
+                        'OK Equipment
+                    Else
+                        MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        Exit Sub
+                    End If
+                Else
+                    MsgBox("Please choose an Store before entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                    Exit Sub
+                End If
+            Case General.modo.UpdateRecord
+                If dgContract.SelectedRows.Count = 0 Then
+                    If dgContract.SelectedCells.Count > 0 Then
+                        dgContract.Rows(dgContract.SelectedCells(0).RowIndex).Selected = True
+                    End If
+                End If
+                If dgStore.SelectedRows.Count > 0 Then
+                    'OK Store
+                    If dgEquipment.SelectedRows.Count > 0 Then
+                        'OK Equipment
+
+                        If dgContract.SelectedRows.Count > 0 Then
+                            'OK Contract
+                        Else
+                            MsgBox("Please choose a Contract to Update.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                            Exit Sub
+                        End If
+                    Else
+                        MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        Exit Sub
+                    End If
+
+                Else
+                    MsgBox("Please choose an Store before entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                    Exit Sub
+                End If
 				
 			Case Else
 				Exit Sub
@@ -106,68 +111,54 @@ Friend Class frmContract
 		
 		On Error GoTo ErrorHandler
 		
-        gContractRecord.sCustId = rsStore.Item("cust_id").Value
-        gContractRecord.nStoreId = rsStore.Item("store_id").Value
-        gContractRecord.sStoreNumber = rsStore.Item("Store").Value
-        gContractRecord.nEqptSeq = rsEquipment.Item("eqpt_seq").Value
+        gContractRecord.sCustId = rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id")
+        gContractRecord.nStoreId = rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")
+        gContractRecord.sStoreNumber = rsStore.Rows(dgStore.CurrentRow.Index).Item("Store")
+        gContractRecord.nEqptSeq = rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq")
 		gContractRecord.nServId = -1
 		
 		If bFlag = General.modo.UpdateRecord Then
-            gContractRecord.nVendSeq = rsContract.Item("vend_seq").Value
+            gContractRecord.nVendSeq = rsContract.Rows(dgContract.CurrentRow.Index).Item("vend_seq")
             'gContractRecord.nEqptSeq = rsContract.item("eqpt_seq")
-            gContractRecord.nServId = rsContract.Item("serv_id").Value
+            gContractRecord.nServId = rsContract.Rows(dgContract.CurrentRow.Index).Item("serv_id")
 			
-            gContractRecord.nFreqId = rsContract.Item("freq_id").Value
+            gContractRecord.nFreqId = rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_id")
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqComments = IIf(IsDBNull(rsContract.Item("freq_comments").Value), "", rsContract.Item("freq_comments").Value)
+            gContractRecord.sFreqComments = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_comments")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_comments"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sContractComments = IIf(IsDBNull(rsContract.Item("contract_comments").Value), "", rsContract.Item("contract_comments").Value)
+            gContractRecord.sContractComments = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("contract_comments")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("contract_comments"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqTimes = IIf(IsDBNull(rsContract.Item("freq_times").Value), "", rsContract.Item("freq_times").Value)
+            gContractRecord.sFreqTimes = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_times")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_times"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqPeriod = IIf(IsDBNull(rsContract.Item("freq_period").Value), "", rsContract.Item("freq_period").Value)
+            gContractRecord.sFreqPeriod = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_period")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_period"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.nGlmRate = IIf(IsDBNull(rsContract.Item("GLM Rate").Value), 0, rsContract.Item("GLM Rate").Value)
+            gContractRecord.nGlmRate = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("GLM Rate")), 0, rsContract.Rows(dgContract.CurrentRow.Index).Item("GLM Rate"))
 			
-            gContractRecord.nOldRate = rsContract.Item("Prev Rate").Value
-            gContractRecord.nCurrRate = rsContract.Item("Rate").Value
-            gContractRecord.sOpeningDate = rsContract.Item("Started").Value
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sExpirationDate = IIf(IsDBNull(rsContract.Item("Until").Value), "", rsContract.Item("Until").Value)
+            gContractRecord.nOldRate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Prev Rate")
+            gContractRecord.nCurrRate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Rate")
+            gContractRecord.sOpeningDate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Started")
+
+            gContractRecord.sExpirationDate = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("Until")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("Until"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay1 = IIf(IsDBNull(rsContract.Item("freq_day1").Value), "", rsContract.Item("freq_day1").Value)
+            gContractRecord.sFreqDay1 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day1")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day1"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay2 = IIf(IsDBNull(rsContract.Item("freq_day2").Value), "", rsContract.Item("freq_day2").Value)
+            gContractRecord.sFreqDay2 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day2")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day2"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay3 = IIf(IsDBNull(rsContract.Item("freq_day3").Value), "", rsContract.Item("freq_day3").Value)
+            gContractRecord.sFreqDay3 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day3")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day3"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay4 = IIf(IsDBNull(rsContract.Item("freq_day4").Value), "", rsContract.Item("freq_day4").Value)
+            gContractRecord.sFreqDay4 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day4")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day4"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay5 = IIf(IsDBNull(rsContract.Item("freq_day5").Value), "", rsContract.Item("freq_day5").Value)
+            gContractRecord.sFreqDay5 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day5")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day5"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay6 = IIf(IsDBNull(rsContract.Item("freq_day6").Value), "", rsContract.Item("freq_day6").Value)
+            gContractRecord.sFreqDay6 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day6")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day6"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sFreqDay7 = IIf(IsDBNull(rsContract.Item("freq_day7").Value), "", rsContract.Item("freq_day7").Value)
+            gContractRecord.sFreqDay7 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day7")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day7"))
 			
-            gContractRecord.sVendor = rsContract.Item("Vendor").Value
+            gContractRecord.sVendor = rsContract.Rows(dgContract.CurrentRow.Index).Item("Vendor")
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sRateStatus = IIf(IsDBNull(rsContract.Item("rate_status").Value), "", rsContract.Item("rate_status").Value)
+            gContractRecord.sRateStatus = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("rate_status")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("rate_status"))
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gContractRecord.sOverrideExpFlag = IIf(IsDBNull(rsContract.Item("override_exp_flag").Value), "", rsContract.Item("override_exp_flag").Value)
+            gContractRecord.sOverrideExpFlag = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("override_exp_flag")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("override_exp_flag"))
 		End If
 		Exit Sub
 		
@@ -176,33 +167,34 @@ ErrorHandler:
 		MsgBox("An unexpected has occurred, please check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "Glm Error")
 		
 	End Sub
-	Private Sub dgEquipment_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgEquipment.ClickEvent
-		'jp BEG 01.29.03
-		'If dgEquipment.Row >= 0 Then
-		'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
-		If dgEquipment.SelBookmarks.Count > 0 Then
-            set_dgContractData()
-		End If
-	End Sub
+    'Private Sub dgEquipment_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+    '    'jp BEG 01.29.03
+    '    'If dgEquipment.Row >= 0 Then
+    '    'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+    '    If dgEquipment.SelectedRows.Count > 0 Then
+    '        set_dgContractData()
+    '    End If
+    'End Sub
 	
-	Private Sub dgStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStore.ClickEvent
-		'01/29/03
-		'If dgStore.Row >= 0 Then
-		'dgStore.SelBookmarks.Add rsStore.Bookmark
-		If dgStore.SelBookmarks.Count > 0 Then
+    Private Sub dgStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        '01/29/03
+        'If dgStore.Row >= 0 Then
+        'dgStore.SelBookmarks.Add rsStore.Bookmark
+        If dgStore.SelectedRows.Count > 0 Then
             'Busco los equipos para esta tienda
             'no se como implementar el bookmark.
-            get_dgEquipmentData(False, rsStore.Item("store_id").Value)
-            If dgEquipment.Row >= 0 Then
+            'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+            If dgEquipment.SelectedRows(0).Index >= 0 Then
                 'rsEquipment.Bookmark()
                 'dgEquipment.SelBookmarks.Add()
                 set_dgContractData()
             Else
                 get_dgContractData(True)
             End If
-			
-		End If
-	End Sub
+
+        End If
+    End Sub
 	'Carga el datagrid Contract
     Private Sub get_dgContractData(ByRef bInit As Boolean, Optional ByRef sCustId As String = "", Optional ByRef nStoreId As Short = 0, Optional ByRef nVendSeq As Short = 0, Optional ByRef nEqptSeq As Short = 0)
 
@@ -228,17 +220,15 @@ ErrorHandler:
             sStmt = sStmt & " AND VContract.eqpt_seq = -1"
         End If
 
-
-
-        'UPGRADE_NOTE: Object dgContract.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         dgContract.DataSource = Nothing
 
         cmd.CommandText = sStmt
-        rsContract = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsContract.HasRows() Then
-            dgContract.DataSource = rsContract
+        rsContract = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        End If
+        dgContract.DataSource = rsContract
+        Dim rowCount As Short = rsContract.Rows.Count
+        dgContract.Refresh()
+
 
         'Formato
         dgContract.Columns("cust_id").Visible = False
@@ -271,7 +261,6 @@ ErrorHandler:
         dgContract.Columns("Started").Width = VB6.TwipsToPixelsX(1000)
         dgContract.Columns("Until").Width = VB6.TwipsToPixelsX(1000)
 
-        'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgContract.Refresh()
         Exit Sub
 
@@ -286,14 +275,14 @@ ErrorHandler:
 	Private Sub init_vars()
         Dim nCounter As Integer = 0
         Dim cmd As SqlCommand = cn.CreateCommand()
-        Dim dt As DataTable
 		'Combo CustId
 		sStmt = "SELECT DISTINCT suser_data.cust_id, customer.cust_name " & "FROM customer, suser_data " & "WHERE customer.cust_id = suser_data.cust_id " & "AND suser_data.suser_name='" & Trim(gsUser) & "' ORDER BY suser_data.cust_id "
         cmd.CommandText = sStmt
 		
-        dt = exec_sql(sStmt)
+        'dt = exec_sql(sStmt)
+        rsLocal = getDataTable(sStmt)
 		
-        If Not dt.Rows.Count > 0 Then
+        If Not rsLocal.Rows.Count > 0 Then
             MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
             Exit Sub
         End If
@@ -302,34 +291,35 @@ ErrorHandler:
 		'En caso de haber datos
 		cbCustId.Items.Clear()
 
-        While rsLocal.Read()
-            cbCustId.Items.Insert(nCounter, rsLocal.Item("cust_id").Value)
-            'UPGRADE_WARNING: Couldn't resolve default property of object nCounter. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        'While rsLocal.Read()
+        For Each aRow As DataRow In rsLocal.Rows()
+            cbCustId.Items.Insert(nCounter, aRow.Item("cust_id"))
             nCounter = nCounter + 1
-        End While
-		
-		cbCustId.SelectedIndex = 0
-		
-		'Vendor
-		txtVendName.Text = "<All>"
-		txtVendName.Tag = 0 'VendSeq por defecto
-		
-		'Cargo Datagrids
-		'get_dg_defaults True
+        Next aRow
+
+        cbCustId.SelectedIndex = 0
+
+        'Vendor
+        txtVendName.Text = "<All>"
+        txtVendName.Tag = 0 'VendSeq por defecto
+
+        'Cargo Datagrids
+        'get_dg_defaults True
         get_dgStoreData(True)
         get_dgEquipmentData(True)
         get_dgContractData(True)
-		
-	End Sub
+
+    End Sub
 	
 	Private Sub get_dg_defaults(ByRef bInit As Boolean)
 		
         get_dgStoreData(bInit)
-        If dgStore.Row >= 0 Then
+        If dgStore.SelectedRows.Count > 0 Then
             'no se como implementar el bookmark
             'dgStore.SelBookmarks.Add(rsStore.Bookmark)
-            get_dgEquipmentData(False, rsStore.Item("store_id").Value)
-            If dgEquipment.Row >= 0 Then
+            'get_dgEquipmentData(False, rsStore.Item("store_id").Value)
+            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+            If dgEquipment.CurrentRow.Index >= 0 Then
                 'dgEquipment.SelBookmarks.Add(rsEquipment.Bookmark)
                 set_dgContractData()
             Else
@@ -365,10 +355,9 @@ ErrorHandler:
         sStmt = sStmt & " ORDER BY store_number"
         'MsgBox sStmt
         cmd.CommandText = sStmt
-        rsStore = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsStore.HasRows() Then
-            dgStore.DataSource = rsStore
-        End If
+        rsStore = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+        dgStore.DataSource = rsStore
 
         'Formato de dgStore
         dgStore.Columns("cust_id").Visible = False
@@ -379,8 +368,6 @@ ErrorHandler:
         dgStore.Columns("Address").Width = VB6.TwipsToPixelsX(1700)
         dgStore.Columns("City").Width = VB6.TwipsToPixelsX(800)
 
-
-
         Exit Sub
 
 ErrorHandler:
@@ -388,8 +375,9 @@ ErrorHandler:
         Resume Next
     End Sub
     Private Sub set_dgEquipmentData()
-        get_dgEquipmentData(False, rsStore.Item("store_id").Value)
-        If dgEquipment.Row >= 0 Then
+        'get_dgEquipmentData(False, rsStore.Item("store_id").Value)
+        get_dgEquipmentData(False, rsStore.Rows(dgStore.SelectedRows(0).Index).Item("store_id"))
+        If dgEquipment.CurrentRow.Index >= 0 Then
             'dgEquipment.SelBookmarks.Add(rsEquipment.Bookmark)
             set_dgContractData()
         End If
@@ -403,11 +391,12 @@ ErrorHandler:
             nVendSeq = 0
         End If
 
-        get_dgContractData(False, rsEquipment.Item("cust_id").Value, rsEquipment.Item("store_id").Value, nVendSeq, rsEquipment.Item("eqpt_seq").Value)
+        get_dgContractData(False, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("cust_id"), rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("store_id"), _
+                            nVendSeq, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq"))
         'no se como implementar el bookmark
-        If dgContract.Row >= 0 Then
-            'dgContract.SelBookmarks.Add(rsContract.Bookmark)
-        End If
+        'If dgContract.CurrentRow.Index >= 0 Then
+        'dgContract.SelBookmarks.Add(rsContract.Bookmark)
+        'End If
     End Sub
 	'Obtiene datos para datagrid dbEquipment
     Private Sub get_dgEquipmentData(ByRef bInit As Boolean, Optional ByRef nStoreId As Short = 0)
@@ -448,15 +437,13 @@ ErrorHandler:
 
         sStmt = sStmt & " ORDER BY Eqpt "
         'MsgBox sStmt
-        'UPGRADE_NOTE: Object dgEquipment.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         dgEquipment.DataSource = Nothing
 
         cmd.CommandText = sStmt
-        rsEquipment = cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsEquipment.HasRows() Then
-            dgEquipment.DataSource = rsEquipment
+        rsEquipment = getDataTable(sStmt) ' cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        End If
+        dgEquipment.DataSource = rsEquipment
+
 
 
         'Formato
@@ -468,7 +455,6 @@ ErrorHandler:
         dgEquipment.Columns("eqpt").Width = VB6.TwipsToPixelsX(1100)
         dgEquipment.Columns("Content").Width = VB6.TwipsToPixelsX(800)
 
-        'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgEquipment.Refresh()
         Exit Sub
 
@@ -502,25 +488,27 @@ ErrorHandler:
 		Dim sInvoiceStatus As String
         Dim nRecords As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
+        cmLocal = cn.CreateCommand
+        cmLocal.CommandType = CommandType.Text
 		
-		If dgStore.Row >= 0 Then
-			'Se escogio una tienda. OK
-			If dgEquipment.Row >= 0 Then
-				'OK Equipment
-				If dgContract.Row >= 0 Then
-					'OK. Escogio contrato
-				Else
-					MsgBox("Please select a Contract to Delete.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-					Exit Sub
-				End If
-			Else
-				MsgBox("Please choose an Equipment.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-				Exit Sub
-			End If
-		Else
-			MsgBox("Please choose an Store.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-			Exit Sub
-		End If
+        If dgStore.CurrentRow.Index >= 0 Then
+            'Se escogio una tienda. OK
+            If dgEquipment.CurrentRow.Index >= 0 Then
+                'OK Equipment
+                If dgContract.CurrentRow.Index >= 0 Then
+                    'OK. Escogio contrato
+                Else
+                    MsgBox("Please select a Contract to Delete.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                    Exit Sub
+                End If
+            Else
+                MsgBox("Please choose an Equipment.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                Exit Sub
+            End If
+        Else
+            MsgBox("Please choose an Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
 		
 		
 		If (MsgBox("Do you want to delete the selected contract?", MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.No) Then
@@ -530,30 +518,39 @@ ErrorHandler:
 		'Solo se puede borrar contratos sin facturas asociadas.
 		'Las facturas deben ser impresas en cheques invoice_status=PRT
 		'y dichos cheques debieron ser transferidos a Quick Books.
-        sStmt = "SELECT DISTINCT VInvoiceDet.invoice_no, " & "VInvoiceDet.account_no, VInvoice.vinvoice_status " & " FROM VInvoice, VInvoiceDet " & " WHERE VInvoice.invoice_no = VInvoiceDet.invoice_no " & " AND VInvoice.cust_id = VInvoiceDet.cust_id " & " AND VInvoice.store_id = VInvoiceDet.store_id " & " AND VInvoice.vend_seq = VInvoiceDet.vend_seq " & " AND VInvoice.account_no = VInvoiceDet.account_no " & " AND VInvoiceDet.cust_id = '" + rsStore.Item("cust_id").Value + "' " + " AND VInvoiceDet.store_id = " + Str(rsStore.Item("store_id").Value) + " AND VInvoiceDet.vend_seq = " + Str(rsContract.Item("vend_seq").Value) + " AND VInvoiceDet.eqpt_seq = " + Str(rsEquipment.Item("eqpt_seq").Value) + " AND VInvoiceDet.serv_id =" + Str(rsContract.Item("serv_id").Value)
+        sStmt = "SELECT DISTINCT VInvoiceDet.invoice_no, " & "VInvoiceDet.account_no, VInvoice.vinvoice_status " & " FROM VInvoice, VInvoiceDet " & " WHERE VInvoice.invoice_no = VInvoiceDet.invoice_no " & " AND VInvoice.cust_id = VInvoiceDet.cust_id " & " AND VInvoice.store_id = VInvoiceDet.store_id " & " AND VInvoice.vend_seq = VInvoiceDet.vend_seq " & " AND VInvoice.account_no = VInvoiceDet.account_no " & " AND VInvoiceDet.cust_id = '" + _
+                rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + " AND VInvoiceDet.store_id = " + _
+                Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + " AND VInvoiceDet.vend_seq = " + _
+                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("vend_seq")) + " AND VInvoiceDet.eqpt_seq = " + _
+                Str(rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq")) + " AND VInvoiceDet.serv_id =" + _
+                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("serv_id"))
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
-            While rsLocal.Read()
-                sInvoiceNo = rsLocal.Item("invoice_no").Value
-                sAccountNo = rsLocal.Item("account_no").Value
-                sInvoiceStatus = rsLocal.Item("vinvoice_status").Value
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
+            'While rsLocal.Read()
+            For Each aRow As DataRow In rsLocal.Rows
+                sInvoiceNo = aRow.Item("invoice_no")
+                sAccountNo = aRow.Item("account_no")
+                sInvoiceStatus = aRow.Item("vinvoice_status")
                 If sInvoiceStatus = "CRE" Then
                     'No se puede eliminar contrato. Ordenes sin pagar y sin transferir
                     MsgBox("Found some open invoices associated to this contract." & vbCrLf & "All invoices using this contract info " & "must be completed," & vbCrLf & "before attempting to delete contract.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
                     Exit Sub
                 Else
 
-                    sStmt = "SELECT COUNT(*) " & " FROM VInvoice ,Bcheck " & " WHERE VInvoice.invoice_no = Bcheck.invoice_no " & " AND VInvoice.cust_id = Bcheck.cust_id " & " AND VInvoice.store_id = Bcheck.store_id " & " AND VInvoice.vend_seq = Bcheck.vend_seq " & " AND VInvoice.account_no = Bcheck.account_no " & " AND VInvoice.invoice_no = '" & Trim(sInvoiceNo) & "' " & " AND VInvoice.cust_id = '" + rsStore.Item("cust_id").Value + "' " + " AND VInvoice.store_id = " + Str(rsStore.Item("store_id").Value) + " AND VInvoice.vend_seq = " + Str(rsContract.Item("vend_seq").Value) + " AND VInvoice.account_no = '" + Trim(sAccountNo) + "' " + " AND Bcheck.qb_exported_flag IS NULL "
+                    sStmt = "SELECT COUNT(*) " & " FROM VInvoice ,Bcheck " & " WHERE VInvoice.invoice_no = Bcheck.invoice_no " & " AND VInvoice.cust_id = Bcheck.cust_id " & " AND VInvoice.store_id = Bcheck.store_id " & " AND VInvoice.vend_seq = Bcheck.vend_seq " & " AND VInvoice.account_no = Bcheck.account_no " & " AND VInvoice.invoice_no = '" & Trim(sInvoiceNo) & "' " & " AND VInvoice.cust_id = '" + _
+                            rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + " AND VInvoice.store_id = " + _
+                            Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + " AND VInvoice.vend_seq = " + _
+                            Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("vend_seq").Value) + " AND VInvoice.account_no = '" + Trim(sAccountNo) + "' " + " AND Bcheck.qb_exported_flag IS NULL "
                     cmd.CommandText = sStmt
                     'qb_exported_flag puede ser : NULL o Y
 
                     'MsgBox sStmt
-                    rsLocalDet = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                    rsLocalDet = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
                     'MsgBox Str(rsLocalDet.item(0))
-                    If rsLocalDet.HasRows() Then
-                        If rsLocalDet.Item(0).Value = 0 Then
+                    If rsLocalDet.Rows.Count > 0 Then
+                        If rsLocalDet.Rows(0).Item(0).Value = 0 Then
                             'Siguiente factura
                         Else
                             MsgBox("Found some open invoices associated to this contract." & vbCrLf & "All invoices using this contract info " & "must be completed," & vbCrLf & "before attempting to delete contract.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
@@ -564,11 +561,15 @@ ErrorHandler:
                         Exit Sub
                     End If
                 End If
-            End While
+                'End While
+            Next aRow
         End If
 		
 		'Eliminar contrato
-        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + rsStore.Item("cust_id").Value + "' " + " AND store_id = " + Str(rsStore.Item("store_id").Value) + " AND vend_seq = " + Str(rsContract.Item("vend_seq").Value) + " AND eqpt_seq = " + Str(rsEquipment.Item("eqpt_seq").Value) + " AND serv_id = " + Str(rsContract.Item("serv_id").Value)
+        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + _
+        " AND store_id = " + Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + _
+        " AND vend_seq = " + Str(rsContract.Rows(dgContract.CurrentRow.Index).Item("vend_seq")) + _
+        " AND eqpt_seq = " + Str(rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq")) + " AND serv_id = " + Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("serv_id"))
 		'MsgBox sStmt
 		
 		cmLocal.CommandText = sStmt
@@ -576,9 +577,89 @@ ErrorHandler:
 		If nRecords > 0 Then
 			MsgBox("Contract info successfully deleted.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
 			'Refresco datagrid de Contratos
-            get_dgContractData(False, rsStore.Item("cust_id").Value, rsStore.Item("store_id").Value, CShort(txtVendName.Tag), rsEquipment.Item("eqpt_seq").Value)
+            get_dgContractData(False, rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id"), _
+                                rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id"), _
+                                CShort(txtVendName.Tag), rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq"))
 			
 		End If
 		
 	End Sub
+
+    'Private Sub dgEquipment_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellClick
+    '    'jp BEG 01.29.03
+    '    'If dgEquipment.Row >= 0 Then
+    '    'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+    '    If dgEquipment.SelectedRows.Count > 0 Then
+    '        'set_dgContractData()
+    '    End If
+    'End Sub
+    Private Sub dgEquipment_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellContentClick
+        'jp BEG 01.29.03
+        If dgEquipment.SelectedRows.Count = 0 Then
+            For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
+                dgEquipment.Rows(aCell.RowIndex).Selected = True
+            Next aCell
+        End If
+        'If dgEquipment.Row >= 0 Then
+        'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+        If dgEquipment.SelectedRows.Count > 0 Then
+            set_dgContractData()
+        End If
+    End Sub
+
+    Private Sub dgStore_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentClick
+        '01/29/03
+        If dgStore.SelectedRows.Count = 0 Then
+            For Each aCell As DataGridViewCell In dgStore.SelectedCells()
+                dgStore.Rows(aCell.RowIndex).Selected = True
+            Next aCell
+        End If
+        'If dgStore.Row >= 0 Then
+        'dgStore.SelBookmarks.Add rsStore.Bookmark
+        If dgStore.SelectedRows.Count > 0 Then
+            'Busco los equipos para esta tienda
+            'no se como implementar el bookmark.
+            'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+            If dgEquipment.Rows.Count > 0 Then
+                dgEquipment.Rows(0).Selected = True
+            End If
+
+            If dgEquipment.SelectedRows.Count = 0 Then
+                If dgEquipment.SelectedCells.Count > 0 Then
+                    dgEquipment.Rows(dgEquipment.SelectedCells(0).RowIndex).Selected = True
+                End If
+            End If
+            If rsEquipment.Rows.Count > 0 Then
+                'rsEquipment.Bookmark()
+                'dgEquipment.SelBookmarks.Add()
+                set_dgContractData()
+            Else
+                get_dgContractData(True)
+            End If
+
+        End If
+    End Sub
+
+   
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        data_entry((General.modo.NewRecord))
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        data_entry((General.modo.UpdateRecord))
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
+        get_dg_defaults(False)
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_contract()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
 End Class

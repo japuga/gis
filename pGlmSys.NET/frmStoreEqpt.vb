@@ -8,24 +8,28 @@ Friend Class frmStoreEqpt
     Private rsStoreEqpt As DataTable
     Private ImageList2 As New ImageList()
 	
-	Private Sub dgStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStore.ClickEvent
-		'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
-		
-		'If dgStore.Row >= 0 Then
-		If dgStore.SelBookmarks.Count > 0 Then
-            set_dgStoreEqptData(True, CShort(dgStore.Columns("store_id").Text), dgStore.Columns("Store").Text)
-		End If
-	End Sub
+    Private Sub dgStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
+        If dgStore.SelectedRows.Count = 0 Then
+            If dgStore.SelectedCells.Count > 0 Then
+                dgStore.Rows(dgStore.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        'If dgStore.Row >= 0 Then
+        If dgStore.SelectedRows.Count > 0 Then
+            set_dgStoreEqptData(True, CShort(dgStore.SelectedRows(0).Cells("store_id").Value), dgStore.SelectedRows(0).Cells("Store").Value)
+        End If
+    End Sub
 	
-	Private Sub dgStoreEqpt_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStoreEqpt.DblClick
-		update_storeEqpt()
-		If General.gbStoreEqptMode = General.modo.SavedRecord Then
+    Private Sub dgStoreEqpt_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_storeEqpt()
+        If General.gbStoreEqptMode = General.modo.SavedRecord Then
             set_dgStoreData(True)
-		End If
-	End Sub
+        End If
+    End Sub
 	'Actualiza Equipo
 	Private Sub update_storeEqpt()
-        If dgStoreEqpt.Row >= 0 Then
+        If dgStoreEqpt.CurrentRow.Index >= 0 Then
             Dim ds As DataSet = New DataSet()
 
             'no se como funciona bookmark
@@ -46,28 +50,28 @@ Friend Class frmStoreEqpt
 		On Error GoTo ErrorHandler
 		
 		get_storeEqpt = True 'Ok por defecto
-        gStoreEqptRecord.sCustId = Trim(rsStore.Rows(0).Item("cust_id").Value)
-        gStoreEqptRecord.nStoreId = rsStore.Rows(0).Item("store_id").Value
+        'gStoreEqptRecord.sCustId = Trim(rsStore.Rows(0).Item("cust_id"))
+        gStoreEqptRecord.sCustId = Trim(dgStore.CurrentRow.Cells("cust_id").Value) 'rsStore.Rows(0).Item("cust_id"))
+        gStoreEqptRecord.nStoreId = dgStore.CurrentRow.Cells("store_id").Value
 		gStoreEqptRecord.sCustName = gbStoreSearch.sCustName
-        gStoreEqptRecord.sStoreNumber = rsStore.Rows(0).Item("Store").Value
+        gStoreEqptRecord.sStoreNumber = dgStore.CurrentRow.Cells("Store").Value
 		
 		If bFlag = General.modo.UpdateRecord Then
-            gStoreEqptRecord.nEqptSeq = rsStoreEqpt.Rows(0).Item("eqpt_seq").Value
-            gStoreEqptRecord.nEqptId = rsStoreEqpt.Rows(0).Item("eqpt_id").Value
-            gStoreEqptRecord.sLoadId = rsStoreEqpt.Rows(0).Item("load_id").Value
+            gStoreEqptRecord.nEqptSeq = dgStoreEqpt.CurrentRow.Cells("eqpt_seq").Value
+            gStoreEqptRecord.nEqptId = dgStoreEqpt.CurrentRow.Cells("eqpt_id").Value
+            gStoreEqptRecord.sLoadId = dgStoreEqpt.CurrentRow.Cells("load_id").Value
 			
-            gStoreEqptRecord.sEqptStatus = rsStoreEqpt.Rows(0).Item("Status").Value
-            gStoreEqptRecord.sEqptDesc = rsStoreEqpt.Rows(0).Item("Equip").Value
-            gStoreEqptRecord.nContentId = rsStoreEqpt.Rows(0).Item("content_id").Value
-            gStoreEqptRecord.nEqptQty = rsStoreEqpt.Rows(0).Item("Qty").Value
-            gStoreEqptRecord.nEqptSizeCapacity = rsStoreEqpt.Rows(0).Item("eqpt_size_capacity").Value
-            gStoreEqptRecord.nEqptActualQty = rsStoreEqpt.Rows(0).Item("eqpt_actual_qty").Value
+            gStoreEqptRecord.sEqptStatus = dgStoreEqpt.CurrentRow.Cells("Status").Value
+            gStoreEqptRecord.sEqptDesc = dgStoreEqpt.CurrentRow.Cells("Equip").Value
+            gStoreEqptRecord.nContentId = dgStoreEqpt.CurrentRow.Cells("content_id").Value
+            gStoreEqptRecord.nEqptQty = dgStoreEqpt.CurrentRow.Cells("Qty").Value
+            gStoreEqptRecord.nEqptSizeCapacity = dgStoreEqpt.CurrentRow.Cells("eqpt_size_capacity").Value
+            gStoreEqptRecord.nEqptActualQty = dgStoreEqpt.CurrentRow.Cells("eqpt_actual_qty").Value
 			
-			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsStoreEqpt.Rows(0).Item("eqpt_temp").Value) Then
+            If IsDBNull(dgStoreEqpt.CurrentRow.Cells("eqpt_temp").Value) Then
                 gStoreEqptRecord.sEqptTemp = ""
             Else
-                gStoreEqptRecord.sEqptTemp = rsStoreEqpt.Rows(0).Item("eqpt_temp").Value
+                gStoreEqptRecord.sEqptTemp = dgStoreEqpt.CurrentRow.Cells("eqpt_temp").Value
             End If
 		End If
 		Exit Function
@@ -121,13 +125,13 @@ ErrorHandler:
 		VB6.ShowForm(frmStoreSearch, VB6.FormShowConstants.Modal, Me)
 		If gbStoreSearch.bFlag Then 'Usuario ingreso parametros para query
 			'Habilito botones
-			Toolbar1.Items.Item("new").Enabled = True
-			Toolbar1.Items.Item("save").Enabled = True
+            Toolbar1.Items.Item("btNew").Enabled = True
+            Toolbar1.Items.Item("btSave").Enabled = True
 			
 		Else
 			'Deshabilito botones
-			Toolbar1.Items.Item("new").Enabled = False
-			Toolbar1.Items.Item("save").Enabled = False
+            Toolbar1.Items.Item("btNew").Enabled = False
+            Toolbar1.Items.Item("btSave").Enabled = False
 			
 		End If
 		'Corro query y cargo datos al Datagrid
@@ -186,10 +190,12 @@ ErrorHandler:
             'StoreEqpt se actualizo sin problema
             If General.gbStoreEqptMode = General.modo.SavedRecord Then
                 For row As Integer = 0 To rsStore.Rows.Count - 1
-                    If rsStore.Rows(row).Item("store_id").Value = gStoreEqptRecord.nStoreId Then
+                    If rsStore.Rows(row).Item("store_id") = gStoreEqptRecord.nStoreId Then
                         'bookmark como funciona
                         'dgStore.SelBookmarks.Add(rsStore.Rows.Bookmark)
-                        set_dgStoreEqptData(True, CShort(dgStore.Columns("store_id").Text), dgStore.Columns("Store").Text)
+                        dgStore.Rows(row).Selected = True
+                        set_dgStoreEqptData(True, CShort(dgStore.Rows(row).Cells("store_id").Value), _
+                                                  dgStore.Rows(row).Cells("Store").Value)
                         Exit For
                     End If
                 Next row
@@ -197,7 +203,8 @@ ErrorHandler:
             Else
                 'If Not IsNull(dgStore.Columns("store_id")) Then
                 'dgStore.SelBookmarks.Add(rsStore.Bookmark)
-                set_dgStoreEqptData(True, CShort(dgStore.Columns("store_id").Text), dgStore.Columns("Store").Text)
+                set_dgStoreEqptData(True, CShort(dgStore.Rows(0).Cells("store_id").Value), _
+                                                 dgStore.Rows(0).Cells("Store").Value)
                 'End If
             End If
         Else
@@ -246,9 +253,10 @@ ErrorHandler:
         If rsStoreEqpt.Rows.Count > 0 Then
             If General.gbStoreEqptMode = General.modo.SavedRecord Then
                 For row As Integer = 0 To rsStoreEqpt.Rows.Count - 1
-                    If rsStoreEqpt.Rows(row).Item("store_id").Value = gStoreEqptRecord.nStoreId And rsStoreEqpt.Rows(row).Item("cust_id").Value = gStoreEqptRecord.sCustId And rsStoreEqpt.Rows(row).Item("eqpt_seq").Value = gStoreEqptRecord.nEqptSeq Then
+                    If rsStoreEqpt.Rows(row).Item("store_id") = gStoreEqptRecord.nStoreId And rsStoreEqpt.Rows(row).Item("cust_id") = gStoreEqptRecord.sCustId And rsStoreEqpt.Rows(row).Item("eqpt_seq") = gStoreEqptRecord.nEqptSeq Then
                         'no se como hacer bookmark
                         'dgStoreEqpt.SelBookmarks.Add((rsStoreEqpt.Rows(row).Bookmark))
+                        dgStoreEqpt.Rows(row).Selected = True
                         bFound = True
                         Exit For
                     End If
@@ -256,9 +264,10 @@ ErrorHandler:
                 
                 'Store-Eqpt no se encontro
                 If bFound = False Then
-                    'dgStoreEqpt.SelBookmarks.Add((rsStoreEqpt.Bookmark))
+                    dgStoreEqpt.Rows(0).Selected = True '.SelBookmarks.Add((rsStoreEqpt.Bookmark))
                 End If
             Else
+                dgStoreEqpt.Rows(0).Selected = True
                 'dgStoreEqpt.SelBookmarks.Add((rsStoreEqpt.Bookmark))
             End If
         End If
@@ -287,5 +296,59 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "set_dgStoreEqpt")
         MsgBox("An unexpected error has occurred, check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+    End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+
+        General.gbStoreEqptMode = General.modo.NewRecord
+        'If dgStoreEqpt.Row >= 0 Then
+        If get_storeEqpt(General.gbStoreEqptMode) = True Then
+
+            VB6.ShowForm(frmStoreEqptEntry, VB6.FormShowConstants.Modal, Me)
+            If General.gbStoreEqptMode = General.modo.SavedRecord Then
+                set_dgStoreData(True)
+            End If
+        End If
+
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_storeEqpt()
+        If General.gbStoreEqptMode = General.modo.SavedRecord Then
+            set_dgStoreData(True)
+        End If
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
+        get_data()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub dgStore_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentClick
+        'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
+        If dgStore.SelectedRows.Count = 0 Then
+            If dgStore.SelectedCells.Count > 0 Then
+                dgStore.Rows(dgStore.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        'If dgStore.Row >= 0 Then
+        If dgStore.SelectedRows.Count > 0 Then
+            set_dgStoreEqptData(True, CShort(dgStore.SelectedRows(0).Cells("store_id").Value), dgStore.SelectedRows(0).Cells("Store").Value)
+        End If
+    End Sub
+
+    Private Sub dgStoreEqpt_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStoreEqpt.CellDoubleClick
+        If dgStoreEqpt.SelectedRows.Count = 0 Then
+            If dgStoreEqpt.SelectedCells.Count > 0 Then
+                dgStoreEqpt.Rows(dgStoreEqpt.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        update_storeEqpt()
+        If General.gbStoreEqptMode = General.modo.SavedRecord Then
+            set_dgStoreData(True)
+        End If
     End Sub
 End Class

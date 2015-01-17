@@ -15,7 +15,8 @@ Friend Class frmVendorBrowse
 	End Sub
     Private Sub set_dgVendorData(ByRef bParamProvided As Boolean)
 
-        sStmt = "SELECT vend_id, vend_seq, " & "vend_name AS Vendor, vend_area AS Area, " & "state_id AS State, vend_address AS Address," & "vend_city AS City, vend_zip AS Zip " & " FROM vbranch "
+        sStmt = "SELECT vend_id, vend_seq, " & "vend_name AS Vendor, vend_area AS Area, " & _
+        "state_id AS State, vend_address AS Address," & "vend_city AS City, vend_zip AS Zip " & " FROM vbranch "
 
         If bParamProvided Then
             'Condicion Vendor
@@ -46,10 +47,11 @@ Friend Class frmVendorBrowse
         If rsLocal.rows.count > 0 Then
             dgVendor.DataSource = rsLocal
         Else
-            MsgBox("Error while accesing Vendor Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-            'UPGRADE_NOTE: Object dgVendor.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-            dgVendor.DataSource = Nothing
-            Exit Sub
+            If bParamProvided Then
+                MsgBox("Error while accesing Vendor Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                Exit Sub
+            End If
+            dgVendor.DataSource = rsLocal
         End If
 
 
@@ -69,23 +71,23 @@ Friend Class frmVendorBrowse
 	End Sub
 	'Guarda los valores escogidos del datagrid en variables glob
 	Private Sub save_selected()
-		If dgVendor.Row >= 0 Then
-			
-			gVendorSearch.bFlag = True
-            gVendorSearch.nVendId = rsLocal.Rows(0).Item("vend_id").Value
-            gVendorSearch.sStateId = rsLocal.Rows(0).Item("State").Value
-            gVendorSearch.sVendName = Trim(rsLocal.Rows(0).Item("Vendor").Value) & " - " & Trim(rsLocal.Rows(0).Item("Area").Value)
-            gVendorSearch.nVendSeq = rsLocal.Rows(0).Item("vend_seq").Value
-			'dgVendor.SelBookmarks.Add rsLocal.Bookmark
-			'Solo cerramos forma si selecciono algo
-			Me.Close()
-		End If
+        If dgVendor.CurrentRow.Index >= 0 Then
+
+            gVendorSearch.bFlag = True
+            gVendorSearch.nVendId = rsLocal.Rows(dgVendor.CurrentRow.Index).Item("vend_id")
+            gVendorSearch.sStateId = rsLocal.Rows(dgVendor.CurrentRow.Index).Item("State")
+            gVendorSearch.sVendName = Trim(rsLocal.Rows(dgVendor.CurrentRow.Index).Item("Vendor")) & " - " & Trim(rsLocal.Rows(dgVendor.CurrentRow.Index).Item("Area"))
+            gVendorSearch.nVendSeq = rsLocal.Rows(dgVendor.CurrentRow.Index).Item("vend_seq")
+            'dgVendor.SelBookmarks.Add rsLocal.Bookmark
+            'Solo cerramos forma si selecciono algo
+            Me.Close()
+        End If
 		
 	End Sub
 	
-	Private Sub dgVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgVendor.DblClick
-		save_selected()
-	End Sub
+    Private Sub dgVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        save_selected()
+    End Sub
 	
 	Private Sub frmVendorBrowse_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -121,5 +123,9 @@ Friend Class frmVendorBrowse
 		'Inicializo Datagrid
         set_dgVendorData(False)
 		
-	End Sub
+    End Sub
+
+    Private Sub dgVendor_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgVendor.CellContentDoubleClick
+        save_selected()
+    End Sub
 End Class
