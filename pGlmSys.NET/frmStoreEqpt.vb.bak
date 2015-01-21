@@ -313,11 +313,9 @@ ErrorHandler:
     End Sub
 
     Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
-        If dgStoreEqpt.SelectedRows.Count > 0 Then
-            update_storeEqpt()
-            If General.gbStoreEqptMode = General.modo.SavedRecord Then
-                set_dgStoreData(True)
-            End If
+        update_storeEqpt()
+        If General.gbStoreEqptMode = General.modo.SavedRecord Then
+            set_dgStoreData(True)
         End If
     End Sub
 
