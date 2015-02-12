@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepInvoiceTracking
 	Inherits System.Windows.Forms.Form
 	'Date Created:01.19.04
@@ -19,7 +20,7 @@ Friend Class frmRepInvoiceTracking
 		Dim nError As Short
 	End Structure
 	Private rptInvoiceTrackingParam As rptInvoiceTrackingParamUDT
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
 	Public crysApp As CRPEAuto.Application
 	Public crysRepInvoiceTracking As CRPEAuto.Report
@@ -153,13 +154,13 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		val_fields = True
 	End Function
@@ -178,8 +179,8 @@ ErrorHandler:
         dt = getDataTable(sStmt)
 
         If dt.Rows.Count > 0 Then
-            lbStartDate.Text = dt.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = dt.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = dt.Rows(0).Item("period_start_date")
+            lbEndDate.Text = dt.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -207,10 +208,10 @@ ErrorHandler:
 			.nPeriodSeq = VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex) '16
 			.nGroupSeq = VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex) '3
 			.bPeriodSeq = obPeriod.Checked 'True
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sStartDate = dtStartDate._Value '"01/01/2003"
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sEndDate = dtEndDate._Value ' "01/31/2003"
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate.. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            .sStartDate = dtStartDate.Value '"01/01/2003"
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            .sEndDate = dtEndDate.Value ' "01/31/2003"
 		End With
 		
 		If cbStateId.Text = "<All>" Then
@@ -252,7 +253,7 @@ ErrorHandler:
 		period_enable(False)
 		range_enable(False)
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		'Combo Customer
@@ -263,7 +264,7 @@ ErrorHandler:
 		load_cb_query2(cbCustId, sStmt, 1, True)
 		
 		If cbCustName.Items.Count > 0 Then
-			cbCustName.SelectedIndex = 0
+            cbCustName.SelectedIndex = 0
 		End If
 		
 		'Combo State
@@ -297,74 +298,90 @@ ErrorHandler:
 		dtEndDate.Enabled = bOption
 	End Sub
 	
-	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+    Private Function load_report(ByRef dstReport As DataTable) As Boolean
+        'Dim reportDb As CRPEAuto.Database
+        'Dim reportTables As CRPEAuto.DatabaseTables
+        'Dim reportTable As CRPEAuto.DatabaseTable
+        'Dim reportPage As CRPEAuto.PageSetup
+        Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptGlmInvoice.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
-			crysRepInvoiceTracking = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepInvoiceTracking = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        'On Error GoTo ErrorHandler
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptInvoiceTracking.rpt"
+            sFile = get_template(sLocalReport, cbReportTemplate.Text)
+            rptDoc.Load(strReportsSysPath & "rptInvoiceTracking.rpt")
+        Catch ex As Exception
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End Try
+
+        rptDoc.SetDataSource(dstReport)
+
+        frmRepInvoiceTrackingViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepInvoiceTrackingViewer.CrystalReportViewer1.Visible = True
+        frmRepInvoiceTrackingViewer.CrystalReportViewer1.Show()
+        frmRepInvoiceTrackingViewer.Show()
+
+        'Abro el archivo con el reporte
+        'crysApp = CreateObject("Crystal.CRPE.Application")
+
+        ''sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptGlmInvoice.rpt"
+        'sFile = get_template(sLocalReport, cbReportTemplate.Text)
+
+        'If fileTmp.FileExists(sFile) Then
+        '    crysRepInvoiceTracking = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        crysRepInvoiceTracking = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
+
+        'End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepInvoiceTracking.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepInvoiceTracking.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepInvoiceTracking.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		
-		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		
-		crysRepInvoiceTracking.ProgressDialogEnabled = True
-		crysRepInvoiceTracking.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+
+        'reportDb = crysRepInvoiceTracking.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        'reportPage = crysRepInvoiceTracking.PageSetup
+
+        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
+        ''reportTable.SetPrivateData 3, AdoRs
+        'reportTable.SetPrivateData(3, rsReport)
+
+        ''cd.CancelError = True
+        ''cd.ShowPrinter
+
+        'crysRepInvoiceTracking.ProgressDialogEnabled = True
+        'crysRepInvoiceTracking.Preview()
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
+    End Function
 	
 	
     Private Function ReportHandler2() As Boolean
         ReportHandler2 = False
         'Seleccionar impresora
-        If find_printer() Then
-            'Version para soporte a Crystal Reports
-            show_report2()
-        End If
+        find_printer()
+        'If find_printer() Then
+        'Version para soporte a Crystal Reports
+        show_report2()
+        'End If
 
     End Function
 	'Permite seleccionar una impresora para imprimir
@@ -399,8 +416,7 @@ ErrorHandler:
 		
 		'On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
 		cmReport.CommandTimeout = gnTimeout
 		
@@ -419,7 +435,8 @@ ErrorHandler:
 		
 		'Se cargan los parametros dependiendo del tipo de reporte
 		
-		cmReport.CommandText = "usp_rep_invoice_tracking"
+        cmReport.CommandText = "usp_rep_invoice_tracking"
+        SqlCommandBuilder.DeriveParameters(cmReport)
         'cmReport.Parameters.Refresh()
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptInvoiceTrackingParam.sCustId
@@ -455,16 +472,16 @@ ErrorHandler:
 		'Verifico que se hayan cargado datos en RepData para este reporte
 		sStmt = "SELECT count(*) FROM rptInvoiceTracking WHERE report_no = " & Str(nReport)
         cmd.CommandText = sStmt
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.Item(0).Value > 0 Then
+        If rsLocal.Rows(0).Item(0) > 0 Then
             'Encontro registros
-            rsLocal.Close()
+            'rsLocal.Close()
         Else
             MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
             'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-            rsLocal.Close()
+            'rsLocal.Close()
             Exit Sub
         End If
 
@@ -479,7 +496,7 @@ ErrorHandler:
         'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         'Cargo la plantilla de Crystal Reports con los datos
-        load_report()
+        load_report(rsReport)
         Exit Sub
 
 ErrorHandler:
