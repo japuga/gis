@@ -210,6 +210,18 @@
     <Compile Include="DBFunctions.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="frmRepBillPayViewer.Designer.vb">
+      <DependentUpon>frmRepBillPayViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepBillPayViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRepInvoiceTrackingViewer.Designer.vb">
+      <DependentUpon>frmRepInvoiceTrackingViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepInvoiceTrackingViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmRepRecycleTonGenViewer.Designer.vb">
       <DependentUpon>frmRepRecycleTonGenViewer.vb</DependentUpon>
     </Compile>
@@ -865,6 +877,12 @@
     <Compile Include="frmRepUniversal.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmRepUniversalViewer.Designer.vb">
+      <DependentUpon>frmRepUniversalViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepUniversalViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmSaleRequest.Designer.vb">
       <SubType>Code</SubType>
       <DependentUpon>frmSaleRequest.vb</DependentUpon>
@@ -1418,6 +1436,10 @@
       <DependentUpon>frmRepBillPay.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmRepBillPayViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepBillPayViewer.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmRepCostContSearch.resX">
       <DependentUpon>frmRepCostContSearch.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -1449,6 +1471,10 @@
     <EmbeddedResource Include="frmRepInvoiceTracking.resX">
       <DependentUpon>frmRepInvoiceTracking.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRepInvoiceTrackingViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepInvoiceTrackingViewer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmReport.resX">
       <DependentUpon>frmReport.vb</DependentUpon>
@@ -1493,6 +1519,10 @@
     <EmbeddedResource Include="frmRepUniversal.resX">
       <DependentUpon>frmRepUniversal.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRepUniversalViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepUniversalViewer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSaleRequest.resX">
       <DependentUpon>frmSaleRequest.vb</DependentUpon>

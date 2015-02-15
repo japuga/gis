@@ -387,6 +387,7 @@ Friend Class frmStoreEqptEntry
                 sStmt = sStmt & " ORDER BY Vendor"
         End Select
         'MsgBox sStmt
+        'UPGRADE_NOTE: Object dgAccountEqpt.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         dgAccountEqpt.DataSource = Nothing
 
         rsAccountEqpt = getDataTable(sStmt) '
@@ -396,6 +397,8 @@ Friend Class frmStoreEqptEntry
 
         'MsgBox("Error while accesing Account Equipment table.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
 
+
+        'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgAccountEqpt.Refresh()
         'Formato de Datagrid
         dgAccountEqpt.Columns("vend_seq").Visible = False

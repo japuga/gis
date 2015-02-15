@@ -191,7 +191,7 @@ Friend Class frmAccount
             MsgBox("Unable to verify if account was previously assigned?", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
             Exit Function
         End Try
-
+        Exit Function
 ErrorHandler:
         save_error("frmAccount", "prev_assigned")
         MsgBox("Failed to verify Account Assignments." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
