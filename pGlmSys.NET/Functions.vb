@@ -298,15 +298,28 @@ Module Functions
             record_exist = False
             Exit Function
         End If
+        Try
+            'rsTmp.Find(sItem, , ADODB.SearchDirectionEnum.adSearchForward, 0)
+            'Dim colName As String = rsTmp.Columns(0).ColumnName
+            'Dim drFoundRow As DataRow = rsTmp.Rows.Find(sItem)
 
-        'rsTmp.Find(sItem, , ADODB.SearchDirectionEnum.adSearchForward, 0)
+            'Dim dr As DataRow = rsTmp.Rows(0)
+            'Dim rowVal As String = dr.Item(0).ToString
+            'Dim strSearch As String = "eqpt_id=" & rowVal
+            'Dim rowsArr() As DataRow = rsTmp.Select(strSearch)
 
-        If rsTmp.Rows.Count < 1 Then
-            record_exist = False
-            Exit Function
-        End If
-        record_exist = True
 
+            Dim foundRows() As DataRow
+            foundRows = rsTmp.Select(sItem)
+
+            If foundRows.Length < 1 Then
+                record_exist = False
+                Exit Function
+            End If
+            record_exist = True
+        Catch ex As Exception
+            Dim errMsg As String = ex.Message
+        End Try
     End Function
 	
 	Public Function build_datetime(ByRef dtDate As Date, ByRef bExtendDay As Boolean) As String

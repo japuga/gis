@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepBillPay
 	Inherits System.Windows.Forms.Form
 	Private sLocalVersion As String
@@ -24,15 +25,14 @@ Friend Class frmRepBillPay
 	Public crysRepBillPay As CRPEAuto.Report
     Private rsReport As DataTable
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		If cbCustName.SelectedIndex >= 0 Then
-			cbCustId.SelectedIndex = cbCustName.SelectedIndex
-			load_groups(cbCustId.Text)
-			load_period(cbCustId.Text)
-		End If
-		
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        If cbCustName.SelectedIndex >= 0 Then
+            cbCustId.SelectedIndex = cbCustName.SelectedIndex
+            load_groups(cbCustId.Text)
+            load_period(cbCustId.Text)
+        End If
+
+    End Sub
 	'Carga el combo de grupos
 	Private Sub load_groups(ByRef sCustId As String)
 		
@@ -68,7 +68,7 @@ ErrorHandler:
 		load_cb_query2(cbPeriodName, sStmt, 2, True)
 		
 		If cbPeriodName.Items.Count > 0 Then
-			cbPeriodName.SelectedIndex = 0
+            cbPeriodName.SelectedIndex = 0
 		End If
 		
 		Exit Sub
@@ -90,8 +90,8 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.rows.count > 0 Then
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -126,10 +126,8 @@ ErrorHandler:
 			.nPeriodSeq = VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex) '16
 			.nGroupSeq = VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex) '3
 			.bPeriodSeq = obPeriod.Checked 'True
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sStartDate = dtStartDate._Value '"01/01/2003"
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sEndDate = dtEndDate._Value ' "01/31/2003"
+            .sStartDate = dtStartDate.Value '"01/01/2003"
+            .sEndDate = dtEndDate.Value ' "01/31/2003"
 		End With
 		If cbStateId.Text = "<All>" Then
 			rptBillPayParam.sStateId = "All"
@@ -208,13 +206,11 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		If ckFinal.CheckState = System.Windows.Forms.CheckState.Checked Then
@@ -259,10 +255,10 @@ ErrorHandler:
         ReportHandler2 = False
 
         'Seleccionar impresora
-        If find_printer() Then
-            'Version para soporte a Crystal Reports
-            show_report2()
-        End If
+        'If find_printer() Then
+        'Version para soporte a Crystal Reports
+        show_report2()
+        'End If
 
     End Function
 	'Permite seleccionar una impresora para imprimir
@@ -296,8 +292,7 @@ ErrorHandler:
 		
 		'On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
 		cmReport.CommandTimeout = gnTimeout
         cmReport = cn.CreateCommand '.let_ActiveConnection(cn)
@@ -313,7 +308,8 @@ ErrorHandler:
 		
 		
 		'Se cargan los parametros dependiendo del tipo de reporte
-		cmReport.CommandText = "usp_rep_bill_pay"
+        cmReport.CommandText = "usp_rep_bill_pay"
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptBillPayParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptBillPayParam.sStateId
@@ -355,7 +351,7 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.Rows(0).Item(0).Value > 0 Then
+        If rsLocal.Rows(0).Item(0) > 0 Then
             'Encontro registros
         Else
             MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -376,7 +372,7 @@ ErrorHandler:
 
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         'Cargo la plantilla de Crystal Reports con los datos
-        load_report()
+        load_report(rsReport)
 
         'Close the period
         If ckFinal.CheckState = System.Windows.Forms.CheckState.Checked And obPeriod.Checked = True Then
@@ -394,66 +390,44 @@ ErrorHandler:
 
 	End Sub
 	
-	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+    Private Function load_report(ByVal dstReport As DataTable) As Boolean
+        
+        Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptBillPay.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
-			crysRepBillPay = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepBillPay = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        'On Error GoTo ErrorHandler
+
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptBillPay.rpt"
+            sFile = get_template(sLocalReport, cbReportTemplate.Text)
+            rptDoc.Load(strReportsSysPath & "rptBillPay.rpt")
+        Catch ex As Exception
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End Try
+
+        rptDoc.SetDataSource(dstReport)
+
+        frmRepBillPayViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepBillPayViewer.CrystalReportViewer1.Visible = True
+        frmRepBillPayViewer.CrystalReportViewer1.Show()
+        frmRepBillPayViewer.Show()
+
+        'frmRepRecycleTonGenViewer.CrystalReportViewer1.ReportSource = rptDoc
+        'frmRepRecycleTonGenViewer.CrystalReportViewer1.Visible = True
+        'frmRepRecycleTonGenViewer.CrystalReportViewer1.Show()
+        'frmRepRecycleTonGenViewer.Show()
+        Exit Function
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
 
         'crysRepBillPay.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepBillPay.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepBillPay.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		
-		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		
-		crysRepBillPay.ProgressDialogEnabled = True
-		crysRepBillPay.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+
+       
+    End Function
 	
 	
 	Private Sub frmRepBillPay_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
@@ -473,7 +447,7 @@ ErrorHandler:
 		period_enable(False)
 		range_enable(False)
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		'Combo Customer
@@ -484,7 +458,7 @@ ErrorHandler:
 		load_cb_query2(cbCustId, sStmt, 1, True)
 		
 		If cbCustName.Items.Count > 0 Then
-			cbCustName.SelectedIndex = 0
+            cbCustName.SelectedIndex = 0
 		End If
 		
 		'Combo State

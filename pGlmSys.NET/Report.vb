@@ -591,7 +591,7 @@ ErrorHandler:
         
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
         
-        get_template = rs.Rows(0).Item("rep_template_file").Value
+        get_template = rs.Rows(0).Item("rep_template_file")
         Exit Function
 
 
@@ -982,12 +982,15 @@ ErrorHandler:
         sParams = "Report parameters:" & vbCrLf
 
         For Each p In cm.Parameters
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(p.Value) Then
+            Try
+                If IsNothing(p.Value) Or IsDBNull(p.Value) Then
+                    sValue = "NULL"
+                Else
+                    sValue = p.Value
+                End If
+            Catch ex As Exception
                 sValue = "NULL"
-            Else
-                sValue = p.Value
-            End If
+            End Try
 
             sParams = sParams & " SET " & p.ParameterName & " = " & sValue & vbCrLf
         Next p

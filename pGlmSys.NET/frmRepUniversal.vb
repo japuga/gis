@@ -2,12 +2,13 @@ Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepUniversal
 	Inherits System.Windows.Forms.Form
 	Private nReport As Integer
 	Private nFrameIndex As Short
 	
-    Private rsReportTemplate As SqlDataReader
+    Private rsReportTemplate As DataTable
 	
     Private rsEquipment As DataTable
     Private rsSelEquipment As DataTable
@@ -40,8 +41,8 @@ Friend Class frmRepUniversal
 	Private sSort As String
 	Private sField As String
 	Private sEqptTemp As String
-    Private rsLocal As SqlDataReader
-    Private rsReport As SqlDataReader
+    Private rsLocal As DataTable
+    Private rsReport As DataTable
 	
 	Private sLocalReport As String
 	Private sLocalVersion As String
@@ -209,10 +210,8 @@ Friend Class frmRepUniversal
 					rptUniversalParam.sPeriodSeq = "D"
 					rptUniversalParam.nPeriodSeqFrom = 0
 					rptUniversalParam.nPeriodSeqTo = 0
-					'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					rptUniversalParam.sStartDate = dtStartDate._Value
-					'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					rptUniversalParam.sEndDate = dtEndDate._Value
+                    rptUniversalParam.sStartDate = dtStartDate.Value
+                    rptUniversalParam.sEndDate = dtEndDate.Value
 				End If
 				
 				'Caption
@@ -239,7 +238,7 @@ Friend Class frmRepUniversal
 				End If
 				
 				sb.Text = "Building query...."
-				'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 				System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 				
 				If build_query(bFlagWithoutEqpt, bFlagInvoiceEqpt) Then
@@ -268,14 +267,12 @@ Friend Class frmRepUniversal
 					
 					
 					sb.Text = "Processing Report..."
-					'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-					System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+                    System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 					
 					ReportHandler2()
 				End If
 				
-				'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-				System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 				
 			End If
 		End If
@@ -303,15 +300,16 @@ ErrorHandler:
 		
 		sInsert = "INSERT INTO RptUniversalServiceTmp(report_id, serv_id) VALUES (" & Str(nReportId) & ","
         cmd.CommandText = sInsert
+        cmd.CommandType = CommandType.Text
 
         For row As Integer = 0 To rsSelService.Rows.Count - 1
             sStmt = Trim(sInsert) & Str(rsSelService.Rows(row).Item("serv_id")) & ")"
-            cm.CommandText = sStmt
-            nRecords = cm.ExecuteNonQuery()
+            cmd.CommandText = sStmt
+            nRecords = cmd.ExecuteNonQuery()
         Next
 
         'While rsSelService.   .Read()
-        '    sStmt = Trim(sInsert) & Str(rsSelService.Item("serv_id").Value) & ")"
+        '    sStmt = Trim(sInsert) & Str(rsSelService.Item("serv_id")) & ")"
         '    cm.CommandText = sStmt
         '    nRecords = cm.ExecuteNonQuery()
         'End While
@@ -518,13 +516,11 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields_period = False
-				Exit Function
-			End If
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields_period = False
+                Exit Function
+            End If
 		End If
 		val_fields_period = True
 		Exit Function
@@ -569,11 +565,11 @@ ErrorHandler:
 
             If rs.Rows.Count > 0 Then
                 For row As Integer = 0 To rs.Rows.Count - 1
-                    sPeriod = sPeriod & Str(rs.Rows(0).Item("period_seq").Value) & ","
+                    sPeriod = sPeriod & Str(rs.Rows(0).Item("period_seq")) & ","
                 Next
 
                 'While Not rs.Read()
-                '    sPeriod = sPeriod & Str(rs.Item("period_seq").Value) & ","
+                '    sPeriod = sPeriod & Str(rs.Item("period_seq")) & ","
                 'End While
                 sPeriod = VB.Left(sPeriod, Len(sPeriod) - 1)
             End If
@@ -581,7 +577,7 @@ ErrorHandler:
 
             sWherePeriod = sWherePeriod & " AND vInvoice.period_seq IN (" & sPeriod & ")"
         ElseIf obRange.Checked Then
-            sWherePeriod = sWherePeriod & "AND vInvoice.vinvoice_date BETWEEN " & "'" & Str(dtStartDate._Value) & "' " & " AND '" & Str(dtEndDate._Value) & "'"
+            sWherePeriod = sWherePeriod & "AND vInvoice.vinvoice_date BETWEEN " & "'" & Str(dtStartDate.Value) & "' " & " AND '" & Str(dtEndDate.Value) & "'"
         End If
 
         'MsgBox sWherePeriod
@@ -594,12 +590,12 @@ ErrorHandler:
         Else
             sWhereEquipment = "AND StoreEqpt.eqpt_id IN ("
 
-            For row As Integer = 0 To rsSelEquipment.Rows.Count
-                sWhereEquipment = sWhereEquipment & Str(rsSelEquipment.Rows(row).Item("eqpt_id").Value) & ","
+            For row As Integer = 0 To rsSelEquipment.Rows.Count - 1
+                sWhereEquipment = sWhereEquipment & Str(rsSelEquipment.Rows(row).Item("eqpt_id")) & ","
             Next
 
             'While rsSelEquipment.Read()
-            '    sWhereEquipment = sWhereEquipment & Str(rsSelEquipment.Item("eqpt_id").Value) & ","
+            '    sWhereEquipment = sWhereEquipment & Str(rsSelEquipment.Item("eqpt_id")) & ","
             'End While
             sWhereEquipment = VB.Left(sWhereEquipment, Len(sWhereEquipment) - 1) & ")"
         End If
@@ -618,12 +614,12 @@ ErrorHandler:
 
             sWhereContent = "AND StoreEqpt.content_id IN ("
 
-            For row As Integer = 0 To rsSelContent.Rows.Count
-                sWhereContent = sWhereContent & Str(rsSelContent.Rows(row).Item("content_id").Value) & ","
+            For row As Integer = 0 To rsSelContent.Rows.Count - 1
+                sWhereContent = sWhereContent & Str(rsSelContent.Rows(row).Item("content_id")) & ","
             Next
 
             'While rsSelContent.Read()
-            '    sWhereContent = sWhereContent & Str(rsSelContent.Item("content_id").Value) & ","
+            '    sWhereContent = sWhereContent & Str(rsSelContent.Item("content_id")) & ","
             'End While
             sWhereContent = VB.Left(sWhereContent, Len(sWhereContent) - 1) & ")"
         End If
@@ -635,10 +631,10 @@ ErrorHandler:
         Else
             sWhereLoad = "AND StoreEqpt.load_id IN ("
             For row As Integer = 0 To rsSelLoad.Rows.Count - 1
-                sWhereLoad = sWhereLoad & "'" + rsSelLoad.Rows(row).Item("load_id").Value + "',"
+                sWhereLoad = sWhereLoad & "'" + rsSelLoad.Rows(row).Item("load_id") + "',"
             Next
             'While rsSelLoad.Read()
-            '    sWhereLoad = sWhereLoad & "'" + rsSelLoad.Item("load_id").Value + "',"
+            '    sWhereLoad = sWhereLoad & "'" + rsSelLoad.Item("load_id") + "',"
             'End While
             sWhereLoad = VB.Left(sWhereLoad, Len(sWhereLoad) - 1) & ")"
         End If
@@ -650,14 +646,14 @@ ErrorHandler:
         Else
             sWhereService = "AND vInvoiceDet.serv_id IN ("
 
-            For row As Integer = 0 To rsSelService.Rows.Count
-                sWhereService = sWhereService & Str(rsSelService.Rows(row).Item("serv_id").Value) & ","
-                sServiceList = sServiceList & Str(rsSelService.Rows(row).Item("serv_id").Value) & ","
+            For row As Integer = 0 To rsSelService.Rows.Count - 1
+                sWhereService = sWhereService & Str(rsSelService.Rows(row).Item("serv_id")) & ","
+                sServiceList = sServiceList & Str(rsSelService.Rows(row).Item("serv_id")) & ","
             Next
 
             'While rsSelService.Read()
-            '    sWhereService = sWhereService & Str(rsSelService.Item("serv_id").Value) & ","
-            '    sServiceList = sServiceList & Str(rsSelService.Item("serv_id").Value) & ","
+            '    sWhereService = sWhereService & Str(rsSelService.Item("serv_id")) & ","
+            '    sServiceList = sServiceList & Str(rsSelService.Item("serv_id")) & ","
             'End While
             sWhereService = VB.Left(sWhereService, Len(sWhereService) - 1) & ")"
             sServiceList = VB.Left(sServiceList, Len(sServiceList) - 1)
@@ -668,19 +664,17 @@ ErrorHandler:
             sWhereVendor = ""
         Else
             sWhereVendor = " AND vBranch.vend_id IN ("
-            For row As Integer = 0 To rsSelVendor.Rows.Count
-                sWhereVendor = sWhereVendor & Str(rsSelVendor.Rows(row).Item("vend_id").Value) & ","
+            For row As Integer = 0 To rsSelVendor.Rows.Count - 1
+                sWhereVendor = sWhereVendor & Str(rsSelVendor.Rows(row).Item("vend_id")) & ","
             Next
             'While rsSelVendor.Read()
-            '    sWhereVendor = sWhereVendor & Str(rsSelVendor.Item("vend_id").Value) & ","
+            '    sWhereVendor = sWhereVendor & Str(rsSelVendor.Item("vend_id")) & ","
             'End While
             sWhereVendor = VB.Left(sWhereVendor, Len(sWhereVendor) - 1) & ")"
         End If
 
-        'UPGRADE_WARNING: Couldn't resolve default property of object sWhere. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         sWhere = sWherePeriod & vbCrLf & sWhereEquipment & vbCrLf & sWhereEqptTemp & vbCrLf & sWhereContent & vbCrLf & sWhereLoad & vbCrLf & sWhereService & vbCrLf & sWhereVendor
 
-        'UPGRADE_WARNING: Couldn't resolve default property of object sWhere1. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         sWhere1 = sWherePeriod & vbCrLf & sWhereEquipment & vbCrLf & sWhereEqptTemp & vbCrLf & sWhereContent & vbCrLf & sWhereLoad & vbCrLf & sWhereService & vbCrLf & sWhereVendor
 
         sWhere2 = sWherePeriod & vbCrLf & sWhereService & vbCrLf & sWhereVendor
@@ -727,7 +721,7 @@ ErrorHandler:
 	Private Sub cmdLeftServ_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdLeftServ.Click
 		sField = "serv_id"
 		sSort = "serv_desc"
-		move_member(dgService, dgSelService, rsService, rsSelService, sField, sSort, True)
+        move_member(dgSelService, dgService, rsService, rsSelService, sField, sSort, True)
 		
 		
 	End Sub
@@ -891,79 +885,79 @@ ErrorHandler:
 		
 	End Sub
 	
-	Private Sub dgContent_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgContent.DblClick
-		sField = "content_id"
-		'sSort = "content_type, content_desc"
-		sSort = "Type, Description"
-		move_member(dgContent, dgSelContent, rsContent, rsSelContent, sField, sSort)
-	End Sub
+    Private Sub dgContent_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "content_id"
+        'sSort = "content_type, content_desc"
+        sSort = "Type, Description"
+        move_member(dgContent, dgSelContent, rsContent, rsSelContent, sField, sSort)
+    End Sub
 	
-	Private Sub dgEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgEquipment.DblClick
-		'add_member_equipment
-		sField = "eqpt_id"
-		sSort = "eqpt_type_desc, eqpt_size"
-		
-		move_member(dgEquipment, dgSelEquipment, rsEquipment, rsSelEquipment, sField, sSort)
-		
-	End Sub
+    Private Sub dgEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'add_member_equipment
+        sField = "eqpt_id"
+        sSort = "eqpt_type_desc, eqpt_size"
+
+        move_member(dgEquipment, dgSelEquipment, rsEquipment, rsSelEquipment, sField, sSort)
+
+    End Sub
 	
-	Private Sub dgLoad_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgLoad.DblClick
-		sField = "load_id"
-		sSort = "load_desc"
-		move_member(dgLoad, dgSelLoad, rsLoad, rsSelLoad, sField, sSort, False)
-		
-	End Sub
+    Private Sub dgLoad_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "load_id"
+        sSort = "load_desc"
+        move_member(dgLoad, dgSelLoad, rsLoad, rsSelLoad, sField, sSort, False)
+
+    End Sub
 	
-	Private Sub dgSelContent_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelContent.DblClick
-		sField = "content_id"
-		'sSort = "content_type, content_desc"
-		sSort = "Type, Description"
-		move_member(dgSelContent, dgContent, rsSelContent, rsContent, sField, sSort)
-	End Sub
+    Private Sub dgSelContent_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "content_id"
+        'sSort = "content_type, content_desc"
+        sSort = "Type, Description"
+        move_member(dgSelContent, dgContent, rsSelContent, rsContent, sField, sSort)
+    End Sub
 	
-	Private Sub dgSelEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelEquipment.DblClick
-		'del_member_equipment
-		sField = "eqpt_id"
-		sSort = "eqpt_type_desc, eqpt_size"
-		
-		move_member(dgSelEquipment, dgEquipment, rsSelEquipment, rsEquipment, sField, sSort)
-		
-	End Sub
+    Private Sub dgSelEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'del_member_equipment
+        sField = "eqpt_id"
+        sSort = "eqpt_type_desc, eqpt_size"
+
+        move_member(dgSelEquipment, dgEquipment, rsSelEquipment, rsEquipment, sField, sSort)
+
+    End Sub
 	
-	Private Sub dgSelLoad_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelLoad.DblClick
-		sField = "load_id"
-		sSort = "load_desc"
-		move_member(dgSelLoad, dgLoad, rsSelLoad, rsLoad, sField, sSort, False)
-		
-	End Sub
+    Private Sub dgSelLoad_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "load_id"
+        sSort = "load_desc"
+        move_member(dgSelLoad, dgLoad, rsSelLoad, rsLoad, sField, sSort, False)
+
+    End Sub
 	
-	Private Sub dgSelService_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelService.DblClick
-		sField = "serv_id"
-		sSort = "serv_desc"
-		move_member(dgSelService, dgService, rsSelService, rsService, sField, sSort, True)
-		
-	End Sub
+    Private Sub dgSelService_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "serv_id"
+        sSort = "serv_desc"
+        move_member(dgSelService, dgService, rsSelService, rsService, sField, sSort, True)
+
+    End Sub
 	
-	Private Sub dgSelVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelVendor.DblClick
-		sField = "vend_id"
-		sSort = "vend_name"
-		move_member(dgSelVendor, dgVendor, rsSelVendor, rsVendor, sField, sSort, True)
-		
-	End Sub
+    Private Sub dgSelVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "vend_id"
+        sSort = "vend_name"
+        move_member(dgSelVendor, dgVendor, rsSelVendor, rsVendor, sField, sSort, True)
+
+    End Sub
 	
-	Private Sub dgService_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgService.DblClick
-		sField = "serv_id"
-		sSort = "serv_desc"
-		move_member(dgService, dgSelService, rsService, rsSelService, sField, sSort, True)
-		
-	End Sub
+    Private Sub dgService_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "serv_id"
+        sSort = "serv_desc"
+        move_member(dgService, dgSelService, rsService, rsSelService, sField, sSort, True)
+
+    End Sub
 	
-	Private Sub dgVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgVendor.DblClick
-		sField = "vend_id"
-		sSort = "vend_name"
-		move_member(dgVendor, dgSelVendor, rsVendor, rsSelVendor, sField, sSort, True)
-		
-	End Sub
+    Private Sub dgVendor_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        sField = "vend_id"
+        sSort = "vend_name"
+        move_member(dgVendor, dgSelVendor, rsVendor, rsSelVendor, sField, sSort, True)
+
+    End Sub
 	
 	'UPGRADE_WARNING: Form event frmRepUniversal.Activate has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
 	Private Sub frmRepUniversal_Activated(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Activated
@@ -1004,16 +998,16 @@ ErrorHandler:
         'rsSelVendor = New SqlDataReader
         'rsReportTemplate = New SqlDataReader
 		
-		dgEquipment.ColumnHeaders = False
-		dgSelEquipment.ColumnHeaders = False
-		dgContent.ColumnHeaders = True
-		dgSelContent.ColumnHeaders = True
-		dgLoad.ColumnHeaders = False
-		dgSelLoad.ColumnHeaders = False
-		dgService.ColumnHeaders = False
-		dgSelService.ColumnHeaders = False
-		dgVendor.ColumnHeaders = False
-		dgSelVendor.ColumnHeaders = False
+        dgEquipment.ColumnHeadersVisible = False
+        dgSelEquipment.ColumnHeadersVisible = False
+        dgContent.ColumnHeadersVisible = True
+        dgSelContent.ColumnHeadersVisible = True
+        dgLoad.ColumnHeadersVisible = False
+        dgSelLoad.ColumnHeadersVisible = False
+        dgService.ColumnHeadersVisible = False
+        dgSelService.ColumnHeadersVisible = False
+        dgVendor.ColumnHeadersVisible = False
+        dgSelVendor.ColumnHeadersVisible = False
 		
         'rsEquipment.CursorLocation = ADODB.CursorLocationEnum.adUseClient
         'rsSelEquipment.CursorLocation = ADODB.CursorLocationEnum.adUseClient
@@ -1038,10 +1032,8 @@ ErrorHandler:
 		bAllEquipmentSelected = False
 		lbStartDate.Text = ""
 		lbEndDate.Text = ""
-		'UPGRADE_WARNING: TextBox property txtReportCaption.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtReportCaption.Maxlength = 30 'customer.cust_report_name CHAR(30)
-		'UPGRADE_WARNING: TextBox property txtReportTitle.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtReportTitle.Maxlength = 50
+        txtReportCaption.MaxLength = 30 'customer.cust_report_name CHAR(30)
+        txtReportTitle.MaxLength = 50
 		
 		txtReportTitle.Text = "Universal Report"
 		cbWithoutEqpt.CheckState = System.Windows.Forms.CheckState.Checked
@@ -1056,7 +1048,7 @@ ErrorHandler:
 		range_enable(True)
 		
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		
@@ -1094,7 +1086,6 @@ ErrorHandler:
 		i = 0
 		For	Each fr In frCriteria
 			fr.Visible = False
-			'UPGRADE_ISSUE: Frame property fr.BorderStyle was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
             'fr.BorderStyle = 0
 			frCriteria(nFrameIndex).Top = VB6.TwipsToPixelsY(480)
 			frCriteria(nFrameIndex).Left = VB6.TwipsToPixelsX(240)
@@ -1213,6 +1204,7 @@ ErrorHandler:
         Dim cmd As SqlCommand = cn.CreateCommand
         Dim da As SqlDataAdapter = New SqlDataAdapter
         Dim ds As DataSet = New DataSet("dset")
+
 		On Error GoTo ErrorHandler
 		
 		sStmt = "SELECT eqpt_id, eqpt_desc, eqpt_type_desc, eqpt_size  " & "FROM equipment " & " ORDER BY eqpt_type_desc, eqpt_size "
@@ -1220,8 +1212,9 @@ ErrorHandler:
         da.SelectCommand = cmd
         da.Fill(ds)
         rsEquipment = ds.Tables(0) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-		dgEquipment.DataSource = rsEquipment
-		
+        dgEquipment.DataSource = rsEquipment
+        addPrimaryKey(rsEquipment, "eqpt_id")
+
 		dgEquipment.Columns("eqpt_id").Visible = False
 		dgEquipment.Columns("eqpt_type_desc").Visible = False
 		dgEquipment.Columns("eqpt_size").Visible = False
@@ -1236,7 +1229,7 @@ ErrorHandler:
 	Public Sub load_SelEquipment()
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim daEquipment As SqlDataAdapter = New SqlDataAdapter
-        Dim ds As DataSet = New DataSet("")
+        Dim ds As DataSet = New DataSet("ds")
         sStmt = "SELECT eqpt_id, eqpt_desc, eqpt_type_desc, eqpt_size " & "FROM equipment " & " WHERE eqpt_id=-1"
         cmd.CommandText = sStmt
         daEquipment.SelectCommand = cmd
@@ -1244,7 +1237,9 @@ ErrorHandler:
 
         'rsSelEquipment = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
         rsSelEquipment = ds.Tables(0)
-        dgSelEquipment.DataSource = ds
+        addPrimaryKey(rsSelEquipment, "eqpt_id")
+        dgSelEquipment.DataSource = rsSelEquipment
+
 		
 		
 		dgSelEquipment.Columns("eqpt_id").Visible = False
@@ -1272,9 +1267,9 @@ ErrorHandler:
             For row As Integer = 0 To rsEquipment.Rows.Count - 1
                 Dim drowTmp As DataRow = dtTmp.NewRow()
                 For column As Integer = 0 To nRecords - 1
-                    rsSelEquipment.Rows(row).Item(column).Value = rsEquipment.Rows(row).Item(column).Value
-                    'drowTmp.Item(i).value = rsEquipment.Item(i).Value
-                    '.Item(i).Value = rsEquipment.Item(i).Value
+                    rsSelEquipment.Rows(row).Item(column) = rsEquipment.Rows(row).Item(column)
+                    'drowTmp.Item(i) = rsEquipment.Item(i)
+                    '.Item(i) = rsEquipment.Item(i)
                 Next column
                 'dtTmp.Rows.Add(drowTmp)
             Next row
@@ -1284,9 +1279,9 @@ ErrorHandler:
             '    'rsSelEquipment.AddNew()
             '    Dim drowTmp As DataRow = dtTmp.NewRow()
             '    For i = 0 To nRecords - 1
-            '        'rsSelEquipment.Item(i).Value = rsEquipment.Item(i).Value
-            '        drowTmp.Item(i).value = rsEquipment.Item(i).Value
-            '        '.Item(i).Value = rsEquipment.Item(i).Value
+            '        'rsSelEquipment.Item(i) = rsEquipment.Item(i)
+            '        drowTmp.Item(i) = rsEquipment.Item(i)
+            '        '.Item(i) = rsEquipment.Item(i)
             '    Next i
             '    dtTmp.Rows.Add(drowTmp)
             '    'rsSelEquipment.Update()
@@ -1305,24 +1300,24 @@ ErrorHandler:
 	
 	'Agrega equipos a dgSelEquipment desde dgEquipment
 	Private Sub add_member_equipment()
-		Dim vRow As Object
+        Dim vRow As DataGridViewRow
 		Dim sCriteria As String
 		Dim i As Short
 		
 		On Error GoTo ErrorHandler
 		
 		'Label12.Caption = dgEquipment.SelBookmarks.Count
-		For	Each vRow In dgEquipment.SelBookmarks
+        For Each vRow In dgEquipment.SelectedRows
             'rsEquipment.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
 
             'Verifico si tienda ya existe en recordset
-            sCriteria = "eqpt_id=" & Str(rsEquipment.Rows(vRow).Item("eqpt_id").Value)
+            sCriteria = "eqpt_id=" & Str(rsEquipment.Rows(vRow.Index).Item("eqpt_id"))
             If record_exist(rsSelEquipment, sCriteria) = False Then
                 'rsSelEquipment.AddNew()
                 Dim drowTmp As DataRow = rsSelEquipment.NewRow()
                 For column As Integer = 0 To rsEquipment.Columns.Count - 1
-                    drowTmp.Item(column) = rsEquipment.Rows(vRow).Item(column)
-                    'rsSelEquipment.Rows(vRow).Item(i).Value = rsEquipment.Rows(vRow).Item(i).Value
+                    drowTmp.Item(column) = rsEquipment.Rows(vRow.Index).Item(column)
+                    'rsSelEquipment.Rows(vRow).Item(i) = rsEquipment.Rows(vRow).Item(i)
                 Next column
                 rsSelEquipment.Rows.Add(drowTmp)
                 'rsSelEquipment("eqpt_id") = rsEquipment("eqpt_id")
@@ -1337,16 +1332,17 @@ ErrorHandler:
         Next vRow
 		
 		
-		Do While dgEquipment.SelBookmarks.Count
-			dgEquipment.SelBookmarks.Remove(0)
-		Loop 
-		
-		
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "add_member_equipment")
-		MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+        'Do While dgEquipment.SelectedRows.Count
+        dgEquipment.ClearSelection()
+        'dgEquipment.SelBookmarks.Remove(0)
+        'Loop
+
+
+        Exit Sub
+
+ErrorHandler:
+        save_error(Me.Name, "add_member_equipment")
+        MsgBox("Unexpected error found. Check log for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
 		
 	End Sub
 	
@@ -1371,7 +1367,7 @@ ErrorHandler:
             'While Not rsSelEquipment.EOF
             '    rsEquipment.AddNew()
             '    For i = 0 To rsSelEquipment.Fields.Count - 1
-            '        rsEquipment.item(i).Value = rsSelEquipment.item(i).Value
+            '        rsEquipment.item(i) = rsSelEquipment.item(i)
             '    Next i
             '    rsEquipment.Update()
 
@@ -1387,37 +1383,36 @@ ErrorHandler:
 		
 	End Sub
 	Private Sub del_member_equipment()
-		Dim vRow As Object
+        Dim vRow As DataGridViewRow
 		Dim sCriteria As String
 
-		For	Each vRow In dgSelEquipment.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        For Each vRow In dgSelEquipment.SelectedRows
             'rsSelEquipment.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
-			'Verifico si tienda ya existe en recordset
-			
-            sCriteria = "eqpt_id=" & Str(rsSelEquipment.Rows(vRow).Item("eqpt_id").Value)
+            'Verifico si tienda ya existe en recordset
+
+            sCriteria = "eqpt_id=" & Str(rsSelEquipment.Rows(vRow.Index).Item("eqpt_id"))
             Dim drow As DataRow = rsSelEquipment.NewRow()
-			If record_exist(rsEquipment, sCriteria) = False Then
+            If record_exist(rsEquipment, sCriteria) = False Then
                 'rsEquipment.AddNew()
                 For column As Integer = 0 To rsSelEquipment.Columns.Count - 1
-                    drow.Item(column) = rsSelEquipment.Rows(vRow).Item(column).Value
-                    'rsEquipment.item(column).Value = rsSelEquipment.Rows(vRow).Item(column).Value
+                    drow.Item(column) = rsSelEquipment.Rows(vRow.Index).Item(column)
+                    'rsEquipment.item(column) = rsSelEquipment.Rows(vRow).Item(column)
                 Next column
                 rsEquipment.Rows.Add(drow)
-				'rsEquipment("eqpt_id") = rsSelEquipment("eqpt_id")
-				'rsEquipment("eqpt_desc") = rsSelEquipment("eqpt_desc")
-				
+                'rsEquipment("eqpt_id") = rsSelEquipment("eqpt_id")
+                'rsEquipment("eqpt_desc") = rsSelEquipment("eqpt_desc")
+
                 'rsEquipment.Update()
 
                 rsEquipment.Select("eqpt_type_desc, eqpt_size") '   .Sort = "eqpt_type_desc, eqpt_size"
-			End If
+            End If
             'rsSelEquipment.Delete(ADODB.AffectEnum.adAffectCurrent)
-			
-		Next vRow
-		
-		Do While dgSelEquipment.SelBookmarks.Count
-			dgSelEquipment.SelBookmarks.Remove(0)
-		Loop 
+
+        Next vRow
+        dgSelEquipment.ClearSelection()
+        'Do While dgSelEquipment.SelBookmarks.Count
+        '	dgSelEquipment.SelBookmarks.Remove(0)
+        'Loop 
 		
 	End Sub
 	
@@ -1532,6 +1527,7 @@ ErrorHandler:
         da.SelectCommand = cmd
         da.Fill(ds)
         rsContent = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsContent, "content_id")
 		dgContent.DataSource = rsContent
 		
 		dgContent.Columns("Description").Width = VB6.TwipsToPixelsX(2000)
@@ -1554,6 +1550,7 @@ ErrorHandler:
         da.SelectCommand = cmd
         da.Fill(ds)
         rsSelContent = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsSelContent, "content_id")
 		dgSelContent.DataSource = rsSelContent
 		
 		dgSelContent.Columns("Description").Width = VB6.TwipsToPixelsX(2400)
@@ -1573,43 +1570,53 @@ ErrorHandler:
 	'sField: Campo usado para busqueda y evitar duplicados en dgDestino
 	'sSort: Campo(s) para ordenar recordset
 	'bNumeric: Esta bandera se activa si sField es numerico,Falso si es string
-    Private Sub move_member(ByRef dgSource As AxMSDataGridLib.AxDataGrid, ByRef dgDest As AxMSDataGridLib.AxDataGrid, ByRef rsSource As DataTable, ByRef rsDest As DataTable, ByRef sField As String, ByRef sSort As String, Optional ByRef bNumeric As Boolean = True)
+    Private Sub move_member(ByRef dgSource As DataGridView, ByRef dgDest As DataGridView, ByRef rsSource As DataTable, ByRef rsDest As DataTable, ByRef sField As String, ByRef sSort As String, Optional ByRef bNumeric As Boolean = True)
 
-        Dim vRow As Object
+        Dim vRow As DataGridViewRow
         Dim sCriteria As String
         Dim i As Short
 
         On Error GoTo ErrorHandler
 
-        For Each vRow In dgSource.SelBookmarks
-            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        If dgSource.SelectedRows.Count = 0 Then
+            If dgSource.SelectedCells.Count > 0 Then
+                dgSource.Rows(dgSource.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        For Each vRow In dgSource.SelectedRows
             'rsSource.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
             'Verifico si tienda ya existe en recordset
 
-            sCriteria = "eqpt_id=" + Str(rsSelEquipment.Rows(vRow).Item("eqpt_id"))
+            'sCriteria = "eqpt_id=" + Str(rsSelEquipment.Rows(vRow.Index).Item("eqpt_id"))
+            'sCriteria = "eqpt_id=" + Str(rsSource.Rows(vRow.Index).Item("eqpt_id"))
             If bNumeric Then
-                sCriteria = sField & "=" & Str(rsSource.Rows(vRow).Item(sField).Value)
+                sCriteria = sField & "=" & Str(rsSource.Rows(vRow.Index).Item(sField))
             Else
-                sCriteria = sField & "='" + (rsSource.Rows(vRow).Item(sField)).Value + "'"
+                sCriteria = sField & "='" + (rsSource.Rows(vRow.Index).Item(sField)) + "'"
             End If
 
             If record_exist(rsDest, sCriteria) = False Then
-                Dim drow As DataRow = rsSource.NewRow()
+                'Dim drow As DataRow = rsSource.NewRow()
                 'rsDest.AddNew()
-                For column As Integer = 0 To rsSource.Columns.Count - 1
-                    drow.Item(column) = rsSource.Rows(vRow).Item(i)
-                    'rsDest.Item(i).Value = rsSource.Fields(i).Value
-                Next column
-                rsDest.Rows.Add(drow)
+                'For column As Integer = 0 To rsSource.Columns.Count - 1
+                '    rsDest.ImportRow(rsSource.Rows(
+                '    drow.Item(column) = rsSource.Rows(vRow.Index).Item(i)
+                '    'rsDest.Item(i) = rsSource.Fields(i)
+                'Next column
+                rsDest.ImportRow(rsSource.Rows(vRow.Index))
+                'rsDest.Rows.Add(drow)
                 'rsDest.Update()
-                rsDest.Select(sSort)
+                rsDest.Select(Nothing, sSort)
+
             End If
+            rsSource.Rows.RemoveAt(vRow.Index)
             'rsSource.Delete(ADODB.AffectEnum.adAffectCurrent)
         Next vRow
 
-        Do While dgSource.SelBookmarks.Count
-            dgSource.SelBookmarks.Remove(0)
-        Loop
+        dgSource.ClearSelection()
+        'Do While dgSource.SelBookmarks.Count
+        '    dgSource.SelBookmarks.Remove(0)
+        'Loop
         Exit Sub
 
 ErrorHandler:
@@ -1636,7 +1643,7 @@ ErrorHandler:
             'While Not rsSource.EOF
             '    rsDest.AddNew()
             '    For i = 0 To rsSource.Fields.Count - 1
-            '        rsDest.Fields(i).Value = rsSource.Fields(i).Value
+            '        rsDest.Fields(i) = rsSource.Fields(i)
             '    Next i
             '    rsDest.Update()
 
@@ -1730,11 +1737,11 @@ ErrorHandler:
 		sStmt = "SELECT period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodEnd, cbPeriodEnd.SelectedIndex))
         cmd.CommandText = sStmt
         
-        rsLocal = cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
             'If rsLocal.RecordCount > 0 Then
 
-            lbPeriodEndDate.Text = rsLocal.Item("period_end_date").Value
+            lbPeriodEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
             'End If
         End If
 
@@ -1756,11 +1763,11 @@ ErrorHandler:
 		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         'if rsLocal.State = ADODB.ObjectStateEnum.adStateOpen Then
-        If rsLocal.HasRows() Then
-            lbStartDate.Text = rsLocal.Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Item("period_end_date").Value
+        If rsLocal.Rows.Count > 0 Then
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
         'End If
         Exit Sub
@@ -1779,10 +1786,10 @@ ErrorHandler:
 		sStmt = "SELECT period_start_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodStart, cbPeriodStart.SelectedIndex))
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If rsLocal.HasRows() Then
-            lbPeriodStartDate.Text = rsLocal.Item("period_start_date").Value
+        If rsLocal.Rows.Count > 0 Then
+            lbPeriodStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
         End If
 
 
@@ -1800,10 +1807,10 @@ ErrorHandler:
     Private Function ReportHandler2() As Boolean
         ReportHandler2 = False
         'Seleccionar impresora
-        If find_printer() Then
-            'Version para soporte a Crystal Reports
-            show_report2()
-        End If
+        'If find_printer() Then
+        'Version para soporte a Crystal Reports
+        show_report2()
+        'End If
 
     End Function
 	'Permite seleccionar una impresora para imprimir
@@ -1837,8 +1844,7 @@ ErrorHandler:
 		
         'On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
         cmReport = cn.CreateCommand() '.let_ActiveConnection(cn)
         cmReport.CommandType = CommandType.StoredProcedure
@@ -1848,7 +1854,7 @@ ErrorHandler:
 		
 		'Se cargan los parametros dependiendo del tipo de reporte
 		cmReport.CommandText = "usp_rep_universal"
-		
+        SqlCommandBuilder.DeriveParameters(cmReport)
         'cmReport.Parameters '.Refresh()
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptUniversalParam.sCustId
@@ -1888,19 +1894,17 @@ ErrorHandler:
 		sStmt = "SELECT count(*) FROM rptUniversal WHERE report_id = " & Str(nReport)
         cmd.CommandText = sStmt
         Try
-            rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsLocal.Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Encontro registros
             Else
                 MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
                 Exit Sub
             End If
         Catch
             MsgBox("There was an error while verifying report data for:" & gReport.name, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
             Exit Sub
         End Try
@@ -1915,101 +1919,124 @@ ErrorHandler:
 
         cmd.CommandText = sStmt
         
-        rsReport = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsReport = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         'Set dgDebug.DataSource = rsReport
 
 
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 
         'Cargo la plantilla de Crystal Reports con los datos
         sb.Text = "Loading Report..."
 
-        load_report()
+        load_report(rsReport)
 
         Exit Sub
 
 ErrorHandler:
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         save_error(Me.Name, "show_report2")
 
     End Sub
 	
-	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+    Private Function load_report(ByRef dstReport As DataTable) As Boolean
+        Dim reportDb As CRPEAuto.Database
+        Dim reportTables As CRPEAuto.DatabaseTables
+        Dim reportTable As CRPEAuto.DatabaseTable
+        Dim reportPage As CRPEAuto.PageSetup
+        Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		If fileTmp.FileExists(sFile) Then
-			crysRepUniversal = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepUniversal = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        'On Error GoTo ErrorHandler
+
+        'Abro el archivo con el reporte
+        'Dim sReportTemplate As String 'Nombre de plantilla de reporte
+        fileTmp = New Scripting.FileSystemObject
+
+        'On Error GoTo ErrorHandler
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
+            sFile = get_template(sLocalReport, cbReportTemplate.Text)
+            rptDoc.Load(strReportsSysPath & "rptUniversal.rpt")
+        Catch ex As Exception
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        End Try
+
+        rptDoc.SetDataSource(dstReport)
+
+        frmRepUniversalViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepUniversalViewer.CrystalReportViewer1.Visible = True
+        frmRepUniversalViewer.CrystalReportViewer1.Show()
+        frmRepUniversalViewer.Show()
+
+
+
+
+
+        crysApp = CreateObject("Crystal.CRPE.Application")
+
+        'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
+        sFile = get_template(sLocalReport, cbReportTemplate.Text)
+        If fileTmp.FileExists(sFile) Then
+            crysRepUniversal = crysApp.OpenReport(sFile)
+        Else
+            sFile = get_local_template(sLocalReport)
+            If fileTmp.FileExists(sFile) Then
+                crysRepUniversal = crysApp.OpenReport(sFile)
+            Else
+                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                Exit Function
+            End If
+
+        End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepUniversal.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepUniversal.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepUniversal.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		
-		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		'
-		'crysRepUniversal.ProgressDialogEnabled = True
-		crysRepUniversal.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+
+        reportDb = crysRepUniversal.Database
+        reportTables = reportDb.Tables
+        reportTable = reportTables.Item(1)
+        reportPage = crysRepUniversal.PageSetup
+
+        reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
+        'reportTable.SetPrivateData 3, AdoRs
+        reportTable.SetPrivateData(3, rsReport)
+
+        'cd.CancelError = True
+        'cd.ShowPrinter
+        '
+        'crysRepUniversal.ProgressDialogEnabled = True
+        crysRepUniversal.Preview()
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
+    End Function
 	
 	
 	Private Sub load_load()
 		On Error GoTo ErrorHandler
         Dim cmd As SqlCommand = cn.CreateCommand
-        Dim ds As DataSet = New DataSet("")
+        'Dim ds As DataSet = New DataSet("")
 
-        Dim da As SqlDataAdapter = New SqlDataAdapter()
+        'Dim da As SqlDataAdapter = New SqlDataAdapter()
 
         sStmt = "SELECT load_id, load_desc FROM LoadType " & " ORDER BY load_desc "
-        cmd.CommandText = sStmt
-        da.SelectCommand = cmd
-        da.Fill(ds)
+        'cmd.CommandText = sStmt
+        'da.SelectCommand = cmd
+        'da.Fill(ds)
 		
-        rsLoad = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        rsLoad = getDataTable(sStmt) 'ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsLoad, "load_id")
 		dgLoad.DataSource = rsLoad
 		
 		dgLoad.Columns("load_desc").Width = VB6.TwipsToPixelsX(2400)
@@ -2026,13 +2053,14 @@ ErrorHandler:
 	Private Sub load_SelLoad()
 		On Error GoTo ErrorHandler
         Dim cmd As SqlCommand = cn.CreateCommand()
-        Dim ds As DataSet = New DataSet("")
-        Dim da As SqlDataAdapter = New SqlDataAdapter()
+        'Dim ds As DataSet = New DataSet("")
+        'Dim da As SqlDataAdapter = New SqlDataAdapter()
 
 		sStmt = "SELECT load_id, load_desc FROM LoadType " & " WHERE load_id='--' " & " ORDER BY load_desc "
-        cmd.CommandText = sStmt
-        da.Fill(ds)
-        rsSelLoad = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        'cmd.CommandText = sStmt
+        'da.Fill(ds)
+        rsSelLoad = getDataTable(sStmt) 'ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsSelLoad, "load_id")
 		dgSelLoad.DataSource = rsSelLoad
 		
 		dgSelLoad.Columns("load_desc").Width = VB6.TwipsToPixelsX(2400)
@@ -2049,7 +2077,7 @@ ErrorHandler:
 	Private Sub load_service()
 		On Error GoTo ErrorHandler
         Dim cmd As SqlCommand = cn.CreateCommand
-        Dim ds As DataSet = New DataSet("")
+        Dim ds As DataSet = New DataSet("ds")
         Dim da As SqlDataAdapter = New SqlDataAdapter
 		sStmt = "SELECT serv_id, serv_desc " & " FROM service" & " ORDER BY serv_desc"
         cmd.CommandText = sStmt
@@ -2057,6 +2085,7 @@ ErrorHandler:
         da.Fill(ds)
 		
         rsService = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsService, "serv_id")
 		dgService.DataSource = rsService
 		
 		
@@ -2081,6 +2110,8 @@ ErrorHandler:
         da.SelectCommand = cmd
         da.Fill(ds)
         rsSelService = ds.Tables(0) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+        addPrimaryKey(rsSelService, "serv_id")
+
 		dgSelService.DataSource = rsSelService
 		
 		
@@ -2150,15 +2181,14 @@ ErrorHandler:
 	Private Sub load_vendor()
 		
         Dim cmd As SqlCommand = cn.CreateCommand()
-        Dim ds As DataSet = New DataSet("")
+        Dim ds As DataSet = New DataSet("ds")
         Dim da As SqlDataAdapter = New SqlDataAdapter()
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If IsDbNull(cbCustId.Text) Or IsDbNull(cbStateId.Text) Then
-			MsgBox("Customer or State has not been selected." & vbCrLf & "Unable to retrieve Vendor information.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		End If
+        If IsDBNull(cbCustId.Text) Or IsDBNull(cbStateId.Text) Then
+            MsgBox("Customer or State has not been selected." & vbCrLf & "Unable to retrieve Vendor information.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
 		
 		If sPrevCustId <> cbCustId.Text Or sPrevStateId <> cbStateId.Text Then
 			'UPGRADE_NOTE: Object dgVendor.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
@@ -2185,7 +2215,7 @@ ErrorHandler:
         da.SelectCommand = cmd
         da.Fill(ds)
         rsVendor = ds.Tables(0) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-
+        addPrimaryKey(rsVendor, "vend_id")
         dgVendor.DataSource = rsVendor
 
         If rsVendor.Rows.Count = 0 Then
@@ -2210,7 +2240,7 @@ ErrorHandler:
 		
 		
         rsSelVendor = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-		
+        addPrimaryKey(rsSelVendor, "vend_id")
 		dgSelVendor.DataSource = rsSelVendor
 		
 		dgSelVendor.Columns("vend_name").Width = VB6.TwipsToPixelsX(2000)
@@ -2343,4 +2373,19 @@ ErrorHandler:
 		save_error(Me.Name, "build_query")
 		MsgBox("Unexpected error while building query. Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
 	End Function
+
+    Private Sub dgLoad1_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgLoad.CellContentClick
+
+    End Sub
+
+    Private Sub dgSelVendor_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelVendor.CellContentClick
+
+    End Sub
+    Private Sub addPrimaryKey(ByRef dt As DataTable, ByVal strColName As String)
+        Try
+            dt.PrimaryKey = New DataColumn() {dt.Columns(strColName)}
+        Catch ex As Exception
+            Dim errMsg As String = ex.Message
+        End Try
+    End Sub
 End Class

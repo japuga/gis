@@ -27,8 +27,7 @@ Friend Class frmRepGlmInvoice
 	Public crysApp As CRPEAuto.Application
 	Public crysRepGlmInvoice As CRPEAuto.Report
     Private rsReport As DataTable
-	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
+
 	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
 		If cbCustName.SelectedIndex >= 0 Then
 			cbCustId.SelectedIndex = cbCustName.SelectedIndex
@@ -170,20 +169,19 @@ ErrorHandler:
 		
 		
 	End Function
-	'UPGRADE_WARNING: Event cbPeriodName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbPeriodName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriodName.SelectedIndexChanged
-		
-		On Error GoTo ErrorHandler
-		lbStartDate.Text = ""
-		lbEndDate.Text = ""
-		
-		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
-		
+    Private Sub cbPeriodName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriodName.SelectedIndexChanged
+
+        On Error GoTo ErrorHandler
+        lbStartDate.Text = ""
+        lbEndDate.Text = ""
+
+        sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
+
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -191,8 +189,8 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "cbPeriodName.click")
         MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
-		
-	End Sub
+
+    End Sub
 	
 	'UPGRADE_WARNING: Event cbReportTemplate.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbReportTemplate_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbReportTemplate.SelectedIndexChanged
@@ -229,10 +227,8 @@ ErrorHandler:
 			.nPeriodSeq = VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex) '16
 			.nGroupSeq = VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex)
 			.bPeriodSeq = obPeriod.Checked 'True
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sStartDate = dtStartDate._Value '"01/01/2003"
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sEndDate = dtEndDate._Value ' "01/31/2003"
+            .sStartDate = dtStartDate.Value '"01/01/2003"
+            .sEndDate = dtEndDate.Value ' "01/31/2003"
 		End With
 		
 		Dim sGroupSeq As String
@@ -240,7 +236,7 @@ ErrorHandler:
 			sGroupSeq = ""
 
             For row As Integer = 0 To gItplGridSelector.rsResult.Rows.Count - 1
-                sGroupSeq = sGroupSeq & Str(gItplGridSelector.rsResult.Rows(row).Item("group_seq").value) & ","
+                sGroupSeq = sGroupSeq & Str(gItplGridSelector.rsResult.Rows(row).Item("group_seq")) & ","
             Next row
             
             rptGlmInvoiceParam.sGroupSeqList = VB.Left(sGroupSeq, Len(sGroupSeq) - 1)
@@ -330,12 +326,12 @@ ErrorHandler:
 		End If
 		
 		If ckUseForBilling.CheckState = System.Windows.Forms.CheckState.Checked Then
-			save_glminvoice_report_criteria((cbCustId.Text), nRepNo, nReport, rptGlmInvoiceParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (cbReportTemplate.Text), txtReportCaption.Text, sIsPeriodSeq, VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex), dtStartDate._Value, dtEndDate._Value, sDisplayStoreWithInvoices, sPublishToWeb, (txtReportName.Text), sUseForCustomerBilling, nInstanceNo, sIsFinalVersion)
+            save_glminvoice_report_criteria((cbCustId.Text), nRepNo, nReport, rptGlmInvoiceParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (cbReportTemplate.Text), txtReportCaption.Text, sIsPeriodSeq, VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex), dtStartDate.Value, dtEndDate.Value, sDisplayStoreWithInvoices, sPublishToWeb, (txtReportName.Text), sUseForCustomerBilling, nInstanceNo, sIsFinalVersion)
 		Else
 			'Find existing report
 			nReportFinal = getGIRFinalVersion((cbCustId.Text), VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex), VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex))
 			
-			insert_glminvoice_report_criteria((cbCustId.Text), nRepNo, nReport, rptGlmInvoiceParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (cbReportTemplate.Text), (txtReportCaption.Text), sIsPeriodSeq, VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex), dtStartDate._Value, dtEndDate._Value, sDisplayStoreWithInvoices, sPublishToWeb, (txtReportName.Text), sUseForCustomerBilling, nInstanceNo, sIsFinalVersion)
+            insert_glminvoice_report_criteria((cbCustId.Text), nRepNo, nReport, rptGlmInvoiceParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (cbReportTemplate.Text), (txtReportCaption.Text), sIsPeriodSeq, VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex), dtStartDate.Value, dtEndDate.Value, sDisplayStoreWithInvoices, sPublishToWeb, (txtReportName.Text), sUseForCustomerBilling, nInstanceNo, sIsFinalVersion)
 			
 			
 			If Me.ckPrintFinal.CheckState = System.Windows.Forms.CheckState.Checked Then
@@ -435,13 +431,11 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		If ckPublish.CheckState = System.Windows.Forms.CheckState.Checked Then
@@ -474,10 +468,10 @@ ErrorHandler:
     Private Function ReportHandler2() As Boolean
         ReportHandler2 = False
         'Seleccionar impresora
-        If find_printer() Then
-            'Version para soporte a Crystal Reports
-            show_report2()
-        End If
+        'If find_printer() Then
+        'Version para soporte a Crystal Reports
+        show_report2()
+        'End If
 
     End Function
 	'Permite seleccionar una impresora para imprimir
@@ -528,8 +522,7 @@ ErrorHandler:
 		
 		'On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
 		cmReport.CommandTimeout = gnTimeout
 		
@@ -562,7 +555,7 @@ ErrorHandler:
 		
 		
 		
-
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptGlmInvoiceParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptGlmInvoiceParam.sStateId
@@ -594,26 +587,32 @@ ErrorHandler:
 		End If
 		
 		cmReport.Parameters("@sReportTemplate").value = cbReportTemplate.Text
-		
-		cmReport.Parameters("@sGroupSeqList").Value = rptGlmInvoiceParam.sGroupSeqList
-		
-		log_report_parameters(sLocalReport, cmReport)
-		
-		'Ejecuto el procedure y verifico por errores
+
+        If Not IsNothing(rptGlmInvoiceParam.sGroupSeqList) Then
+            cmReport.Parameters("@sGroupSeqList").Value = rptGlmInvoiceParam.sGroupSeqList
+        Else
+            cmReport.Parameters("@sGroupSeqList").Value = "NULL"
+        End If
+        cmReport.Parameters("@nError").Direction = ParameterDirection.Output
+
+        log_report_parameters(sLocalReport, cmReport)
+
+        'SqlCommandBuilder.DeriveParameters(cmReport)
+        'Ejecuto el procedure y verifico por errores
         cmReport.ExecuteNonQuery()
-		
-		rptGlmInvoiceParam.nError = cmReport.Parameters("@nError").Value
-		If rptGlmInvoiceParam.nError <> 0 Then
-			MsgBox("An error ocurred while generating report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Error")
-			Exit Sub
-		End If
-		
-		'Verifico que se hayan cargado datos en RepData para este reporte
-		sStmt = "SELECT count(*) FROM rptGlmInvoice WHERE report_id = " & Str(nReport)
-		
+
+        rptGlmInvoiceParam.nError = cmReport.Parameters("@nError").Value
+        If rptGlmInvoiceParam.nError <> 0 Then
+            MsgBox("An error ocurred while generating report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+            Exit Sub
+        End If
+
+        'Verifico que se hayan cargado datos en RepData para este reporte
+        sStmt = "SELECT count(*) FROM rptGlmInvoice WHERE report_id = " & Str(nReport)
+
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Encontro registros
             Else
                 MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -625,29 +624,29 @@ ErrorHandler:
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
             Exit Sub
         End If
-		
-		sStmt = "SELECT * " & "FROM rptGlmInvoice " & "WHERE report_id = " & Str(nReport)
-		
-		sStmt = "SELECT report_id, cust_id, LTRIM(RTRIM(cust_name)), " & "report_start, report_end, store_no, location,  " & "invoice," & "savings, savings_percent, " & "savings_flat_fee, savings_invoice_fee," & "invoice_total ,amount_due, " & "sum_savings, sum_amount_due, " & "percent_value, store_name, store_city, state_id, store_number, " & "group_name, period_name, store_address, store_invoice_total, store_savings_invoice_fee, " & "store_savings_flat_fee, store_savings_percent, store_savings, store_amount_due, " & "glmrate_savings, sum_glmrate_savings, glm_total, sc, extc " & "FROM rptGlmInvoice " & "WHERE report_id = " & Str(nReport) & " ORDER BY store_no "
-		
-		
-		
-		sStmt = sStmt & sOrder
+
+        sStmt = "SELECT * " & "FROM rptGlmInvoice " & "WHERE report_id = " & Str(nReport)
+
+        sStmt = "SELECT report_id, cust_id, LTRIM(RTRIM(cust_name)), " & "report_start, report_end, store_no, location,  " & "invoice," & "savings, savings_percent, " & "savings_flat_fee, savings_invoice_fee," & "invoice_total ,amount_due, " & "sum_savings, sum_amount_due, " & "percent_value, store_name, store_city, state_id, store_number, " & "group_name, period_name, store_address, store_invoice_total, store_savings_invoice_fee, " & "store_savings_flat_fee, store_savings_percent, store_savings, store_amount_due, " & "glmrate_savings, sum_glmrate_savings, glm_total, sc, extc " & "FROM rptGlmInvoice " & "WHERE report_id = " & Str(nReport) & " ORDER BY store_no "
+
+
+
+        sStmt = sStmt & sOrder
 
         rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		'Cargo la plantilla de Crystal Reports con los datos
-		load_report()
-		Exit Sub
-		
-ErrorHandler: 
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		save_error(Me.Name, "show_report2")
-		
-	End Sub
+
+        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        'Cargo la plantilla de Crystal Reports con los datos
+        load_report()
+        Exit Sub
+
+ErrorHandler:
+        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        save_error(Me.Name, "show_report2")
+
+    End Sub
 	
 	Private Function load_report() As Boolean
 		Dim reportDb As CRPEAuto.Database
@@ -728,12 +727,13 @@ ErrorHandler:
 
 			sStmt = "DELETE FROM rptCriteriaDet WHERE id = " & Str(nInstanceNo)
 			
-			cm.CommandText = sStmt
+            cm.CommandText = sStmt
+            cm.Transaction = nTran
             nRecords = cm.ExecuteNonQuery()
             For row As Integer = 0 To gItplGridSelector.rsResult.Rows.Count - 1
                 sStmt = "INSERT INTO rptCriteriaDet (id, param_name, param_value, param_seq)" & _
-                        " VALUES(" & Str(nInstanceNo) & "," & "'" & PARAM_GROUP_SEQ & "'," & "'" & Trim(gItplGridSelector.rsResult.Rows(row).Item("Group").value) & "', " & _
-                        Str(gItplGridSelector.rsResult.Rows(row).Item("group_seq").value) & ")"
+                        " VALUES(" & Str(nInstanceNo) & "," & "'" & PARAM_GROUP_SEQ & "'," & "'" & Trim(gItplGridSelector.rsResult.Rows(row).Item("Group")) & "', " & _
+                        Str(gItplGridSelector.rsResult.Rows(row).Item("group_seq")) & ")"
 
                 cm.CommandText = sStmt
                 nRecords = cm.ExecuteNonQuery()
@@ -746,14 +746,15 @@ ErrorHandler:
 		Exit Sub
 		
 ErrorHandler: 
-
-        nTran.Rollback()
+        If Not IsNothing(nTran) Then
+            nTran.Rollback()
+        End If
 
         save_error(Me.Name, "cmdSelectValues")
         MsgBox("An unexpected error occurred when saving report Criteria." & vbCrLf & "Check logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-		
-		
-	End Sub
+
+
+    End Sub
 	
 	Private Sub frmRepGlmInvoice_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -772,15 +773,14 @@ ErrorHandler:
 		
 		lbStartDate.Text = ""
 		lbEndDate.Text = ""
-		'UPGRADE_WARNING: TextBox property txtReportCaption.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtReportCaption.Maxlength = 30 'customer.cust_report_name CHAR(30)
+        txtReportCaption.MaxLength = 30 'customer.cust_report_name CHAR(30)
 		
 		obPeriod.Checked = False
 		obRange.Checked = False
 		period_enable(False)
 		range_enable(False)
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		'Combo Customer
@@ -896,15 +896,15 @@ ErrorHandler:
 		Dim sGroupList As String
 
         If rs.Rows.Count > 0 Then
-            'sUseForCustomerBilling = rs("use_for_customer_billing").value
+            'sUseForCustomerBilling = rs("use_for_customer_billing")
 
             'If Trim(sUseForCustomerBilling) = "TRUE" Then
-            'If rs("group_seq").value > 0 Then 'Single Store Group
+            'If rs("group_seq") > 0 Then 'Single Store Group
             If groupSeq > 0 Then 'Single Store Group
 
                 If MsgBox("Another report was marked for Billing Customer, it will be replaced." & vbCrLf & "Do you want to proceed?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
 
-                    oldReportId = rs.Rows(0).Item("report_id").Value
+                    oldReportId = rs.Rows(0).Item("report_id")
 
                     save_glminvoice_report_criteria = update_glminvoice_report_criteria(custId, repNo, reportId, stateId, groupSeq, repTemplateName, reportCaption, isPeriodSeq, periodSeq, startDate, endDate, displayStoreWithInvoices, publishToWeb, webReportName, useForCustomerBilling, oldReportId, instanceNo, isFinalVersion)
                 Else
@@ -925,7 +925,7 @@ ErrorHandler:
                 For row As Integer = 0 To rs.Rows.Count - 1
                     'Get param details for this each instance found and check if
                     'list of group seq found matches current entry
-                    sStmt = " SELECT * FROM rptCriteriaDet a " & " WHERE a.param_name = 'group_seq' " & " AND id = " & Str(instanceNo) & " AND EXISTS ( SELECT * FROM rptCriteriaDet b " & "              WHERE id = " & Str(rs.Rows(row).Item("id").Value) & "              AND b.param_name = a.param_name " & "              AND b.param_seq = a.param_seq ) "
+                    sStmt = " SELECT * FROM rptCriteriaDet a " & " WHERE a.param_name = 'group_seq' " & " AND id = " & Str(instanceNo) & " AND EXISTS ( SELECT * FROM rptCriteriaDet b " & "              WHERE id = " & Str(rs.Rows(row).Item("id")) & "              AND b.param_name = a.param_name " & "              AND b.param_seq = a.param_seq ) "
 
                     rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 
@@ -936,12 +936,12 @@ ErrorHandler:
 
                             If MsgBox("Another report was Marked for Billing Customer, it will be replaced." & vbCrLf & "Do you want to proceed?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
                                 'UPGRADE_WARNING: Couldn't resolve default property of object result. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                                result = hasCustomerInvoice(custId, rs.Rows(row).Item("id").Value)
+                                result = hasCustomerInvoice(custId, rs.Rows(row).Item("id"))
                                 If result.str1 = "TRUE" Then
                                     MsgBox("Action aborted, existing report is bound to a Customer Invoice that must " & vbCrLf & "be removed before overriding this report." & vbCrLf & "Customer Invoice details:" & vbCrLf & result.str2, MsgBoxStyle.OkOnly, "GLM Warning")
 
                                 Else
-                                    oldReportId = rs.Rows(row).Item("report_id").Value
+                                    oldReportId = rs.Rows(row).Item("report_id")
 
                                     save_glminvoice_report_criteria = update_glminvoice_report_criteria(custId, repNo, reportId, stateId, groupSeq, repTemplateName, reportCaption, isPeriodSeq, periodSeq, startDate, endDate, displayStoreWithInvoices, publishToWeb, webReportName, useForCustomerBilling, oldReportId, instanceNo, isFinalVersion)
                                 End If
@@ -958,7 +958,7 @@ ErrorHandler:
 
                             sGroupList = ""
                             For arow As Integer = 0 To rsLocal.Rows.Count - 1
-                                sGroupList = sGroupList + rsLocal.Rows(arow).Item("param_value").value
+                                sGroupList = sGroupList + rsLocal.Rows(arow).Item("param_value")
                             Next arow
 
                             MsgBox("The following Store Group(s): " & vbCrLf & sGroupList & vbCrLf & "Were already billed with another report." & vbCrLf & "You have to remove them from your list.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
@@ -1043,7 +1043,7 @@ ErrorHandler:
         Dim bFound As Boolean
         Dim i As Short
         Dim j As Short
-        'UPGRADE_NOTE: size was upgraded to size_Renamed. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+
         Dim size_Renamed As Short
 
 
@@ -1056,8 +1056,8 @@ ErrorHandler:
 
         i = 0
         For row As Integer = 0 To rsResult.Rows.Count - 1
-            aGroups(i) = rsResult.Rows(row).Item("group_seq").Value
-            aGroupNames(i) = rsResult.Rows(row).Item("Group").Value
+            aGroups(i) = rsResult.Rows(row).Item("group_seq")
+            aGroupNames(i) = rsResult.Rows(row).Item("Group")
             i = i + 1
         Next row
         
@@ -1075,7 +1075,7 @@ ErrorHandler:
                     rs = getDataTable(sStmt) 'Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 
                     If rs.Rows.Count > 0 Then
-                        msg = "Duplicate store found " & Trim(rs.Rows(0).Item("store_number").value) & " defined in Groups:" & Trim(aGroupNames(i)) & " and " & Trim(aGroupNames(j)) & vbCrLf & "Remove one of these groups."
+                        msg = "Duplicate store found " & Trim(rs.Rows(0).Item("store_number")) & " defined in Groups:" & Trim(aGroupNames(i)) & " and " & Trim(aGroupNames(j)) & vbCrLf & "Remove one of these groups."
                         MsgBox(msg, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
                         bFound = True
                         validateStoreGroupList = False
@@ -1102,8 +1102,8 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If Not IsDBNull(rsLocal.Rows(0).Item(0).value) Then
-            countOfDetails = rsLocal.Rows(0).Item(0).value
+        If Not IsDBNull(rsLocal.Rows(0).Item(0)) Then
+            countOfDetails = rsLocal.Rows(0).Item(0)
         End If
 
 		

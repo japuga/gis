@@ -25,7 +25,7 @@ Module BusinessFunctions
                 sStmt = "UPDATE period " & " SET period_status_id = 'C' " & " WHERE cust_id ='" & sCustId & "' " & " AND period_seq = " & Str(nPeriodSeq)
                 cm.CommandText = sStmt
                 nRecords = cm.ExecuteNonQuery()
-                'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
                 If nRecords > 0 Then
                     close_period = True
                     MsgBox("Billing period has been closed.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")

@@ -29,16 +29,15 @@ Friend Class tplGridSelector
 	End Sub
 	'This functions looks for the originator validation function to
 	'validate result recordset data
-	'UPGRADE_NOTE: validate was upgraded to validate_Renamed. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-	Private Function validate_Renamed() As Boolean
-		
-		validate_Renamed = True
-		
-		If gItplGridSelector.sInvokeFromForm = "frmRepGlmInvoice" Then
-			validate_Renamed = frmRepGlmInvoice.validateStoreGroupList(rsRight)
-		End If
-		
-	End Function
+    Private Function validate_Renamed() As Boolean
+
+        validate_Renamed = True
+
+        If gItplGridSelector.sInvokeFromForm = "frmRepGlmInvoice" Then
+            validate_Renamed = frmRepGlmInvoice.validateStoreGroupList(rsRight)
+        End If
+
+    End Function
 	Private Sub cmdRight_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdRight.Click
 		move_right()
 	End Sub
