@@ -6,8 +6,6 @@ Friend Class frmReportReprint
     Private rsLocal As DataTable
     Private ImageList1 As New ImageList()
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepCostCont As CRPEAuto.Report
     'Private rsReport As sqldatareader
 	
 	
@@ -261,10 +259,6 @@ ErrorHandler:
 	'with data and it is forwarded to Crystal Reports
     Private Function load_report(ByRef sLocalReport As String, ByRef sReportTemplate As String, ByRef rsReport As SqlDataReader) As Boolean
 
-        Dim reportDb As CRPEAuto.Database
-        Dim reportTables As CRPEAuto.DatabaseTables
-        Dim reportTable As CRPEAuto.DatabaseTable
-        Dim reportPage As CRPEAuto.PageSetup
         Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -273,42 +267,40 @@ ErrorHandler:
         On Error GoTo ErrorHandler
 
 
-        'Open Crystal Reports app
-        crysApp = CreateObject("Crystal.CRPE.Application")
+        ''Open Crystal Reports app
+        'crysApp = CreateObject("Crystal.CRPE.Application")
 
-        sFile = get_template(sLocalReport, sReportTemplate)
-        If fileTmp.FileExists(sFile) Then
-            crysRepCostCont = crysApp.OpenReport(sFile)
-        Else
-            sFile = get_local_template(sLocalReport)
-            If fileTmp.FileExists(sFile) Then
-                crysRepCostCont = crysApp.OpenReport(sFile)
-            Else
-                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                Exit Function
-            End If
-        End If
-
-
-        'Assign printer selected by user
-        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        'crysRepCostCont.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-
-        reportDb = crysRepCostCont.Database
-        reportTables = reportDb.Tables
-        reportTable = reportTables.Item(1)
-        reportPage = crysRepCostCont.PageSetup
-
-        reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+        'sFile = get_template(sLocalReport, sReportTemplate)
+        'If fileTmp.FileExists(sFile) Then
+        '    crysRepCostCont = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        crysRepCostCont = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
+        'End If
 
 
-        reportTable.SetPrivateData(3, rsReport)
+        ''Assign printer selected by user
+        ''report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        ''UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        ''UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        ''UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        ''crysRepCostCont.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 
-        crysRepCostCont.ProgressDialogEnabled = True
-        crysRepCostCont.Preview()
+        'reportDb = crysRepCostCont.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        'reportPage = crysRepCostCont.PageSetup
+
+
+        'reportTable.SetPrivateData(3, rsReport)
+
+        'crysRepCostCont.ProgressDialogEnabled = True
+        'crysRepCostCont.Preview()
 
         Exit Function
 
@@ -320,10 +312,6 @@ ErrorHandler:
     'with data and it is forwarded to Crystal Reports
     Private Function load_report(ByRef sLocalReport As String, ByRef sReportTemplate As String, ByRef rsReport As DataTable) As Boolean
 
-        Dim reportDb As CRPEAuto.Database
-        Dim reportTables As CRPEAuto.DatabaseTables
-        Dim reportTable As CRPEAuto.DatabaseTable
-        Dim reportPage As CRPEAuto.PageSetup
         Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -333,20 +321,20 @@ ErrorHandler:
 
 
         'Open Crystal Reports app
-        crysApp = CreateObject("Crystal.CRPE.Application")
+        'crysApp = CreateObject("Crystal.CRPE.Application")
 
-        sFile = get_template(sLocalReport, sReportTemplate)
-        If fileTmp.FileExists(sFile) Then
-            crysRepCostCont = crysApp.OpenReport(sFile)
-        Else
-            sFile = get_local_template(sLocalReport)
-            If fileTmp.FileExists(sFile) Then
-                crysRepCostCont = crysApp.OpenReport(sFile)
-            Else
-                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                Exit Function
-            End If
-        End If
+        'sFile = get_template(sLocalReport, sReportTemplate)
+        'If fileTmp.FileExists(sFile) Then
+        '    crysRepCostCont = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        crysRepCostCont = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
+        'End If
 
 
         'Assign printer selected by user
@@ -356,18 +344,16 @@ ErrorHandler:
         'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepCostCont.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 
-        reportDb = crysRepCostCont.Database
-        reportTables = reportDb.Tables
-        reportTable = reportTables.Item(1)
-        reportPage = crysRepCostCont.PageSetup
-
-        reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+        'reportDb = crysRepCostCont.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        'reportPage = crysRepCostCont.PageSetup
 
 
-        reportTable.SetPrivateData(3, rsReport)
+        'reportTable.SetPrivateData(3, rsReport)
 
-        crysRepCostCont.ProgressDialogEnabled = True
-        crysRepCostCont.Preview()
+        'crysRepCostCont.ProgressDialogEnabled = True
+        'crysRepCostCont.Preview()
 
         Exit Function
 

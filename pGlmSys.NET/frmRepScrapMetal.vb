@@ -24,8 +24,6 @@ Friend Class frmRepScrapMetal
 	Private rptScrapMetalParam As rptScrapMetalParamUDT
     Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepRecycleTon As CRPEAuto.Report
     Private rsReport As DataTable
 	Private sWhere As String
 	
@@ -531,63 +529,50 @@ ErrorHandler:
     End Sub
 	
 	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
-		Dim sFile As String 'Path de la plantilla del reporte
+        Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		'On Error GoTo ErrorHandler
-		
-		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptScrapMetal.rpt"
-		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
-			crysRepRecycleTon = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRepRecycleTon = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+        'On Error GoTo ErrorHandler
+
+        'Abro el archivo con el reporte
+
+        'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptScrapMetal.rpt"
+        sFile = get_template(sLocalReport, cbReportTemplate.Text)
+
+        If fileTmp.FileExists(sFile) Then
+            'crysRepRecycleTon = crysApp.OpenReport(sFile)
+        Else
+            sFile = get_local_template(sLocalReport)
+            If fileTmp.FileExists(sFile) Then
+                'crysRepRecycleTon = crysApp.OpenReport(sFile)
+            Else
+                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                Exit Function
+            End If
+
+        End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepRecycleTon.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRepRecycleTon.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepRecycleTon.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		'crysRepRecycleTon.DialogParentWindow = Me
-		crysRepRecycleTon.ProgressDialogEnabled = True
-		crysRepRecycleTon.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
-	End Function
+
+        'reportTable.SetPrivateData 3, AdoRs
+        'reportTable.SetPrivateData(3, rsReport)
+
+        'cd.CancelError = True
+        'cd.ShowPrinter
+        'crysRepRecycleTon.DialogParentWindow = Me
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
+    End Function
 	
 	
 	Private Sub frmRepScrapMetal_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load

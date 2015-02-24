@@ -22,8 +22,6 @@ Friend Class frmRepInvoiceTracking
 	Private rptInvoiceTrackingParam As rptInvoiceTrackingParamUDT
     Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepInvoiceTracking As CRPEAuto.Report
     Private rsReport As DataTable
 	
 	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -299,10 +297,6 @@ ErrorHandler:
 	End Sub
 	
     Private Function load_report(ByRef dstReport As DataTable) As Boolean
-        'Dim reportDb As CRPEAuto.Database
-        'Dim reportTables As CRPEAuto.DatabaseTables
-        'Dim reportTable As CRPEAuto.DatabaseTable
-        'Dim reportPage As CRPEAuto.PageSetup
         Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -355,8 +349,6 @@ ErrorHandler:
         'reportTables = reportDb.Tables
         'reportTable = reportTables.Item(1)
         'reportPage = crysRepInvoiceTracking.PageSetup
-
-        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
 
         ''reportTable.SetPrivateData 3, AdoRs
         'reportTable.SetPrivateData(3, rsReport)

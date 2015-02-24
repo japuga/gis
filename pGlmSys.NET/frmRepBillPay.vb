@@ -21,8 +21,6 @@ Friend Class frmRepBillPay
 	Private rptBillPayParam As rptBillPayParamUDT
     Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepBillPay As CRPEAuto.Report
     Private rsReport As DataTable
 	
     Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged

@@ -24,8 +24,6 @@ Friend Class frmRepGlmInvoice
 	Private nInstanceNo As Integer
 	
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepGlmInvoice As CRPEAuto.Report
     Private rsReport As DataTable
 
 	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
@@ -649,10 +647,7 @@ ErrorHandler:
     End Sub
 	
 	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
+		
 		Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
 		Dim fileTmp As Scripting.FileSystemObject
@@ -661,16 +656,16 @@ ErrorHandler:
 		'On Error GoTo ErrorHandler
 		
 		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
+
 		
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptGlmInvoice.rpt"
 		sFile = get_template(sLocalReport, cbReportTemplate.Text)
 		If fileTmp.FileExists(sFile) Then
-			crysRepGlmInvoice = crysApp.OpenReport(sFile)
+            'crysRepGlmInvoice = crysApp.OpenReport(sFile)
 		Else
 			sFile = get_local_template(sLocalReport)
 			If fileTmp.FileExists(sFile) Then
-				crysRepGlmInvoice = crysApp.OpenReport(sFile)
+                'crysRepGlmInvoice = crysApp.OpenReport(sFile)
 			Else
 				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
 				Exit Function
@@ -685,21 +680,13 @@ ErrorHandler:
 		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepGlmInvoice.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 		
-		reportDb = crysRepGlmInvoice.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepGlmInvoice.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
 		
 		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
+        'reportTable.SetPrivateData(3, rsReport)
 		
 		'cd.CancelError = True
 		'cd.ShowPrinter
-		
-		crysRepGlmInvoice.ProgressDialogEnabled = True
-		crysRepGlmInvoice.Preview()
 		
 		'ErrorHandler:
 		'If Err.Number = cdlCancel Then

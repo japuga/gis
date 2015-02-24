@@ -29,8 +29,7 @@ Friend Class frmRepCostContSearch
     Private rsLocal As DataTable
     Private cmdLocal As SqlCommand
 	'--------Crystal Reports-----------------
-    'Public crysApp As CRPEAuto.Application
-    'Public crysRepCostCont As CRPEAuto.Report
+
     Private rsReport As DataTable
 	
 	
@@ -824,10 +823,6 @@ ErrorHandler:
     'Private Function load_report(ByVal dstReport As DataTable) As Boolean
     Private Function load_report(ByVal dstReport As DataTable) As Boolean
 
-        'Dim reportDb As CRPEAuto.Database
-        'Dim reportTables As CRPEAuto.DatabaseTables
-        'Dim reportTable As CRPEAuto.DatabaseTable
-        'Dim reportPage As CRPEAuto.PageSetup
         'Dim sFile As String 'Path de la plantilla del reporte
         ' sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -906,8 +901,6 @@ ErrorHandler:
         'reportTables = reportDb.Tables
         'reportTable = reportTables.Item(1)
         'reportPage = crysRepCostCont.PageSetup
-
-        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
 
 
         'Set DataGrid1.DataSource = rsReport

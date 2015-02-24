@@ -36,8 +36,6 @@ Friend Class frmCheckBatch
 	End Structure
 	Private rptBatchCheckSummaryParam As rptBatchCheckSummaryParamUDT
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRep As CRPEAuto.Report
     Private rsReport As DataTable
 	
 	
@@ -1735,10 +1733,7 @@ ErrorHandler:
 	End Sub
 	
 	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
+
 		Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
 		Dim fileTmp As Scripting.FileSystemObject
@@ -1747,21 +1742,17 @@ ErrorHandler:
 		'On Error GoTo ErrorHandler
 		
 		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
-		
-		
+
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptGlmInvoice.rpt"
 		sFile = get_template(sLocalReport, sLocalVersion)
 		If fileTmp.FileExists(sFile) Then
-			crysRep = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-				crysRep = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
+        Else
+            sFile = get_local_template(sLocalReport)
+            If fileTmp.FileExists(sFile) Then
+            Else
+                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                Exit Function
+            End If
 			
 		End If
 		
@@ -1771,23 +1762,15 @@ ErrorHandler:
 		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
 		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRep.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		reportDb = crysRep.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRep.PageSetup
-		
-		reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crPortrait
-		
-		
+
 		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
+        'reportTable.SetPrivateData(3, rsReport)
 		
 		'cd.CancelError = True
 		'cd.ShowPrinter
 		
-		crysRep.ProgressDialogEnabled = True
-		crysRep.Preview()
+        'crysRep.ProgressDialogEnabled = True
+        'crysRep.Preview()
 		
 		'ErrorHandler:
 		'If Err.Number = cdlCancel Then

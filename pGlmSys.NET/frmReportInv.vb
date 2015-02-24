@@ -26,9 +26,6 @@ Friend Class frmReportInv
 	Private rdData As ReportData
 	Private nIndex As Short
 	'--------Crystal Reports-----------------
-	Public app1 As CRPEAuto.Application
-	'UPGRADE_NOTE: report was upgraded to report_Renamed. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-	Public report_Renamed As CRPEAuto.Report
     Private rsReport As DataTable
 	
 	'UPGRADE_WARNING: Event cbCustomer.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -126,9 +123,9 @@ Friend Class frmReportInv
 	Private Sub frmReportInv_FormClosed(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
 		gReport.static_Renamed = True
 		'UPGRADE_NOTE: Object report_Renamed may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		report_Renamed = Nothing
+        'report_Renamed = Nothing
 		'UPGRADE_NOTE: Object app1 may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		app1 = Nothing
+        'app1 = Nothing
 		
 	End Sub
 	
@@ -591,69 +588,58 @@ ErrorHandler:
 	'con los datos de Repdata y lo paso al reporte de Crystal Reports
 	'Actualizado: Mar-30-2002
 	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
         Dim sFile As String = "" 'Path de la plantilla del reporte
         Dim sReportTemplate As String = "" 'Nombre de plantilla de reporte
-		Dim fileTmp As Scripting.FileSystemObject
-		fileTmp = New Scripting.FileSystemObject
-		
-		
-		'ADO
-		'Set cn = New ADODB.Connection
+        Dim fileTmp As Scripting.FileSystemObject
+        fileTmp = New Scripting.FileSystemObject
+
+
+        'ADO
+        'Set cn = New ADODB.Connection
         'Set AdoRs = nothing
         'Set rsReport = nothing
-		'cn.Provider = "SQLOLEDB"
-		'cn.ConnectionString = "User Id=sa;Password=sa;" + _
-		''    "Initial Catalog=glm;Data Source=jpuentelap1;"
-		'cn.Open
-		'AdoRs.Open "select store_id as id, state_id as store, " + _
-		''    "store_address as address , store_city as city  " + _
-		''    "from store", cn
-		
-		'AdoRs.Open "select store_id, store_name,store_address," + _
-		'"store_city from store", cn
-		'MsgBox AdoRs(2)
-		
-		
-		'Abro el archivo con el reporte
-		app1 = CreateObject("Crystal.CRPE.Application")
-		
-		Select Case Trim(cbVersion.Text)
-			Case "BRANCH"
-				sFile = "c:\glm\Reports\rptInvoice5.rpt"
-				'Set report = app1.OpenReport("c:\glm\Reports\rptInvoice5.rpt")
-				'Set report = app1.OpenReport("d:\glm\tmp\rptPrueba2.rpt")
-			Case "LIST"
-				'Set report = app1.OpenReport("c:\glm\Visual Basic\GLM-System\Reports\rptInvList.rpt")
-				
-				sReportTemplate = "rptInvList.rpt"
-				sFile = Trim(My.Application.Info.DirectoryPath) & "\" & sReportTemplate
-				sFile = "c:\glm\rptInvList.rpt"
-				'MsgBox "Looking for file:" + sFile
-		End Select
-		
-		If fileTmp.FileExists(sFile) Then
-			report_Renamed = app1.OpenReport(sFile)
-		Else
-			MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-			Exit Function
-		End If
-		
-		
-		
-		reportDb = report_Renamed.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		'reportTable.SetPrivateData 3, AdoRs
-		
-		
-		reportTable.SetPrivateData(3, rsReport)
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		
-		report_Renamed.Preview()
-	End Function
+        'cn.Provider = "SQLOLEDB"
+        'cn.ConnectionString = "User Id=sa;Password=sa;" + _
+        ''    "Initial Catalog=glm;Data Source=jpuentelap1;"
+        'cn.Open
+        'AdoRs.Open "select store_id as id, state_id as store, " + _
+        ''    "store_address as address , store_city as city  " + _
+        ''    "from store", cn
+
+        'AdoRs.Open "select store_id, store_name,store_address," + _
+        '"store_city from store", cn
+        'MsgBox AdoRs(2)
+
+
+        'Abro el archivo con el reporte
+        'app1 = CreateObject("Crystal.CRPE.Application")
+
+        Select Case Trim(cbVersion.Text)
+            Case "BRANCH"
+                sFile = "c:\glm\Reports\rptInvoice5.rpt"
+                'Set report = app1.OpenReport("c:\glm\Reports\rptInvoice5.rpt")
+                'Set report = app1.OpenReport("d:\glm\tmp\rptPrueba2.rpt")
+            Case "LIST"
+                'Set report = app1.OpenReport("c:\glm\Visual Basic\GLM-System\Reports\rptInvList.rpt")
+
+                sReportTemplate = "rptInvList.rpt"
+                sFile = Trim(My.Application.Info.DirectoryPath) & "\" & sReportTemplate
+                sFile = "c:\glm\rptInvList.rpt"
+                'MsgBox "Looking for file:" + sFile
+        End Select
+
+        If fileTmp.FileExists(sFile) Then
+            'report_Renamed = app1.OpenReport(sFile)
+        Else
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Function
+        End If
+
+        'reportTable.SetPrivateData(3, rsReport)
+        ''report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+
+        'report_Renamed.Preview()
+    End Function
 	'Mayo-12/2002
 	'Usa el recordset rsReport para cargar datos en hoja de Excel y
 	'formatear para impresion

@@ -23,23 +23,20 @@ Friend Class frmRepRecycleTon
 	Private rptRecycleTonParam As rptRecycleTonParamUDT
     Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepRecycleTon As CRPEAuto.Report
-	Private rsReport As ADODB.Recordset
+    Private rsReport As DataTable
 	Private sWhere As String
 	
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		If cbCustName.SelectedIndex >= 0 Then
-			cbCustId.SelectedIndex = cbCustName.SelectedIndex
-			load_groups(cbCustId.Text)
-			load_period2(cbPeriodName, cbCustId.Text)
-			load_period2(cbPeriodStart, cbCustId.Text)
-			load_period2(cbPeriodEnd, cbCustId.Text)
-		End If
-		
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        If cbCustName.SelectedIndex >= 0 Then
+            cbCustId.SelectedIndex = cbCustName.SelectedIndex
+            load_groups(cbCustId.Text)
+            load_period2(cbPeriodName, cbCustId.Text)
+            load_period2(cbPeriodStart, cbCustId.Text)
+            load_period2(cbPeriodEnd, cbCustId.Text)
+        End If
+
+    End Sub
 	'Carga el combo de grupos
 	Private Sub load_groups(ByRef sCustId As String)
 		
@@ -514,10 +511,10 @@ ErrorHandler:
 
         End If
 
-        If rsReport.State = ADODB.ObjectStateEnum.adStateOpen Then
-            rsReport.Close()
-        End If
-        rsReport.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        'If rsReport.State = ADODB.ObjectStateEnum.adStateOpen Then
+        '    rsReport.Close()
+        'End If
+        rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If gbDebug Then
             'DataGrid1.Visible = True
@@ -541,10 +538,7 @@ ErrorHandler:
     End Sub
 	
 	Private Function load_report() As Boolean
-		Dim reportDb As CRPEAuto.Database
-		Dim reportTables As CRPEAuto.DatabaseTables
-		Dim reportTable As CRPEAuto.DatabaseTable
-		Dim reportPage As CRPEAuto.PageSetup
+
 		Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
 		Dim fileTmp As Scripting.FileSystemObject
@@ -553,17 +547,17 @@ ErrorHandler:
 		'On Error GoTo ErrorHandler
 		
 		'Abro el archivo con el reporte
-		crysApp = CreateObject("Crystal.CRPE.Application")
+        'crysApp = CreateObject("Crystal.CRPE.Application")
 		
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptRecycleTon.rpt"
 		sFile = get_template(sLocalReport, cbReportTemplate.Text)
 		
 		If fileTmp.FileExists(sFile) Then
-			crysRepRecycleTon = crysApp.OpenReport(sFile)
+            'crysRepRecycleTon = crysApp.OpenReport(sFile)
 		Else
 			sFile = get_local_template(sLocalReport)
 			If fileTmp.FileExists(sFile) Then
-				crysRepRecycleTon = crysApp.OpenReport(sFile)
+                'crysRepRecycleTon = crysApp.OpenReport(sFile)
 			Else
 				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
 				Exit Function
@@ -573,30 +567,22 @@ ErrorHandler:
 		
 		'Asignar impresora seleccionada por usuario.
 		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepRecycleTon.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 		
-		reportDb = crysRepRecycleTon.Database
-		reportTables = reportDb.Tables
-		reportTable = reportTables.Item(1)
-		reportPage = crysRepRecycleTon.PageSetup
-		
 		If obDetail.Checked Then
-			reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
 		ElseIf obSummary.Checked Then 
-			reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crPortrait
+
 		End If
 		
 		'reportTable.SetPrivateData 3, AdoRs
-		reportTable.SetPrivateData(3, rsReport)
+        'reportTable.SetPrivateData(3, rsReport)
 		
 		'cd.CancelError = True
 		'cd.ShowPrinter
 		'crysRepRecycleTon.DialogParentWindow = Me
-		crysRepRecycleTon.ProgressDialogEnabled = True
-		crysRepRecycleTon.Preview()
+        'crysRepRecycleTon.ProgressDialogEnabled = True
+        'crysRepRecycleTon.Preview()
 		
 		'ErrorHandler:
 		'If Err.Number = cdlCancel Then
