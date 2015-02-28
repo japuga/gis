@@ -827,14 +827,14 @@ ErrorHandler:
         ' sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
-
+        'MsgBox("About to load report: " & vbCrLf & strReportsSysPath & vbCrLf & "Report name: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Info")
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
             rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
         Catch ex As Exception
             MsgBox("Err: " & ex.Message & vbCrLf & "Please install: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
-
+        'MsgBox("Report loaded OK so far after try.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Info")
         rptDoc.SetDataSource(dstReport)
 
         frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc

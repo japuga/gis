@@ -1106,6 +1106,10 @@
     <Compile Include="General.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1662,6 +1666,7 @@
       <DependentUpon>tplGridSelector2.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagram2.cd" />
     <None Include="DRINVOICEREP.dsr" />
@@ -1673,6 +1678,10 @@
     <None Include="_UpgradeReport.htm">
       <SubType>Preview</SubType>
     </None>
+    <Content Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </Content>
     <Content Include="pGlmSys.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -2022,8 +2022,6 @@ ErrorHandler:
 
         'Guarda error en variables globales
         cache_error()
-
-
         sError = "*************************************" & vbCrLf & "Date:     " & CStr(Now) & vbCrLf & _
                 "Form:     " & sForm & vbCrLf & "Function: " & sFunction & vbCrLf & "Error:    " & Str(Err.Number) & vbCrLf & _
                 "Desc:     " & Err.Description & vbCrLf & "Source:   " & Err.Source & vbCrLf & "*************************************"
