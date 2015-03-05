@@ -69,22 +69,14 @@ Friend Class frmRepUniversal
 	End Structure
 	Private rptUniversalParam As rptUniversalParamUDT
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepUniversal As CRPEAuto.Report
 	
-	
-	
-	
-	
-	
-	'UPGRADE_WARNING: Event cbWithoutEqpt.CheckStateChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbWithoutEqpt_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbWithoutEqpt.CheckStateChanged
-		If cbWithoutEqpt.CheckState = System.Windows.Forms.CheckState.Checked Then
-			cbInvoiceEqpt.Enabled = True
-		Else
-			cbInvoiceEqpt.Enabled = False
-		End If
-	End Sub
+    Private Sub cbWithoutEqpt_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbWithoutEqpt.CheckStateChanged
+        If cbWithoutEqpt.CheckState = System.Windows.Forms.CheckState.Checked Then
+            cbInvoiceEqpt.Enabled = True
+        Else
+            cbInvoiceEqpt.Enabled = False
+        End If
+    End Sub
 	
 	Private Sub cmdAllLeftContent_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdAllLeftContent.Click
 		'sSort = "content_type, content_desc"
@@ -1940,10 +1932,7 @@ ErrorHandler:
     End Sub
 	
     Private Function load_report(ByRef dstReport As DataTable) As Boolean
-        Dim reportDb As CRPEAuto.Database
-        Dim reportTables As CRPEAuto.DatabaseTables
-        Dim reportTable As CRPEAuto.DatabaseTable
-        Dim reportPage As CRPEAuto.PageSetup
+       
         Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -1972,20 +1961,14 @@ ErrorHandler:
         frmRepUniversalViewer.CrystalReportViewer1.Show()
         frmRepUniversalViewer.Show()
 
-
-
-
-
-        crysApp = CreateObject("Crystal.CRPE.Application")
-
         'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
         sFile = get_template(sLocalReport, cbReportTemplate.Text)
         If fileTmp.FileExists(sFile) Then
-            crysRepUniversal = crysApp.OpenReport(sFile)
+            'crysRepUniversal = crysApp.OpenReport(sFile)
         Else
             sFile = get_local_template(sLocalReport)
             If fileTmp.FileExists(sFile) Then
-                crysRepUniversal = crysApp.OpenReport(sFile)
+                'crysRepUniversal = crysApp.OpenReport(sFile)
             Else
                 MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                 Exit Function
@@ -2000,21 +1983,11 @@ ErrorHandler:
         'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepUniversal.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 
-        reportDb = crysRepUniversal.Database
-        reportTables = reportDb.Tables
-        reportTable = reportTables.Item(1)
-        reportPage = crysRepUniversal.PageSetup
-
-        reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
-
-        'reportTable.SetPrivateData 3, AdoRs
-        reportTable.SetPrivateData(3, rsReport)
-
         'cd.CancelError = True
         'cd.ShowPrinter
         '
         'crysRepUniversal.ProgressDialogEnabled = True
-        crysRepUniversal.Preview()
+        'crysRepUniversal.Preview()
 
         'ErrorHandler:
         'If Err.Number = cdlCancel Then

@@ -533,12 +533,9 @@ ErrorHandler:
     'con los datos de Repdata y lo paso al reporte de Crystal Reports
     Private Function load_report() As Boolean
         Dim rsReport As Object = New Object()
-        Dim app1 As CRPEAuto.Application
+
         'UPGRADE_NOTE: report was upgraded to report_Renamed. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-        Dim report_Renamed As CRPEAuto.Report
-        Dim reportDb As CRPEAuto.Database
-        Dim reportTables As CRPEAuto.DatabaseTables
-        Dim reportTable As CRPEAuto.DatabaseTable
+
         MsgBox("load_report")
         'ADO
         'Set cn = New ADODB.Connection
@@ -555,15 +552,15 @@ ErrorHandler:
         'MsgBox AdoRs(2)
 
         'Abro el archivo con el reporte
-        app1 = CreateObject("Crystal.CRPE.Application")
-        report_Renamed = app1.OpenReport("d:\glm\Reports\rptInvoice.rpt")
+        'app1 = CreateObject("Crystal.CRPE.Application")
+        'report_Renamed = app1.OpenReport("d:\glm\Reports\rptInvoice.rpt")
 
-        reportDb = report_Renamed.Database
-        reportTables = reportDb.Tables
-        reportTable = reportTables.Item(1)
-        'reportTable.SetPrivateData 3, AdoRS
-        reportTable.SetPrivateData(3, rsReport)
-        report_Renamed.Preview()
+        'reportDb = report_Renamed.Database
+        'reportTables = reportDb.Tables
+        'reportTable = reportTables.Item(1)
+        ''reportTable.SetPrivateData 3, AdoRS
+        'reportTable.SetPrivateData(3, rsReport)
+        'report_Renamed.Preview()
 
     End Function
     'Parametros

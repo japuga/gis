@@ -10,8 +10,6 @@ Friend Class frmRepRecycleTonGen
 	Private sLocalReport As String
     Private rsLocal As DataTable
 	'--------Crystal Reports-----------------
-	Public crysApp As CRPEAuto.Application
-	Public crysRepRecycleTon As CRPEAuto.Report
     Private rsReport As DataTable
 	Private sWhere As String
 	
@@ -164,10 +162,6 @@ ErrorHandler:
 		'Next
 	End Sub
     Private Function load_report(ByVal dstReport As DataTable) As Boolean
-        'Dim reportDb As CRPEAuto.Database
-        'Dim reportTables As CRPEAuto.DatabaseTables
-        'Dim reportTable As CRPEAuto.DatabaseTable
-        'Dim reportPage As CRPEAuto.PageSetup
         'Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
@@ -227,7 +221,7 @@ ErrorHandler:
         'reportPage = crysRepRecycleTon.PageSetup
 
 
-        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
+
 
         ''reportTable.SetPrivateData 3, AdoRs
         'reportTable.SetPrivateData(3, rsReport)

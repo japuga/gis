@@ -29,8 +29,7 @@ Friend Class frmRepCostContSearch
     Private rsLocal As DataTable
     Private cmdLocal As SqlCommand
 	'--------Crystal Reports-----------------
-    'Public crysApp As CRPEAuto.Application
-    'Public crysRepCostCont As CRPEAuto.Report
+
     Private rsReport As DataTable
 	
 	
@@ -824,22 +823,18 @@ ErrorHandler:
     'Private Function load_report(ByVal dstReport As DataTable) As Boolean
     Private Function load_report(ByVal dstReport As DataTable) As Boolean
 
-        'Dim reportDb As CRPEAuto.Database
-        'Dim reportTables As CRPEAuto.DatabaseTables
-        'Dim reportTable As CRPEAuto.DatabaseTable
-        'Dim reportPage As CRPEAuto.PageSetup
         'Dim sFile As String 'Path de la plantilla del reporte
         ' sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
-
+        'MsgBox("About to load report: " & vbCrLf & strReportsSysPath & vbCrLf & "Report name: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Info")
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
             rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
         Catch ex As Exception
             MsgBox("Err: " & ex.Message & vbCrLf & "Please install: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
-
+        'MsgBox("Report loaded OK so far after try.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Info")
         rptDoc.SetDataSource(dstReport)
 
         frmRepCostContSearchViewer.CrystalReportViewer1.ReportSource = rptDoc
@@ -906,8 +901,6 @@ ErrorHandler:
         'reportTables = reportDb.Tables
         'reportTable = reportTables.Item(1)
         'reportPage = crysRepCostCont.PageSetup
-
-        'reportPage.PaperOrientation = CRPEAuto.CRPaperOrientation.crLandscape
 
 
         'Set DataGrid1.DataSource = rsReport
