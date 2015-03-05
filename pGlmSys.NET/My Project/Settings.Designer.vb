@@ -53,6 +53,24 @@ Namespace My
                 Return defaultInstance
             End Get
         End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("CC_DESKTOP2\CCDESKTOP")>  _
+        Public ReadOnly Property dbChris() As String
+            Get
+                Return CType(Me("dbChris"),String)
+            End Get
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("rpt1\rpt1sql")>  _
+        Public ReadOnly Property dbJavier() As String
+            Get
+                Return CType(Me("dbJavier"),String)
+            End Get
+        End Property
     End Class
 End Namespace
 
