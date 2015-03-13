@@ -64,24 +64,30 @@ Friend Class frmAccess
                           "Persist Security Info=True;" & _
                           "Connection Timeout = 30"
 
-            MsgBox(My.Computer.Name)
+            'Usar valor del combo-box
             'si esta es la compu de christian (drive E) utiliza esta base de datos
-            If ((OSdriveLetter(0) = "E") Or (OSdriveLetter(0) = "e")) Then
-                'sStr = "Data Source=" & cbServername.Text CC_DESKTOP2\CCDESKTOP  ;" & _
-                sStr = "Data Source=" & My.Settings.dbChris & ";" & _
-                                 "Initial Catalog=GLM;" & _
-                                 "Persist Security Info=True;" & _
-                                 "MultipleActiveResultSets=True;" & _
-                                 "User ID=" & Trim(txtUser.Text) & ";" & _
-                                 "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
-            Else 'si esta es la compu de javier
-                'sStr = "Data Source="& rpt1\rpt1sql  ;" & _
-                sStr = "Data Source=" & My.Settings.dbChris & ";" & _
-                                 "Initial Catalog=GLM;" & _
-                                 "Persist Security Info=True;" & _
-                                 "User ID=" & Trim(txtUser.Text) & ";" & _
-                                 "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
-            End If
+            'If ((OSdriveLetter(0) = "E") Or (OSdriveLetter(0) = "e")) Then
+            'sStr = "Data Source=" & cbServername.Text CC_DESKTOP2\CCDESKTOP  ;" & _
+            'sStr = "Data Source=" & My.Settings.dbChris & ";" & _
+            '                "Initial Catalog=GLM;" & _
+            '               "Persist Security Info=True;" & _
+            '              "MultipleActiveResultSets=True;" & _
+            '             "User ID=" & Trim(txtUser.Text) & ";" & _
+            '            "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
+            'Else 'si esta es la compu de javier
+            'sStr = "Data Source="& rpt1\rpt1sql  ;" & _
+            'sStr = "Data Source=" & My.Settings.dbChris & ";" & _
+            '                 "Initial Catalog=GLM;" & _
+            '                 "Persist Security Info=True;" & _
+            '                "User ID=" & Trim(txtUser.Text) & ";" & _
+            '                "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
+            'End If
+            sStr = "Data Source=" & cbServername.SelectedItem & ";" & _
+                 "Initial Catalog=GLM;" & _
+                 "Persist Security Info=True;" & _
+                 "User ID=" & Trim(txtUser.Text) & ";" & _
+                 "Password=" & Trim(txtPassword.Text) & ";" & "Connection Timeout = 300"
+
             cn.ConnectionString = sStr
             'cn.ConnectionTimeout = 300
 
@@ -92,7 +98,7 @@ Friend Class frmAccess
             nFrom = nFrom + Len("Password=")
 
             'sStr = Replace(sStr, Mid(sStr, nFrom, nTo - nFrom), "***")
-
+            MsgBox(sStr)
             write_msg("frmAccess.cmdOk", sStr)
 
 
@@ -191,11 +197,17 @@ ErrorHandler:
 	End Sub
 	'Servidor de base de datos por defecto
     Private Sub SetDBServer()
-        cbServername.Items.Add("CC_DESKTOP2\CCDESKTOP")
+        For i As Integer = 0 To My.Settings.dbServers.Count - 1
+            cbServername.Items.Insert(i, My.Settings.dbServers.Item(i))
+
+        Next
+        'cbServername.Items.Add("CC_DESKTOP2\CCDESKTOP")
         'cbServername.Items.Insert(0, "sql01")
         'cbServername.Items.Insert(1, "glmsql")
         'cbServername.Items.Insert(2, "fs1")
-        cbServername.SelectedIndex = 0
+
+
+        'cbServername.SelectedIndex = 0
 
     End Sub
 	'Lee archivo de configuracion para cargar SqlServer
@@ -268,9 +280,9 @@ ErrorHandler:
 			SetDBServer()
 		End If
 		
-		If cbServername.Items.Count > 0 Then
-			cbServername.SelectedIndex = 0
-		End If
+        If cbServername.Items.Count > 0 Then
+            cbServername.SelectedIndex = 0
+        End If
 		Exit Sub
 		
 ErrorHandler: 
@@ -307,4 +319,8 @@ ErrorHandler:
 			eventArgs.Handled = True
 		End If
 	End Sub
+
+    Private Sub cbServername_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbServername.SelectedIndexChanged
+
+    End Sub
 End Class
