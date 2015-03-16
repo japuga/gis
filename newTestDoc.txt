@@ -1,9 +1,0 @@
-newTestDoc . txt
-
-for(a)
-    lines 1111
-next
-
-2
-
-sdf
