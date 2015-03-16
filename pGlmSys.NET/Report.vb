@@ -615,7 +615,7 @@ ErrorHandler:
         
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
-        get_local_template = rs.Rows(0).Item("rep_template_file").Value
+        get_local_template = rs.Rows(0).Item("rep_template_file")
         write_error("Warning: Using LOCAL report file instead.", sLogfile)
         Exit Function
 
@@ -767,10 +767,14 @@ ErrorHandler:
 
         nRecords = 0
 
-        sStmt = "INSERT INTO RptCriteriaGlmInvoice (cust_id, rep_no, report_id," & "state_id, group_seq, rep_template_name, report_caption, " & "is_period_seq, period_seq, start_date, end_date, " & "display_store_with_invoices, publish_to_web, web_report_name, " & "use_for_customer_billing, id, is_final_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?)"
+        sStmt = "INSERT INTO RptCriteriaGlmInvoice (cust_id, rep_no, report_id," & "state_id, group_seq, rep_template_name, report_caption, " & "is_period_seq, period_seq, start_date, end_date, " & "display_store_with_invoices, publish_to_web, web_report_name, " & _
+        "use_for_customer_billing, id, is_final_version)" & _
+        " VALUES (@cust_id, @rep_no, @report_id, @state_id, @group_seq, @rep_template_name, @report_caption, @is_period_seq, @period_seq, @start_date, @end_date, @display_store_with_invoices, @publish_to_web, @web_report_name, @use_for_customer_billing , @id, @is_final_version)"
+
+        '" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?)"
         cm = cn.CreateCommand()
-        cm.Parameters(0).Direction = ParameterDirection.Input
-        cm.Parameters(0).Direction = ParameterDirection.Output
+        'cm.Parameters(0).Direction = ParameterDirection.Input
+        'cm.Parameters(0).Direction = ParameterDirection.Output
         
         create_param("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(custId), cm, 2)
         create_param("rep_no", SqlDbType.Int, ParameterDirection.Input, repNo, cm)
