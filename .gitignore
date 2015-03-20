@@ -14,6 +14,8 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+#Project binary files
+/pGlmSys.NET/bin/
 # =========================
 # Operating System Files
 # =========================
