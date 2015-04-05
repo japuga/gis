@@ -46,21 +46,26 @@ Friend Class frmCustInvGen
 	
 	
 	
-	Private Sub cmdBuildDoc_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdBuildDoc.Click
-		If existInvoice((cbCustId.Text), VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), VB6.GetItemData(cbGroupStore, cbGroupStore.SelectedIndex), VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex)) Then
-			MsgBox("Operation was cancelled, since there is another" & " invoice for the selected criteria. ", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-			Exit Sub
-		Else
-			
-			'UPGRADE_ISSUE: Load statement is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
+    Private Sub cmdBuildDoc_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdBuildDoc.Click
+
+        Dim anObj As Object = cbTemplate.SelectedValue
+        'if 
+        '= VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex)
+        'If existInvoice((cbCustId.Text), VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), VB6.GetItemData(cbGroupStore, cbGroupStore.SelectedIndex), VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex)) Then
+        If existInvoice((cbCustId.Text), VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), VB6.GetItemData(cbGroupStore, cbGroupStore.SelectedIndex), anObj) Then
+            MsgBox("Operation was cancelled, since there is another" & " invoice for the selected criteria. ", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Sub
+        Else
+
+            'UPGRADE_ISSUE: Load statement is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
             frmCustInvGenPreview.Show()
-			If frmCustInvGenPreview.build_document Then
-				frmCustInvGenPreview.ShowDialog()
-			End If
-			
-		End If
-		
-	End Sub
+            If frmCustInvGenPreview.build_document Then
+                frmCustInvGenPreview.ShowDialog()
+            End If
+
+        End If
+
+    End Sub
 	
 	Private Sub cmdClose_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdClose.Click
 		Me.Close()
@@ -107,7 +112,7 @@ Friend Class frmCustInvGen
         End If
 
 
-        sReport_Id = rsLocal.Rows(0).Item("report_id").value
+        sReport_Id = rsLocal.Rows(0).Item("report_id")
 
         '***************************************************
         ' Found data
@@ -125,15 +130,15 @@ Friend Class frmCustInvGen
 
 
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtInvoiceTotal.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("bill_payment").value), "0.00", rsLocal.Rows(0).Item("bill_payment").Value)
+        txtInvoiceTotal.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("bill_payment")), "0.00", rsLocal.Rows(0).Item("bill_payment"))
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtSavings.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("savings").value), "0.00", rsLocal.Rows(0).Item("savings").Value)
+        txtSavings.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("savings")), "0.00", rsLocal.Rows(0).Item("savings"))
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtSavingsPercent.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("savings_percent").value), "0.00", rsLocal.Rows(0).Item("savings_percent").Value)
+        txtSavingsPercent.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("savings_percent")), "0.00", rsLocal.Rows(0).Item("savings_percent"))
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreFlatFee.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("store_flat_fee").value), "0.00", rsLocal.Rows(0).Item("store_flat_fee").Value)
+        txtStoreFlatFee.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("store_flat_fee")), "0.00", rsLocal.Rows(0).Item("store_flat_fee"))
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtInvoiceFee.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("invoice_fee").value), "0.00", rsLocal.Rows(0).Item("invoice_fee").Value)
+        txtInvoiceFee.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("invoice_fee")), "0.00", rsLocal.Rows(0).Item("invoice_fee"))
         txtTax.Text = "0.00"
         txtGrandTotal.Text = "0.00"
 
@@ -180,9 +185,9 @@ Friend Class frmCustInvGen
 		
 	End Sub
 	
-	Private Sub dtInvoiceDate_Change(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dtInvoiceDate.Change
-		txtInvoiceDate.Text = VB6.Format(dtInvoiceDate.value, "MMMM dd, yyyy")
-	End Sub
+    Private Sub dtInvoiceDate_Change(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        txtInvoiceDate.Text = VB6.Format(dtInvoiceDate.Value, "MMMM dd, yyyy")
+    End Sub
 	
 	Private Sub frmCustInvGen_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -256,8 +261,8 @@ Friend Class frmCustInvGen
 
 
         For row As Integer = 0 To rsLocal.Rows.Count - 1
-            cbCustId.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_id").Value)
-            cbCustName.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_name").Value)
+            cbCustId.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_id"))
+            cbCustName.Items.Insert(nCounter, rsLocal.Rows(row).Item("cust_name"))
             nCounter = nCounter + 1
         Next row
 
@@ -296,20 +301,20 @@ Friend Class frmCustInvGen
 
         If rsLocal.Rows.Count > 0 Then
 
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_name").Value), "", Trim(rsLocal.Rows(0).Item("cust_name").Value) & vbCrLf)
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_name")), "", Trim(rsLocal.Rows(0).Item("cust_name")) & vbCrLf)
 
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_contact").Value), "", "Attn: " & Trim(rsLocal.Rows(0).Item("cust_contact").Value) & vbCrLf)
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_contact")), "", "Attn: " & Trim(rsLocal.Rows(0).Item("cust_contact")) & vbCrLf)
 
 
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_address").Value), "", Trim(rsLocal.Rows(0).Item("cust_address").Value) & vbCrLf)
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_city").Value), "", Trim(rsLocal.Rows(0).Item("cust_city").Value) & " ")
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("state_id").Value), "", Trim(rsLocal.Rows(0).Item("state_id").Value) & " ")
-            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_zip").Value), "", Trim(rsLocal.Rows(0).Item("cust_zip").Value) & " ") & vbCrLf
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_address")), "", Trim(rsLocal.Rows(0).Item("cust_address")) & vbCrLf)
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_city")), "", Trim(rsLocal.Rows(0).Item("cust_city")) & " ")
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("state_id")), "", Trim(rsLocal.Rows(0).Item("state_id")) & " ")
+            txtAddress.Text = txtAddress.Text & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_zip")), "", Trim(rsLocal.Rows(0).Item("cust_zip")) & " ") & vbCrLf
 
 
             'txtAccountNo.Text = IIf(IsNull(rsLocal.item("billing_account_no")), "", Trim(rsLocal.item("billing_account_no")) & vbCrLf)
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            txtAccountNo.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no").Value), "", Trim(rsLocal.Rows(0).Item("billing_account_no").Value))
+            txtAccountNo.Text = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no")), "", Trim(rsLocal.Rows(0).Item("billing_account_no")))
             'customer.billing_account_no
         End If
 
@@ -370,8 +375,8 @@ Friend Class frmCustInvGen
 
         For row As Integer = 0 To rsLocal.Rows.Count - 1
             ReDim Preserve period_start_date(nCounter + 1)
-            cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name").value), rsLocal.Rows(row).Item("period_seq").Value))
-            period_start_date(nCounter + 1) = rsLocal.Rows(row).Item("period_start_date").value
+            cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name")), rsLocal.Rows(row).Item("period_seq")))
+            period_start_date(nCounter + 1) = rsLocal.Rows(row).Item("period_start_date")
             nCounter = nCounter + 1
         Next row
 

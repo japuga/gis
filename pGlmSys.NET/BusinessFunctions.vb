@@ -441,7 +441,7 @@ ErrorHandler:
 	'Checks for uniqueness of Word doc invoice
 	Public Function existInvoice(ByRef sCustId As String, ByRef nPeriodSeq As Short, ByRef nGroupSeq As Short, ByRef nTemplateId As Short) As Boolean
 		
-        Dim rsInvoice As SqlDataReader = Nothing
+        Dim rsInvoice As DataTable
         Dim stmt As String
         Dim cmd As SqlCommand = cn.CreateCommand()
 		
@@ -450,27 +450,21 @@ ErrorHandler:
 		stmt = " SELECT cust_invoice_seq FROM CustomerInvoice " & " WHERE cust_id ='" & Trim(sCustId) & "' " & " AND period_seq =" & Str(nPeriodSeq) & " AND group_seq =" & Str(nGroupSeq) & " AND template_id =" & Str(nTemplateId)
         cmd.CommandText = stmt
         Try
-            rsInvoice = cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-            If rsInvoice.HasRows() > 0 Then
+            rsInvoice = getDataTable(stmt) 'cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            If rsInvoice.Rows.Count > 0 Then
                 existInvoice = True
-                rsInvoice.Close()
                 Exit Function
             Else
                 MsgBox("Can not verify customer invoice uniqueness for: Cust:" & sCustId & ",period_seq =" & Str(nPeriodSeq) & ",group_seq =" & Str(nGroupSeq) & ",template_id =" & Str(nTemplateId), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 existInvoice = True
-                rsInvoice.Close()
-
                 Exit Function
             End If
 
         Catch e As Exception
             MsgBox("Can not verify customer invoice uniqueness for: Cust:" & sCustId & ",period_seq =" & Str(nPeriodSeq) & ",group_seq =" & Str(nGroupSeq) & ",template_id =" & Str(nTemplateId), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
             existInvoice = True
-            rsInvoice.Close()
             Exit Function
         End Try
-
-        rsInvoice.Close()
 
     End Function
 	
@@ -557,20 +551,18 @@ ErrorHandler:
 		Dim stmt As Object
 		valid_store = True
         Dim cmd As SqlCommand = cn.CreateCommand()
-        Dim rsStore As SqlDataReader
+        Dim rsStore As DataTable
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object stmt. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         stmt = "SELECT count(*) FROM store WHERE cust_id = '" & sCustId & "'" & " AND store_id = " & Str(nStoreId)
         cmd.CommandText = stmt
-        rsStore = cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
+        rsStore = getDataTable(stmt) ' cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 		
-        If rsStore.HasRows() Then
-            If rsStore.Item(0) = 0 Then
+        If rsStore.Rows.Count > 0 Then
+            If rsStore.Rows(0).Item(0) = 0 Then
                 valid_store = False
             End If
         End If
-		
-		rsStore.Close()
 		
 	End Function
 	Public Function valid_vendor(ByRef nVendSeq As Short) As Boolean

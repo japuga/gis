@@ -7,19 +7,19 @@ Imports System.Text
 
 Friend Class frmCustInvGenSearch
 	Inherits System.Windows.Forms.Form
-    Private ImageList2 As New ImageList()
+
 	Private Declare Function GetTempPath Lib "kernel32"  Alias "GetTempPathA"(ByVal nBufferLength As Integer, ByVal lpBuffer As String) As Integer
 	
 	Private Declare Function GetTempFileName Lib "kernel32"  Alias "GetTempFileNameA"(ByVal lpszPath As String, ByVal lpPrefixString As String, ByVal wUnique As Integer, ByVal lpTempFileName As String) As Integer
 	
 	
-    Private rsLocal As SqlDataReader
-    Private rsLocal2 As SqlDataReader
-	Private period_start_date() As Date
+    Private rsLocal As DataTable
+    Private rsLocal2 As DataTable
+    Private period_start_date() As DateTime
 	
 	
     Public stre As IO.StreamWriter
-    Public rsBatch As SqlDataReader
+    Public rsBatch As DataTable
 	
 	Public stmt As String
 	Public idBatch As String
@@ -129,7 +129,7 @@ Friend Class frmCustInvGenSearch
 			End If
 			
 			If ckInvoiceDates.CheckState = System.Windows.Forms.CheckState.Checked Then
-				sWhere = sWhere & " AND a.invoice_date BETWEEN '" & CStr(dtFrom._Value) & "' AND '" & CStr(dtTo._Value) & "' "
+                sWhere = sWhere & " AND a.invoice_date BETWEEN '" & CStr(dtFrom.Value) & "' AND '" & CStr(dtTo.Value) & "' "
 			End If
 			
 			sOrder = " ORDER BY a.cust_id DESC, a.billing_period DESC, a.invoice_date DESC, a.cust_invoice_seq DESC"
@@ -156,8 +156,8 @@ Friend Class frmCustInvGenSearch
 
                 For row As Integer = 0 To rs.Rows.Count - 1
                     nCount = nCount + 1
-                    sGroupSeq = sGroupSeq & Str(rs.Rows(row).Item("param_seq").Value)
-                    sGroup = sGroup + rs.Rows(row).Item("param_value").Value
+                    sGroupSeq = sGroupSeq & Str(rs.Rows(row).Item("param_seq"))
+                    sGroup = sGroup + rs.Rows(row).Item("param_value")
                     If recordCount > nCount Then
                         sGroupSeq = sGroupSeq & ","
                         sGroup = sGroup & ","
@@ -170,18 +170,18 @@ Friend Class frmCustInvGenSearch
 			sStmt = sStmt & sWhere
             cmd.CommandText = sStmt
 			
-            rsLocal2 = cmd.ExecuteReader()
-            If rsLocal2.hasrows() Then
+            rsLocal2 = getDataTable(sStmt) 'cmd.ExecuteReader()
+            If rsLocal2.Rows.Count > 0 Then
                 dgData.DataSource = rsLocal2
             End If
 			
 		Else
-            rsLocal = cmd.ExecuteReader()
-            If rsLocal.HasRows() Then
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
+            If rsLocal.Rows.Count > 0 Then
                 dgData.DataSource = rsLocal
             Else
                 'UPGRADE_NOTE: Object dgData.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-                dgData.DataSource = Nothing
+                'dgData.DataSource = Nothing
                 Exit Sub
             End If
 		End If
@@ -262,19 +262,20 @@ ErrorHandler:
 		
 	End Sub
 	
-	Private Sub dgData_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgData.DblClick
-		updateInvoiceDoc()
-	End Sub
+    Private Sub dgData_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        updateInvoiceDoc()
+    End Sub
 	
 	Public Sub updateInvoiceDoc()
 		Dim iFila As Object
         'Dim vRow As Object
 		'vRow = Me.dgData.SelBookmarks
-		If dgData.Row < 0 Then
-			Exit Sub
-		End If
+        If dgData.SelectedRows.Count() < 1 Then
+            Exit Sub
+        End If
 		'UPGRADE_WARNING: Couldn't resolve default property of object iFila. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		iFila = dgData.Columns("Cust_invoice_seq").Text
+        'iFila = dgData.CurrentRow.Cells.Columns("Cust_invoice_seq").Text
+        iFila = dgData.CurrentRow.Cells("Cust_invoice_seq").Value
 		
         'UPGRADE_ISSUE: Load statement is no() supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
         frmCustInvGenPreview.Show()
@@ -301,7 +302,9 @@ ErrorHandler:
 		If cbCustName.Items.Count > 0 Then
 			cbCustName.SelectedIndex = 0
 		End If
-		
+
+        period_start_date(1) = Today.Date
+        period_start_date(0) = Today.Date
 		'load_Data True
 		
 	End Sub
@@ -312,18 +315,18 @@ ErrorHandler:
             Case "new"
                 add_letter()
             Case "save"
-                If dgData.SelBookmarks.Count > 0 Then
+                If dgData.SelectedRows.Count > 0 Then
                     updateInvoiceDoc()
                 Else
                     MsgBox("You must select a record before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                 End If
             Case "delete"
-                If Me.dgData.Row < 0 Then
+                If Me.dgData.SelectedRows.Count < 1 Then
                     MsgBox("Please select one or more records before attempting this action." & vbCrLf, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
                     Exit Sub
                 End If
 
-                If deleteSingleCustomerInvoice(CShort(dgData.Columns("cust_invoice_seq").Text)) Then
+                If deleteSingleCustomerInvoice(CShort(dgData.SelectedRows(0).Cells("cust_invoice_seq").Value)) Then
                     cbFill_Click(cbFill, New System.EventArgs())
                     MsgBox("Customer Invoice was successfully removed.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
                 End If
@@ -359,7 +362,7 @@ ErrorHandler:
 	Private Sub init_vars()
 		dtFrom.value = Today
 		dtTo.value = Today
-		dtFrom.Day = 1
+        'dtFrom.Day = 1
 		
 		
         'rsLocal
@@ -449,23 +452,23 @@ ErrorHandler:
 	
 	Public Sub loadDocument(ByRef Cust_invoice_seq As String)
 		Dim sFileSaved As Object
-        Dim rs As SqlDataReader
+        Dim rs As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
 		stmt = "SELECT * FROM customerInvoice where cust_invoice_seq= " & Cust_invoice_seq
         cmd.CommandText = stmt
-        rs = cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenKeyset, ADODB.LockTypeEnum.adLockOptimistic)
+        rs = getDataTable(stmt) 'cmd.ExecuteReader() '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenKeyset, ADODB.LockTypeEnum.adLockOptimistic)
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rs.Item("filecontent").value) Then
+        If IsDBNull(rs.Rows(0).Item("filecontent")) Then
             '        create_document_word rs
             MsgBox("Document not exists", MsgBoxStyle.Critical, "GLM")
         Else
             nFile = pFreeFile()
             stre = New IO.StreamWriter(nFile)
-            stre.Write(rs.Item("filecontent").value)
+            stre.Write(rs.Rows(0).Item("filecontent"))
             stre.Close()
             'stre.SaveToFile(nFile, ADODB.SaveOptionsEnum.adSaveCreateOverWrite)
-            rs.Close()
+            'rs.Close()
 
             'OLEInvoice.SourceDoc = nFile
             'OLEInvoice.CreateLink nFile 'oWord.Application.ActiveDocument
@@ -479,34 +482,32 @@ ErrorHandler:
 	Private Sub print_document()
 
         Dim oWord As Object = New Object()
-        Dim vRow As Object = New Object()
+        Dim vRow As DataGridViewRow
 		
         Dim nSelected As String = ""
 		
-		If dgData.Row < 0 Then
-			MsgBox("Please select a record before attempting this command", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-			Exit Sub
-		End If
+        If dgData.SelectedRows.Count < 1 Then
+            MsgBox("Please select a record before attempting this command", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+            Exit Sub
+        End If
 		
 		
-		For	Each vRow In dgData.SelBookmarks
-			If Not (rsBatch Is Nothing) Then
-				'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        For Each vRow In dgData.SelectedRows
+            If Not (rsBatch Is Nothing) Then
                 'no se como funciona esto
                 'rsBatch.Bookmark = vRow 'dgData.SelBookmarks.Item(vRow - 1)
-                nSelected = rsBatch.Item("Cust_invoice_seq").Value
-			Else
-				'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                nSelected = rsBatch.Rows(vRow.Index).Item("Cust_invoice_seq")
+            Else
                 'no se como funciona esto
                 'rsLocal.Bookmark = vRow 'dgData.SelBookmarks.Item(vRow - 1)
-                nSelected = rsLocal.Item("Cust_invoice_seq").Value
-			End If
-			
-			
-			loadDocument(nSelected)
-			printingDocument()
-			
-		Next vRow
+                nSelected = rsLocal.Rows(vRow.Index).Item("Cust_invoice_seq")
+            End If
+
+
+            loadDocument(nSelected)
+            printingDocument()
+
+        Next vRow
 		
 		On Error Resume Next
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Quit. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -525,9 +526,9 @@ ErrorHandler:
 		sStmt = "SELECT tb1.cust_invoice_seq, tb1.invoice_date 'Invoice Date', " & " tb1.billing_period 'Period', tb3.group_name 'Group Name', tb4.template_name 'Template' " & " FROM CustomerInvoice tb1 INNER JOIN CustomerInvoiceBatchDet tb2 on (tb1.cust_invoice_seq = tb2.cust_invoice_seq) " & " INNER JOIN Groups tb3 ON (tb3.cust_id = tb1.cust_id AND tb3.group_seq = tb1.group_seq) " & " INNER JOIN CustomerInvoiceTemplate tb4 ON (tb4.template_id = tb1.template_id) " & " WHERE tb2.cust_inv_batch_seq = " & idBatch & " ORDER BY tb1.billing_period DESC, tb1.invoice_date DESC, tb1.cust_invoice_seq DESC"
         cmd.CommandText = sStmt
 		
-        rsBatch = cmd.ExecuteReader()
+        rsBatch = getDataTable(sStmt) 'cmd.ExecuteReader()
 		
-        If rsBatch.HasRows() Then
+        If rsBatch.Rows.Count > 0 Then
             dgData.DataSource = rsBatch
         Else
             'UPGRADE_NOTE: Object dgData.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
@@ -553,4 +554,41 @@ ErrorHandler2:
 		save_error(Me.Name, "showBatch")
 		MsgBox("Unexpected error found while loading Batch details." & vbCrLf & "Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_letter()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If dgData.SelectedRows.Count > 0 Then
+            updateInvoiceDoc()
+        Else
+            MsgBox("You must select a record before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+        End If
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        If Me.dgData.SelectedRows.Count < 1 Then
+            MsgBox("Please select one or more records before attempting this action." & vbCrLf, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
+            Exit Sub
+        End If
+
+        'If deleteSingleCustomerInvoice(CShort(dgData.Columns("cust_invoice_seq").Text)) Then
+        If deleteSingleCustomerInvoice(CShort(dgData.SelectedRows(0).Cells("cust_invoice_seq").Value)) Then
+            cbFill_Click(cbFill, New System.EventArgs())
+            MsgBox("Customer Invoice was successfully removed.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+        End If
+    End Sub
+
+    Private Sub btPrint_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btPrint.Click
+        print_document()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub btDunno_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDunno.Click
+
+    End Sub
 End Class

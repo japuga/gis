@@ -799,6 +799,7 @@ ErrorHandler:
         cm.CommandText = sStmt
 
         nRecords = cm.ExecuteNonQuery()
+
         If nRecords > 0 Then
             'ok
             insert_glminvoice_report_criteria = True

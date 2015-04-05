@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,45 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>665, 17</value>
-  </metadata>
-  <metadata name="Toolbar1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>452, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btSave.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACnSURBVFhH7ZRLDsUgCEVZepfmzqxYraDEfsTWATc5SV/h
-        cc+osFg2X4BJsA4aOohD770ueFPoyWkG4pER8KbQA+Ccyz/CYlg9n3XBm7w89nCBWkYzeJOXxx4uUJZ+
-        EWCD9De9mIAJmIAJmMBDgThURuzoCXyBCVwI4GwU6W6hI9B7j8kFd5DuHJiACawiIC3S96PQuxySdln6
-        nr+FllKqUOtZpKoQgB0tKXW7ZRNd2QAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="btExit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADZSURBVFhH7ZBRDsMgDEN39B6NmzE8GpRWMSQI8dH1SVa3
-        QJc3f/6BrOInpZRncr6uiS0Wzh8LpSNgzftcBHIepy8QRwSOo/2DGms5Us4GDVhnHN2ASFxk/AJz3BsY
-        SpTvnQb000evgSaxQ4AuR3wCgM05T2pAZtYZZ2EDcyxsALA5Z3EDbM55G3haA3FYA7ISn50C9W6NH9bA
-        hABgcw5rQJ6/7BBAqMQOAboc2SGAUIkdAnQ54heIs7iBOG8DWgAxG7hlSgAveVKutoiEdS8at4BEi1jn
-        saT8BRDY9JSC6otrAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <metadata name="cdFileOpen.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>552, 17</value>
-  </metadata>
-  <metadata name="cdFileSave.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>344, 17</value>
-  </metadata>
-  <metadata name="cdFileFont.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>125, 17</value>
-  </metadata>
-  <metadata name="cdFileColor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>232, 17</value>
-  </metadata>
-  <metadata name="cdFilePrint.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
 </root>
