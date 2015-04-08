@@ -237,30 +237,30 @@ ErrorHandler:
 		
 	End Sub
 	'Loads cbPeriod with periods and period_start_date array with period dates
-	Public Sub loadPeriodAndArray(ByRef cbPeriod As System.Windows.Forms.ComboBox, ByRef period_start_date As Object, ByRef sCustId As String, ByRef bShowAll As Boolean)
-		
+    Public Sub loadPeriodAndArray(ByRef cbPeriod As System.Windows.Forms.ComboBox, ByRef period_start_date() As DateTime, ByRef sCustId As String, ByRef bShowAll As Boolean)
+
         Dim rsLocal As DataTable
-		Dim nCounter As Short
-		
-		cbPeriod.Items.Clear()
-		
-		nCounter = 0
-		
-		If bShowAll Then
-			cbPeriod.Items.Insert(nCounter, UI_ALL)
-			nCounter = nCounter + 1
-		End If
-		
-		
-		sStmt = "SELECT period_seq, period_name, period_start_date " & " FROM period " & " WHERE cust_id =  '" & Trim(sCustId) & "' AND period_status_id='O' " & " ORDER BY period.period_start_date DESC "
-		
-		
-		'UPGRADE_WARNING: Lower bound of array period_start_date was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
-		'UPGRADE_ISSUE: As Date was removed from ReDim period_start_date(1 To 1) statement. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="19AFCB41-AA8E-4E6B-A441-A3E802E5FD64"'
-		ReDim period_start_date(1)
-		
-		rsLocal = exec_sql(sStmt)
-		
+        Dim nCounter As Short
+
+        cbPeriod.Items.Clear()
+
+        nCounter = 0
+
+        If bShowAll Then
+            cbPeriod.Items.Insert(nCounter, UI_ALL)
+            nCounter = nCounter + 1
+        End If
+
+
+        sStmt = "SELECT period_seq, period_name, period_start_date " & " FROM period " & " WHERE cust_id =  '" & Trim(sCustId) & "' AND period_status_id='O' " & " ORDER BY period.period_start_date DESC "
+
+
+        'UPGRADE_WARNING: Lower bound of array period_start_date was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
+        'UPGRADE_ISSUE: As Date was removed from ReDim period_start_date(1 To 1) statement. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="19AFCB41-AA8E-4E6B-A441-A3E802E5FD64"'
+        ReDim period_start_date(0)
+
+        rsLocal = exec_sql(sStmt)
+
         If rsLocal.Rows.Count < 0 Then
             write_msg("loadPeriodAndArray", "Could not find Period for customer:" & sCustId)
             Exit Sub
@@ -270,11 +270,11 @@ ErrorHandler:
                 Exit Sub
             End If
         End If
-		
-		'In data was found
-		
-		'nCounter = 1
-		
+
+        'In data was found
+
+        'nCounter = 1
+
         For row As Integer = 0 To rsLocal.Rows.Count - 1
 
             If bShowAll Then
@@ -298,10 +298,10 @@ ErrorHandler:
             nCounter = nCounter + 1
         Next row
 
-		
-		
-		
-	End Sub
+
+
+
+    End Sub
 	
 	Public Sub load_cb_groups(ByRef cbStoreGroup As System.Windows.Forms.ComboBox, ByRef sCustId As String, ByRef bShowAll As Boolean, ByRef bClear As Boolean)
 		

@@ -216,6 +216,12 @@
     <Compile Include="frmRepBillPayViewer.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmRepGlmInvoiceViewer.Designer.vb">
+      <DependentUpon>frmRepGlmInvoiceViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepGlmInvoiceViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmRepInvoiceTrackingViewer.Designer.vb">
       <DependentUpon>frmRepInvoiceTrackingViewer.vb</DependentUpon>
     </Compile>
@@ -1471,6 +1477,10 @@
     <EmbeddedResource Include="frmRepGlmInvoice.resX">
       <DependentUpon>frmRepGlmInvoice.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRepGlmInvoiceViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepGlmInvoiceViewer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRepInvoiceTracking.resX">
       <DependentUpon>frmRepInvoiceTracking.vb</DependentUpon>

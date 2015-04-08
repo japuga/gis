@@ -45,51 +45,51 @@ Friend Class frmSetting
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("fields_from_db").Value) Then
+            If IsDBNull(rs.Rows(0).Item("fields_from_db")) Then
                 If cbFieldsFromDb.Items.Count > 0 Then
                     cbFieldsFromDb.SelectedIndex = 0
                 End If
             Else
-                set_cb(cbFieldsFromDb, Trim(rs.Rows(0).Item("fields_from_db").Value))
+                set_cb(cbFieldsFromDb, Trim(rs.Rows(0).Item("fields_from_db")))
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("report_dir").Value) Then
+            If IsDBNull(rs.Rows(0).Item("report_dir")) Then
                 txtReportDir.Text = ""
             Else
-                txtReportDir.Text = rs.Rows(0).Item("report_dir").Value
+                txtReportDir.Text = rs.Rows(0).Item("report_dir")
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("check_logo_file").Value) Then
+            If IsDBNull(rs.Rows(0).Item("check_logo_file")) Then
                 txtCheckLogoFile.Text = ""
             Else
-                txtCheckLogoFile.Text = rs.Rows(0).Item("check_logo_file").Value
+                txtCheckLogoFile.Text = rs.Rows(0).Item("check_logo_file")
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("max_batch_check_details").Value) Then
+            If IsDBNull(rs.Rows(0).Item("max_batch_check_details")) Then
                 txtMaxBatchCheckDetails.Text = ""
             Else
-                txtMaxBatchCheckDetails.Text = rs.Rows(0).Item("max_batch_check_details").Value
+                txtMaxBatchCheckDetails.Text = rs.Rows(0).Item("max_batch_check_details")
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("check_paper_source").Value) Then
+            If IsDBNull(rs.Rows(0).Item("check_paper_source")) Then
                 If cbCheckPaperSource.Items.Count > 0 Then
                     cbCheckPaperSource.SelectedIndex = 0
                 End If
             Else
-                set_cb(cbCheckPaperSource, rs.Rows(0).Item("check_paper_source").Value)
+                set_cb(cbCheckPaperSource, rs.Rows(0).Item("check_paper_source"))
             End If
 
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("debug_flag").Value) Then
+            If IsDBNull(rs.Rows(0).Item("debug_flag")) Then
                 If cbDebugFlag.Items.Count > 0 Then
                     cbDebugFlag.SelectedIndex = 0
                 End If
             Else
-                set_cb(cbDebugFlag, Trim(rs.Rows(0).Item("debug_flag").Value))
+                set_cb(cbDebugFlag, Trim(rs.Rows(0).Item("debug_flag")))
             End If
 
             txtWordTemplate.Text = gGlobSettings.sMswordTemplateFile
@@ -258,4 +258,14 @@ ErrorHandler:
 		
 		
 	End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields() Then
+            save_setting()
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class
