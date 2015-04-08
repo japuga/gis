@@ -1411,5 +1411,5 @@
     Friend WithEvents btInvoiceBooking As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripButton1 As System.Windows.Forms.ToolStripButton
     Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
-#End Region 
+#End Region
 End Class

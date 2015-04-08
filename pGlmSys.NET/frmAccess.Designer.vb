@@ -84,7 +84,7 @@
         Me.picLogo.Location = New System.Drawing.Point(16, 88)
         Me.picLogo.Name = "picLogo"
         Me.picLogo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.picLogo.Size = New System.Drawing.Size(145, 161)
+        Me.picLogo.Size = New System.Drawing.Size(172, 161)
         Me.picLogo.TabIndex = 9
         Me.picLogo.TabStop = False
         '
@@ -99,7 +99,7 @@
         Me.cmdCancel.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdCancel.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdCancel.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdCancel.Location = New System.Drawing.Point(240, 240)
+        Me.cmdCancel.Location = New System.Drawing.Point(73, 152)
         Me.cmdCancel.Name = "cmdCancel"
         Me.cmdCancel.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdCancel.Size = New System.Drawing.Size(57, 25)
@@ -113,7 +113,7 @@
         Me.cmdOk.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdOk.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdOk.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdOk.Location = New System.Drawing.Point(176, 240)
+        Me.cmdOk.Location = New System.Drawing.Point(9, 152)
         Me.cmdOk.Name = "cmdOk"
         Me.cmdOk.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdOk.Size = New System.Drawing.Size(57, 25)
@@ -155,6 +155,8 @@
         '
         Me.Frame1.BackColor = System.Drawing.SystemColors.Desktop
         Me.Frame1.Controls.Add(Me.cbServername)
+        Me.Frame1.Controls.Add(Me.cmdCancel)
+        Me.Frame1.Controls.Add(Me.cmdOk)
         Me.Frame1.Controls.Add(Me.cmdOptions)
         Me.Frame1.Controls.Add(Me.Label3)
         Me.Frame1.Controls.Add(Me._imgKey_3)
@@ -167,10 +169,10 @@
         Me.Frame1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Frame1.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Frame1.ForeColor = System.Drawing.SystemColors.Desktop
-        Me.Frame1.Location = New System.Drawing.Point(168, 88)
+        Me.Frame1.Location = New System.Drawing.Point(194, 88)
         Me.Frame1.Name = "Frame1"
         Me.Frame1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Frame1.Size = New System.Drawing.Size(289, 201)
+        Me.Frame1.Size = New System.Drawing.Size(306, 201)
         Me.Frame1.TabIndex = 1
         Me.Frame1.Text = "Security Access"
         '
@@ -180,10 +182,10 @@
         Me.cbServername.Cursor = System.Windows.Forms.Cursors.Default
         Me.cbServername.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbServername.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbServername.Location = New System.Drawing.Point(104, 104)
+        Me.cbServername.Location = New System.Drawing.Point(78, 109)
         Me.cbServername.Name = "cbServername"
         Me.cbServername.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cbServername.Size = New System.Drawing.Size(121, 21)
+        Me.cbServername.Size = New System.Drawing.Size(145, 21)
         Me.cbServername.TabIndex = 3
         '
         'cmdOptions
@@ -314,7 +316,7 @@
         Me.lblGlm.Location = New System.Drawing.Point(8, 24)
         Me.lblGlm.Name = "lblGlm"
         Me.lblGlm.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblGlm.Size = New System.Drawing.Size(433, 45)
+        Me.lblGlm.Size = New System.Drawing.Size(479, 45)
         Me.lblGlm.TabIndex = 10
         Me.lblGlm.Text = "GLM  Inc."
         Me.lblGlm.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -325,10 +327,8 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(17.0!, 33.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Info
-        Me.ClientSize = New System.Drawing.Size(470, 307)
+        Me.ClientSize = New System.Drawing.Size(512, 307)
         Me.Controls.Add(Me.picLogo)
-        Me.Controls.Add(Me.cmdCancel)
-        Me.Controls.Add(Me.cmdOk)
         Me.Controls.Add(Me.txtPassword)
         Me.Controls.Add(Me.txtUser)
         Me.Controls.Add(Me.Frame1)
