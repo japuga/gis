@@ -200,8 +200,31 @@ ErrorHandler:
 
         On Error GoTo ErrorHandler
         Dim cmd As SqlCommand = cn.CreateCommand()
-        sStmt = "SELECT " & " RTRIM(VBranch.vend_name)+ ' - ' +RTRIM (VBranch.vend_area)  AS Vendor, " & " StoreEqpt.eqpt_desc AS Equipment, " & " Content.content_desc AS Content , " & " Service.serv_desc AS Service, " & " dbo.format_freq2 (Frequency.freq_sched_flag, " & " Frequency.freq_times_flag, " & " VContract.freq_times, " & " ISNULL(VContract.freq_period,''), " & " ISNULL(VContract.freq_day1,''), " & " ISNULL(VContract.freq_day2,''), " & " ISNULL(VContract.freq_day3,''), " & " ISNULL(VContract.freq_day4,''), " & " ISNULL(VContract.freq_day5,''), " & " ISNULL(VContract.freq_day6,''), " & " ISNULL(VContract.freq_day7,'')) " & " AS Frequency," & " VContract.glm_rate AS 'GLM Rate', " & " VContract.curr_rate AS Rate, " & " VContract.old_rate AS 'Prev Rate', " & " VContract.opening_date AS Started, " & " VContract.expiration_date AS Until, "
-        sStmt = sStmt & " VContract.cust_id, VContract.store_id, " & " VContract.vend_seq, VContract.eqpt_seq , " & " VContract.serv_id , VContract.freq_times, " & " VContract.freq_period, VContract.freq_day1, " & " VContract.freq_day2, VContract.freq_day3, " & " VContract.freq_day4, VContract.freq_day5, " & " VContract.freq_day6, VContract.freq_day7, " & " VContract.freq_id, VContract.freq_comments, " & " VContract.contract_comments, VContract.rate_status,  " & " VContract.override_exp_flag "
+        sStmt = "SELECT " & " RTRIM(VBranch.vend_name)+ ' - ' +RTRIM (VBranch.vend_area)  AS Vendor, " & " StoreEqpt.eqpt_desc AS Equipment, " & " Content.content_desc AS Content , " & " Service.serv_desc AS Service, " & " dbo.format_freq2 (Frequency.freq_sched_flag, " & " Frequency.freq_times_flag, " & " VContract.freq_times, " & " ISNULL(VContract.freq_period,''), " & " ISNULL(VContract.freq_day1,''), " & " ISNULL(VContract.freq_day2,''), " & " ISNULL(VContract.freq_day3,''), " & " ISNULL(VContract.freq_day4,''), " & _
+                " ISNULL(VContract.freq_day5,''), " & _
+                " ISNULL(VContract.freq_day6,''), " & _
+                " ISNULL(VContract.freq_day7,'')) " & _
+                " AS Frequency," & _
+                " VContract.glm_rate AS 'GLM Rate', " & _
+                " VContract.curr_rate AS Rate, " & _
+                " VContract.old_rate AS 'Prev Rate', " & _
+                " VContract.opening_date AS Started, " & _
+                " VContract.expiration_date AS Until, "
+        sStmt = sStmt & " VContract.cust_id, VContract.store_id, " & _
+                " VContract.vend_seq, VContract.eqpt_seq , " & _
+                " VContract.serv_id , VContract.freq_times, " & _
+                " VContract.freq_period, VContract.freq_day1, " & _
+                " VContract.freq_day2, VContract.freq_day3, " & _
+                " VContract.freq_day4, VContract.freq_day5, " & _
+                " VContract.freq_day6, VContract.freq_day7, " & _
+                " VContract.freq_id, VContract.freq_comments, " & _
+                " VContract.contract_comments, VContract.rate_status,  " & _
+                " VContract.override_exp_flag, " & _
+                " CASE " & _
+                "    WHEN (VContract.default_service='F') THEN 'No' " & _
+                "    WHEN (VContract.default_service='T') THEN 'Yes' " & _
+                " END AS 'Default Freq' "
+
         sStmt = sStmt & " FROM StoreEqpt, VContract, Content, Service, VBranch, Frequency " & " WHERE vContract.cust_id = StoreEqpt.cust_id " & " AND VContract.store_id = StoreEqpt.store_id " & " AND VContract.eqpt_seq = StoreEqpt.eqpt_seq " & " AND StoreEqpt.content_id = Content.content_id " & " AND VContract.serv_id = Service.serv_id " & " AND VContract.vend_seq = VBranch.vend_seq " & " AND VContract.cust_id = '" & Trim(sCustId) & "' " & " AND VContract.store_id = " & Str(nStoreId) & " " & " AND VContract.freq_id = Frequency.freq_id "
 
         'Solo se incluye si usuario selecciono un Vendor
@@ -260,6 +283,7 @@ ErrorHandler:
         dgContract.Columns("Prev Rate").Width = VB6.TwipsToPixelsX(850)
         dgContract.Columns("Started").Width = VB6.TwipsToPixelsX(1000)
         dgContract.Columns("Until").Width = VB6.TwipsToPixelsX(1000)
+        dgContract.Columns("Default Freq").Width = VB6.TwipsToPixelsX(1200)
 
         dgContract.Refresh()
         Exit Sub
