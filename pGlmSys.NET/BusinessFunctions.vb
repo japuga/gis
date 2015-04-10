@@ -454,10 +454,10 @@ ErrorHandler:
             If rsInvoice.Rows.Count > 0 Then
                 existInvoice = True
                 Exit Function
-            Else
-                MsgBox("Can not verify customer invoice uniqueness for: Cust:" & sCustId & ",period_seq =" & Str(nPeriodSeq) & ",group_seq =" & Str(nGroupSeq) & ",template_id =" & Str(nTemplateId), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-                existInvoice = True
-                Exit Function
+                'Else
+                '   MsgBox("Can not verify customer invoice uniqueness for: Cust:" & sCustId & ",period_seq =" & Str(nPeriodSeq) & ",group_seq =" & Str(nGroupSeq) & ",template_id =" & Str(nTemplateId), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                '  existInvoice = True
+                ' Exit Function
             End If
 
         Catch e As Exception
