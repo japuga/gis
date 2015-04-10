@@ -115,12 +115,16 @@ Friend Class frmReport
 		'On Error GoTo ErrorHandler
 		
 		'Este rs fue previamente cargado por map_fields
-        If rsFields.HasRows() Then
+        If rsFields.Rows.Count > 0 Then
 
             sStmt = "SELECT 'ND' as cust_name,'SEPTEMBER' AS month_year, "
-            While rsFields.Read()
-                sStmt = Trim(sStmt) & " " & Trim(rsFields.Item("col_map").Value) & ", "
-            End While
+            'While rsFields.Read()
+            '    sStmt = Trim(sStmt) & " " & Trim(rsFields.Item("col_map").Value) & ", "
+            'End While
+
+            For arow As Integer = 0 To rsFields.Rows.Count - 1
+                sStmt = Trim(sStmt) & " " & Trim(rsFields.Rows(arow).Item("col_map")) & ", "
+            Next arow
             sStmt = VB.Left(sStmt, Len(sStmt) - 2) 'Elimina la ultima coma
             sStmt = Trim(sStmt) & " FROM RepData " & "WHERE col0 = " & Str(nReport)
             MsgBox(sStmt)
