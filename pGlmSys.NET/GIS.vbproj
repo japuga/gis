@@ -16,7 +16,7 @@
     <GenerateRevisionNumber>False</GenerateRevisionNumber>
     <AssemblyCompanyName>JP</AssemblyCompanyName>
     <StartWithIE>False</StartWithIE>
-    <ApplicationIcon>pGlmSys.ico</ApplicationIcon>
+    <ApplicationIcon>recycle-icon.ico</ApplicationIcon>
     <RootNamespace>pGlmSys</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -1693,6 +1693,7 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </Content>
     <Content Include="pGlmSys.ico" />
+    <Content Include="recycle-icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
