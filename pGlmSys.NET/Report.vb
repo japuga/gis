@@ -15,10 +15,10 @@ Module Report
     Public p As Printing.PrintDocument
     Private bPrinter As Boolean 'Determina si hay impresoras definidas
     Public nReport As Integer
-    'Private rsFields As SqlDataReader
-    Public rsFields As SqlDataReader
+
+    Public rsFields As DataTable
     Private Structure ReportData
-        Dim rs As SqlDataReader
+        Dim rs As DataTable
         Dim bOpen As Boolean
     End Structure
     Private rdData As ReportData
@@ -158,7 +158,7 @@ Module Report
     Private Sub show_report()
 
         Dim sCaption As String = ""
-        Dim drInvoiceRep As SqlDataReader
+        Dim drInvoiceRep As DataTable
         Dim num_cols As Integer = 0
         'Dim rsReport As SqlDataReader
 
@@ -223,7 +223,7 @@ Module Report
                 Exit Sub
             End If
 
-            If Not rsFields.HasRows() Then
+            If Not rsFields.Rows.Count > 0 Then
                 MsgBox("An error has ocurred while maping report data.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 Exit Sub
             End If
@@ -232,17 +232,17 @@ Module Report
             'UPGRADE_WARNING: Couldn't resolve default property of object num_cols. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             num_cols = 0
             'UPGRADE_WARNING: Couldn't resolve default property of object num_cols. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            num_cols = rsFields.FieldCount
+            num_cols = rsFields.Columns.Count
             'Mapeo los titulos de los campos con labels del DataReport. Section Page Header        
             'For Each c In drInvoiceRep.Sections(2).Controls
-            While rsFields.Read()
+            For arow As Integer = 0 To rsFields.Rows.Count - 1
                 'UPGRADE_WARNING: Couldn't resolve default property of object c.name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If InStr(rsFields.Item(2), "Label") > 0 Then
-                    If Not IsDBNull(rsFields.Item(2).Value) Then
-                        If IsDBNull(rsFields.Item(0).Value) Then
+                If InStr(rsFields.Rows(arow).Item(2), "Label") > 0 Then
+                    If Not IsDBNull(rsFields.Rows(arow).Item(2)) Then
+                        If IsDBNull(rsFields.Rows(arow).Item(0)) Then
                             sCaption = "NN"
                         Else
-                            sCaption = rsFields.Item(0).Value
+                            sCaption = rsFields.Rows(arow).Item(0)
                         End If
 
                         c.Caption = sCaption
@@ -252,7 +252,7 @@ Module Report
                         c.Visible = False
                     End If
                 End If
-            End While
+            Next arow
 
 
             'Armar query a RepData
@@ -270,27 +270,30 @@ Module Report
             drInvoiceRep = rsFields
             'Mapeo los campos con el DataReport Section Detail
             'UPGRADE_WARNING: Couldn't resolve default property of object drInvoiceRep.Sections. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            While (drInvoiceRep.Read())
+            'While (drInvoiceRep.Read())
+            For arow As Integer = 0 To drInvoiceRep.Rows.Count - 1
                 'drInvoiceRep.Sections(3).Controls("txtCol1").DataField = rs("store_name").Name
                 'Verifico que el control sea de tipo Txt
                 'UPGRADE_WARNING: Couldn't resolve default property of object c.name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If InStr(drInvoiceRep.GetName(3), "txt") > 0 Then
+                'If InStr(drInvoiceRep.GetName(3), "txt") > 0 Then
+                If InStr(drInvoiceRep.Columns(3).ColumnName, "txt") > 0 Then
                     'UPGRADE_WARNING: Couldn't resolve default property of object num_cols. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     If nIndex < num_cols Then
                         'UPGRADE_WARNING: Couldn't resolve default property of object c.DataField. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         'UPGRADE_WARNING: Couldn't resolve default property of object rsReport().name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                        c.DataField = drInvoiceRep.GetName(3)
+                        'c.DataField = drInvoiceRep.GetName(3)
+                        c.DataField = drInvoiceRep.Columns(3).ColumnName
                         nIndex = nIndex + 1
                     Else
                         'UPGRADE_WARNING: Couldn't resolve default property of object c.DataField. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         'UPGRADE_WARNING: Couldn't resolve default property of object rsReport().name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         'c.DataField = rsReport.GetName(nIndex - 1)
-                        c.DataField = drInvoiceRep.GetName(nIndex - 1)
+                        c.DataField = drInvoiceRep.Columns(nIndex - 1).ColumnName
                         'UPGRADE_WARNING: Couldn't resolve default property of object c.Visible. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         c.Visible = False
                     End If
                 End If
-            End While
+            Next arow
 
 
             'UPGRADE_WARNING: Couldn't resolve default property of object drInvoiceRep.Show. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -312,7 +315,7 @@ Module Report
     '5.-Muestra el reporte
     Private Sub show_report2()
 
-        Dim rsReport As SqlDataReader
+        Dim rsReport As DataTable
         Dim nError As Integer
         Dim cmd As SqlCommand = cn.CreateCommand()
         'Dim c, sec As Object
@@ -361,11 +364,11 @@ Module Report
             'Verifico que se hayan cargado datos en RepData para este reporte
             sStmt = "SELECT count(*) FROM RepData WHERE col0 = " & Str(nReport)
             cmd.CommandText = sStmt
-            rsReport = cmd.ExecuteReader()
+            rsReport = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-            If rsReport.HasRows() Then
+            If rsReport.Rows.Count > 0 Then
                 'UPGRADE_WARNING: Couldn't resolve default property of object rsReport(0). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If rsReport.HasRows() Then
+                If rsReport.Rows.Count > 0 Then
                     'Encontro registros
                 Else
                     MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -385,7 +388,7 @@ Module Report
                 Exit Sub
             End If
 
-            If Not rsFields.HasRows() = 0 Then
+            If Not rsFields.Rows.Count > 0 Then
                 MsgBox("An error has ocurred while maping report data.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 Exit Sub
             End If
@@ -454,7 +457,7 @@ Module Report
     'Public Function map_fields() As SqlDataReader
     Private Function map_fields() As ReportData
 
-        Dim rsMap As SqlDataReader
+        Dim rsMap As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
         map_fields = Nothing
         'On Error GoTo ErrorHandler
@@ -463,7 +466,7 @@ Module Report
         cmd.CommandText = sStmt
         Try
 
-            rsMap = cmd.ExecuteReader()
+            rsMap = getDataTable(sStmt) ' cmd.ExecuteReader()
             map_fields.bOpen = True
         Catch ex As Exception
             map_fields.bOpen = False
@@ -484,18 +487,23 @@ Module Report
     'de la tabla RepData y lo ejecuta. Los datos se pueden accesar usando
     'el recordset rsReport
     Private Function map_data() As Boolean
-        Dim rsReport As SqlDataReader
+        Dim rsReport As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
         'On Error GoTo ErrorHandler
 
         'Este rs fue previamente cargado por map_fields
-        If rsFields.HasRows() Then
+        If rsFields.Rows.Count > 0 Then
 
             sStmt = "SELECT 'ND' as cust_name,'SEPTEMBER' AS month_year, "
 
-            While (rsFields.HasRows())
-                sStmt = Trim(sStmt) & " " & Trim(rsFields.Item("col_map").Value) & ", "
-            End While
+            'While (rsFields.HasRows())
+            '    sStmt = Trim(sStmt) & " " & Trim(rsFields.Item("col_map").Value) & ", "
+            'End While
+
+            For drow As Integer = 0 To rsFields.Rows.Count - 1
+                sStmt = Trim(sStmt) & " " & Trim(rsFields.Rows(drow).Item("col_map")) & ", "
+            Next drow
+
             sStmt = Left(sStmt, Len(sStmt) - 2) 'Elimina la ultima coma
             sStmt = Trim(sStmt) & " FROM RepData " & "WHERE col0 = " & Str(nReport)
             MsgBox(sStmt)
@@ -507,13 +515,13 @@ Module Report
         'Cargo el recordset con los datos de RepData
         Try
             cmd.CommandText = sStmt
-            rsReport = cmd.ExecuteReader()
+            rsReport = getDataTable(sStmt) 'cmd.ExecuteReader()
             'UPGRADE_WARNING: Couldn't resolve default property of object rsReport.State. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 
             'Si hay datos
             map_data = True
             'UPGRADE_WARNING: Couldn't resolve default property of object rsReport.RecordCount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            If Not rsReport.HasRows() Then
+            If Not rsReport.Rows.Count > 0 Then
                 map_data = False
             End If
         Catch e As Exception
@@ -1005,7 +1013,7 @@ ErrorHandler:
     Public Function hasCustomerInvoice(ByRef sCustId As String, ByRef nId As Short) As gDumpUDT
 
 
-        Dim rsCust As SqlDataReader
+        Dim rsCust As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
         hasCustomerInvoice.str1 = "FALSE"
         hasCustomerInvoice.str2 = ""
@@ -1013,11 +1021,11 @@ ErrorHandler:
         sStmt = "SELECT cust_id, invoice_date, billing_period, id  " & " FROM CustomerInvoice " & " WHERE cust_id = '" & sCustId & "' " & " AND id = " & Str(nId)
         cmd.CommandText = sStmt
 
-        rsCust = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
+        rsCust = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 
-        If rsCust.HasRows() Then
+        If rsCust.Rows.Count > 0 Then
             hasCustomerInvoice.str1 = "TRUE"
-            hasCustomerInvoice.str2 = "CustId:" + rsCust.Item("cust_id").Value + " Invoice Date:" + CStr(rsCust.Item("invoice_date").Value) + " Billing Period:" + rsCust.Item("billing_period").Value
+            hasCustomerInvoice.str2 = "CustId:" + rsCust.Rows(0).Item("cust_id") + " Invoice Date:" + CStr(rsCust.Rows(0).Item("invoice_date")) + " Billing Period:" + rsCust.Rows(0).Item("billing_period")
         End If
 
 
@@ -1094,17 +1102,17 @@ ErrorHandler:
 
         getGIRFinalVersion = 0
 
-        Dim rsGIR As SqlDataReader
+        Dim rsGIR As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
 
         Dim query As String
         query = "SELECT report_id FROM rptCriteriaGlmInvoice " & " WHERE  cust_id = '" & sCustId & "' " & " AND period_seq = " & Str(nPeriodSeq) & " AND group_seq = " & Str(nGroupSeq) & " AND is_final_version = 'TRUE' "
         cmd.CommandText = query
         
-        rsGIR = cmd.ExecuteReader() '.Open(query, cn, ADODB.CursorTypeEnum.adOpenStatic)
+        rsGIR = getDataTable(query) ' cmd.ExecuteReader() '.Open(query, cn, ADODB.CursorTypeEnum.adOpenStatic)
 
-        If rsGIR.HasRows() Then
-            getGIRFinalVersion = rsGIR.Item("report_id").Value
+        If rsGIR.Rows.Count > 0 Then
+            getGIRFinalVersion = rsGIR.Rows(0).Item("report_id")
         End If
 
 
@@ -1707,7 +1715,7 @@ ErrorHandler:
 
 
         Dim wgt As Double
-        Dim rsPU As SqlDataReader
+        Dim rsPU As DataTable
         Dim numPU As Double
         Dim eqptQty As Short
         Dim eqptSizeCapacity As Double
@@ -1720,10 +1728,10 @@ ErrorHandler:
         'if not found then look for "Service Rate per Haul"
         sStmt = " SELECT sum(b.units)  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = 'RPTRECYCLETONGEN_PKR_TON' )"
         cmd.CommandText = sStmt
-        rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsPU = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If Not IsDBNull(rsPU.Item(0).Value) Then
-            tons = rsPU.Item(0).Value
+        If Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+            tons = rsPU.Rows(0).Item(0)
         End If
 
 
@@ -1733,13 +1741,13 @@ ErrorHandler:
             sStmt = " SELECT sum(b.units), d.eqpt_qty, d.eqpt_size_capacity  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = 'RPTRECYCLETONGEN_PKR_PU' )" & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity  "
             cmd.CommandText = sStmt
 
-            rsPU = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
 
-            If rsPU.HasRows() Then
-                numPU = rsPU.Item(0).Value
-                eqptQty = rsPU.Item(1).Value
-                eqptSizeCapacity = rsPU.Item(2).Value
+            If rsPU.Rows.Count > 0 Then
+                numPU = rsPU.Rows(0).Item(0)
+                eqptQty = rsPU.Rows(0).Item(1)
+                eqptSizeCapacity = rsPU.Rows(0).Item(2)
             End If
 
 
