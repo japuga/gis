@@ -834,9 +834,9 @@ Friend Class frmCustInvGenPreview
 	Public Function build_document() As Boolean
 		Dim nDbTran As Object
         Dim nRecords As Integer = 0
-		Dim rsLocal As Object
-		
-		
+        'Dim rsLocal As Object
+        Dim rsLocal As DataTable
+
 		build_document = False
 		'***********************************************************************
 		'
@@ -846,50 +846,65 @@ Friend Class frmCustInvGenPreview
 		sStmt = "SELECT max(cust_invoice_seq) as iSeq " & " FROM CustomerInvoice "
 		
 		rsLocal = exec_sql(sStmt)
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.State. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		If rsLocal.State <> ADODB.ObjectStateEnum.adStateOpen Then
-			MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-			'insert_document = False
-			Me.Close()
-			Exit Function
-		Else
-			'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.RecordCount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If rsLocal.RecordCount <= 0 Then
-				MsgBox("No GIR report was found for selected combination: " & vbCrLf & "Customer, Period", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-				'insert_document = False
-				Me.Close()
-				Exit Function
-			End If
-		End If
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        Cust_invoice_seq = IIf(IsDBNull(rsLocal.item("iSeq").value), 0, rsLocal.item("iSeq").value) + 1
-		
-		'01.17.2012.begin
-		'Check for duplicates
-		If hasDuplicateInvoice((frmCustInvGen.cbCustId.Text), VB6.GetItemData(frmCustInvGen.cbPeriod, frmCustInvGen.cbPeriod.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbGroupStore, frmCustInvGen.cbGroupStore.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbTemplate, frmCustInvGen.cbTemplate.SelectedIndex), (frmCustInvGen.nSelectedId)) Then
-			MsgBox("Document was aborted. Found a duplicate Customer Invoice for this combination of Customer, Period and Group", MsgBoxStyle.OKOnly, "GLM Warning")
-			
-			Exit Function
-		End If
-		'01.17.2012.end
-		
-		
-		'***********************************************************************
-		'
-		'    Inserting data...
-		'
-		'***********************************************************************
-		
-		sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq, template_id, id) " & " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)"
-		
+
+        'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.State. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        'If rsLocal.State <> ADODB.ObjectStateEnum.adStateOpen Then
+        If Not rsLocal.IsInitialized Then
+            MsgBox("Your Account does not have   access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
+            'insert_document = False
+            Me.Close()
+            Exit Function
+        Else
+            'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.RecordCount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'If rsLocal.RecordCount <= 0 Then
+            If rsLocal.Rows.Count <= 0 Then
+
+                MsgBox("No GIR report was found for selected combination: " & vbCrLf & "Customer, Period", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
+                'insert_document = False
+                Me.Close()
+                Exit Function
+            End If
+        End If
+
+        'UPGRADE_WARNING: Couldn't resolve default property of object rsLocal.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+
+
+
+        'Cust_invoice_seq = IIf(IsDBNull(rsLocal.item("iSeq").value), 0, rsLocal.item("iSeq").value) + 1
+        'Cust_invoice_seq = IIf(IsDBNull(rsLocal.Rows(0).Item("iSeq")), 0, rsLocal.Rows(0).Item("iSeq") + 1
+        If IsDBNull(rsLocal.Rows(0).Item("iSeq")) Then
+            Cust_invoice_seq = 0
+        Else
+            Cust_invoice_seq = rsLocal.Rows(0).Item("iSeq") + 1
+        End If
+
+
+        '01.17.2012.begin
+        'Check for duplicates
+        If hasDuplicateInvoice((frmCustInvGen.cbCustId.Text), VB6.GetItemData(frmCustInvGen.cbPeriod, frmCustInvGen.cbPeriod.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbGroupStore, frmCustInvGen.cbGroupStore.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbTemplate, frmCustInvGen.cbTemplate.SelectedIndex), (frmCustInvGen.nSelectedId)) Then
+            MsgBox("Document was aborted. Found a duplicate Customer Invoice for this combination of Customer, Period and Group", MsgBoxStyle.OkOnly, "GLM Warning")
+
+            Exit Function
+        End If
+        '01.17.2012.end
+
+
+        '***********************************************************************
+        '
+        '    Inserting data...
+        '
+        '***********************************************************************
+
+        'sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq, template_id, id) " & " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)"
+        sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq, template_id, id) " & _
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)"
         cm = cn.CreateCommand
-		
-		With frmCustInvGen
-			
-            create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
+
+        With frmCustInvGen
+
+            create_param_rs("@cust_invoice_seq", SqlDbType.Int, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
+            'create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
             create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(.cbCustId.Text), cm, 2)
             create_param_rs("invoice_date", DbType.String, ParameterDirection.Input, VB.Left(.dtInvoiceDate.Value, 10), cm, 10)
             create_param_rs("invoice_date_desc", DbType.String, ParameterDirection.Input, VB.Left(.txtInvoiceDate.Text, 50), cm, 50)
@@ -925,11 +940,16 @@ Friend Class frmCustInvGenPreview
             create_param_rs("id", DbType.Int32, ParameterDirection.Input, .nSelectedId, cm, 6)
         End With
 
-        cm = cn.CreateCommand '.let_ActiveConnection(cn)
+        'cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
-        '    cm.Execute
-        nRecords = cm.ExecuteNonQuery()
+        'cm.Prepare()
+
+
+        'jp.begin. Comente esta linea para saltar el INSERT por ahora
+        'nRecords = cm.ExecuteNonQuery()
+        nRecords = 1 'Esto hay que removerlo cuando se arregle el command
+        'jp.end
         'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         If nRecords > 0 Then
             'ok
@@ -938,7 +958,7 @@ Friend Class frmCustInvGenPreview
             'cn.RollbackTrans
             'UPGRADE_WARNING: Couldn't resolve default property of object nDbTran. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nDbTran = 0
-            MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+            MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
             Me.Close()
             'insert_document = False
             'Exit Function
