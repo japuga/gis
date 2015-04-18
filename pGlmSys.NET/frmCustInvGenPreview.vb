@@ -878,17 +878,17 @@ Friend Class frmCustInvGenPreview
         Dim nGroupSeq As Short = VB6.GetItemData(frmCustInvGen.cbGroupStore, frmCustInvGen.cbGroupStore.SelectedIndex)
 
         Dim tmpltId As Integer = frmCustInvGen.cbTemplate.SelectedIndex
-        Dim nTemplateId As Short
+        'Dim nTemplateId As Short
         If tmpltId < 0 Then
-            nTemplateId = -1
+            tmpltId = -1
         Else
-            VB6.GetItemData(frmCustInvGen.cbTemplate, frmCustInvGen.cbTemplate.SelectedIndex)
+            tmpltId = VB6.GetItemData(frmCustInvGen.cbTemplate, frmCustInvGen.cbTemplate.SelectedIndex)
         End If
 
         Dim nSelectedId As Short = VB6.GetItemData(frmCustInvGen.cbCustName, frmCustInvGen.cbCustName.SelectedIndex)
 
         'If hasDuplicateInvoice((frmCustInvGen.cbCustId.Text), VB6.GetItemData(frmCustInvGen.cbPeriod, frmCustInvGen.cbPeriod.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbGroupStore, frmCustInvGen.cbGroupStore.SelectedIndex), VB6.GetItemData(frmCustInvGen.cbTemplate, frmCustInvGen.cbTemplate.SelectedIndex), iCustInvGenSelId) Then
-        If hasDuplicateInvoice(sCustId, nPeriodSeq, nGroupSeq, nTemplateId, nSelectedId) Then
+        If hasDuplicateInvoice(sCustId, nPeriodSeq, nGroupSeq, tmpltId, nSelectedId) Then
             MsgBox("Document was aborted. Found a duplicate Customer Invoice for this combination of Customer, Period and Group", MsgBoxStyle.OkOnly, "GLM Warning")
 
             Exit Function
@@ -958,6 +958,8 @@ Friend Class frmCustInvGenPreview
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
         '    cm.Execute
+
+        'cm.Parameters("template_id")
         Try
             nRecords = cm.ExecuteNonQuery()
             'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'

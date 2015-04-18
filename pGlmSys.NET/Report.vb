@@ -769,7 +769,7 @@ ErrorHandler:
     End Function
 
     'Inserts record in RptCriteriaGlmInvoice
-    Public Function insert_glminvoice_report_criteria(ByRef custId As String, ByRef repNo As Short, ByRef reportId As Integer, ByRef stateId As String, ByRef groupSeq As Short, ByRef repTemplateName As String, ByRef reportCaption As String, ByRef isPeriodSeq As String, ByRef periodSeq As Short, ByRef startDate As Date, ByRef endDate As Date, ByRef displayStoreWithInvoices As String, ByRef publishToWeb As String, ByRef webReportName As String, ByRef useForCustomerBilling As String, ByRef instanceNo As Integer, ByRef isFinalVersion As String) As Boolean
+    Public Function insert_glminvoice_report_criteria(ByRef custId As String, ByRef repNo As Short, ByRef reportId As Integer, ByRef stateId As String, ByRef groupSeq As Short, ByRef repTemplateName As String, ByRef reportCaption As String, ByRef isPeriodSeq As String, ByRef periodSeq As Short, ByRef startDate As Date, ByRef endDate As Date, ByRef displayStoreWithInvoices As String, ByRef publishToWeb As String, ByRef webReportName As String, ByRef useForCustomerBilling As String, ByRef instanceNo As Integer, ByRef isFinalVersion As String, Optional ByRef sqlTran As SqlTransaction = Nothing) As Boolean
 
         Dim nRecords As Short
 
@@ -783,7 +783,7 @@ ErrorHandler:
         cm = cn.CreateCommand()
         'cm.Parameters(0).Direction = ParameterDirection.Input
         'cm.Parameters(0).Direction = ParameterDirection.Output
-        
+
         create_param("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(custId), cm, 2)
         create_param("rep_no", SqlDbType.Int, ParameterDirection.Input, repNo, cm)
         create_param("report_id", SqlDbType.Int, ParameterDirection.Input, reportId, cm)
@@ -805,6 +805,11 @@ ErrorHandler:
 
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
+
+
+        If Not IsNothing(sqlTran) Then
+            cm.Transaction = sqlTran
+        End If
 
         nRecords = cm.ExecuteNonQuery()
 
@@ -922,10 +927,11 @@ ErrorHandler:
 
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
+        cm.Transaction = nTrans
         nRecords = cm.ExecuteNonQuery()
         If nRecords > 0 Then
             'ok
-            If insert_glminvoice_report_criteria(custId, repNo, reportId, stateId, groupSeq, repTemplateName, reportCaption, isPeriodSeq, periodSeq, startDate, endDate, displayStoreWithInvoices, publishToWeb, webReportName, useForCustomerBilling, nInstanceNo, sIsFinalVersion) = True Then
+            If insert_glminvoice_report_criteria(custId, repNo, reportId, stateId, groupSeq, repTemplateName, reportCaption, isPeriodSeq, periodSeq, startDate, endDate, displayStoreWithInvoices, publishToWeb, webReportName, useForCustomerBilling, nInstanceNo, sIsFinalVersion, nTrans) = True Then
 
                 nTrans.Commit()
                 update_glminvoice_report_criteria = True
