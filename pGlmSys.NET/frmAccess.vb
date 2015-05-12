@@ -98,7 +98,7 @@ Friend Class frmAccess
             nFrom = nFrom + Len("Password=")
 
             'sStr = Replace(sStr, Mid(sStr, nFrom, nTo - nFrom), "***")
-            MsgBox(sStr)
+            'MsgBox(sStr)
             write_msg("frmAccess.cmdOk", sStr)
 
 

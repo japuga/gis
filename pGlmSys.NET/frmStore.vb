@@ -60,7 +60,11 @@ Friend Class frmStore
         If bFlag Then
             Label1.Text = Trim(gbStoreSearch.sCustName) & " - Stores"
             lbState.Text = "State - " & gbStoreSearch.sStateId
-            sStmt = "SELECT store.store_id, " & "store.store_number AS Store, store_name AS Name," & "store_address AS Address, store_city AS City, " & "store_zip AS Zip, store_contact AS Contact, store_address_seq " & "FROM store " & "WHERE cust_id ='" & gbStoreSearch.sCustId & "' "
+            sStmt = "SELECT store.store_id, " & _
+                "store.store_number AS Store, store_name AS Name," & _
+                "store_address AS Address, store_city AS City, " & _
+                "store_zip AS Zip, store_contact AS Contact, store_address_seq, lf_group AS LF_Group " & _
+                "FROM store " & "WHERE cust_id ='" & gbStoreSearch.sCustId & "' "
 
             If gbStoreSearch.sStateId = "<All>" Then
                 '1.8.8 Solo estados con permiso
@@ -75,7 +79,10 @@ Friend Class frmStore
             'Este query es solo para mostrar los titulos de los campos en Datagrid
             Label1.Text = "Stores"
             lbState.Text = ""
-            sStmt = "SELECT store.store_id, " & "store.store_number AS Store, store_name AS Name," & "store_address AS Address, store_city AS City, " & "store_zip AS Zip, store_contact AS Contact, store_address_seq " & "FROM store " & "WHERE cust_id ='00' "
+            sStmt = "SELECT store.store_id, " & _
+            "store.store_number AS Store, store_name AS Name," & _
+            "store_address AS Address, store_city AS City, " & _
+            "store_zip AS Zip, store_contact AS Contact, store_address_seq, lf_group AS LF_Group " & "FROM store " & "WHERE cust_id ='00' "
 
 
         End If
@@ -115,12 +122,14 @@ Friend Class frmStore
 
         dgStore.Columns("store_id").Visible = False
         dgStore.Columns("store_address_seq").Visible = False
+        dgStore.Columns("Contact").Visible = False
 
         'Formato de columnas en datagrid.
-        dgStore.Columns("Store").Width = VB6.TwipsToPixelsX(800)
-        dgStore.Columns("Address").Width = VB6.TwipsToPixelsX(2500)
-        dgStore.Columns("City").Width = VB6.TwipsToPixelsX(900)
+        dgStore.Columns("Store").Width = VB6.TwipsToPixelsX(1200)
+        dgStore.Columns("Address").Width = VB6.TwipsToPixelsX(2800)
+        dgStore.Columns("City").Width = VB6.TwipsToPixelsX(1000)
         dgStore.Columns("Zip").Width = VB6.TwipsToPixelsX(1000)
+        dgStore.Columns("LF_Group").Width = VB6.TwipsToPixelsX(1000)
         Exit Sub
 
 ErrorHandler:
@@ -204,7 +213,7 @@ ErrorHandler:
                 gStoreRecord.sStoreCoCode = IIf(IsDBNull(dt.Rows(0).Item("store_co_code")), "", Trim(dt.Rows(0).Item("store_co_code")))
 
                 'Bug 35.begin
-                gStoreRecord.nStoreOccupants = IIf(IsDBNull(dt.Rows(0).Item("store_occupants")), 0, Trim(dt.Rows(0).Item("store_occupants")))
+                gStoreRecord.nStoreOccupants = IIf(IsDBNull(dt.Rows(0).Item("store_occupants")), 0, dt.Rows(0).Item("store_occupants"))
                 'Bug 35.end
 
                 Dim expr As Boolean = IsDBNull(dt.Rows(0).Item("store_address_seq"))
