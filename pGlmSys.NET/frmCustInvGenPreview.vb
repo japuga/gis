@@ -837,8 +837,8 @@ Friend Class frmCustInvGenPreview
         Dim nRecords As Integer = 0
         Dim rsLocal As DataTable
 		
-		
 		build_document = False
+
 		'***********************************************************************
 		'
 		'     Get last sequence number...
@@ -957,6 +957,7 @@ Friend Class frmCustInvGenPreview
         'cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
+
         '    cm.Execute
 
         'cm.Parameters("template_id")
@@ -987,7 +988,6 @@ Friend Class frmCustInvGenPreview
         'jpdebug.begin.013010
         create_document_word()
         oleOpenForEdition()
-
         'jpdebug.end
 
         '2012.01.17.begin

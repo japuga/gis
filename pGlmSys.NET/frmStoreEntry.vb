@@ -667,43 +667,43 @@ ErrorHandler:
 		'End If
 		
 		'Phone
-        If getPhoneNumberLen(mtxtStorePhone1.Text) = 0 And getPhoneNumberLen(mtxtStorePhone2.Text) = 0 Then
-            MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-            val_fields = False
-            Exit Function
-        End If
-		
+        'If getPhoneNumberLen(mtxtStorePhone1.Text) = 0 And getPhoneNumberLen(mtxtStorePhone2.Text) = 0 Then
+        'MsgBox("At least one Phone Number should be entered.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        'val_fields = False
+        'Exit Function
+        'End If
+
         If getPhoneNumberLen(mtxtStorePhone1.Text) >= 0 And getPhoneNumberLen(mtxtStorePhone1.Text) < 10 Then
             MsgBox("Phone1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
             mtxtStorePhone1.Focus()
             val_fields = False
             Exit Function
         End If
-		
-        If getPhoneNumberLen(mtxtStorePhone2.Text) >= 0 And getPhoneNumberLen(mtxtStorePhone2.Text) < 10 Then
-            MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-            mtxtStorePhone2.Focus()
-            val_fields = False
-            Exit Function
-        End If
-		
-        If getPhoneNumberLen(mtxtStoreFax1.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax1.Text) < 10 Then
-            MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-            mtxtStoreFax1.Focus()
-            val_fields = False
-            Exit Function
-        End If
 
-        If getPhoneNumberLen(mtxtStoreFax2.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax2.Text) < 10 Then
-            MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
-            mtxtStoreFax2.Focus()
-            val_fields = False
-            Exit Function
-        End If
-		
-		
-		
-		'Occupants
+        'If getPhoneNumberLen(mtxtStorePhone2.Text) >= 0 And getPhoneNumberLen(mtxtStorePhone2.Text) < 10 Then
+        ' MsgBox("Phone2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        'mtxtStorePhone2.Focus()
+        'val_fields = False
+        'Exit Function
+        'End If
+
+        'If getPhoneNumberLen(mtxtStoreFax1.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax1.Text) < 10 Then
+        ' MsgBox("Fax1: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        'mtxtStoreFax1.Focus()
+        'val_fields = False
+        'Exit Function
+        'End If
+
+        'If getPhoneNumberLen(mtxtStoreFax2.Text) >= 0 And getPhoneNumberLen(mtxtStoreFax2.Text) < 10 Then
+        ' MsgBox("Fax2: Please enter 10 digit number including Area Code", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        'mtxtStoreFax2.Focus()
+        'val_fields = False
+        'Exit Function
+        'End If
+
+
+
+        'Occupants
         Try
 
             Dim nOccupants As Short
