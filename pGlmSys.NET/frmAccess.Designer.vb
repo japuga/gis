@@ -135,7 +135,7 @@
         Me.txtPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtPassword.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.txtPassword.Size = New System.Drawing.Size(145, 20)
-        Me.txtPassword.TabIndex = 2
+        Me.txtPassword.TabIndex = 1
         '
         'txtUser
         '
