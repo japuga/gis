@@ -256,23 +256,23 @@
   <metadata name="Timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>105, 17</value>
   </metadata>
-  <metadata name="imgKey.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>177, 17</value>
-  </metadata>
   <data name="_imgKey_3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
         8vDPVCN+Aptt21Zr7RU1arqKg6ml1Nfa19CLQuaZR+hFYXNS6m9jDSROBS3D2zPVc/IITsyEZwolD3oj
         4NkdoIcyFUaCQz68bEZpf7P5YOaRmIrgERzIv/8dXBBFDuR0TbwJ/n87Qir1t7EjVhE5WZNvImxOSv1t
         LJdbzQsZ7MJhmcvarmvoJfiLPJupsPrm8Y7wtCM6lK1MtHlVQZcfNWerpst7w1kKzPxo6GrtiA5pBdF+
         qMmo6C0Z1T1NJWoKvYRbzTW3mD6co5QX5daG4PmuynMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="imgKey.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>177, 17</value>
+  </metadata>
   <data name="_imgKey_2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
         8vDPVCN+Aptt21Zr7RU1arqKg6ml1Nfa19CLQuaZR+hFYXNS6m9jDSROBS3D2zPVc/IITsyEZwolD3oj
         4NkdoIcyFUaCQz68bEZpf7P5YOaRmIrgERzIv/8dXBBFDuR0TbwJ/n87Qir1t7EjVhE5WZNvImxOSv1t
         LJdbzQsZ7MJhmcvarmvoJfiLPJupsPrm8Y7wtCM6lK1MtHlVQZcfNWerpst7w1kKzPxo6GrtiA5pBdF+
@@ -282,7 +282,7 @@
   <data name="_imgKey_1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAADtSURBVFhH7Y6NDsMgCIR99L65K7hbkOKgStdk6ZeQU/6O
         8vDPVCN+Aptt21Zr7RU1arqKg6ml1Nfa19CLQuaZR+hFYXNS6m9jDSROBS3D2zPVc/IITsyEZwolD3oj
         4NkdoIcyFUaCQz68bEZpf7P5YOaRmIrgERzIv/8dXBBFDuR0TbwJ/n87Qir1t7EjVhE5WZNvImxOSv1t
         LJdbzQsZ7MJhmcvarmvoJfiLPJupsPrm8Y7wtCM6lK1MtHlVQZcfNWerpst7w1kKzPxo6GrtiA5pBdF+
@@ -292,7 +292,7 @@
   <data name="imgUnlock.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAEYSURBVFhH7ZIBDsIwDAP39D1tPwPcxSVEzZppBiTESZZp
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAAEYSURBVFhH7ZIBDsIwDAP39D1tPwPcxSVEzZppBiTESZZp
         yRwPsVzgNtBHaMtG8DsMvQtbdQzm9nEtFv8Ed1TE7mVY7A7OJk+789idBIsshdrkv4C4wLZtTfi8X6XY
         +l8rAL5ZAFQDbb2+QBVbryvAoLLC/yXqFC3IvU0/Z84ZKM4z46ESL6FePjR6fA7wfl1XZkx5CWVAvM/c
         z/KM5dUCw1CK55lTyAvL5wVU4mIudyVS+hsoHHmD5ccFquEVRx506hfAkErM825K6e0VjjxoUCKlDanE
@@ -303,7 +303,7 @@
   <data name="imgLock.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAEBSURBVFhH7ZBRDoMwDEM5OkfjZmwOcReqpA0i28fEkyyv
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAAEBSURBVFhH7ZBRDoMwDEM5OkfjZmwOcReqpA0i28fEkyyv
         JThmy8PDDXZHP0GWefAZhr6FrhqDuWO8Fo3/gDuqR+/L0NgDnFUWubPoXQkamQrVyafAHxWQoG3bRDyP
         NJm9RAuyoQC/Pe9n7XOcVSlOocAL7X303rqu4m9NOYUyoL+P3M7yjOXZAm4oxfPMKeR1y+cFqsTFXG5K
         hLQvqHDkOcvHBbLhGUcedOkfwFCVmGddFdLaVzjyIKdEiAxViXnWVSHpr8s48iCnRIgMVYl51lUhrX2F
@@ -311,7 +311,4 @@
         rkJggg==
 </value>
   </data>
-  <metadata name="imgKey.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>177, 17</value>
-  </metadata>
 </root>

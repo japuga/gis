@@ -55,7 +55,7 @@ Friend Class frmContract
 			Case General.modo.NewRecord
                 If dgStore.SelectedRows.Count > 0 Then
                     'Se escogio una tienda. OK
-                    If dgEquipment.SelectedRows(0).Index >= 0 Then
+                    If dgEquipment.SelectedRows.Count > 0 Then
                         'OK Equipment
                     Else
                         MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
