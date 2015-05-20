@@ -336,6 +336,8 @@ ErrorHandler:
 		
         'Ejecuto el procedure y verifico por errores
         cmReport.Parameters("@nError").Direction = ParameterDirection.Output
+        cmReport.CommandTimeout = 300
+
         cmReport.ExecuteNonQuery()
 		
 		rptBillPayParam.nError = cmReport.Parameters("@nError").Value
@@ -363,7 +365,7 @@ ErrorHandler:
         '      System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         '      Exit Sub
 
-        sStmt = "SELECT report_no, cust_id, cust_name, " & "report_start, report_end, store_no, location,  " & "RTRIM(vendor), account_no , invoice_no," & "invoice_date, amount, " & "taxes, total_amount, comment, sum_amount, sum_taxes," & " sum_total_amount, check_amount, check_no, check_date, status, store_name, card_auth  " & "FROM rptBillPayment " & "WHERE report_no = " & Str(nReport) & " " & "ORDER BY cust_id, store_no, location, vendor, account_no, invoice_no "
+        sStmt = "SELECT report_no, cust_id, cust_name, " & "report_start, report_end, store_no, location,  " & "RTRIM(vendor) vendor, account_no , invoice_no," & "invoice_date, amount, " & "taxes, total_amount, comment, sum_amount, sum_taxes," & " sum_total_amount, check_amount, check_no, check_date, status, store_name, card_auth  " & "FROM rptBillPayment " & "WHERE report_no = " & Str(nReport) & " " & "ORDER BY cust_id, store_no, location, vendor, account_no, invoice_no "
 
         rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -403,7 +405,7 @@ ErrorHandler:
             sFile = get_template(sLocalReport, cbReportTemplate.Text)
             rptDoc.Load(strReportsSysPath & "rptBillPay.rpt")
         Catch ex As Exception
-            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rrptBillPay.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
 
         rptDoc.SetDataSource(dstReport)
