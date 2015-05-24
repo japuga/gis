@@ -425,12 +425,13 @@ ErrorHandler:
             Exit Function
         End If
 		
-		VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
-		If gbPrinter Then
-			find_printer = True
-		Else
-			find_printer = False
-		End If
+        'VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
+        find_printer = True
+        'If gbPrinter Then
+        '	find_printer = True
+        'Else
+        '	find_printer = False
+        'End If
 	End Function
 	'Rel1.3.2 Extension de show_report para manejar reportes
 	'en Crystal Reports.

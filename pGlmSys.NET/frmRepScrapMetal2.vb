@@ -400,7 +400,7 @@ ErrorHandler:
             Exit Function
         End If
 		
-		VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
+        '.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
 		If gbPrinter Then
 			find_printer = True
 		Else

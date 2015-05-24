@@ -484,12 +484,13 @@ ErrorHandler:
             Exit Function
         End If
 		
-		VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
-		If gbPrinter Then
-			find_printer = True
-		Else
-			find_printer = False
-		End If
+        'VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
+        find_printer = True
+        'If gbPrinter Then
+        '	find_printer = True
+        'Else
+        '	find_printer = False
+        'End If
 	End Function
 	
 	Private Function get_instance_no() As Integer

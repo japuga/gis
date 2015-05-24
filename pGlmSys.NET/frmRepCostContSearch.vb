@@ -553,7 +553,7 @@ ErrorHandler:
             Exit Function
         End If
 		
-        VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
+        'VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
         find_printer = True
         'If gbPrinter Then
         '	find_printer = True

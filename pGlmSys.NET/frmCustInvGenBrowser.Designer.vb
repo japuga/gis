@@ -23,6 +23,8 @@ Partial Class frmCustInvGenBrowser
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.WebBrowser1 = New System.Windows.Forms.WebBrowser
+        Me.FileSystemWatcher1 = New System.IO.FileSystemWatcher
+        CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'WebBrowser1
@@ -31,19 +33,26 @@ Partial Class frmCustInvGenBrowser
         Me.WebBrowser1.Location = New System.Drawing.Point(0, 0)
         Me.WebBrowser1.MinimumSize = New System.Drawing.Size(20, 20)
         Me.WebBrowser1.Name = "WebBrowser1"
-        Me.WebBrowser1.Size = New System.Drawing.Size(879, 505)
+        Me.WebBrowser1.Size = New System.Drawing.Size(989, 532)
         Me.WebBrowser1.TabIndex = 0
+        '
+        'FileSystemWatcher1
+        '
+        Me.FileSystemWatcher1.EnableRaisingEvents = True
+        Me.FileSystemWatcher1.SynchronizingObject = Me
         '
         'frmCustInvGenBrowser
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(879, 505)
+        Me.ClientSize = New System.Drawing.Size(989, 532)
         Me.Controls.Add(Me.WebBrowser1)
         Me.Name = "frmCustInvGenBrowser"
         Me.Text = "frmCustInvGenBrowser"
+        CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents WebBrowser1 As System.Windows.Forms.WebBrowser
+    Friend WithEvents FileSystemWatcher1 As System.IO.FileSystemWatcher
 End Class
