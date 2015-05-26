@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,36 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="FileSystemWatcher1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="cmdVBranch.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAFcSURBVFhHzZbhEoQgCIR9dB+tN+tcCKNSwLK7Y4bZMZX9
-        2v6UzpVzXr3ejs4vDI/UKxC7eVqXZXF1KsSouegUCAzBsLuN+3d6s49/99lVrBliB4jFPktzJoC1AtiH
-        L/HRALR1z9ILQPsQG2KdyhNRgWAQ3m/dt9RNYB+MFZdW7JXLtyHMBELmohXCN9VqJiDPxFTqYi6qANBn
-        s5Z2E5C3D5tjr6aAWb45tJsA1mIuisJ+y5y0AsTMoUMJyLqnryfQMj1oBYiZQ8MJuOY4UwEmJMCbcQht
-        jmfos1lLuwnwZhmqIHpK5mgC8E21mglAPYij+TiEmYAoHeBD1972cBYzRiHcBLSKmW7c4zN8lwHKDdpr
-        z9EaSsBTDUGfhQDQPsRQApbWN6dV6SDElAREy38Vm9KqdADiAIDF0/YgWk0AW8niYfchOv1GmRDfqr+F
-        +CoASkH8BoBKjBvmKX0A43TAunrNJqYAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="cmdDrop.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAwUExURQAAAMbGxv///////////////////////////////////////////////////////9N1
-        NaUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAAsSURBVBjTYxCEAjQGI5QhAGMwQBkCMAYDlCHAgC6CUAPX
-        hTAHbjIWSwUFBQH85AciFq/pQgAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmdAdd.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAwUExURQAAAMbGxv///////////////////////////////////////////////////////9N1
-        NaUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAApSURBVBjTYxCEAmSGAJzBCGMwwBmMMAYDnMGILsKIrosR
-        3WRBrAxBQQAWlQd8ToUcMQAAAABJRU5ErkJggg==
-</value>
-  </data>
 </root>

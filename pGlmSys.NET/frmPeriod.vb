@@ -17,6 +17,10 @@ Friend Class frmPeriod
 	
     Private Sub dgPeriod_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         'Update
+        If dgPeriod.SelectedRows.Count = 0 Then
+            dgPeriod.Rows(dgPeriod.SelectedCells(0).RowIndex).Selected = True
+        End If
+
         If dgPeriod.SelectedRows.Count > 0 Then
             gPeriodRecord.bMode = General.modo.UpdateRecord
             If get_period((General.modo.UpdateRecord)) = True Then
@@ -237,5 +241,9 @@ ErrorHandler:
     Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
         remove_period()
         set_dgPeriodData(cbCustId.Text)
+    End Sub
+
+    Private Sub dgPeriod_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgPeriod.CellDoubleClick
+        dgPeriod_DblClick(dgPeriod, New System.EventArgs())
     End Sub
 End Class

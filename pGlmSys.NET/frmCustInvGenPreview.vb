@@ -424,8 +424,8 @@ Friend Class frmCustInvGenPreview
 		'jp.20110102.begin
 		create_document_word_content(oWord, wordDoc, nFile, sTemplateFile, flags)
 		'create_document_word_content oWord, wordDoc, nFile, sTemplateFile
-		'jp.20110102.end
-		
+        'jp.20110102.end
+        frmCustInvGenBrowser.WebBrowser1.Navigate(nFile)
 		'Link Tmp file onto OLE container
 		'UPGRADE_ISSUE: Ole method OLEInvoice.CreateLink was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'OLEInvoice.CreateLink(nFile) 'oWord.Application.ActiveDocument
@@ -814,7 +814,7 @@ Friend Class frmCustInvGenPreview
         'OLEInvoice.AppIsRunning = True
 		'OLEInvoice.object.Documents.Close ':=False
 		'OLEInvoice.object.ActiveDocuments.Quit False
-		Close()
+        'Close()
 		'UPGRADE_ISSUE: Ole method OLEInvoice.Delete was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'OLEInvoice.Delete()
 		
@@ -836,8 +836,9 @@ Friend Class frmCustInvGenPreview
         Dim nDbTran As SqlTransaction
         Dim nRecords As Integer = 0
         Dim rsLocal As DataTable
+		
+		build_document = False
 
-        build_document = False
 		'***********************************************************************
 		'
 		'     Get last sequence number...

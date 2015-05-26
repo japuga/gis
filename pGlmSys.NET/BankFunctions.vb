@@ -188,9 +188,9 @@ ErrorHandler:
         'While (rs.Read())
         For row As Integer = 0 To rs.Rows.Count - 1
             If Len(sVendSeq) = 0 Then
-                sVendSeq = Str(rs.Rows(row).Item("vend_seq").Value)
+                sVendSeq = Str(rs.Rows(row).Item("vend_seq"))
             Else
-                sVendSeq = sVendSeq & "," & Str(rs.Rows(row).Item("vend_seq").Value)
+                sVendSeq = sVendSeq & "," & Str(rs.Rows(row).Item("vend_seq"))
             End If
         Next row
 
@@ -220,7 +220,7 @@ ErrorHandler:
         If rs.Rows.Count > 0 Then
 
             For row As Integer = 0 To rs.Rows.Count - 1
-                sPeriodSeq = sPeriodSeq & Str(rs.Rows(row).Item("period_seq").Value) & ","
+                sPeriodSeq = sPeriodSeq & Str(rs.Rows(row).Item("period_seq")) & ","
             Next row
 
             sPeriodSeq = Left(sPeriodSeq, Len(sPeriodSeq) - 1)
@@ -651,7 +651,7 @@ ErrorHandler:
 
         rs = getDataTable(sStmt) ' = cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            sQBGroupId = rs.Rows(0).Item("qb_group_id").Value
+            sQBGroupId = rs.Rows(0).Item("qb_group_id")
         Else
             MsgBox("Failed to obtain Customer's QuickBooks group.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
             Exit Function
@@ -668,10 +668,10 @@ ErrorHandler:
 
         'Query no retorno datos
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If Not rs.Rows.Count > 0 Or IsDBNull(rs.Rows(0).Item(0).Value) Then
+        If Not rs.Rows.Count > 0 Or IsDBNull(rs.Rows(0).Item(0)) Then
             get_check_no = 1
         Else
-            get_check_no = rs.Rows(0).Item(0).Value + 1
+            get_check_no = rs.Rows(0).Item(0) + 1
         End If
 
         Exit Function
@@ -733,10 +733,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item(0).Value) Then
+            If IsDBNull(rs.Rows(0).Item(0)) Then
                 nBatchId = 1
             Else
-                nBatchId = rs.Rows(0).Item(0).Value + 1
+                nBatchId = rs.Rows(0).Item(0) + 1
             End If
         Else
             nBatchId = 1
@@ -836,10 +836,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("bank_account").Value) Then
+            If IsDBNull(rs.Rows(0).Item("bank_account")) Then
                 get_bank_account = ""
             Else
-                get_bank_account = rs.Rows(0).Item("bank_account").Value
+                get_bank_account = rs.Rows(0).Item("bank_account")
             End If
             Exit Function
         End If
@@ -857,10 +857,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("bank_aba").Value) Then
+            If IsDBNull(rs.Rows(0).Item("bank_aba")) Then
                 get_bank_aba = ""
             Else
-                get_bank_aba = rs.Rows(0).Item("bank_aba").Value
+                get_bank_aba = rs.Rows(0).Item("bank_aba")
             End If
             Exit Function
         End If
@@ -879,10 +879,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item(sFieldName).Value) Then
+            If IsDBNull(rs.Rows(0).Item(sFieldName)) Then
                 get_bank_info = ""
             Else
-                get_bank_info = rs.Rows(0).Item(sFieldName).Value
+                get_bank_info = rs.Rows(0).Item(sFieldName)
             End If
             Exit Function
         End If
@@ -998,7 +998,7 @@ ErrorHandler:
 
                 If sPrevBankAccount <> sBankAccount Then
                     sPrevBankAccount = sBankAccount
-                    sBankAccount = get_bank_account(rsCheckHeader.Item("bank_cust_seq").Value)
+                    sBankAccount = get_bank_account(rsCheckHeader.Item("bank_cust_seq"))
                     If sBankAccount = "" Then
                         MsgBox("Failed to retrieve Bank Account number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
@@ -1007,7 +1007,7 @@ ErrorHandler:
 
                 If sPrevBankAba <> sBankAba Then
                     sPrevBankAba = sBankAba
-                    sBankAba = get_bank_aba(rsCheckHeader.Item("bank_cust_seq").Value)
+                    sBankAba = get_bank_aba(rsCheckHeader.Item("bank_cust_seq"))
                     If sBankAba = "" Then
                         MsgBox("Failed to retrieve Bank ABA number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
@@ -1015,16 +1015,16 @@ ErrorHandler:
                 End If
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Item("check_no").Value) Then
-                    nCheckNo = rsCheckHeader.Item("check_no").Value
+                If Not IsDBNull(rsCheckHeader.Item("check_no")) Then
+                    nCheckNo = rsCheckHeader.Item("check_no")
                 Else
                     MsgBox("Failed to retrieve Check Number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
                 End If
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Item("check_date").Value) Then
-                    sCheckDate = rsCheckHeader.Item("check_date").Value
+                If Not IsDBNull(rsCheckHeader.Item("check_date")) Then
+                    sCheckDate = rsCheckHeader.Item("check_date")
                 Else
                     MsgBox("Failed to retrieve Check Date, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
@@ -1032,34 +1032,34 @@ ErrorHandler:
 
                 'sbBatch.SimpleText = "Printing Check# " + Str(nCheckNo)
 
-                sCustName = rsCheckHeader.Item("cust_name").Value
-                nCheckAmount = rsCheckHeader.Item("check_amount").Value
-                nBankCustSeq = rsCheckHeader.Item("bank_cust_seq").Value
-                sVendName = rsCheckHeader.Item("vend_name").Value
-                sVendPayAddress = rsCheckHeader.Item("vend_pay_address").Value
-                sVendPayCity = rsCheckHeader.Item("vend_pay_city").Value
-                sVendPayState = rsCheckHeader.Item("vend_pay_state").Value
-                sVendPayZip = rsCheckHeader.Item("vend_pay_zip").Value
+                sCustName = rsCheckHeader.Item("cust_name")
+                nCheckAmount = rsCheckHeader.Item("check_amount")
+                nBankCustSeq = rsCheckHeader.Item("bank_cust_seq")
+                sVendName = rsCheckHeader.Item("vend_name")
+                sVendPayAddress = rsCheckHeader.Item("vend_pay_address")
+                sVendPayCity = rsCheckHeader.Item("vend_pay_city")
+                sVendPayState = rsCheckHeader.Item("vend_pay_state")
+                sVendPayZip = rsCheckHeader.Item("vend_pay_zip")
                 sAmountString = num2str(nCheckAmount)
 
-                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Item("bank_cust_seq").Value, "check_info1")
-                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Item("bank_cust_seq").Value, "check_info2")
-                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Item("bank_cust_seq").Value, "check_info3")
-                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Item("bank_cust_seq").Value, "check_info4")
+                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info1")
+                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info2")
+                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info3")
+                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info4")
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsCheckHeader.Item("foot_note1").Value) Then
+                If IsDBNull(rsCheckHeader.Item("foot_note1")) Then
                     sFootNote1 = ""
                 Else
-                    sFootNote1 = rsCheckHeader.Item("foot_note1").Value
+                    sFootNote1 = rsCheckHeader.Item("foot_note1")
                 End If
 
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsCheckHeader.Item("foot_note2").Value) Then
+                If IsDBNull(rsCheckHeader.Item("foot_note2")) Then
                     sFootNote2 = ""
                 Else
-                    sFootNote2 = rsCheckHeader.Item("foot_note2").Value
+                    sFootNote2 = rsCheckHeader.Item("foot_note2")
                 End If
 
                 'Carga gCheck.rsStore
@@ -1125,7 +1125,7 @@ ErrorHandler:
         For row As Integer = 0 To rs.Rows.Count - 1
             i = i + 1
             'UPGRADE_WARNING: Couldn't resolve default property of object sStoreArray(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            sStoreArray(i) = rs.Rows(row).Item("store_number").Value
+            sStoreArray(i) = rs.Rows(row).Item("store_number")
         Next row
 
     End Sub
@@ -1343,24 +1343,24 @@ ErrorHandler:
             'Printer.CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("Store").Value)
+            'Printer.Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de cuenta
             'Printer.Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer.Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer.Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 5.7 * 1440 '6
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+            'Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
 
             i = i + 1
         Next row
@@ -1498,25 +1498,25 @@ ErrorHandler:
             'Printer.CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method 'Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("Store").Value)
+            'Printer.Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: Printer property 'Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de Cuenta
             ''Printer.Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method 'Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer.Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: Printer property 'Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method 'Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer.Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: Printer property 'Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentX = 5.7 * 1440 '6
             ''Printer.Print FormatCurrency(gCheck.rsStore("Total"), 2, vbTrue)
             'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: Printer method 'Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+            'Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
             i = i + 1
         Next row
 
@@ -2066,24 +2066,24 @@ ErrorHandler:
             'Printer..CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Store").Value)
+            'Printer..Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de cuenta
             ''Printer..Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer..Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer..Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 5.7 * 1440 '6
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
             i = i + 1
         Next row
 
@@ -2254,25 +2254,25 @@ ErrorHandler:
             'Printer..CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Store").Value)
+            'Printer..Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de Cuenta
             ''Printer..Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer..Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer..Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 5.7 * 1440 '6
             ''Printer..Print FormatCurrency(gCheck.rsStore("Total"), 2, vbTrue)
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
 
             i = i + 1
         Next row
@@ -2804,24 +2804,24 @@ ErrorHandler:
             'Printer..CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Store").Value)
+            'Printer..Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de cuenta
             ''Printer..Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer..Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer..Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 5.7 * 1440 '6
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+            'Printer..Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
 
             i = i + 1
         Next row
@@ -2974,19 +2974,19 @@ ErrorHandler:
             'Printer..CurrentX = 2 * 1440 '3
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Store").Value)
+            'Printer..Print(gCheck.rsStore.item("Store"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 3 * 1440 '4
             '05.15.03 Mascara de Cuenta
             ''Printer..Print gCheck.rsStore("Account");
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("account_mask").Value)
+            'Printer..Print(gCheck.rsStore.item("account_mask"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 4.5 * 1440 '5
             'UPGRADE_ISSUE: 'Printer. object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
             'UPGRADE_ISSUE: 'Printer. method 'Printer..Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-            'Printer..Print(gCheck.rsStore.item("Invoice").Value)
+            'Printer..Print(gCheck.rsStore.item("Invoice"))
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentX = 5.7 * 1440 '6
             ''Printer..Print FormatCurrency(gCheck.rsStore("Total"), 2, vbTrue)

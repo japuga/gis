@@ -1618,33 +1618,22 @@ ErrorHandler:
     End Sub
 	
     Private Sub move_all_member(ByRef rsSource As DataTable, ByRef rsDest As DataTable, ByRef sSort As String)
-
+        Dim rowIndx As Integer
         Dim i As Short
 
         On Error GoTo ErrorHandler
 
-        If rsSource.Rows.Count > 0 Then
-            For row As Integer = 0 To rsSource.Rows.Count - 1
-                Dim drow As DataRow = rsSource.NewRow()
-                For column As Integer = 0 To rsSource.Columns.Count - 1
-                    drow.Item(column) = rsSource.Rows(row).Item(column)
-                Next column
-                rsDest.Rows.Add(drow)
-            Next row
+        'copy rows
+        For Each dRow As DataRow In rsSource.Rows
+            rsDest.ImportRow(dRow)
+        Next dRow
+        'remove rows
+        For rowIndx = 0 To rsSource.Rows.Count - 1
+            rsSource.Rows.RemoveAt(0)
+        Next rowIndx
 
-            'While Not rsSource.EOF
-            '    rsDest.AddNew()
-            '    For i = 0 To rsSource.Fields.Count - 1
-            '        rsDest.Fields(i) = rsSource.Fields(i)
-            '    Next i
-            '    rsDest.Update()
+        rsDest.Select(Nothing, sSort)
 
-            '    rsSource.Delete(ADODB.AffectEnum.adAffectCurrent)
-            '    rsSource.MoveNext()
-            'End While
-
-            rsDest.Select(sSort)
-        End If
         Exit Sub
 
 ErrorHandler:
@@ -1816,12 +1805,13 @@ ErrorHandler:
             Exit Function
         End If
 		
-		VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
-		If gbPrinter Then
-			find_printer = True
-		Else
-			find_printer = False
-		End If
+        'VB6.ShowForm(frmPrinter, VB6.FormShowConstants.Modal, Me)
+        find_printer = True
+        'If gbPrinter Then
+        '	find_printer = True
+        'Else
+        '	find_printer = False
+        'End If
 	End Function
 	'Rel1.3.2 Extension de show_report para manejar reportes
 	'en Crystal Reports.
@@ -1962,19 +1952,19 @@ ErrorHandler:
         frmRepUniversalViewer.Show()
 
         'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
-        sFile = get_template(sLocalReport, cbReportTemplate.Text)
-        If fileTmp.FileExists(sFile) Then
-            'crysRepUniversal = crysApp.OpenReport(sFile)
-        Else
-            sFile = get_local_template(sLocalReport)
-            If fileTmp.FileExists(sFile) Then
-                'crysRepUniversal = crysApp.OpenReport(sFile)
-            Else
-                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                Exit Function
-            End If
+        'sFile = get_template(sLocalReport, cbReportTemplate.Text)
+        'If fileTmp.FileExists(sFile) Then
+        '    'crysRepUniversal = crysApp.OpenReport(sFile)
+        'Else
+        '    sFile = get_local_template(sLocalReport)
+        '    If fileTmp.FileExists(sFile) Then
+        '        'crysRepUniversal = crysApp.OpenReport(sFile)
+        '    Else
+        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+        '        Exit Function
+        '    End If
 
-        End If
+        'End If
 
         'Asignar impresora seleccionada por usuario.
         'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"

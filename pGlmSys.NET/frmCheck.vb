@@ -188,14 +188,24 @@ ErrorHandler:
 	
 	
 	
-	Private Sub dgPending_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgPending.DblClick
-		add_dgSelected()
-		
-	End Sub
+    Private Sub dgPending_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        add_dgSelected()
+
+    End Sub
+    Private Sub dgPending_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgPending.CellDoubleClick
+        add_dgSelected()
+    End Sub
 	
-	Private Sub dgSelected_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgSelected.DblClick
-		del_dgSelected()
-	End Sub
+    Private Sub dgSelected_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        del_dgSelected()
+    End Sub
+
+
+    Private Sub dgSelected_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelected.CellDoubleClick
+        del_dgSelected()
+    End Sub
+
+    
 	
 	Private Sub frmCheck_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -210,8 +220,8 @@ ErrorHandler:
 		txtAuthorizationCode.Text = ""
 		
 		obCheck.Checked = True
-		obCreditCard.Checked = False
-		dtTranDate._Value = Today
+        obCreditCard.Checked = False
+        dtTranDate.Value = Today
 		
 		gVendor.nVendId = -1
 		gVendor.sVendName = ""
@@ -314,7 +324,9 @@ ErrorHandler:
 		End If
 		
         rsPending = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-		dgPending.ClearFields()
+        dgPending.DataSource = Nothing
+        dgPending.Refresh()
+        'dgPending.Rows.Clear()
 		dgPending.DataSource = rsPending
 		set_fonts(dgPending) 'Establecer el ancho de las columnas
 		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
@@ -325,24 +337,24 @@ ErrorHandler:
 		save_error(Me.Name, "load_dgPending")
 		MsgBox("An error ccurred while loading Pending Invoices info." & vbCrLf & "Check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM error")
 	End Sub
-	Private Sub set_fonts(ByRef dg As AxMSDataGridLib.AxDataGrid)
-		On Error GoTo ErrorHandler
-		
-		dg.Columns("store_id").Visible = False
-		dg.Columns("account_mask").Visible = False
-		dg.Columns("vend_seq").Visible = False
-		dg.Columns("Store").Width = VB6.TwipsToPixelsX(800)
-		dg.Columns("Account").Width = VB6.TwipsToPixelsX(1000)
-		dg.Columns("Invoice").Width = VB6.TwipsToPixelsX(700)
-		dg.Columns("Total").Width = VB6.TwipsToPixelsX(700)
-		dg.Columns("Total").Alignment = MSDataGridLib.AlignmentConstants.dbgRight
-		sdfTotal.Format = "#,###,###.00"
-		dg.Columns("Total").DataFormat = sdfTotal
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "set_fonts")
-	End Sub
+    Private Sub set_fonts(ByRef dg As DataGridView)
+        On Error GoTo ErrorHandler
+
+        dg.Columns("store_id").Visible = False
+        dg.Columns("account_mask").Visible = False
+        dg.Columns("vend_seq").Visible = False
+        dg.Columns("Store").Width = VB6.TwipsToPixelsX(800)
+        dg.Columns("Account").Width = VB6.TwipsToPixelsX(1000)
+        dg.Columns("Invoice").Width = VB6.TwipsToPixelsX(700)
+        dg.Columns("Total").Width = VB6.TwipsToPixelsX(700)
+        dg.Columns("Total").DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomRight ' = MSDataGridLib.AlignmentConstants.dbgRight
+        sdfTotal.Format = "#,###,###.00"
+        dg.Columns("Total").DefaultCellStyle.Format = "#,###,###.00" ' sdfTotal
+        Exit Sub
+
+ErrorHandler:
+        save_error(Me.Name, "set_fonts")
+    End Sub
 	'Limpia el datagrid de facturas seleccionadas y reinicia el recordset
 	Private Sub init_dgSelected()
 		'Set dgSelected.DataSource = Nothing
@@ -353,8 +365,10 @@ ErrorHandler:
         sStmt = "SELECT Store.store_id, Store.store_number AS 'Store'," & "VInvoice.account_no AS 'Account', " & "VInvoice.invoice_no AS 'Invoice', " & "VInvoice.total AS Total, VAccount.account_mask, " & " VInvoice.vend_seq " & "FROM VInvoice, Store, VAccount " & "WHERE VInvoice.store_id = Store.store_id " & "AND VInvoice.cust_id =Store.cust_id " & " AND VAccount.account_no = VInvoice.account_no " & " AND VAccount.cust_id = VInvoice.cust_id " & " AND VAccount.store_id = VInvoice.store_id " & " AND VAccount.vend_seq = VInvoice.vend_seq " & "AND Store.cust_id ='NULL'"
 		
         rsSelected = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-		
-		dgSelected.ClearFields()
+
+        dgSelected.DataSource = Nothing
+        dgSelected.Refresh()
+        'dgSelected.Rows.Clear() 'ClearFields()
 		dgSelected.DataSource = rsSelected
 
         dgSelected.Refresh()
@@ -368,55 +382,72 @@ ErrorHandler:
 	'de dgPending al dgSelected
 	Private Sub add_dgSelected()
 		Dim nRecSelected As Short
-		Dim vRow As Object
+        Dim vRow As Integer
+        Dim rowCount As Integer
         'Dim X As Object
 		
 		
         nRecSelected = rsSelected.Rows.Count
-		For	Each vRow In dgPending.SelBookmarks
-			If nRecSelected > MAX_CHECK_INVOICE Then
-				Exit For
-			Else
+
+        If nRecSelected = 0 Then
+            If dgPending.SelectedCells.Count > 0 Then
+                dgPending.Rows(dgPending.CurrentCell.RowIndex).Selected = True
+            End If
+        End If
+
+
+
+        For rowCount = 0 To dgPending.SelectedRows.Count - 1
+            vRow = dgPending.SelectedRows(rowCount).Index
+            If nRecSelected > MAX_CHECK_INVOICE Then
+                Exit For
+            Else
                 'rsPending.Bookmark = vRow
-				nRecSelected = nRecSelected + 1
-				
-                If Not verify_vendor(cbCustomer.Text, rsPending.Rows(vRow).Item("vend_seq").Value, rsPending.Rows(vRow).Item("Invoice").Value) Then
+                nRecSelected = nRecSelected + 1
+
+                If Not verify_vendor(cbCustomer.Text, rsPending.Rows(vRow).Item("vend_seq"), rsPending.Rows(vRow).Item("Invoice")) Then
                     Exit Sub
                 End If
                 Dim drow As DataRow = rsSelected.NewRow
 
-                drow.Item("store_id").Value = rsPending.Rows(vRow).Item("store_id").Value
-                drow.Item("Store").Value = rsPending.Rows(vRow).Item("Store").Value
-                drow.Item("Account").Value = rsPending.Rows(vRow).Item("Account").Value
-                drow.Item("Invoice").Value = rsPending.Rows(vRow).Item("Invoice").Value
-                drow.Item("Total").Value = rsPending.Rows(vRow).Item("Total").Value
-                drow.Item("account_mask").Value = rsPending.Rows(vRow).Item("account_mask").Value
-                drow.Item("vend_seq").Value = rsPending.Rows(vRow).Item("vend_seq").Value
+                drow.Item("store_id") = rsPending.Rows(vRow).Item("store_id")
+                drow.Item("Store") = rsPending.Rows(vRow).Item("Store")
+                drow.Item("Account") = rsPending.Rows(vRow).Item("Account")
+                drow.Item("Invoice") = rsPending.Rows(vRow).Item("Invoice")
+                drow.Item("Total") = rsPending.Rows(vRow).Item("Total")
+                drow.Item("account_mask") = rsPending.Rows(vRow).Item("account_mask")
+                drow.Item("vend_seq") = rsPending.Rows(vRow).Item("vend_seq")
 
                 'rsSelected.item("store_id").Value = rsPending.item("store_id").Value
                 'rsSelected.item("Store").Value = rsPending.item("Store").Value
                 'rsSelected.item("Account").Value = rsPending.item("Account").Value
                 'rsSelected.item("Invoice").Value = rsPending.item("Invoice").Value
+                'rsSelected("Invoice") = dgPending.Columns("Invoice").Value
                 'rsSelected.item("Total").Value = rsPending.item("Total").Value
                 'rsSelected.item("account_mask").Value = rsPending.item("account_mask").Value
                 'rsSelected.item("vend_seq").Value = rsPending.item("vend_seq").Value
-				'rsSelected("Invoice") = dgPending.Columns("Invoice").Value
-				'If (dgPending.Columns("Total").Text = "") Then
-				'    rsSelected("Total") = 0
-				'Else
-				'    rsSelected("Total") = dgPending.Columns("Total").Text
-				'End If
-				
+
+                If rsPending.Rows(vRow).Item("Total").ToString() = "" Then
+                    drow.Item("Total") = 0
+                Else
+                    drow.Item("Total") = rsPending.Rows(vRow).Item("Total").ToString()
+                End If
+                'If (dgPending.Columns("Total").Text = "") Then
+                '    rsSelected("Total") = 0
+                'Else
+                '    rsSelected("Total") = dgPending.Columns("Total").Text
+                'End If
+
                 'rsSelected.Update()
                 rsSelected.Rows.Add(drow)
-				'Bug #1
-				'UPGRADE_WARNING: Couldn't resolve default property of object rsSelected.Bookmark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                'Bug #1
+                'UPGRADE_WARNING: Couldn't resolve default property of object rsSelected.Bookmark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 'dgSelected.Bookmark = rsSelected.Bookmark
                 calc_amount()
-                rsPending.Rows.Remove(vRow)
-				
-			End If
-		Next vRow
+                rsPending.Rows.Remove(rsPending.Rows(vRow))
+
+            End If
+        Next rowCount
 		
 	End Sub
 	'Antes de agregar una factura al dgSelected se verifica
@@ -442,7 +473,7 @@ ErrorHandler:
 		'Verificar que no hayas mas de un Vendor al mismo tiempo
 		sVendSeq = Str(nVendSeq) & ","
         For row As Integer = 0 To rsClone.Rows.Count - 1
-            sVendSeq = sVendSeq & Str(rsClone.Rows(row).Item("vend_seq").Value) & ","
+            sVendSeq = sVendSeq & Str(rsClone.Rows(row).Item("vend_seq")) & ","
 
         Next row
 		
@@ -465,7 +496,7 @@ ErrorHandler:
             verify_vendor = False
             sStmt = ""
             For row As Integer = 0 To rsClone.Rows.Count - 1
-                sStmt = sStmt + rsClone.Rows(row).Item("name").Value + vbCrLf
+                sStmt = sStmt + rsClone.Rows(row).Item("name") + vbCrLf
             Next
 
             sStmt = "This invoice " & Trim(sInvoiceNo) & " " & "can not be paid in this Check " & vbCrLf & "because a QuickBooks Vendor inconsistency was found." & vbCrLf & "Vendor: " & Trim(cbVendor.Text) & vbCrLf & "is associated to the following QB Vendors:" & vbCrLf & sStmt & vbCrLf & vbCrLf & "This will generate duplicate checks" & vbCrLf & "Action Required: Be sure that all Vendor Branches are " & "related to the same QB Vendor"
@@ -492,7 +523,7 @@ ErrorHandler:
 		
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rs.Rows.Count > 0 Then
-            If rs.Rows(0).Item(0).Value = 0 Then
+            If rs.Rows(0).Item(0) = 0 Then
                 verify_qb_vendor = False
             End If
         End If
@@ -506,20 +537,20 @@ ErrorHandler:
 	
 	'Elimina registros de dgSelected
 	Private Sub del_dgSelected()
-		Dim vRow As Object
+        Dim vRow As Integer
 		
-		For	Each vRow In dgSelected.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        For vRow = 0 To dgSelected.SelectedRows.Count - 1
+            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsSelected.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
             Dim drow As DataRow = rsPending.NewRow
 
-            drow.Item("store_id").Value = rsSelected.Rows(vRow).Item("store_id").Value
-            drow.Item("Store").Value = rsSelected.Rows(vRow).Item("Store").Value
-            drow.Item("Account").Value = rsSelected.Rows(vRow).Item("Account").Value
-            drow.Item("Invoice").Value = rsSelected.Rows(vRow).Item("Invoice").Value
-            drow.Item("Total").Value = rsSelected.Rows(vRow).Item("Total").Value
-            drow.Item("account_mask").Value = rsSelected.Rows(vRow).Item("account_mask").Value
-            drow.Item("vend_seq").Value = rsSelected.Rows(vRow).Item("vend_seq").Value
+            drow.Item("store_id") = rsSelected.Rows(vRow).Item("store_id")
+            drow.Item("Store") = rsSelected.Rows(vRow).Item("Store")
+            drow.Item("Account") = rsSelected.Rows(vRow).Item("Account")
+            drow.Item("Invoice") = rsSelected.Rows(vRow).Item("Invoice")
+            drow.Item("Total") = rsSelected.Rows(vRow).Item("Total")
+            drow.Item("account_mask") = rsSelected.Rows(vRow).Item("account_mask")
+            drow.Item("vend_seq") = rsSelected.Rows(vRow).Item("vend_seq")
 
 
             'rsPending.item("store_id").Value = rsSelected.item("store_id").Value
@@ -531,20 +562,20 @@ ErrorHandler:
             'rsPending.item("vend_seq").Value = rsSelected.item("vend_seq").Value
             rsPending.Rows.Add(drow)
             rsPending.Select("", "store, account, invoice")
-			
-			
-			'rsSelected.Bookmark = vRow
-            rsSelected.Rows.Remove(vRow) '(ADODB.AffectEnum.adAffectCurrent)
-			
-			
-		Next vRow
+
+
+            'rsSelected.Bookmark = vRow
+            rsSelected.Rows.Remove(rsSelected.Rows(vRow)) '(ADODB.AffectEnum.adAffectCurrent)
+
+
+        Next vRow
 		calc_amount()
 	End Sub
 	Private Sub calc_amount()
 		
 		On Error GoTo ErrorHandler
 		
-        If rsSelected.Rows.Count > 0 Then
+        If rsSelected.Rows.Count < 0 Then
             txtAmount.Text = CStr(0)
             Exit Sub
         End If
@@ -555,8 +586,8 @@ ErrorHandler:
 		
         txtAmount.Text = CStr(0)
         For row As Integer = 0 To rsSelected.Rows.Count - 1
-            If Not IsDBNull(rsSelected.Rows(row).Item("Total").Value) And rsSelected.Rows(row).Item("Total").Value <> "" Then
-                txtAmount.Text = txtAmount.Text + rsSelected.Rows(row).Item("Total").Value
+            If Not IsDBNull(rsSelected.Rows(row).Item("Total")) And rsSelected.Rows(row).Item("Total").ToString() <> "" Then
+                txtAmount.Text = txtAmount.Text + rsSelected.Rows(row).Item("Total")
             End If
         Next row
 		
@@ -587,7 +618,7 @@ ErrorHandler:
         End If
 		
 		bBankInfo = True
-        sBankCustSeq = rsForm.Rows(0).Item("bank_cust_seq").Value
+        sBankCustSeq = rsForm.Rows(0).Item("bank_cust_seq")
 		
 		
 		'Check Info
@@ -603,8 +634,8 @@ ErrorHandler:
         If rsForm.Rows.Count = 0 Then
             txtCheckNo.Text = CStr(1)
         Else
-            If rsForm.Rows(0).Item(0).Value <> "" Then
-                txtCheckNo.Text = rsForm.Rows(0).Item(0).Value + 1
+            If rsForm.Rows(0).Item(0) <> "" Then
+                txtCheckNo.Text = rsForm.Rows(0).Item(0) + 1
             End If
         End If
 		
@@ -650,11 +681,11 @@ ErrorHandler:
         End If
 		
 		'Query no retorno datos
-        If rsForm.Rows.Count = 0 Or IsDBNull(rsForm.Rows(0).Item(0).Value) Then
+        If rsForm.Rows.Count = 0 Or IsDBNull(rsForm.Rows(0).Item(0)) Then
             txtCheckNo.Text = CStr(1)
         Else
-            If rsForm.Rows(0).Item(0).Value <> "" Then
-                txtCheckNo.Text = rsForm.Rows(0).Item(0).Value + 1
+            If rsForm.Rows(0).Item(0) <> "" Then
+                txtCheckNo.Text = rsForm.Rows(0).Item(0) + 1
             End If
         End If
 		Exit Sub
@@ -710,7 +741,7 @@ ErrorHandler:
 		gCheck.BankCustSeq = sBankCustSeq
 		'gCheck.VendorSeq = cbVendor.ItemData(cbVendor.ListIndex)
 
-        gCheck.VendorSeq = rsSelected.Rows(0).Item("vend_seq").Value
+        gCheck.VendorSeq = rsSelected.Rows(0).Item("vend_seq")
 		'Rel1.3.2 Se selecciona el nombre del vendor en el string del cbVendor
 		'gCheck.VendorName = Left(cbVendor, InStr(cbVendor, "-") - 1)
 		gCheck.VendorName = cbVendor.Text
@@ -776,10 +807,10 @@ ErrorHandler:
 
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If IsDBNull(rs.Rows(0).Item(0).Value) Then
+        If IsDBNull(rs.Rows(0).Item(0)) Then
             nTranSeq = 1
         Else
-            nTranSeq = rs.Rows(0).Item(0).Value + 1
+            nTranSeq = rs.Rows(0).Item(0) + 1
         End If
 
 
@@ -787,11 +818,12 @@ ErrorHandler:
         'Credit Card Transaction Header
         nDbTran = cn.BeginTransaction()
 
-        sStmt = "INSERT INTO BTransaction (tran_seq, cust_id, vend_id, " & "card_seq, authorization_code, tran_date, tran_amount) " & " VALUES (" & Str(nTranSeq) & "," & "'" & cbCustomer.Text & "'," & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & "," & Str(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex)) & "," & Trim(txtAuthorizationCode.Text) & "," & "'" & CStr(dtTranDate._Value) & "'," & Str(CDbl(txtAmount.Text)) & ")"
+        sStmt = "INSERT INTO BTransaction (tran_seq, cust_id, vend_id, " & "card_seq, authorization_code, tran_date, tran_amount) " & " VALUES (" & Str(nTranSeq) & "," & "'" & cbCustomer.Text & "'," & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & "," & Str(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex)) & "," & Trim(txtAuthorizationCode.Text) & "," & "'" & CStr(dtTranDate.Value) & "'," & Str(CDbl(txtAmount.Text)) & ")"
 
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
+        cm.Transaction = nDbTran
         nRecords = cm.ExecuteNonQuery()
         If nRecords > 0 Then
             'Update Credit Card Balance
@@ -814,11 +846,12 @@ ErrorHandler:
 
         'Credit Card Transaction Details
         For row As Integer = 0 To rsSelected.Rows.Count - 1
-            nTranDetNo = get_tran_det_no(nTranSeq)
+            nTranDetNo = get_tran_det_no(nTranSeq, nDbTran)
 
-            sStmt = "INSERT INTO BTransactionDet (tran_seq, " & "tran_det_no, cust_id, store_id, " & "invoice_no, account_no, vend_seq, invoice_total)" & " VALUES (" & Str(nTranSeq) & "," & Str(nTranDetNo) & "," & "'" & cbCustomer.Text & "'," & Str(rsSelected.Rows(row).Item("store_id").Value) & "," & "'" + rsSelected.Rows(row).Item("Invoice").Value + "'," + "'" + rsSelected.Rows(row).Item("Account").Value + "'," + Str(rsSelected.Rows(row).Item("vend_seq").Value) + "," + Str(rsSelected.Rows(row).Item("Total").Value) + ")"
+            sStmt = "INSERT INTO BTransactionDet (tran_seq, " & "tran_det_no, cust_id, store_id, " & "invoice_no, account_no, vend_seq, invoice_total)" & " VALUES (" & Str(nTranSeq) & "," & Str(nTranDetNo) & "," & "'" & cbCustomer.Text & "'," & Str(rsSelected.Rows(row).Item("store_id")) & "," & "'" + rsSelected.Rows(row).Item("Invoice") + "'," + "'" + rsSelected.Rows(row).Item("Account") + "'," + Str(rsSelected.Rows(row).Item("vend_seq")) + "," + Str(rsSelected.Rows(row).Item("Total")) + ")"
 
             cm.CommandText = sStmt
+            cm.Transaction = nDbTran
             nRecords = cm.ExecuteNonQuery()
             If nRecords > 0 Then
                 'ok
@@ -829,16 +862,17 @@ ErrorHandler:
             End If
 
             sStmt = "UPDATE vInvoice  " & " SET vinvoice_status = 'PRT', " & " change_time = getdate () , " & _
-                    " change_user = '" & gsUser & "' " & " WHERE invoice_no = '" + rsSelected.Rows(row).Item("Invoice").Value + "' " + _
-                    " AND cust_id = '" + cbCustomer.Text + "' " + " AND store_id = " + Str(rsSelected.Rows(row).Item("store_id").Value) + _
-                    " AND account_no = '" + rsSelected.Rows(row).Item("Account").Value + "' " + _
-                    " AND vend_seq = " + Str(rsSelected.Rows(row).Item("vend_seq").Value)
+                    " change_user = '" & gsUser & "' " & " WHERE invoice_no = '" + rsSelected.Rows(row).Item("Invoice") + "' " + _
+                    " AND cust_id = '" + cbCustomer.Text + "' " + " AND store_id = " + Str(rsSelected.Rows(row).Item("store_id")) + _
+                    " AND account_no = '" + rsSelected.Rows(row).Item("Account") + "' " + _
+                    " AND vend_seq = " + Str(rsSelected.Rows(row).Item("vend_seq"))
             cm.CommandText = sStmt
+            cm.Transaction = nDbTran
             nRecords = cm.ExecuteNonQuery()
             If nRecords > 0 Then
                 'ok
             Else
-                MsgBox("Failed to update invoice status table. " & vbCrLf & "Invoice:" + rsSelected.Rows(row).Item("Invoice").Value + "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                MsgBox("Failed to update invoice status table. " & vbCrLf & "Invoice:" + rsSelected.Rows(row).Item("Invoice") + "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 nDbTran.Rollback()
 
                 Exit For
@@ -880,17 +914,17 @@ ErrorHandler:
 	End Function
 	
 	
-	Private Function get_tran_det_no(ByRef nTranSeq As Short) As Short
-		Dim nTranDetNo As Short
-		
-		sStmt = "SELECT MAX(tran_det_no) " & " FROM BTransactionDet " & " WHERE tran_seq=" & Str(nTranSeq)
-		
+    Private Function get_tran_det_no(ByRef nTranSeq As Short, Optional ByRef sqlTrans As SqlTransaction = Nothing) As Short
+        Dim nTranDetNo As Short
+
+        sStmt = "SELECT MAX(tran_det_no) " & " FROM BTransactionDet " & " WHERE tran_seq=" & Str(nTranSeq)
+
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-        If IsDBNull(rs.Rows(0).Item(0).Value) Then
+        If IsDBNull(rs.Rows(0).Item(0)) Then
             nTranDetNo = 1
         Else
-            nTranDetNo = rs.Rows(0).Item(0).Value + 1
+            nTranDetNo = rs.Rows(0).Item(0) + 1
         End If
 
 
@@ -900,5 +934,8 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "get_tran_det_no")
         MsgBox("Failed to obtain Transaction Detail Number." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-	End Function
+    End Function
+
+  
+    
 End Class

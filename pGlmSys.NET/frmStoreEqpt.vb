@@ -329,6 +329,19 @@ ErrorHandler:
         Me.Close()
     End Sub
 
+    Private Sub dgStore_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellClick
+        'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
+        If dgStore.SelectedRows.Count = 0 Then
+            If dgStore.SelectedCells.Count > 0 Then
+                dgStore.Rows(dgStore.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        'If dgStore.Row >= 0 Then
+        If dgStore.SelectedRows.Count > 0 Then
+            set_dgStoreEqptData(True, CShort(dgStore.SelectedRows(0).Cells("store_id").Value), dgStore.SelectedRows(0).Cells("Store").Value)
+        End If
+    End Sub
+
     Private Sub dgStore_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentClick
         'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
         If dgStore.SelectedRows.Count = 0 Then
