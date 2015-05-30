@@ -106,6 +106,7 @@ Friend Class frmPeriod
 
 
         dgPeriod.DataSource = rsLocal
+        dgPeriod.Refresh()
         If bFound Then
             'no se como funciona los bookmarks
             '            dgPeriod.SelBookmarks.Add(rsLocal.Bookmark)
@@ -167,12 +168,12 @@ ErrorHandler:
 			Case General.modo.NewRecord
 				gPeriodRecord.nPeriodSeq = 0
 			Case General.modo.UpdateRecord
-                gPeriodRecord.nPeriodSeq = rsLocal.Rows(0).Item("period_seq")
-                gPeriodRecord.sPeriodStartDate = rsLocal.Rows(0).Item("Start")
-                gPeriodRecord.sPeriodEndDate = rsLocal.Rows(0).Item("End")
-                gPeriodRecord.sPeriodName = rsLocal.Rows(0).Item("Name")
-                gPeriodRecord.sPeriodStatusId = rsLocal.Rows(0).Item("period_status_id")
-                gPeriodRecord.sPeriodStatusDesc = rsLocal.Rows(0).Item("Status")
+                gPeriodRecord.nPeriodSeq = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("period_seq")
+                gPeriodRecord.sPeriodStartDate = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("Start")
+                gPeriodRecord.sPeriodEndDate = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("End")
+                gPeriodRecord.sPeriodName = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("Name")
+                gPeriodRecord.sPeriodStatusId = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("period_status_id")
+                gPeriodRecord.sPeriodStatusDesc = rsLocal.Rows(dgPeriod.SelectedRows(0).Index).Item("Status")
 		End Select
 		Exit Function
 		

@@ -607,7 +607,11 @@ ErrorHandler:
 			
 		End If
 		
-	End Sub
+    End Sub
+
+    Private Sub dgEquipment_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellClick
+        dgEquipment_CellContentClick(sender, e)
+    End Sub
 
     'Private Sub dgEquipment_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellClick
     '    'jp BEG 01.29.03
@@ -629,6 +633,11 @@ ErrorHandler:
         If dgEquipment.SelectedRows.Count > 0 Then
             set_dgContractData()
         End If
+    End Sub
+
+
+    Private Sub dgStore_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellClick
+        dgStore_CellContentClick(sender, e)
     End Sub
 
     Private Sub dgStore_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentClick
