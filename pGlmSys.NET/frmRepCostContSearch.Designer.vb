@@ -138,7 +138,7 @@
         Me.ckGlmVendor.Location = New System.Drawing.Point(16, 464)
         Me.ckGlmVendor.Name = "ckGlmVendor"
         Me.ckGlmVendor.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.ckGlmVendor.Size = New System.Drawing.Size(137, 17)
+        Me.ckGlmVendor.Size = New System.Drawing.Size(145, 17)
         Me.ckGlmVendor.TabIndex = 35
         Me.ckGlmVendor.Text = "Display GLM as vendor"
         Me.ckGlmVendor.UseVisualStyleBackColor = False
@@ -150,10 +150,10 @@
         Me.cbReportTemplateDesc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbReportTemplateDesc.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbReportTemplateDesc.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbReportTemplateDesc.Location = New System.Drawing.Point(296, 48)
+        Me.cbReportTemplateDesc.Location = New System.Drawing.Point(303, 48)
         Me.cbReportTemplateDesc.Name = "cbReportTemplateDesc"
         Me.cbReportTemplateDesc.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cbReportTemplateDesc.Size = New System.Drawing.Size(273, 22)
+        Me.cbReportTemplateDesc.Size = New System.Drawing.Size(257, 22)
         Me.cbReportTemplateDesc.TabIndex = 34
         '
         'ckUseGlmRate
@@ -395,10 +395,10 @@
         Me.obPeriod.Cursor = System.Windows.Forms.Cursors.Default
         Me.obPeriod.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.obPeriod.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.obPeriod.Location = New System.Drawing.Point(16, 32)
+        Me.obPeriod.Location = New System.Drawing.Point(16, 23)
         Me.obPeriod.Name = "obPeriod"
         Me.obPeriod.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.obPeriod.Size = New System.Drawing.Size(97, 22)
+        Me.obPeriod.Size = New System.Drawing.Size(98, 39)
         Me.obPeriod.TabIndex = 9
         Me.obPeriod.TabStop = True
         Me.obPeriod.Text = "Invoicing Period"
@@ -462,10 +462,10 @@
         Me.Label5.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label5.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label5.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label5.Location = New System.Drawing.Point(64, 160)
+        Me.Label5.Location = New System.Drawing.Point(54, 160)
         Me.Label5.Name = "Label5"
         Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(49, 21)
+        Me.Label5.Size = New System.Drawing.Size(59, 21)
         Me.Label5.TabIndex = 15
         Me.Label5.Text = "End Date"
         '
@@ -475,10 +475,10 @@
         Me.Label4.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label4.Location = New System.Drawing.Point(64, 136)
+        Me.Label4.Location = New System.Drawing.Point(51, 136)
         Me.Label4.Name = "Label4"
         Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label4.Size = New System.Drawing.Size(49, 21)
+        Me.Label4.Size = New System.Drawing.Size(62, 21)
         Me.Label4.TabIndex = 12
         Me.Label4.Text = "Start Date"
         '
@@ -502,7 +502,7 @@
         Me.cbStateId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbStateId.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbStateId.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbStateId.Location = New System.Drawing.Point(296, 16)
+        Me.cbStateId.Location = New System.Drawing.Point(303, 15)
         Me.cbStateId.Name = "cbStateId"
         Me.cbStateId.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cbStateId.Size = New System.Drawing.Size(73, 22)
@@ -544,7 +544,7 @@
         Me.Label10.Location = New System.Drawing.Point(176, 448)
         Me.Label10.Name = "Label10"
         Me.Label10.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label10.Size = New System.Drawing.Size(65, 17)
+        Me.Label10.Size = New System.Drawing.Size(65, 33)
         Me.Label10.TabIndex = 28
         Me.Label10.Text = "Report Name"
         '
@@ -557,7 +557,7 @@
         Me.Label9.Location = New System.Drawing.Point(240, 48)
         Me.Label9.Name = "Label9"
         Me.Label9.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label9.Size = New System.Drawing.Size(49, 17)
+        Me.Label9.Size = New System.Drawing.Size(57, 17)
         Me.Label9.TabIndex = 25
         Me.Label9.Text = "Template"
         '
@@ -583,7 +583,7 @@
         Me.label3.Location = New System.Drawing.Point(16, 48)
         Me.label3.Name = "label3"
         Me.label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.label3.Size = New System.Drawing.Size(57, 17)
+        Me.label3.Size = New System.Drawing.Size(57, 32)
         Me.label3.TabIndex = 5
         Me.label3.Text = "Store Group"
         '
@@ -606,10 +606,10 @@
         Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label1.Location = New System.Drawing.Point(14, 18)
+        Me.Label1.Location = New System.Drawing.Point(16, 18)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(49, 17)
+        Me.Label1.Size = New System.Drawing.Size(57, 17)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Customer"
         '

@@ -52,7 +52,7 @@
         Me.Frame1.Location = New System.Drawing.Point(8, 24)
         Me.Frame1.Name = "Frame1"
         Me.Frame1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Frame1.Size = New System.Drawing.Size(345, 121)
+        Me.Frame1.Size = New System.Drawing.Size(410, 121)
         Me.Frame1.TabIndex = 2
         Me.Frame1.TabStop = False
         '
@@ -63,7 +63,7 @@
         Me.cbVendor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbVendor.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbVendor.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbVendor.Location = New System.Drawing.Point(64, 24)
+        Me.cbVendor.Location = New System.Drawing.Point(96, 24)
         Me.cbVendor.Name = "cbVendor"
         Me.cbVendor.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cbVendor.Size = New System.Drawing.Size(265, 22)
@@ -76,7 +76,7 @@
         Me.cbState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbState.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbState.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbState.Location = New System.Drawing.Point(64, 64)
+        Me.cbState.Location = New System.Drawing.Point(96, 64)
         Me.cbState.Name = "cbState"
         Me.cbState.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cbState.Size = New System.Drawing.Size(105, 22)
@@ -88,7 +88,7 @@
         Me.Label3.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label3.Location = New System.Drawing.Point(0, 24)
+        Me.Label3.Location = New System.Drawing.Point(16, 24)
         Me.Label3.Name = "Label3"
         Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label3.Size = New System.Drawing.Size(73, 22)

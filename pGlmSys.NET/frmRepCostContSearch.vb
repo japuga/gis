@@ -158,7 +158,7 @@ ErrorHandler:
 		End If
 
         'MessageBox.Show(cbPeriodName.Items(cbPeriodName.SelectedIndex).ToString())
-        MessageBox.Show(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
+        'MessageBox.Show(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
 
 		
 		With rptCostContParam

@@ -478,7 +478,16 @@ ErrorHandler:
             Exit Sub
         End If
 
-        sStmt = "SELECT report_no, cust_id, LTRIM(RTRIM(cust_name)), " & "report_start, report_end, date_range,store_no, store_address,  " & "store_city_state, RTRIM(vendor), vend_phone, eqpt_name, " & "frequency_mask, contract_status, comment, " & "account_no, account_mask,  RTRIM(invoice_no)," & "invoice_date, invoice_total " & "FROM rptInvoiceTracking " & "WHERE report_no = " & Str(nReport) & " ORDER BY cust_id, store_no, vendor,eqpt_name"
+        sStmt = "SELECT report_no, cust_id, LTRIM(RTRIM(cust_name)) cust_name, " & _
+            "report_start, report_end, date_range,store_no, store_address,  " & _
+            "store_city_state, RTRIM(vendor) vendor, vend_phone, eqpt_name, " & _
+            "frequency_mask, contract_status, comment, " & _
+            "account_no, account_mask,  RTRIM(invoice_no) invoice_no," & _
+            "invoice_date, invoice_total " & _
+            "FROM rptInvoiceTracking " & _
+            "WHERE report_no = " & _
+            Str(nReport) & _
+            " ORDER BY cust_id, store_no, vendor,eqpt_name"
         cmd.CommandText = sStmt
         rsReport = getDataTable(sStmt) 'cm.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         'DEBUG

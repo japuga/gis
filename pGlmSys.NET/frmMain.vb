@@ -465,6 +465,7 @@ ErrorHandler:
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+
     End Sub
 
     Private Sub btInvoiceBooking_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btInvoiceBooking.Click

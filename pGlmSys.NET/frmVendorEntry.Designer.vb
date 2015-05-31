@@ -193,7 +193,7 @@
         Me.txtVendPayZip.MaxLength = 11
         Me.txtVendPayZip.Name = "txtVendPayZip"
         Me.txtVendPayZip.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendPayZip.Size = New System.Drawing.Size(89, 21)
+        Me.txtVendPayZip.Size = New System.Drawing.Size(89, 20)
         Me.txtVendPayZip.TabIndex = 16
         '
         'txtVendPayCity
@@ -207,7 +207,7 @@
         Me.txtVendPayCity.MaxLength = 0
         Me.txtVendPayCity.Name = "txtVendPayCity"
         Me.txtVendPayCity.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendPayCity.Size = New System.Drawing.Size(137, 21)
+        Me.txtVendPayCity.Size = New System.Drawing.Size(137, 20)
         Me.txtVendPayCity.TabIndex = 13
         '
         'txtVendPayAddress
@@ -221,7 +221,7 @@
         Me.txtVendPayAddress.MaxLength = 0
         Me.txtVendPayAddress.Name = "txtVendPayAddress"
         Me.txtVendPayAddress.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendPayAddress.Size = New System.Drawing.Size(297, 21)
+        Me.txtVendPayAddress.Size = New System.Drawing.Size(297, 20)
         Me.txtVendPayAddress.TabIndex = 12
         '
         'Label18
@@ -371,7 +371,7 @@
         Me.txtQBName.Name = "txtQBName"
         Me.txtQBName.ReadOnly = True
         Me.txtQBName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtQBName.Size = New System.Drawing.Size(241, 21)
+        Me.txtQBName.Size = New System.Drawing.Size(241, 20)
         Me.txtQBName.TabIndex = 19
         '
         'cbQBGroupId
@@ -420,7 +420,7 @@
         Me.Label12.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label12.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label12.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label12.Location = New System.Drawing.Point(0, 24)
+        Me.Label12.Location = New System.Drawing.Point(6, 24)
         Me.Label12.Name = "Label12"
         Me.Label12.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label12.Size = New System.Drawing.Size(97, 22)
@@ -438,7 +438,7 @@
         Me.txtVendFax2.MaxLength = 15
         Me.txtVendFax2.Name = "txtVendFax2"
         Me.txtVendFax2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendFax2.Size = New System.Drawing.Size(121, 21)
+        Me.txtVendFax2.Size = New System.Drawing.Size(121, 20)
         Me.txtVendFax2.TabIndex = 26
         Me.txtVendFax2.Visible = False
         '
@@ -453,7 +453,7 @@
         Me.txtVendFax1.MaxLength = 15
         Me.txtVendFax1.Name = "txtVendFax1"
         Me.txtVendFax1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendFax1.Size = New System.Drawing.Size(121, 21)
+        Me.txtVendFax1.Size = New System.Drawing.Size(121, 20)
         Me.txtVendFax1.TabIndex = 24
         Me.txtVendFax1.Visible = False
         '
@@ -468,7 +468,7 @@
         Me.txtVendPhone2.MaxLength = 15
         Me.txtVendPhone2.Name = "txtVendPhone2"
         Me.txtVendPhone2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendPhone2.Size = New System.Drawing.Size(121, 21)
+        Me.txtVendPhone2.Size = New System.Drawing.Size(121, 20)
         Me.txtVendPhone2.TabIndex = 25
         Me.txtVendPhone2.Visible = False
         '
@@ -483,7 +483,7 @@
         Me.txtVendPhone1.MaxLength = 15
         Me.txtVendPhone1.Name = "txtVendPhone1"
         Me.txtVendPhone1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendPhone1.Size = New System.Drawing.Size(121, 21)
+        Me.txtVendPhone1.Size = New System.Drawing.Size(121, 20)
         Me.txtVendPhone1.TabIndex = 21
         Me.txtVendPhone1.Visible = False
         '
@@ -498,7 +498,7 @@
         Me.txtVendZip.MaxLength = 11
         Me.txtVendZip.Name = "txtVendZip"
         Me.txtVendZip.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendZip.Size = New System.Drawing.Size(89, 21)
+        Me.txtVendZip.Size = New System.Drawing.Size(89, 20)
         Me.txtVendZip.TabIndex = 7
         '
         'txtVendCity
@@ -512,7 +512,7 @@
         Me.txtVendCity.MaxLength = 30
         Me.txtVendCity.Name = "txtVendCity"
         Me.txtVendCity.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendCity.Size = New System.Drawing.Size(145, 21)
+        Me.txtVendCity.Size = New System.Drawing.Size(145, 20)
         Me.txtVendCity.TabIndex = 6
         '
         'txtVendAddress
@@ -526,7 +526,7 @@
         Me.txtVendAddress.MaxLength = 80
         Me.txtVendAddress.Name = "txtVendAddress"
         Me.txtVendAddress.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendAddress.Size = New System.Drawing.Size(289, 21)
+        Me.txtVendAddress.Size = New System.Drawing.Size(289, 20)
         Me.txtVendAddress.TabIndex = 5
         '
         'txtVendRepre
@@ -540,7 +540,7 @@
         Me.txtVendRepre.MaxLength = 20
         Me.txtVendRepre.Name = "txtVendRepre"
         Me.txtVendRepre.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendRepre.Size = New System.Drawing.Size(193, 21)
+        Me.txtVendRepre.Size = New System.Drawing.Size(193, 20)
         Me.txtVendRepre.TabIndex = 4
         '
         'txtVendArea
@@ -554,7 +554,7 @@
         Me.txtVendArea.MaxLength = 40
         Me.txtVendArea.Name = "txtVendArea"
         Me.txtVendArea.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendArea.Size = New System.Drawing.Size(193, 21)
+        Me.txtVendArea.Size = New System.Drawing.Size(193, 20)
         Me.txtVendArea.TabIndex = 2
         '
         'txtVendName
@@ -570,7 +570,7 @@
         Me.txtVendName.Name = "txtVendName"
         Me.txtVendName.ReadOnly = True
         Me.txtVendName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendName.Size = New System.Drawing.Size(193, 21)
+        Me.txtVendName.Size = New System.Drawing.Size(193, 20)
         Me.txtVendName.TabIndex = 1
         '
         'mtxtVendFax1
@@ -703,7 +703,7 @@
         Me.Label4.Location = New System.Drawing.Point(16, 88)
         Me.Label4.Name = "Label4"
         Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label4.Size = New System.Drawing.Size(73, 17)
+        Me.Label4.Size = New System.Drawing.Size(89, 17)
         Me.Label4.TabIndex = 29
         Me.Label4.Text = "Representative"
         '
@@ -791,6 +791,7 @@
         Me.Frame2.ResumeLayout(False)
         Me.Frame2.PerformLayout()
         Me.frQuickBooks.ResumeLayout(False)
+        Me.frQuickBooks.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

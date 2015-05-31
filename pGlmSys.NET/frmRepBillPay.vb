@@ -398,15 +398,18 @@ ErrorHandler:
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
 
+        sFile = Nothing
         'On Error GoTo ErrorHandler
 
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
             'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptBillPay.rpt"
             sFile = get_template(sLocalReport, cbReportTemplate.Text)
-            rptDoc.Load(strReportsSysPath & "rptBillPay.rpt")
+            'rptDoc.Load(strReportsSysPath & "rptBillPay.rpt")
+            rptDoc.Load(sFile)
         Catch ex As Exception
-            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rrptBillPay.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Function
         End Try
 
         rptDoc.SetDataSource(dstReport)

@@ -189,10 +189,10 @@
         Me.obPeriod.Cursor = System.Windows.Forms.Cursors.Default
         Me.obPeriod.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.obPeriod.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.obPeriod.Location = New System.Drawing.Point(16, 32)
+        Me.obPeriod.Location = New System.Drawing.Point(16, 19)
         Me.obPeriod.Name = "obPeriod"
         Me.obPeriod.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.obPeriod.Size = New System.Drawing.Size(97, 22)
+        Me.obPeriod.Size = New System.Drawing.Size(97, 35)
         Me.obPeriod.TabIndex = 10
         Me.obPeriod.TabStop = True
         Me.obPeriod.Text = "Invoicing Period"
@@ -220,7 +220,7 @@
         Me.cbPeriodName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbPeriodName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbPeriodName.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbPeriodName.Location = New System.Drawing.Point(120, 32)
+        Me.cbPeriodName.Location = New System.Drawing.Point(120, 26)
         Me.cbPeriodName.Name = "cbPeriodName"
         Me.cbPeriodName.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cbPeriodName.Size = New System.Drawing.Size(129, 22)
@@ -378,7 +378,7 @@
         Me.Label8.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label8.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label8.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label8.Location = New System.Drawing.Point(16, 88)
+        Me.Label8.Location = New System.Drawing.Point(6, 88)
         Me.Label8.Name = "Label8"
         Me.Label8.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label8.Size = New System.Drawing.Size(49, 33)
@@ -404,7 +404,7 @@
         Me.label3.Cursor = System.Windows.Forms.Cursors.Default
         Me.label3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.label3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.label3.Location = New System.Drawing.Point(16, 48)
+        Me.label3.Location = New System.Drawing.Point(6, 48)
         Me.label3.Name = "label3"
         Me.label3.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.label3.Size = New System.Drawing.Size(64, 40)
