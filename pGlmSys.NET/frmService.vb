@@ -118,7 +118,11 @@ ErrorHandler:
 	End Sub
 	
 	Private Sub update_service()
-		
+        If dgService.SelectedRows.Count < 1 Then
+            If dgService.SelectedCells.Count > 0 Then
+                dgService.Rows(dgService.CurrentRow.Index).Selected = True
+            End If
+        End If
         If dgService.SelectedRows.Count > 0 Then
             gServiceRecord.bFlag = General.modo.UpdateRecord
             set_service()
@@ -129,8 +133,8 @@ ErrorHandler:
         Else
             MsgBox("You must select a record before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
         End If
-		
-	End Sub
+
+    End Sub
 	
 	Private Sub set_service()
 		
@@ -209,5 +213,9 @@ ErrorHandler:
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgService_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgService.CellDoubleClick
+        update_service()
     End Sub
 End Class

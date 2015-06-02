@@ -114,7 +114,7 @@ Friend Class frmContract
         gContractRecord.sCustId = rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id")
         gContractRecord.nStoreId = rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")
         gContractRecord.sStoreNumber = rsStore.Rows(dgStore.CurrentRow.Index).Item("Store")
-        gContractRecord.nEqptSeq = rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq")
+        gContractRecord.nEqptSeq = rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq")
 		gContractRecord.nServId = -1
 		
 		If bFlag = General.modo.UpdateRecord Then
