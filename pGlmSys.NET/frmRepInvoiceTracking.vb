@@ -309,7 +309,7 @@ ErrorHandler:
             sFile = get_template(sLocalReport, cbReportTemplate.Text)
             rptDoc.Load(strReportsSysPath & "rptInvoiceTracking.rpt")
         Catch ex As Exception
-            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptInvoiceTracking.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
 
         rptDoc.SetDataSource(dstReport)
@@ -529,4 +529,8 @@ ErrorHandler:
 			
 		End If
 	End Sub
+
+    Private Sub Frame1_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Frame1.Enter
+
+    End Sub
 End Class
