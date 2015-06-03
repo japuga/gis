@@ -87,6 +87,12 @@ Friend Class frmBank
 	End Sub
     Private Sub update_bankAccount()
 
+        If dgBankAccount.SelectedRows.Count < 1 Then
+            If dgBankAccount.SelectedCells.Count > 0 Then
+                dgBankAccount.Rows(dgBankAccount.CurrentRow.Index).Selected = True
+            End If
+        End If
+
         'If dgBankAccount.SelBookmarks.Count > 0 Then
         If dgBankAccount.SelectedRows.Count > 0 Then
             'ok
@@ -233,5 +239,17 @@ ErrorHandler:
     End Sub
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgBankAccount_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgBankAccount.CellContentClick
+
+    End Sub
+
+    Private Sub dgBankAccount_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgBankAccount.CellContentDoubleClick
+
+    End Sub
+
+    Private Sub dgBankAccount_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgBankAccount.CellDoubleClick
+        update_bankAccount()
     End Sub
 End Class

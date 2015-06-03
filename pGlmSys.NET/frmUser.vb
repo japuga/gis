@@ -103,7 +103,13 @@ ErrorHandler:
 			load_dgUser()
 		End If
 	End Sub
-	Private Sub update_user()
+    Private Sub update_user()
+
+        If dgUser.SelectedRows.Count < 1 Then
+            If dgUser.SelectedCells.Count > 0 Then
+                dgUser.Rows(dgUser.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
         If dgUser.SelectedRows.Count > 0 Then
             gUserRecord.bFlag = General.modo.UpdateRecord
             set_user()
@@ -115,7 +121,7 @@ ErrorHandler:
         Else
             MsgBox("You must select a user before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
         End If
-	End Sub
+    End Sub
     Private Sub set_user()
         If dgUser.SelectedRows.Count <= 0 Then
             For Each aCell As DataGridViewCell In dgUser.SelectedCells
@@ -287,5 +293,9 @@ ErrorHandler:
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgUser_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgUser.CellDoubleClick
+        update_user()
     End Sub
 End Class

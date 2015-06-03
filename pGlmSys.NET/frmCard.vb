@@ -115,17 +115,24 @@ Friend Class frmCard
             MsgBox("Unexpected error was found while deleting Credit Card." & vbCrLf & "Check log files for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
         End Try
     End Function
-	Private Sub modify_card()
-		If set_data Then
-			gCreditCard.bFlag = General.modo.UpdateRecord
-			VB6.ShowForm(frmCardEntry, VB6.FormShowConstants.Modal, Me)
-			If gCreditCard.bFlag = General.modo.SavedRecord Then
-				load_dgCard()
-			End If
-			
-		End If
-		
-	End Sub
+    Private Sub modify_card()
+
+        If dgCard.SelectedRows.Count < 1 Then
+            If dgCard.SelectedCells.Count > 0 Then
+                dgCard.Rows(dgCard.CurrentRow.Index).Selected = True
+            End If
+        End If
+
+        If set_data() Then
+            gCreditCard.bFlag = General.modo.UpdateRecord
+            VB6.ShowForm(frmCardEntry, VB6.FormShowConstants.Modal, Me)
+            If gCreditCard.bFlag = General.modo.SavedRecord Then
+                load_dgCard()
+            End If
+
+        End If
+
+    End Sub
 	Private Function set_data() As Boolean
 		
 		set_data = False
@@ -197,5 +204,9 @@ Friend Class frmCard
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgCard_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgCard.CellDoubleClick
+        modify_card()
     End Sub
 End Class

@@ -103,7 +103,12 @@ ErrorHandler:
         Dim vRow As DataGridViewRow
 		
 		On Error GoTo ErrorHandler
-		
+
+        If dgState.SelectedRows.Count < 1 Then
+            If dgState.SelectedCells.Count > 0 Then
+                dgState.Rows(dgState.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
         For Each vRow In dgState.SelectedRows
             'rsState.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
             'Verifico si tienda ya existe en recordset
@@ -118,10 +123,12 @@ ErrorHandler:
 
                 rsAssgState.Rows.Add(drow)
                 dgAssgState.Sort(dgAssgState.Columns("state"), System.ComponentModel.ListSortDirection.Ascending)
+                dgAssgState.Refresh()
                 'rsAssgState.Select("state")
 
             End If
             rsState.Rows.RemoveAt(vRow.Index)
+            dgState.Refresh()
         Next vRow
 		Exit Sub
 		
@@ -136,8 +143,11 @@ ErrorHandler:
 	'Busca una estado en Datagrid
     Private Function record_exist(ByRef rsTmp As DataTable, ByRef sStateId As String) As Boolean
         Dim sCriteria As String
+        Dim tmpDr() As DataRow
         sCriteria = "state='" & Trim(sStateId) & "'"
-        If rsTmp.Rows.Count > 0 Then
+        Dim a As Integer = rsTmp.Select(sCriteria).Length
+        tmpDr = rsTmp.Select(sCriteria)
+        If tmpDr.Length < 1 Then
             record_exist = False
             Exit Function
         End If
@@ -178,6 +188,8 @@ ErrorHandler:
                 'rsState.Item("name") = rsAssgState.Item("name")
                 drow("name") = rsAssgState.Rows(vRow.Index).Item("name")
                 rsState.Rows.Add(drow)
+                dgState.DataSource = Nothing
+                dgState.Refresh()
                 dgState.DataSource = rsState
 
                 dgState.Sort(dgState.Columns("state"), System.ComponentModel.ListSortDirection.Ascending)

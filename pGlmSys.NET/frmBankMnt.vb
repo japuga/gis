@@ -82,55 +82,61 @@ ErrorHandler:
 		End If
 	End Sub
 	
-	Private Sub update_bank()
+    Private Sub update_bank()
+
+        If dgBank.SelectedRows.Count < 1 Then
+            If dgBank.SelectedCells.Count > 0 Then
+                dgBank.Rows(dgBank.CurrentRow.Index).Selected = True
+            End If
+        End If
         If dgBank.SelectedRows.Count < 1 Then
             MsgBox("Please select a Bank before attempting this command.", MsgBoxStyle.Exclamation, "GLM Warning")
         End If
-		
-		gBank.bFlag = General.modo.UpdateRecord
+
+        gBank.bFlag = General.modo.UpdateRecord
         gBank.nBankId = CShort(dgBank.CurrentRow.Cells("bank_id").Value)
         gBank.sBankName = dgBank.CurrentRow.Cells("Bank").Value
-        gBank.sBankAba = dgBank.CurrentRow.Cells("Routing").Value
-		
-		
-		gBank.sBankStatus = ""
-		gBank.sCheckInfo1 = ""
-		gBank.sCheckInfo2 = ""
-		gBank.sCheckInfo3 = ""
-		gBank.sCheckInfo4 = ""
-		
+        gBank.sBankAba = dgBank.CurrentRow.Cells("Routing").Value.ToString()
+
+
+        gBank.sBankStatus = ""
+        gBank.sCheckInfo1 = ""
+        gBank.sCheckInfo2 = ""
+        gBank.sCheckInfo3 = ""
+        gBank.sCheckInfo4 = ""
+
 
         If Not IsDBNull(dgBank.CurrentRow.Cells("Status").Value) Then
             gBank.sBankStatus = dgBank.CurrentRow.Cells("Status").Value
         End If
-		
+
 
         If Not IsDBNull(dgBank.CurrentRow.Cells("check_info1").Value) Then
             gBank.sCheckInfo1 = dgBank.CurrentRow.Cells("check_info1").Value
         End If
-		
+
 
         If Not IsDBNull(dgBank.CurrentRow.Cells("check_info2").Value) Then
             gBank.sCheckInfo2 = dgBank.CurrentRow.Cells("check_info2").Value
         End If
-		
+
 
         If Not IsDBNull(dgBank.CurrentRow.Cells("check_info3").Value) Then
             gBank.sCheckInfo3 = dgBank.CurrentRow.Cells("check_info3").Value
         End If
-		
+
 
         If Not IsDBNull(dgBank.CurrentRow.Cells("check_info4").Value) Then
             gBank.sCheckInfo4 = dgBank.CurrentRow.Cells("check_info4").Value
         End If
-		
-		
-		VB6.ShowForm(frmBankMntEntry, VB6.FormShowConstants.Modal, Me)
-		If gBank.bFlag = General.modo.SavedRecord Then
-			load_dgBank()
-		End If
-		
-	End Sub
+
+
+        VB6.ShowForm(frmBankMntEntry, VB6.FormShowConstants.Modal, Me)
+        If gBank.bFlag = General.modo.SavedRecord Then
+            load_dgBank()
+        End If
+
+    End Sub
 	
 	Private Sub delete_bank()
 		Dim nRecords As Short
@@ -185,5 +191,9 @@ ErrorHandler:
 
     Private Sub ToolStripButton4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgBank_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgBank.CellDoubleClick
+        update_bank()
     End Sub
 End Class
