@@ -220,7 +220,9 @@ ErrorHandler:
 		'cbServClass.AddItem "EXCEPTION", 1
 		sStmt = "SELECT serv_class FROM ServClass " & " ORDER BY serv_class"
 		load_cb_query2(cbServClass, sStmt, 1, True)
-		
+
+
+        cbServDescConversion.Items.Clear()
 		cbServDescConversion.Items.Insert(0, "<None>")
 		VB6.SetItemData(cbServDescConversion, 0, 0)
 		sStmt = " SELECT serv_desc, serv_id FROM service " & " ORDER BY serv_desc "

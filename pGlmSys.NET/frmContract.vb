@@ -695,4 +695,7 @@ ErrorHandler:
         Me.Close()
     End Sub
 
+    Private Sub dgContract_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgContract.CellDoubleClick
+        data_entry((General.modo.UpdateRecord))
+    End Sub
 End Class
