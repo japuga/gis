@@ -713,7 +713,7 @@ ErrorHandler:
 	Private Sub cmdLeftServ_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdLeftServ.Click
 		sField = "serv_id"
 		sSort = "serv_desc"
-        move_member(dgSelService, dgService, rsService, rsSelService, sField, sSort, True)
+        move_member(dgSelService, dgService, rsSelService, rsService, sField, sSort, True)
 		
 		
 	End Sub
@@ -2350,5 +2350,45 @@ ErrorHandler:
         Catch ex As Exception
             Dim errMsg As String = ex.Message
         End Try
+    End Sub
+
+    Private Sub dgEquipment_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellDoubleClick
+        cmdRightEquipment_Click(sender, e)
+    End Sub
+
+    Private Sub dgSelEquipment_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelEquipment.CellDoubleClick
+        cmdLeftEquipment_Click(sender, e)
+    End Sub
+
+    Private Sub dgSelContent_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelContent.CellDoubleClick
+        cmdLeftContent_Click(sender, e)
+    End Sub
+
+    Private Sub dgContent_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgContent.CellDoubleClick
+        cmdRightContent_Click(sender, e)
+    End Sub
+
+    Private Sub dgLoad_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgLoad.CellDoubleClick
+        cmdRightLoad_Click(sender, e)
+    End Sub
+
+    Private Sub dgSelLoad_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelLoad.CellDoubleClick
+        cmdLeftLoad_Click(sender, e)
+    End Sub
+
+    Private Sub dgService_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgService.CellDoubleClick
+        cmdRightServ_Click(sender, e)
+    End Sub
+
+    Private Sub dgSelService_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelService.CellDoubleClick
+        cmdLeftServ_Click(sender, e)
+    End Sub
+
+    Private Sub dgVendor_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgVendor.CellDoubleClick
+        cmdRightVendor_Click(sender, e)
+    End Sub
+
+    Private Sub dgSelVendor_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgSelVendor.CellDoubleClick
+        cmdLeftVendor_Click(sender, e)
     End Sub
 End Class

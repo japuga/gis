@@ -248,7 +248,9 @@ ErrorHandler:
 		sStmt = "SELECT state_id FROM state"
 		load_cb_query2(cbState, sStmt, 1, False)
 		
-		cbState.SelectedIndex = 0
+        cbState.SelectedIndex = 0
+        cbCustomer.SelectedIndex = 0
+        cbVendPayment.Items.Clear()
 		Exit Sub
 		
 ErrorHandler: 
@@ -387,7 +389,7 @@ ErrorHandler:
         'Dim X As Object
 		
 		
-        nRecSelected = rsSelected.Rows.Count
+        nRecSelected = dgSelected.SelectedRows.Count 'rsSelected.Rows.Count
 
         If nRecSelected = 0 Then
             If dgPending.SelectedCells.Count > 0 Then
@@ -919,7 +921,11 @@ ErrorHandler:
 
         sStmt = "SELECT MAX(tran_det_no) " & " FROM BTransactionDet " & " WHERE tran_seq=" & Str(nTranSeq)
 
-        rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If IsNothing(sqlTrans) Then
+            rs = getDataTable(sStmt)
+        Else
+            rs = getDataTable(sStmt, sqlTrans)
+        End If
 
         If IsDBNull(rs.Rows(0).Item(0)) Then
             nTranDetNo = 1

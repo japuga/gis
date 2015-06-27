@@ -61,45 +61,61 @@ Friend Class frmCheckRep
 		On Error GoTo ErrorHandler
 		
 		'txtDate = gCheck.Date
-		dtCheckDate._Value = gCheck.Date_Renamed
+        dtCheckDate.Value = gCheck.Date_Renamed
 		txtVendor.Text = UCase(gCheck.VendorName)
 		'UPGRADE_ISSUE: MSMask.MaskEdBox property txtAmount.Format was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
-        txtAmount.Mask = "#,###,##0.00"
-		txtAmount.Text = CStr(gCheck.Amount)
-		
-		lCheckNo.Text = CStr(gCheck.CheckNo)
-		lCheckNo.Font = VB6.FontChangeUnderline(lCheckNo.Font, True)
-		
-		txtAmountString.Text = num2str(gCheck.Amount)
-		
-		sCustId = gCheck.CustId
-		
-		'Obtener direccion del vendor
-		'1.7.2
-		sStmt = "SELECT vend_pay_address, vend_pay_city, " & "vend_pay_state, vend_pay_zip " & "FROM VBranch " & "WHERE vend_seq = " & Str(gCheck.VendorSeq)
+        'txtAmount.Mask = "#,###,##0.00"
+        txtAmount.Mask = "9,999,990.00"
+
+        'contar cuantos digits hay en el string
+        Dim count As Integer = 0
+        Dim atxt As String = CStr(gCheck.Amount)
+        For i = 0 To atxt.Length - 1
+            If Char.IsDigit(atxt(i)) Then
+                count = count + 1
+            End If
+        Next
+
+        While count < 9
+            atxt = " " + atxt
+            count = count + 1
+        End While
+
+        txtAmount.Text = atxt 'CStr(gCheck.Amount)
+
+        lCheckNo.Text = CStr(gCheck.CheckNo)
+        lCheckNo.Font = VB6.FontChangeUnderline(lCheckNo.Font, True)
+
+        txtAmountString.Text = num2str(gCheck.Amount)
+
+        sCustId = gCheck.custId
+
+        'Obtener direccion del vendor
+        '1.7.2
+        sStmt = "SELECT vend_pay_address, vend_pay_city, " & "vend_pay_state, vend_pay_zip " & "FROM VBranch " & "WHERE vend_seq = " & Str(gCheck.VendorSeq)
         cmd.CommandText = sStmt
-		
+
         rsCheckRep = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
         If Not rsCheckRep.Rows.Count > 0 Then
             MsgBox("Unable to find Payment Address for vendor.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
             Exit Sub
         End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+
+        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If Not IsDBNull(rsCheckRep.Rows(0).Item("vend_pay_address")) Then
             sVendAddress = rsCheckRep.Rows(0).Item("vend_pay_address")
         Else
             sVendAddress = ""
         End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+
+        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If Not IsDBNull(rsCheckRep.Rows(0).Item("vend_pay_city")) Then
             sVendCity = rsCheckRep.Rows(0).Item("vend_pay_city")
         Else
             sVendCity = ""
         End If
-		
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+
+        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
         If Not IsDBNull(rsCheckRep.Rows(0).Item("vend_pay_state")) And Not IsDBNull(rsCheckRep.Rows(0).Item("vend_pay_zip")) Then
             sVendState = rsCheckRep.Rows(0).Item("vend_pay_state")
             'sVendZip = rsCheckRep("vend_pay_state") + " - " + rsCheckRep("vend_pay_zip")
@@ -108,19 +124,19 @@ Friend Class frmCheckRep
             sVendState = ""
             sVendZip = ""
         End If
-		
-		'txtVendorAddress = Trim(txtVendor) + vbCrLf + _
-		'Trim(sVendAddress) + vbCrLf + _
-		'Trim(sVendCity) + " - " + Trim(sVendZip)
-		
+
+        'txtVendorAddress = Trim(txtVendor) + vbCrLf + _
+        'Trim(sVendAddress) + vbCrLf + _
+        'Trim(sVendCity) + " - " + Trim(sVendZip)
+
         txtVendorAddress.Text = Trim(txtVendor.Text) & vbCrLf & Trim(sVendAddress) & vbCrLf & Trim(sVendCity) & " - " & Trim(rsCheckRep.Rows(0).Item("vend_pay_state") + " - " + rsCheckRep.Rows(0).Item("vend_pay_zip"))
-		
-		
-		'Obtener la lista de tiendas
-		'1.7.2
-		'txtStore = sCustId
-		txtStore.Text = Trim(gCheck.CustName)
-		nIndex = 0		
+
+
+        'Obtener la lista de tiendas
+        '1.7.2
+        'txtStore = sCustId
+        txtStore.Text = Trim(gCheck.CustName)
+        nIndex = 0
 
         For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
             add_store(gCheck.rsStore.Rows(row).Item("Store"))
@@ -152,7 +168,7 @@ ErrorHandler:
         txtVendorAddress.Text = ""
         save_error("frmCheckRep", "load_comp")
         MsgBox("An error occured while loading Check Info." & vbCrLf & "Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-	End Sub
+    End Sub
 	
 	
 	Private Sub add_store(ByRef sData As String)
@@ -1492,7 +1508,7 @@ ErrorHandler:
             If gCheck.reprint = True And gCheck.bSameCheck = True Then
                 nTran = cn.BeginTransaction()
                 'Actualizo fecha de reimpresion de cheque
-                sStmt = "UPDATE Bcheck " & " SET check_date='" & Str(dtCheckDate._Value) & "'" & " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
+                sStmt = "UPDATE Bcheck " & " SET check_date='" & Str(dtCheckDate.Value) & "'" & " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
 
                 'MsgBox sStmt
                 cmCheck.Transaction = nTran
@@ -1539,7 +1555,7 @@ ErrorHandler:
             End If
 
 
-            sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim) " & " VALUES " & "(" & Str(gCheck.CheckNo) & "," & gCheck.BankCustSeq & ", " & Str(nCounter) & ", " & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & ", '" & gCheck.custId & "', " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & ", '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "', '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "', " & "'" & Str(dtCheckDate._Value) & "', " & Str(gCheck.Amount) & ", " & "'" & gCheck.Memo & "', " & Str(gCheck.rsStore.Rows(row).Item("Total")) & ", " & "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate())"
+            sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim) " & " VALUES " & "(" & Str(gCheck.CheckNo) & "," & gCheck.BankCustSeq & ", " & Str(nCounter) & ", " & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & ", '" & gCheck.custId & "', " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & ", '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "', '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "', " & "'" & Str(dtCheckDate.Value) & "', " & Str(gCheck.Amount) & ", " & "'" & gCheck.Memo & "', " & Str(gCheck.rsStore.Rows(row).Item("Total")) & ", " & "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate())"
             'MsgBox sStmt
             cmCheck.CommandText = sStmt
             nRecords = cmCheck.ExecuteNonQuery()

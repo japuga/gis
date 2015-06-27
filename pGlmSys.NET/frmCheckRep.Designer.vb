@@ -17,8 +17,7 @@
 	'Required by the Windows Form Designer
 	Private components As System.ComponentModel.IContainer
 	Public ToolTip1 As System.Windows.Forms.ToolTip
-	Public WithEvents dtCheckDate As AxMSComCtl2.AxDTPicker
-	Public cdPrinterPrint As System.Windows.Forms.PrintDialog
+    Public cdPrinterPrint As System.Windows.Forms.PrintDialog
 	Public WithEvents txtAmount As System.Windows.Forms.MaskedTextBox
 	Public WithEvents txtStore As System.Windows.Forms.TextBox
 	Public WithEvents txtVendorAddress As System.Windows.Forms.TextBox
@@ -126,7 +125,6 @@
         Me.components = New System.ComponentModel.Container
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmCheckRep))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.dtCheckDate = New AxMSComCtl2.AxDTPicker
         Me.cdPrinterPrint = New System.Windows.Forms.PrintDialog
         Me.txtAmount = New System.Windows.Forms.MaskedTextBox
         Me.txtStore = New System.Windows.Forms.TextBox
@@ -230,7 +228,7 @@
         Me.lInvoice = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.lStore = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.lTotal = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
-        CType(Me.dtCheckDate, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.dtCheckDate = New System.Windows.Forms.DateTimePicker
         CType(Me.picLogo, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Frame1.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
@@ -240,14 +238,6 @@
         CType(Me.lTotal, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'dtCheckDate
-        '
-        Me.dtCheckDate.Location = New System.Drawing.Point(440, 104)
-        Me.dtCheckDate.Name = "dtCheckDate"
-        Me.dtCheckDate.OcxState = CType(resources.GetObject("dtCheckDate.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.dtCheckDate.Size = New System.Drawing.Size(81, 21)
-        Me.dtCheckDate.TabIndex = 90
-        '
         'txtAmount
         '
         Me.txtAmount.AllowPromptAsInput = False
@@ -255,6 +245,7 @@
         Me.txtAmount.Enabled = False
         Me.txtAmount.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAmount.Location = New System.Drawing.Point(440, 136)
+        Me.txtAmount.Mask = "99,999,990.00"
         Me.txtAmount.Name = "txtAmount"
         Me.txtAmount.Size = New System.Drawing.Size(89, 13)
         Me.txtAmount.TabIndex = 82
@@ -1654,6 +1645,14 @@
         Me.Shape1.Size = New System.Drawing.Size(545, 257)
         Me.Shape1.TabIndex = 96
         '
+        'dtCheckDate
+        '
+        Me.dtCheckDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtCheckDate.Location = New System.Drawing.Point(439, 99)
+        Me.dtCheckDate.Name = "dtCheckDate"
+        Me.dtCheckDate.Size = New System.Drawing.Size(82, 20)
+        Me.dtCheckDate.TabIndex = 97
+        '
         'frmCheckRep
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -1691,7 +1690,6 @@
         Me.Name = "frmCheckRep"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text = "Check Report Preview"
-        CType(Me.dtCheckDate, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picLogo, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Frame1.ResumeLayout(False)
         Me.Frame1.PerformLayout()
@@ -1707,5 +1705,6 @@
     End Sub
     Friend WithEvents btPrint As System.Windows.Forms.ToolStripButton
     Friend WithEvents btPaper As System.Windows.Forms.ToolStripButton
+    Friend WithEvents dtCheckDate As System.Windows.Forms.DateTimePicker
 #End Region 
 End Class

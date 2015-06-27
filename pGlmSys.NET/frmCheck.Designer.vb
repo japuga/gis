@@ -85,6 +85,15 @@
         Me.obCreditCard = New System.Windows.Forms.RadioButton
         Me.obCheck = New System.Windows.Forms.RadioButton
         Me.cbVendPayZip = New System.Windows.Forms.ComboBox
+        Me.frCreditCard = New System.Windows.Forms.GroupBox
+        Me.dtTranDate = New System.Windows.Forms.DateTimePicker
+        Me.txtAuthorizationCode = New System.Windows.Forms.TextBox
+        Me.cbCardNumber = New System.Windows.Forms.ComboBox
+        Me.cbCardBankName = New System.Windows.Forms.ComboBox
+        Me.Label14 = New System.Windows.Forms.Label
+        Me.Label13 = New System.Windows.Forms.Label
+        Me.Label12 = New System.Windows.Forms.Label
+        Me.Label11 = New System.Windows.Forms.Label
         Me.cbVendPayCity = New System.Windows.Forms.ComboBox
         Me.cbVendPayment = New System.Windows.Forms.ComboBox
         Me.cmdVBranch = New System.Windows.Forms.Button
@@ -96,14 +105,6 @@
         Me.cbVendor = New System.Windows.Forms.ComboBox
         Me.cbCustomer = New System.Windows.Forms.ComboBox
         Me.txtAmount = New System.Windows.Forms.MaskedTextBox
-        Me.frCreditCard = New System.Windows.Forms.GroupBox
-        Me.txtAuthorizationCode = New System.Windows.Forms.TextBox
-        Me.cbCardNumber = New System.Windows.Forms.ComboBox
-        Me.cbCardBankName = New System.Windows.Forms.ComboBox
-        Me.Label14 = New System.Windows.Forms.Label
-        Me.Label13 = New System.Windows.Forms.Label
-        Me.Label12 = New System.Windows.Forms.Label
-        Me.Label11 = New System.Windows.Forms.Label
         Me.Label6 = New System.Windows.Forms.Label
         Me.Label10 = New System.Windows.Forms.Label
         Me.Label9 = New System.Windows.Forms.Label
@@ -112,7 +113,6 @@
         Me.Label3 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
-        Me.dtTranDate = New System.Windows.Forms.DateTimePicker
         Me.Frame1.SuspendLayout()
         CType(Me.dgSelected, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgPending, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -390,6 +390,127 @@
         Me.cbVendPayZip.TabIndex = 24
         Me.cbVendPayZip.Visible = False
         '
+        'frCreditCard
+        '
+        Me.frCreditCard.BackColor = System.Drawing.SystemColors.HighlightText
+        Me.frCreditCard.Controls.Add(Me.dtTranDate)
+        Me.frCreditCard.Controls.Add(Me.txtAuthorizationCode)
+        Me.frCreditCard.Controls.Add(Me.cbCardNumber)
+        Me.frCreditCard.Controls.Add(Me.cbCardBankName)
+        Me.frCreditCard.Controls.Add(Me.Label14)
+        Me.frCreditCard.Controls.Add(Me.Label13)
+        Me.frCreditCard.Controls.Add(Me.Label12)
+        Me.frCreditCard.Controls.Add(Me.Label11)
+        Me.frCreditCard.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.frCreditCard.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.frCreditCard.Location = New System.Drawing.Point(334, 23)
+        Me.frCreditCard.Name = "frCreditCard"
+        Me.frCreditCard.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.frCreditCard.Size = New System.Drawing.Size(217, 144)
+        Me.frCreditCard.TabIndex = 28
+        Me.frCreditCard.TabStop = False
+        Me.frCreditCard.Text = "Credit Card"
+        '
+        'dtTranDate
+        '
+        Me.dtTranDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtTranDate.Location = New System.Drawing.Point(72, 114)
+        Me.dtTranDate.Name = "dtTranDate"
+        Me.dtTranDate.Size = New System.Drawing.Size(105, 20)
+        Me.dtTranDate.TabIndex = 44
+        '
+        'txtAuthorizationCode
+        '
+        Me.txtAuthorizationCode.AcceptsReturn = True
+        Me.txtAuthorizationCode.BackColor = System.Drawing.SystemColors.Window
+        Me.txtAuthorizationCode.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtAuthorizationCode.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtAuthorizationCode.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtAuthorizationCode.Location = New System.Drawing.Point(72, 88)
+        Me.txtAuthorizationCode.MaxLength = 0
+        Me.txtAuthorizationCode.Name = "txtAuthorizationCode"
+        Me.txtAuthorizationCode.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.txtAuthorizationCode.Size = New System.Drawing.Size(113, 20)
+        Me.txtAuthorizationCode.TabIndex = 42
+        '
+        'cbCardNumber
+        '
+        Me.cbCardNumber.BackColor = System.Drawing.SystemColors.Window
+        Me.cbCardNumber.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cbCardNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbCardNumber.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbCardNumber.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.cbCardNumber.Location = New System.Drawing.Point(72, 56)
+        Me.cbCardNumber.Name = "cbCardNumber"
+        Me.cbCardNumber.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cbCardNumber.Size = New System.Drawing.Size(137, 22)
+        Me.cbCardNumber.TabIndex = 41
+        '
+        'cbCardBankName
+        '
+        Me.cbCardBankName.BackColor = System.Drawing.SystemColors.Window
+        Me.cbCardBankName.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cbCardBankName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbCardBankName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbCardBankName.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.cbCardBankName.Location = New System.Drawing.Point(72, 24)
+        Me.cbCardBankName.Name = "cbCardBankName"
+        Me.cbCardBankName.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cbCardBankName.Size = New System.Drawing.Size(137, 22)
+        Me.cbCardBankName.TabIndex = 40
+        '
+        'Label14
+        '
+        Me.Label14.BackColor = System.Drawing.Color.White
+        Me.Label14.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label14.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label14.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label14.Location = New System.Drawing.Point(8, 112)
+        Me.Label14.Name = "Label14"
+        Me.Label14.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label14.Size = New System.Drawing.Size(41, 17)
+        Me.Label14.TabIndex = 39
+        Me.Label14.Text = "Date"
+        '
+        'Label13
+        '
+        Me.Label13.BackColor = System.Drawing.Color.White
+        Me.Label13.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label13.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label13.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label13.Location = New System.Drawing.Point(8, 88)
+        Me.Label13.Name = "Label13"
+        Me.Label13.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label13.Size = New System.Drawing.Size(105, 17)
+        Me.Label13.TabIndex = 38
+        Me.Label13.Text = "Auth Code"
+        '
+        'Label12
+        '
+        Me.Label12.BackColor = System.Drawing.Color.White
+        Me.Label12.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label12.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label12.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label12.Location = New System.Drawing.Point(8, 56)
+        Me.Label12.Name = "Label12"
+        Me.Label12.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label12.Size = New System.Drawing.Size(65, 17)
+        Me.Label12.TabIndex = 37
+        Me.Label12.Text = "Credit Card"
+        '
+        'Label11
+        '
+        Me.Label11.BackColor = System.Drawing.Color.White
+        Me.Label11.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label11.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label11.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label11.Location = New System.Drawing.Point(8, 24)
+        Me.Label11.Name = "Label11"
+        Me.Label11.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label11.Size = New System.Drawing.Size(33, 17)
+        Me.Label11.TabIndex = 36
+        Me.Label11.Text = "Bank"
+        '
         'cbVendPayCity
         '
         Me.cbVendPayCity.BackColor = System.Drawing.SystemColors.Window
@@ -540,129 +661,16 @@
         Me.txtAmount.TabIndex = 44
         Me.txtAmount.TabStop = False
         '
-        'frCreditCard
-        '
-        Me.frCreditCard.BackColor = System.Drawing.SystemColors.HighlightText
-        Me.frCreditCard.Controls.Add(Me.dtTranDate)
-        Me.frCreditCard.Controls.Add(Me.txtAuthorizationCode)
-        Me.frCreditCard.Controls.Add(Me.cbCardNumber)
-        Me.frCreditCard.Controls.Add(Me.cbCardBankName)
-        Me.frCreditCard.Controls.Add(Me.Label14)
-        Me.frCreditCard.Controls.Add(Me.Label13)
-        Me.frCreditCard.Controls.Add(Me.Label12)
-        Me.frCreditCard.Controls.Add(Me.Label11)
-        Me.frCreditCard.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.frCreditCard.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.frCreditCard.Location = New System.Drawing.Point(334, 23)
-        Me.frCreditCard.Name = "frCreditCard"
-        Me.frCreditCard.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.frCreditCard.Size = New System.Drawing.Size(217, 144)
-        Me.frCreditCard.TabIndex = 28
-        Me.frCreditCard.TabStop = False
-        Me.frCreditCard.Text = "Credit Card"
-        '
-        'txtAuthorizationCode
-        '
-        Me.txtAuthorizationCode.AcceptsReturn = True
-        Me.txtAuthorizationCode.BackColor = System.Drawing.SystemColors.Window
-        Me.txtAuthorizationCode.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.txtAuthorizationCode.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtAuthorizationCode.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtAuthorizationCode.Location = New System.Drawing.Point(72, 88)
-        Me.txtAuthorizationCode.MaxLength = 0
-        Me.txtAuthorizationCode.Name = "txtAuthorizationCode"
-        Me.txtAuthorizationCode.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtAuthorizationCode.Size = New System.Drawing.Size(113, 20)
-        Me.txtAuthorizationCode.TabIndex = 42
-        '
-        'cbCardNumber
-        '
-        Me.cbCardNumber.BackColor = System.Drawing.SystemColors.Window
-        Me.cbCardNumber.Cursor = System.Windows.Forms.Cursors.Default
-        Me.cbCardNumber.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cbCardNumber.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbCardNumber.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbCardNumber.Location = New System.Drawing.Point(72, 56)
-        Me.cbCardNumber.Name = "cbCardNumber"
-        Me.cbCardNumber.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cbCardNumber.Size = New System.Drawing.Size(137, 22)
-        Me.cbCardNumber.TabIndex = 41
-        '
-        'cbCardBankName
-        '
-        Me.cbCardBankName.BackColor = System.Drawing.SystemColors.Window
-        Me.cbCardBankName.Cursor = System.Windows.Forms.Cursors.Default
-        Me.cbCardBankName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cbCardBankName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbCardBankName.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.cbCardBankName.Location = New System.Drawing.Point(72, 24)
-        Me.cbCardBankName.Name = "cbCardBankName"
-        Me.cbCardBankName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cbCardBankName.Size = New System.Drawing.Size(137, 22)
-        Me.cbCardBankName.TabIndex = 40
-        '
-        'Label14
-        '
-        Me.Label14.BackColor = System.Drawing.Color.White
-        Me.Label14.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label14.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label14.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label14.Location = New System.Drawing.Point(8, 112)
-        Me.Label14.Name = "Label14"
-        Me.Label14.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label14.Size = New System.Drawing.Size(41, 17)
-        Me.Label14.TabIndex = 39
-        Me.Label14.Text = "Date"
-        '
-        'Label13
-        '
-        Me.Label13.BackColor = System.Drawing.Color.White
-        Me.Label13.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label13.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label13.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label13.Location = New System.Drawing.Point(8, 88)
-        Me.Label13.Name = "Label13"
-        Me.Label13.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label13.Size = New System.Drawing.Size(105, 17)
-        Me.Label13.TabIndex = 38
-        Me.Label13.Text = "Auth Code"
-        '
-        'Label12
-        '
-        Me.Label12.BackColor = System.Drawing.Color.White
-        Me.Label12.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label12.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label12.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label12.Location = New System.Drawing.Point(8, 56)
-        Me.Label12.Name = "Label12"
-        Me.Label12.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label12.Size = New System.Drawing.Size(65, 17)
-        Me.Label12.TabIndex = 37
-        Me.Label12.Text = "Credit Card"
-        '
-        'Label11
-        '
-        Me.Label11.BackColor = System.Drawing.Color.White
-        Me.Label11.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label11.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label11.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label11.Location = New System.Drawing.Point(8, 24)
-        Me.Label11.Name = "Label11"
-        Me.Label11.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label11.Size = New System.Drawing.Size(33, 17)
-        Me.Label11.TabIndex = 36
-        Me.Label11.Text = "Bank"
-        '
         'Label6
         '
         Me.Label6.BackColor = System.Drawing.SystemColors.Window
         Me.Label6.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label6.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label6.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.Label6.Location = New System.Drawing.Point(328, 160)
+        Me.Label6.Location = New System.Drawing.Point(325, 165)
         Me.Label6.Name = "Label6"
         Me.Label6.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label6.Size = New System.Drawing.Size(41, 17)
+        Me.Label6.Size = New System.Drawing.Size(58, 22)
         Me.Label6.TabIndex = 45
         Me.Label6.Text = "Amount"
         '
@@ -760,14 +768,6 @@
         Me.Label1.Size = New System.Drawing.Size(57, 21)
         Me.Label1.TabIndex = 9
         Me.Label1.Text = "Customer"
-        '
-        'dtTranDate
-        '
-        Me.dtTranDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtTranDate.Location = New System.Drawing.Point(72, 114)
-        Me.dtTranDate.Name = "dtTranDate"
-        Me.dtTranDate.Size = New System.Drawing.Size(105, 20)
-        Me.dtTranDate.TabIndex = 44
         '
         'frmCheck
         '
