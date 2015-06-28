@@ -4,8 +4,7 @@ Imports System.Data.SqlClient
 Friend Class frmGroupStore
 	Inherits System.Windows.Forms.Form
     Private cmLocal As SqlCommand
-    Private rsLocal As SqlDataReader
-    Public ImageList2 As New ImageList()
+    Private rsLocal As DataTable
 	
 	'UPGRADE_WARNING: Event cbCustId.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbCustId_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustId.SelectedIndexChanged
@@ -29,31 +28,37 @@ Friend Class frmGroupStore
 		
 	End Sub
 	
-	Private Sub dgGroups_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgGroups.DblClick
-		update_group()
-	End Sub
-	Private Sub update_group()
-		If dgGroups.SelBookmarks.Count > 0 Then
-			
-			gGroupsRecord.bFlag = General.modo.UpdateRecord
-			gGroupsRecord.sCustId = cbCustId.Text
-			gGroupsRecord.sCustName = cbCustName.Text
-			gGroupsRecord.sGroupName = dgGroups.Columns("name").Text
-			gGroupsRecord.nGroupSeq = CShort(dgGroups.Columns("group_seq").Text)
-			gGroupsRecord.sTypeId = RTrim(cbTypeId.Text)
-			gGroupsRecord.sAttention = dgGroups.Columns("cinvoice_attention").Text
-			gGroupsRecord.sContractNo = dgGroups.Columns("cinvoice_contract_no").Text
-			gGroupsRecord.sText = dgGroups.Columns("cinvoice_text").Text
-			VB6.ShowForm(frmGroupStoreEntry, VB6.FormShowConstants.Modal, Me)
-			If gGroupsRecord.bFlag = General.modo.SavedRecord Then
-				load_dgGroups((cbCustId.Text), (cbTypeId.Text))
-			End If
-		Else
-			MsgBox("You must select a group to Update ," & vbCrLf & " before attempting this comand", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
-			Exit Sub
-		End If
-		
-	End Sub
+    Private Sub dgGroups_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_group()
+    End Sub
+    Private Sub update_group()
+
+        If dgGroups.SelectedRows.Count < 1 Then
+            If dgGroups.SelectedCells.Count > 0 Then
+                dgGroups.CurrentRow.Selected = True
+            End If
+        End If
+        If dgGroups.SelectedRows.Count > 0 Then
+
+            gGroupsRecord.bFlag = General.modo.UpdateRecord
+            gGroupsRecord.sCustId = cbCustId.Text
+            gGroupsRecord.sCustName = cbCustName.Text
+            gGroupsRecord.sGroupName = dgGroups.SelectedRows(0).Cells("name").Value
+            gGroupsRecord.nGroupSeq = CShort(dgGroups.SelectedRows(0).Cells("group_seq").Value)
+            gGroupsRecord.sTypeId = RTrim(cbTypeId.Text)
+            gGroupsRecord.sAttention = dgGroups.SelectedRows(0).Cells("cinvoice_attention").Value
+            gGroupsRecord.sContractNo = dgGroups.SelectedRows(0).Cells("cinvoice_contract_no").Value
+            gGroupsRecord.sText = dgGroups.SelectedRows(0).Cells("cinvoice_text").Value
+            VB6.ShowForm(frmGroupStoreEntry, VB6.FormShowConstants.Modal, Me)
+            If gGroupsRecord.bFlag = General.modo.SavedRecord Then
+                load_dgGroups((cbCustId.Text), (cbTypeId.Text))
+            End If
+        Else
+            MsgBox("You must select a group to Update ," & vbCrLf & " before attempting this comand", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
+
+    End Sub
 	Private Sub frmGroupStore_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
 	End Sub
@@ -104,14 +109,17 @@ Friend Class frmGroupStore
 
         sStmt = "SELECT group_seq, group_name AS Name, cust_id, " & " cinvoice_attention, cinvoice_contract_no, cinvoice_text " & " FROM groups " & " WHERE cust_id = '" & Trim(sCustId) & "'" & " AND type_id = '" & sTypeId & "' " & " ORDER BY group_name"
         cmd.CommandText = sStmt
+        rsLocal = getDataTable(sStmt)
 
-        rsLocal = cmd.ExecuteReader()
-        If rsLocal.HasRows() Then
-            dgGroups.DataSource = rsLocal
-            dgGroups.Refresh()
-            
-        Else          
-            dgGroups.DataSource = Nothing
+        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader()
+        dgGroups.DataSource = rsLocal
+        dgGroups.Refresh()
+        If rsLocal.Rows.Count > 0 Then
+            '    dgGroups.DataSource = rsLocal
+            '    dgGroups.Refresh()
+
+        Else
+            '    dgGroups.DataSource = Nothing
             Exit Sub
         End If
 
@@ -164,69 +172,76 @@ ErrorHandler:
 		Dim nRecords As Short
         Dim nTran As SqlTransaction
 		
-		On Error GoTo ErrorHandler
-		
-		If dgGroups.SelBookmarks.Count > 0 Then
-			If MsgBox("Do you want to delete Group: " & dgGroups.Columns("Name").Text, MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
-				
-				If Not check_references(Trim(cbTypeId.Text), CShort(Str(CDbl(dgGroups.Columns("group_seq").Text)))) Then
-					MsgBox("This record is referenced in a higher group level." & vbCrLf & "First remove the record from the group:" & Trim(gDump.str1) & " before removing this record", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-					
-					Exit Sub
-				End If
-				
+        On Error GoTo ErrorHandler
+
+        If dgGroups.SelectedRows.Count < 1 Then
+            If dgGroups.SelectedCells.Count > 0 Then
+                dgGroups.CurrentRow.Selected = True
+            End If
+        End If
+
+        If dgGroups.SelectedRows.Count > 0 Then
+            If MsgBox("Do you want to delete Group: " & dgGroups.SelectedRows(0).Cells("Name").Value, MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.Yes Then
+
+                If Not check_references(Trim(cbTypeId.Text), CShort(Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value)))) Then
+                    MsgBox("This record is referenced in a higher group level." & vbCrLf & "First remove the record from the group:" & Trim(gDump.str1) & " before removing this record", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+
+                    Exit Sub
+                End If
+
                 nTran = cn.BeginTransaction()
                 'General.bcnStatus = General.cnStatus.BeginTrans
-				
-				Select Case Trim(cbTypeId.Text)
-					Case GROUP_LOCAL
-						sStmt = "DELETE FROM GroupStore" & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-						
-					Case GROUP_AREA
-						
-						sStmt = "DELETE FROM AreaDet " & " WHERE area_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-						
-					Case GROUP_DISTRICT
-						sStmt = "DELETE FROM DistrictDet " & " WHERE district_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-						
-					Case GROUP_REGION
-						sStmt = "DELETE FROM RegionDet " & " WHERE region_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-						
-				End Select
-				
-				'MsgBox sStmt
-				cmLocal.CommandText = sStmt
+
+                Select Case Trim(cbTypeId.Text)
+                    Case GROUP_LOCAL
+                        sStmt = "DELETE FROM GroupStore" & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value))
+
+                    Case GROUP_AREA
+
+                        sStmt = "DELETE FROM AreaDet " & " WHERE area_seq = " & Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value))
+
+                    Case GROUP_DISTRICT
+                        sStmt = "DELETE FROM DistrictDet " & " WHERE district_seq = " & Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value))
+
+                    Case GROUP_REGION
+                        sStmt = "DELETE FROM RegionDet " & " WHERE region_seq = " & Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value))
+
+                End Select
+
+                'MsgBox sStmt
+                cmLocal.CommandText = sStmt
+                cmLocal.Transaction = nTran
                 cmLocal.ExecuteNonQuery()
-				
-				sStmt = "DELETE FROM Groups " & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.Columns("group_seq").Text))
-				'MsgBox sStmt
-				cmLocal.CommandText = sStmt
+
+                sStmt = "DELETE FROM Groups " & " WHERE cust_id ='" & cbCustId.Text & "'" & " AND group_seq = " & Str(CDbl(dgGroups.SelectedRows(0).Cells("group_seq").Value))
+                'MsgBox sStmt
+                cmLocal.CommandText = sStmt
                 nRecords = cmLocal.ExecuteNonQuery()
-				
-				If nRecords > 0 Then
+
+                If nRecords > 0 Then
                     nTran.Commit()
-					General.bcnStatus = General.cnStatus.NoTrans
-					MsgBox("Data was sucessfully deleted.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-					load_dgGroups((cbCustId.Text), Trim(cbTypeId.Text))
-				Else
+                    General.bcnStatus = General.cnStatus.NoTrans
+                    MsgBox("Data was sucessfully deleted.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                    load_dgGroups((cbCustId.Text), Trim(cbTypeId.Text))
+                Else
                     nTran.Rollback()
-					General.bcnStatus = General.cnStatus.NoTrans
-				End If
-			End If
-		Else
-			MsgBox("You must select a record to execute this command.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-			Exit Sub
-		End If
-		Exit Sub
-		
-ErrorHandler: 
-		If General.bcnStatus = General.cnStatus.BeginTrans Then
+                    General.bcnStatus = General.cnStatus.NoTrans
+                End If
+            End If
+        Else
+            MsgBox("You must select a record to execute this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
+        Exit Sub
+
+ErrorHandler:
+        If General.bcnStatus = General.cnStatus.BeginTrans Then
             nTran.Rollback()
-			General.bcnStatus = General.cnStatus.NoTrans
-		End If
-		save_error(Me.Name, "delete_group")
-		MsgBox("Unexpected error while deleting groups table." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-	End Sub
+            General.bcnStatus = General.cnStatus.NoTrans
+        End If
+        save_error(Me.Name, "delete_group")
+        MsgBox("Unexpected error while deleting groups table." & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+    End Sub
 	
 	Private Function check_references(ByRef sType As String, ByRef nSeq As Short) As Boolean
         Dim cmd As SqlCommand = cn.CreateCommand()
@@ -262,8 +277,8 @@ ErrorHandler:
             check_references = True
             Exit Function
         Else
-            gDump.str1 = rs.Rows(0).Item(0).value
-            gDump.str2 = Str(rs.Rows(0).Item(1).value)
+            gDump.str1 = rs.Rows(0).Item(0)
+            gDump.str2 = Str(rs.Rows(0).Item(1))
         End If
 
 
@@ -274,4 +289,24 @@ ErrorHandler:
 		
 		
 	End Function
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        add_group()
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_group()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_group()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub dgGroups_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgGroups.CellDoubleClick
+        btSave_Click(sender, e)
+    End Sub
 End Class

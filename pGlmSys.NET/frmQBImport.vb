@@ -700,13 +700,34 @@ ErrorHandler:
 		sStmt = "SELECT name FROM qb_vendor " & " WHERE qb_group_id ='" & Trim(cbQBGroupId.Text) & "' " & " AND LTRIM(RTRIM(name))='" & Trim(quotation_mask(QBVendorRecord.name_Renamed)) & "'"
 		
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rs.Rows.Count > 0 Then
-            If rs.Rows.Count = 1 Then
-                'Registro ya existe, actualizar
-                sStmt = "UPDATE qb_vendor " & " SET refnum =" & Str(QBVendorRecord.refnum) & "," & " TIMESTAMP=" & Str(QBVendorRecord.TimeStamp) & "," & " PRINTAS ='" & Trim(quotation_mask(QBVendorRecord.PRINTAS)) & "'," & " ADDR1 = '" & Trim(quotation_mask(QBVendorRecord.ADDR1)) & "'," & " ADDR2 = '" & Trim(quotation_mask(QBVendorRecord.ADDR2)) & "'," & " ADDR3 = '" & Trim(quotation_mask(QBVendorRecord.ADDR3)) & "'," & " ADDR4 = '" & Trim(quotation_mask(QBVendorRecord.ADDR4)) & "'," & " ADDR5 = '" & Trim(quotation_mask(QBVendorRecord.ADDR5)) & "'," & " VTYPE = '" & Trim(quotation_mask(QBVendorRecord.VTYPE)) & "'," & " CONT1 = '" & Trim(quotation_mask(QBVendorRecord.CONT1)) & "'," & " CONT2 = '" & Trim(quotation_mask(QBVendorRecord.CONT2)) & "'," & " PHONE1 = '" & Trim(quotation_mask(QBVendorRecord.PHONE1)) & "'," & " PHONE2 = '" & Trim(quotation_mask(QBVendorRecord.PHONE2)) & "'," & " FAXNUM = '" & Trim(quotation_mask(QBVendorRecord.FAXNUM)) & "'," & " NOTE = '" & Trim(quotation_mask(QBVendorRecord.NOTE)) & "'," & " TAXID = '" & Trim(quotation_mask(QBVendorRecord.TAXID)) & "'," & " LIMIT = '" & Trim(quotation_mask(QBVendorRecord.LIMIT)) & "'," & " TERMS = '" & Trim(quotation_mask(QBVendorRecord.TERMS)) & "'," & " NOTEPAD = '" & Trim(quotation_mask(QBVendorRecord.NOTEPAD)) & "'," & " SALUTATION = '" & Trim(quotation_mask(QBVendorRecord.SALUTATION)) & "'," & " CompanyName = '" & Trim(quotation_mask(QBVendorRecord.CompanyName_Renamed)) & "'," & " FIRSTNAME = '" & Trim(quotation_mask(QBVendorRecord.FIRSTNAME)) & "'," & " MIDINIT = '" & Trim(quotation_mask(QBVendorRecord.MIDINIT)) & "',"
-                sStmt = sStmt & " LASTNAME = '" & Trim(quotation_mask(QBVendorRecord.LASTNAME)) & "'," & " CUSTFLD1 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD1)) & "'," & " CUSTFLD2 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD2)) & "'," & " CUSTFLD3 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD3)) & "'," & " CUSTFLD4 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD4)) & "'," & " CUSTFLD5 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD5)) & "'," & " CUSTFLD6 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD6)) & "'," & " CUSTFLD7 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD7)) & "'," & " CUSTFLD8 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD8)) & "'," & " CUSTFLD9 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD9)) & "'," & " CUSTFLD10 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD10)) & "'," & " CUSTFLD11 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD11)) & "'," & " CUSTFLD12 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD12)) & "'," & " CUSTFLD13 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD13)) & "'," & " CUSTFLD14 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD14)) & "'," & " CUSTFLD15 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD15)) & "'," & " F41 = '" & Trim(quotation_mask(QBVendorRecord.F41)) & "'," & " Hidden = '" & Trim(quotation_mask(QBVendorRecord.Hidden)) & "'," & " DELCOUNT = " & Str(QBVendorRecord.DELCOUNT)
-                sStmt = sStmt & "WHERE qb_group_id ='" & Trim(quotation_mask(QBVendorRecord.qb_group_id)) & "' " & " AND name = '" & Trim(quotation_mask(QBVendorRecord.name_Renamed)) & "' "
 
+        If rs.Rows.Count = 1 Then
+            'Registro ya existe, actualizar
+            sStmt = "UPDATE qb_vendor " & " SET refnum =" & Str(QBVendorRecord.refnum) & "," & " TIMESTAMP=" & Str(QBVendorRecord.TimeStamp) & "," & " PRINTAS ='" & Trim(quotation_mask(QBVendorRecord.PRINTAS)) & "'," & " ADDR1 = '" & Trim(quotation_mask(QBVendorRecord.ADDR1)) & "'," & " ADDR2 = '" & Trim(quotation_mask(QBVendorRecord.ADDR2)) & "'," & " ADDR3 = '" & Trim(quotation_mask(QBVendorRecord.ADDR3)) & "'," & " ADDR4 = '" & Trim(quotation_mask(QBVendorRecord.ADDR4)) & "'," & " ADDR5 = '" & Trim(quotation_mask(QBVendorRecord.ADDR5)) & "'," & " VTYPE = '" & Trim(quotation_mask(QBVendorRecord.VTYPE)) & "'," & " CONT1 = '" & Trim(quotation_mask(QBVendorRecord.CONT1)) & "'," & " CONT2 = '" & Trim(quotation_mask(QBVendorRecord.CONT2)) & "'," & " PHONE1 = '" & Trim(quotation_mask(QBVendorRecord.PHONE1)) & "'," & " PHONE2 = '" & Trim(quotation_mask(QBVendorRecord.PHONE2)) & "'," & " FAXNUM = '" & Trim(quotation_mask(QBVendorRecord.FAXNUM)) & "'," & " NOTE = '" & Trim(quotation_mask(QBVendorRecord.NOTE)) & "'," & " TAXID = '" & Trim(quotation_mask(QBVendorRecord.TAXID)) & "'," & " LIMIT = '" & Trim(quotation_mask(QBVendorRecord.LIMIT)) & "'," & " TERMS = '" & Trim(quotation_mask(QBVendorRecord.TERMS)) & "'," & " NOTEPAD = '" & Trim(quotation_mask(QBVendorRecord.NOTEPAD)) & "'," & " SALUTATION = '" & Trim(quotation_mask(QBVendorRecord.SALUTATION)) & "'," & " CompanyName = '" & Trim(quotation_mask(QBVendorRecord.CompanyName_Renamed)) & "'," & " FIRSTNAME = '" & Trim(quotation_mask(QBVendorRecord.FIRSTNAME)) & "'," & " MIDINIT = '" & Trim(quotation_mask(QBVendorRecord.MIDINIT)) & "',"
+            sStmt = sStmt & " LASTNAME = '" & Trim(quotation_mask(QBVendorRecord.LASTNAME)) & "'," & " CUSTFLD1 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD1)) & "'," & " CUSTFLD2 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD2)) & "'," & " CUSTFLD3 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD3)) & "'," & " CUSTFLD4 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD4)) & "'," & " CUSTFLD5 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD5)) & "'," & " CUSTFLD6 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD6)) & "'," & " CUSTFLD7 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD7)) & "'," & " CUSTFLD8 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD8)) & "'," & " CUSTFLD9 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD9)) & "'," & " CUSTFLD10 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD10)) & "'," & " CUSTFLD11 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD11)) & "'," & " CUSTFLD12 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD12)) & "'," & " CUSTFLD13 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD13)) & "'," & " CUSTFLD14 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD14)) & "'," & " CUSTFLD15 = '" & Trim(quotation_mask(QBVendorRecord.CUSTFLD15)) & "'," & " F41 = '" & Trim(quotation_mask(QBVendorRecord.F41)) & "'," & " Hidden = '" & Trim(quotation_mask(QBVendorRecord.Hidden)) & "'," & " DELCOUNT = " & Str(QBVendorRecord.DELCOUNT)
+            sStmt = sStmt & "WHERE qb_group_id ='" & Trim(quotation_mask(QBVendorRecord.qb_group_id)) & "' " & " AND name = '" & Trim(quotation_mask(QBVendorRecord.name_Renamed)) & "' "
+
+            'MsgBox sStmt
+            cm.CommandText = sStmt
+            nRecords = cm.ExecuteNonQuery()
+            If nRecords > 0 Then
+                'ok
+            Else
+                'error
+                If MsgBox("Failed to update vendor:" & QBVendorRecord.name_Renamed & vbCrLf & "Do you want to continue processing?", MsgBoxStyle.Critical + MsgBoxStyle.YesNo, "GLM Error") = MsgBoxResult.No Then
+                    'Abort Process
+                    save_vendor_record = False
+                    Exit Function
+                End If
+                save_vendor_record = True
+                Exit Function
+            End If
+        Else
+            If rs.Rows.Count <= 0 Then
+                'Registro nuevo, insertar
+                sStmt = "INSERT INTO qb_vendor  " & " (qb_group_id, NAME, refnum, TimeStamp, PRINTAS, " & " ADDR1, ADDR2, ADDR3, ADDR4, ADDR5, " & " VTYPE, CONT1, CONT2, PHONE1, PHONE2, " & " FAXNUM, NOTE, TAXID, LIMIT, TERMS, " & " NOTEPAD, SALUTATION, CompanyName, FIRSTNAME, " & " MIDINIT, LASTNAME, CUSTFLD1, CUSTFLD2, " & " CUSTFLD3, CUSTFLD4, CUSTFLD5, CUSTFLD6, " & " CUSTFLD7, CUSTFLD8, CUSTFLD9, CUSTFLD10, " & " CUSTFLD11, CUSTFLD12, CUSTFLD13, CUSTFLD14, " & " CUSTFLD15, F41, Hidden, DELCOUNT )" & " VALUES "
+                sStmt = sStmt & "('" & QBVendorRecord.qb_group_id & "'," & "'" & Trim(quotation_mask(QBVendorRecord.name_Renamed)) & "'," & "" & Str(QBVendorRecord.refnum) & "," & "" & Str(QBVendorRecord.TimeStamp) & "," & "'" & Trim(quotation_mask(QBVendorRecord.PRINTAS)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR3)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR4)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR5)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.VTYPE)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CONT1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CONT2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.PHONE1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.PHONE2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.FAXNUM)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.NOTE)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.TAXID)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.LIMIT)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.TERMS)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.NOTEPAD)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.SALUTATION)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CompanyName_Renamed)) & "',"
+                sStmt = sStmt & "'" & Trim(quotation_mask(QBVendorRecord.FIRSTNAME)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.MIDINIT)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.LASTNAME)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD3)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD4)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD5)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD6)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD7)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD8)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD9)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD10)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD11)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD12)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD13)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD14)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD15)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.F41)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.Hidden)) & "'," & "'" & Str(QBVendorRecord.DELCOUNT) & "')"
                 'MsgBox sStmt
                 cm.CommandText = sStmt
                 nRecords = cm.ExecuteNonQuery()
@@ -714,53 +735,31 @@ ErrorHandler:
                     'ok
                 Else
                     'error
-                    If MsgBox("Failed to update vendor:" & QBVendorRecord.name_Renamed & vbCrLf & "Do you want to continue processing?", MsgBoxStyle.Critical + MsgBoxStyle.YesNo, "GLM Error") = MsgBoxResult.No Then
-                        'Abort Process
+                    If MsgBox("Failed to insert vendor:" & QBVendorRecord.name_Renamed & vbCrLf & "Do you want to continue processing?", MsgBoxStyle.Critical + MsgBoxStyle.YesNo, "GLM Error") = MsgBoxResult.Yes Then
+                        'Abortar?
                         save_vendor_record = False
-                        Exit Function
                     End If
                     save_vendor_record = True
                     Exit Function
                 End If
+                'rsTmp(0) = "New"
             Else
-                If rs.Rows.Count <= 0 Then
-                    'Registro nuevo, insertar
-                    sStmt = "INSERT INTO qb_vendor  " & " (qb_group_id, NAME, refnum, TimeStamp, PRINTAS, " & " ADDR1, ADDR2, ADDR3, ADDR4, ADDR5, " & " VTYPE, CONT1, CONT2, PHONE1, PHONE2, " & " FAXNUM, NOTE, TAXID, LIMIT, TERMS, " & " NOTEPAD, SALUTATION, CompanyName, FIRSTNAME, " & " MIDINIT, LASTNAME, CUSTFLD1, CUSTFLD2, " & " CUSTFLD3, CUSTFLD4, CUSTFLD5, CUSTFLD6, " & " CUSTFLD7, CUSTFLD8, CUSTFLD9, CUSTFLD10, " & " CUSTFLD11, CUSTFLD12, CUSTFLD13, CUSTFLD14, " & " CUSTFLD15, F41, Hidden, DELCOUNT )" & " VALUES "
-                    sStmt = sStmt & "('" & QBVendorRecord.qb_group_id & "'," & "'" & Trim(quotation_mask(QBVendorRecord.name_Renamed)) & "'," & "" & Str(QBVendorRecord.refnum) & "," & "" & Str(QBVendorRecord.TimeStamp) & "," & "'" & Trim(quotation_mask(QBVendorRecord.PRINTAS)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR3)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR4)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.ADDR5)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.VTYPE)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CONT1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CONT2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.PHONE1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.PHONE2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.FAXNUM)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.NOTE)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.TAXID)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.LIMIT)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.TERMS)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.NOTEPAD)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.SALUTATION)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CompanyName_Renamed)) & "',"
-                    sStmt = sStmt & "'" & Trim(quotation_mask(QBVendorRecord.FIRSTNAME)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.MIDINIT)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.LASTNAME)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD1)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD2)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD3)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD4)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD5)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD6)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD7)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD8)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD9)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD10)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD11)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD12)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD13)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD14)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.CUSTFLD15)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.F41)) & "'," & "'" & Trim(quotation_mask(QBVendorRecord.Hidden)) & "'," & "'" & Str(QBVendorRecord.DELCOUNT) & "')"
-                    'MsgBox sStmt
-                    cm.CommandText = sStmt
-                    nRecords = cm.ExecuteNonQuery()
-                    If nRecords > 0 Then
-                        'ok
-                    Else
-                        'error
-                        If MsgBox("Failed to insert vendor:" & QBVendorRecord.name_Renamed & vbCrLf & "Do you want to continue processing?", MsgBoxStyle.Critical + MsgBoxStyle.YesNo, "GLM Error") = MsgBoxResult.Yes Then
-                            'Abortar?
-                            save_vendor_record = False
-                        End If
-                        save_vendor_record = True
-                        Exit Function
-                    End If
-                    'rsTmp(0) = "New"
-                Else
-                    'Registro repetido en base de datos
-                End If
+                'Registro repetido en base de datos
             End If
         End If
-		
-		
-		Exit Function
-		
-ErrorHandler: 
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		'UPGRADE_WARNING: frmQBImport property VB.Global.Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		If System.Windows.Forms.Cursor.Current.equals(System.Windows.Forms.Cursors.WaitCursor) Then
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		End If
-		
-		save_error(Me.Name, "save_vendor_record")
-		MsgBox("Failed to save Vendor Record." & vbCrLf & "Check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
+
+
+        Exit Function
+
+ErrorHandler:
+        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        'UPGRADE_WARNING: frmQBImport property VB.Global.Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        If System.Windows.Forms.Cursor.Current.Equals(System.Windows.Forms.Cursors.WaitCursor) Then
+            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        End If
+
+        save_error(Me.Name, "save_vendor_record")
+        MsgBox("Failed to save Vendor Record." & vbCrLf & "Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
 	End Function
 End Class

@@ -18,8 +18,8 @@ Friend Class frmExportCheck
         'rsCheckList = SqlDataReader
 		
 		sStmt = ""
-		dtFrom._Value = Today
-		dtTo._Value = Today
+        dtFrom.Value = Today
+        dtTo.Value = Today
 		
 		set_limits()
 	End Sub
@@ -108,13 +108,13 @@ ErrorHandler:
         aGroup(0) = New gDumpUDT()
         If rsLocal.Rows.Count > 0 Then
             Dim recordCount As Integer = 0
-            Dim tmpDR As SqlDataReader
+            Dim tmpDR As DataTable
 
-            If rsLocal.Rows.Count > 0 And Not IsDBNull(rsLocal.Rows(0).Item("qb_group_id").Value) Then
+            If rsLocal.Rows.Count > 0 And Not IsDBNull(rsLocal.Rows(0).Item("qb_group_id")) Then
                 recordCount = rsLocal.Rows.Count
-                'tmpDR = rsLocal
-                
-                'sGroup = rsLocal.item("qb_group_id").value
+                tmpDR = rsLocal
+
+                'sGroup = rsLocal.Rows(0).Item("qb_group_id")
                 'gsGroupId = sGroup 'Guardo para query del detalle del cheque en frmExportCheckList
 
                 ReDim aGroup(recordCount)
@@ -122,8 +122,8 @@ ErrorHandler:
                 idx = 0
 
                 For row As Integer = 0 To rsLocal.Rows.Count - 1
-                    gDump.str1 = rsLocal.Rows(row).Item("cust_id").value
-                    gDump.str2 = rsLocal.Rows(row).Item("qb_group_id").value
+                    gDump.str1 = rsLocal.Rows(row).Item("cust_id")
+                    gDump.str2 = rsLocal.Rows(row).Item("qb_group_id")
 
                     aGroup(idx) = gDump
                     idx = idx + 1
@@ -180,10 +180,10 @@ ErrorHandler:
 		For i = 0 To numCustomers - 1
 			
 			sSelect = " SELECT DISTINCT ISNULL(bcheck.qb_exported_flag,'N') AS Exported, " & " qb_bankAccount.name AS qb_bank_name, " & " bcheck.check_no AS qb_doc_num, " & " bcheck.check_date AS qb_check_date , " & " qb_vendor_vbranch.name  as qb_vendor_name, " & " bcheck.check_amount AS qb_check_amount, " & " 'N' AS qb_clear, 'N' AS qb_to_print, " & " qb_vendor_vbranch.name AS qb_addr1, " & " vbranch.vend_pay_address AS qb_addr2, " & " vbranch.vend_pay_city AS qb_addr3_1, " & " vbranch.vend_pay_zip AS qb_addr3_2, " & " bcheck.check_memo AS qb_addr4, " & " bcheck.check_memo AS qb_check_memo, " & " bcheck.bank_cust_seq, vbranch.vend_name , " & " bcheck.voided_flag AS Void, bcheck.cust_id, qb_bankAccount.qb_group_id "
-            'Dim str As String = aGroup(i).str1
-            'sStmtLocal = " FROM bcheck, vbranch, qb_bankAccount, qb_vendor_vbranch " & " WHERE bcheck.cust_id ='" & Trim(str) & "' " & " AND bcheck.vend_seq = vbranch.vend_seq " & " AND bcheck.bank_cust_seq = qb_bankaccount.bank_cust_seq " & " AND qb_bankAccount.qb_group_id='" & Trim(aGroup(i).str2) & "' " & " AND qb_vendor_vbranch.qb_group_id = '" & Trim(aGroup(i).str2) & "' " & " AND qb_vendor_vbranch.vend_seq = bcheck.vend_seq"
-			
-			
+
+            Dim str As String = aGroup(i).str1
+            sStmtLocal = " FROM bcheck, vbranch, qb_bankAccount, qb_vendor_vbranch " & " WHERE bcheck.cust_id ='" & Trim(str) & "' " & " AND bcheck.vend_seq = vbranch.vend_seq " & " AND bcheck.bank_cust_seq = qb_bankaccount.bank_cust_seq " & " AND qb_bankAccount.qb_group_id='" & Trim(aGroup(i).str2) & "' " & " AND qb_vendor_vbranch.qb_group_id = '" & Trim(aGroup(i).str2) & "' " & " AND qb_vendor_vbranch.vend_seq = bcheck.vend_seq"
+
 			
 			'MsgBox sStmt
 			If chExported.CheckState = System.Windows.Forms.CheckState.Checked Then
@@ -199,7 +199,7 @@ ErrorHandler:
 			
 			
 			'Query Criteria
-			'sTmp = get_criteria
+            'sTmp = get_criteria()
 			If Len(sTmp) = 0 Then
 				Exit Sub
 			End If
@@ -214,13 +214,18 @@ ErrorHandler:
 		sStmt = sSingleQuery
 		sStmt = sStmt & vbCrLf & " ORDER BY qb_doc_num, qb_check_date "
         cmd.CommandText = sStmt
-		
-        'rsCheckList.Filter = ADODB.FilterGroupEnum.adFilterNone
-		
-		'rsCheckList.CursorLocation = adUseClient		
-        rsCheckList = getdatatable(sStmt)'cm.ExecuteReader()
 
-        If rsCheckList.Rows.Count > 0 Then
+
+        'rsCheckList.Filter = ADODB.FilterGroupEnum.adFilterNone
+
+        If (numCustomers < 1) Then
+            MsgBox("There are not checks for such criteria.", MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
+        'rsCheckList.CursorLocation = adUseClient		
+        rsCheckList = getDataTable(sStmt) 'cm.ExecuteReader()
+
+        If rsCheckList.Rows.Count < 1 Then
             MsgBox("There are not checks for such criteria.", MsgBoxStyle.OkOnly, "GLM Message")
             Exit Sub
         Else
@@ -246,8 +251,8 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "export_check_list")
         MsgBox("An error occurred while accessing Quick Books info." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-		
-	End Sub
+
+    End Sub
 	'Se asume que recordset rs esta abierto
 	'TRUE  Se encontraron cheques duplicados
 	'FALSE No hay problema
@@ -274,7 +279,7 @@ ErrorHandler:
             nRecords = 0
             For rsRow As Integer = 0 To rsCheckList.Rows.Count - 1
 
-                If rsClone.Rows(cloneRow).Item("qb_doc_num").Value = rsCheckList.Rows(rsRow).Item("qb_doc_num").Value Then
+                If rsClone.Rows(cloneRow).Item("qb_doc_num") = rsCheckList.Rows(rsRow).Item("qb_doc_num") Then
                     nRecords = nRecords + 1
                     If nRecords > 1 Then
 
@@ -283,7 +288,7 @@ ErrorHandler:
                         'Verificar todos los campos
 
                         For i = 0 To rsCheckList.Columns.Count - 1
-                            If rsCheckList.Rows(rsRow).Item(i).Value <> rsClone.Rows(cloneRow).Item(i).Value Then
+                            If rsCheckList.Rows(rsRow).Item(i) <> rsClone.Rows(cloneRow).Item(i) Then
                                 Dim prm As SqlParameter = New SqlParameter()
                                 prm.SqlDbType = SqlDbType.VarChar
                                 bCharFlag = False
@@ -296,9 +301,9 @@ ErrorHandler:
                                     rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.Text Then
 
                                     bCharFlag = True
-                                    sStmt = sStmt + rsCheckList.Rows(rsRow).Item(i).Value
+                                    sStmt = sStmt + rsCheckList.Rows(rsRow).Item(i)
                                 Else
-                                    sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i).Value)
+                                    sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i))
                                 End If
                                 Exit For
                             End If
@@ -318,12 +323,12 @@ ErrorHandler:
 
                         'MsgBox sStmt
 
-                        sStmt = "INSERT INTO CheckException(cust_id,check_no, field_name, " & "conflict_value1, conflict_value2) VALUES " & "('" & cbCustId.Text & "'," & Str(rsCheckList.Rows(rsRow).Item("qb_doc_num").Value) & "," & "'" & rsCheckList.Rows(rsRow).Item(i).name & "',"
+                        sStmt = "INSERT INTO CheckException(cust_id,check_no, field_name, " & "conflict_value1, conflict_value2) VALUES " & "('" & cbCustId.Text & "'," & Str(rsCheckList.Rows(rsRow).Item("qb_doc_num")) & "," & "'" & rsCheckList.Rows(rsRow).Item(i).name & "',"
 
                         If bCharFlag Then
-                            sStmt = sStmt & "'" + rsCheckList.Rows(rsRow).Item(i).Value + "','" + rsClone.Rows(cloneRow).Item(i).Value + "')"
+                            sStmt = sStmt & "'" + rsCheckList.Rows(rsRow).Item(i) + "','" + rsClone.Rows(cloneRow).Item(i) + "')"
                         Else
-                            sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i).Value) & "," & Str(rsClone.Rows(cloneRow).Item(i).Value) & ")"
+                            sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i)) & "," & Str(rsClone.Rows(cloneRow).Item(i)) & ")"
                         End If
 
                         cmd.CommandText = sStmt
@@ -363,7 +368,7 @@ ErrorHandler:
         get_criteria = ""
 		Select Case sRadioFlag
 			Case "date"
-				sWhere = " AND bcheck.check_date between '" & Str(dtFrom._Value) & "'  AND '" & Str(dtTo._Value) & "' "
+                sWhere = " AND bcheck.check_date between '" & Str(dtFrom.Value) & "'  AND '" & Str(dtTo.Value) & "' "
 			Case "check"
 				If Len(txtCheckFrom.Text) = 0 Then
 					MsgBox("You must enter an Starting Check Number.", MsgBoxStyle.OKOnly, "Warning")
@@ -657,9 +662,9 @@ ErrorHandler:
             Dim tmpDR As DataTable
             Dim recordCount As Integer = 0
             'Verify that qb_vendor_vbranch exists in qb_vendor
-            sQBVendName = rsCheckList.Rows(row).Item("qb_vendor_name").Value
-            sVendName = rsCheckList.Rows(row).Item("vend_name").Value
-            sGroup = rsCheckList.Rows(row).Item("qb_group_id").Value
+            sQBVendName = rsCheckList.Rows(row).Item("qb_vendor_name")
+            sVendName = rsCheckList.Rows(row).Item("vend_name")
+            sGroup = rsCheckList.Rows(row).Item("qb_group_id")
             sStmt = "SELECT name FROM qb_vendor " & " WHERE qb_group_id ='" & Trim(sGroup) & "' " & " AND name ='" & quotation_mask(Trim(sQBVendName)) & "'"
 
             rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader()
@@ -678,8 +683,8 @@ ErrorHandler:
 
 
             'Verify that qb_bankAccount exists in qb_account
-            sQBaccount = rsCheckList.Rows(0).Item("qb_bank_name").Value
-            nBankCustSeq = rsCheckList.Rows(0).Item("bank_cust_seq").Value
+            sQBaccount = rsCheckList.Rows(0).Item("qb_bank_name")
+            nBankCustSeq = rsCheckList.Rows(0).Item("bank_cust_seq")
             sStmt = "SELECT name FROM qb_account " & " WHERE qb_group_id ='" & Trim(sGroup) & "' " & " AND accnttype ='BANK' " & " AND name ='" & quotation_mask(Trim(sQBaccount)) & "'"
             cmd.CommandText = sStmt
             rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
@@ -693,7 +698,7 @@ ErrorHandler:
                 cmd.CommandText = sStmt
                 rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
                 If rsLocal.Rows.Count > 0 Then
-                    sBankName = rsLocal.Rows(0).Item("bank_name").Value
+                    sBankName = rsLocal.Rows(0).Item("bank_name")
                 End If
 
                 MsgBox("QB Inconsistency." & vbCrLf & "Bank:" & Trim(sBankName) & " associated to " & vbCrLf & "QBBank Account:" & Trim(sQBaccount) & " was not found on QB Account table.")
