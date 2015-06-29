@@ -22,7 +22,7 @@ Friend Class frmExportVendor
             rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rs.Rows.Count > 0 Then
-                txtQBGroupDesc.Text = rs.Rows(0).Item("qb_group_desc").Value
+                txtQBGroupDesc.Text = rs.Rows(0).Item("qb_group_desc")
             End If
         End If
         Exit Sub
@@ -106,7 +106,7 @@ ErrorHandler:
 		cdFileSave.InitialDirectory = sDir 'Directorio para guardar archivo IIF
 		cdFileSave.DefaultExt = "iif"
 		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		cdFileSave.Filter = "QuickBooks Files (*.iif)"
+        cdFileSave.Filter = "QuickBooks Files (*.iif)|*.iif"
 		cdFileSave.FileName = "Vendors" 'Nombre por defecto de archivo
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
@@ -178,13 +178,13 @@ ErrorHandler:
             'Cada campo
             For i = 0 To nFields - 1
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsLocal.Rows(row).Item(i).Value) Then
+                If IsDBNull(rsLocal.Rows(row).Item(i)) Then
                     sBuffer = sBuffer & vbTab
                 Else
-                    If Len(Trim(rsLocal.Rows(row).Item(i).Value)) = 0 Then
+                    If Len(Trim(rsLocal.Rows(row).Item(i))) = 0 Then
                         sBuffer = sBuffer & vbTab
                     Else
-                        sBuffer = sBuffer & Trim(rsLocal.Rows(row).Item(i).Value) & vbTab
+                        sBuffer = sBuffer & Trim(rsLocal.Rows(row).Item(i)) & vbTab
                     End If
                 End If
             Next i

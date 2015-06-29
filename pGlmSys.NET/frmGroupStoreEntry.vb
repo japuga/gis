@@ -8,7 +8,6 @@ Friend Class frmGroupStoreEntry
     Private rsMember As DataTable
     Private cmLocal As SqlCommand
     Private bNewRecord As Boolean
-    Private ImageList2 As New ImageList()
 	
 	
 	
@@ -31,18 +30,18 @@ Friend Class frmGroupStoreEntry
 		
 	End Sub
 	
-	Private Sub dgGroupStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgGroupStore.ClickEvent
-		'dgGroupStore.SelBookmarks.Add rsMember.Bookmark
-		
-	End Sub
+    Private Sub dgGroupStore_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'dgGroupStore.SelBookmarks.Add rsMember.Bookmark
+
+    End Sub
 	
-	Private Sub dgGroupStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgGroupStore.DblClick
-		del_dgGroupStore(gGroupsRecord.sTypeId)
-	End Sub
+    Private Sub dgGroupStore_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        del_dgGroupStore(gGroupsRecord.sTypeId)
+    End Sub
 	
-	Private Sub dgStores_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgStores.DblClick
-		add_dgGroupStore(gGroupsRecord.sTypeId)
-	End Sub
+    Private Sub dgStores_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        add_dgGroupStore(gGroupsRecord.sTypeId)
+    End Sub
 	
 	Private Sub frmGroupStoreEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -51,7 +50,11 @@ Friend Class frmGroupStoreEntry
 	Private Sub init_vars()
 		
         cmLocal = cn.CreateCommand()
-		
+
+        'init fields
+        txtAttention.Text = ""
+        txtContractNo.Text = ""
+        txtText.Text = ""
 		
 		'Restrictions
 		'UPGRADE_WARNING: TextBox property txtGroupName.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
@@ -113,7 +116,8 @@ Friend Class frmGroupStoreEntry
 			Case General.modo.NewRecord
 				
 				load_dgGroupStore(gGroupsRecord.sTypeId, gGroupsRecord.sCustId, -1)
-				
+                txtGroupName.Enabled = True
+                txtGroupName.Text = ""
 				bNewRecord = True
 			Case General.modo.UpdateRecord
 				txtGroupName.Enabled = False
@@ -242,9 +246,10 @@ ErrorHandler:
 		
 		'2.Execute query
         rsMember = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-        If rsMember.rows.count > 0 Then
-            dgGroupStore.DataSource = rsMember
-        End If
+        dgGroupStore.DataSource = rsMember
+        'If rsMember.rows.count > 0 Then
+        '    dgGroupStore.DataSource = rsMember
+        'End If
 		
 		
 		
@@ -364,14 +369,14 @@ ErrorHandler:
 				
                 rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
                 If rsLocal.Rows.Count > 0 Then
-                    If IsDBNull(rsLocal.Rows(0).Item(0).Value) Then
+                    If IsDBNull(rsLocal.Rows(0).Item(0)) Then
                         nGroupSeq = 1
                     End If
-                    If rsLocal.Rows(0).Item(0).Value = 0 Then
+                    If rsLocal.Rows(0).Item(0) = 0 Then
                         nGroupSeq = 1
                     End If
-                    If rsLocal.Rows(0).Item(0).Value > 0 Then
-                        nGroupSeq = rsLocal.Rows(0).Item(0).Value + 1
+                    If rsLocal.Rows(0).Item(0) > 0 Then
+                        nGroupSeq = rsLocal.Rows(0).Item(0) + 1
                     End If
                 Else
                     MsgBox("Unable to find next group sequence number." & "Check log file for details.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -386,6 +391,7 @@ ErrorHandler:
 
 
                 cmLocal.CommandText = sStmt
+                cmLocal.Transaction = nTran
                 nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
@@ -407,16 +413,16 @@ ErrorHandler:
                     For row As Integer = 0 To rsMember.Rows.Count - 1
                         Select Case gGroupsRecord.sTypeId
                             Case GROUP_LOCAL
-                                sStmt = "INSERT INTO GroupStore (group_seq, cust_id," & "store_id) VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & "'" & gGroupsRecord.sCustId & "'," & Str(rsMember.Rows(row).Item("store_id").Value) & ")"
+                                sStmt = "INSERT INTO GroupStore (group_seq, cust_id," & "store_id) VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & "'" & gGroupsRecord.sCustId & "'," & Str(rsMember.Rows(row).Item("store_id")) & ")"
 
                             Case GROUP_AREA
-                                sStmt = "INSERT INTO AreaDet ( area_seq, group_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("group_seq").Value) & ")"
+                                sStmt = "INSERT INTO AreaDet ( area_seq, group_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("group_seq")) & ")"
 
                             Case GROUP_DISTRICT
-                                sStmt = "INSERT INTO DistrictDet ( district_seq, area_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("area_seq").Value) & ")"
+                                sStmt = "INSERT INTO DistrictDet ( district_seq, area_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("area_seq")) & ")"
 
                             Case GROUP_REGION
-                                sStmt = "INSERT INTO RegionDet ( region_seq, district_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("district_seq").Value) & ")"
+                                sStmt = "INSERT INTO RegionDet ( region_seq, district_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("district_seq")) & ")"
 
                         End Select
 
@@ -453,6 +459,7 @@ ErrorHandler:
 
 
                 cmLocal.CommandText = sStmt
+                cmLocal.Transaction = nTran
                 nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
@@ -494,16 +501,16 @@ ErrorHandler:
                 For row As Integer = 0 To rsMember.Rows.Count - 1
                     Select Case gGroupsRecord.sTypeId
                         Case GROUP_LOCAL
-                            sStmt = "INSERT INTO GroupStore (group_seq, cust_id," & "store_id) VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & "'" & gGroupsRecord.sCustId & "'," & Str(rsMember.Rows(row).Item("store_id").Value) & ")"
+                            sStmt = "INSERT INTO GroupStore (group_seq, cust_id," & "store_id) VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & "'" & gGroupsRecord.sCustId & "'," & Str(rsMember.Rows(row).Item("store_id")) & ")"
 
                         Case GROUP_AREA
-                            sStmt = "INSERT INTO AreaDet ( area_seq, group_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("group_seq").Value) & ")"
+                            sStmt = "INSERT INTO AreaDet ( area_seq, group_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("group_seq")) & ")"
 
                         Case GROUP_DISTRICT
-                            sStmt = "INSERT INTO DistrictDet ( district_seq, area_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("area_seq").Value) & ")"
+                            sStmt = "INSERT INTO DistrictDet ( district_seq, area_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("area_seq")) & ")"
 
                         Case GROUP_REGION
-                            sStmt = "INSERT INTO RegionDet ( region_seq, district_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("district_seq").Value) & ")"
+                            sStmt = "INSERT INTO RegionDet ( region_seq, district_seq) " & " VALUES " & "(" & Str(gGroupsRecord.nGroupSeq) & "," & Str(rsMember.Rows(row).Item("district_seq")) & ")"
 
                     End Select
 
@@ -542,184 +549,198 @@ ErrorHandler:
 	
 	'Add records to dgGroupStore
 	Private Sub add_dgGroupStore(ByRef sType As String)
-		Dim vRow As Object
+        Dim vRow As DataGridViewRow
         'Dim sCriteria As String
 		
-		Dim nCandidate As Short
+        Dim nCandidate As Short
+
+        If dgStores.SelectedRows.Count < 1 Then
+            If dgStores.SelectedCells.Count > 0 Then
+                dgStores.Rows(dgStores.CurrentRow.Index).Selected = True
+            End If
+        End If
 		
-		For	Each vRow In dgStores.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        For Each vRow In dgStores.SelectedRows
+            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsStore.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
-			'Verifico si tienda ya existe en recordset
+            'Verifico si tienda ya existe en recordset
             'sCriteria = "store_id=" + Str(rsStore.item("store_id")) '04.17.2010
-			
-			
-			
-			'If rsMember.RecordCount > 0 Then
-			'   rsMember.MoveFirst
-			'    rsMember.Find sCriteria, , adSearchForward, 0
-			'End If
-			
-			Select Case sType
-				Case GROUP_LOCAL
-                    nCandidate = rsStore.Rows(vRow).Item("store_id").Value
-					
-				Case GROUP_AREA
-                    nCandidate = rsStore.Rows(vRow).Item("group_seq").Value
-					
-				Case GROUP_DISTRICT
-                    nCandidate = rsStore.Rows(vRow).Item("area_seq").Value
-					
-				Case GROUP_REGION
-                    nCandidate = rsStore.Rows(vRow).Item("district_seq").Value
-					
-				Case Else
-					write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
-					Exit Sub
-			End Select
-			
-			
-			
+
+
+
+            'If rsMember.RecordCount > 0 Then
+            '   rsMember.MoveFirst
+            '    rsMember.Find sCriteria, , adSearchForward, 0
+            'End If
+
+            Select Case sType
+                Case GROUP_LOCAL
+                    nCandidate = vRow.Cells("store_id").Value
+
+                Case GROUP_AREA
+                    nCandidate = vRow.Cells("group_seq").Value
+
+                Case GROUP_DISTRICT
+                    nCandidate = vRow.Cells("area_seq").Value
+
+                Case GROUP_REGION
+                    nCandidate = vRow.Cells("district_seq").Value
+
+                Case Else
+                    write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
+                    Exit Sub
+            End Select
+
+
+
             'If record_exist(rsMember, rsStore.item("store_id")) = False Then
-			If record_exist(rsMember, nCandidate, sType) = False Then
-				
+            If record_exist(rsMember, nCandidate, sType) = False Then
+
                 'rsMember.AddNew()
                 Dim drow As DataRow = rsMember.NewRow
-				Select Case sType
-					Case GROUP_LOCAL
-                        drow.Item("store_id").Value = rsStore.Rows(vRow).Item("store_id").Value
-                        drow.Item("store").Value = rsStore.Rows(vRow).Item("store").Value
-                        drow.Item("name").Value = rsStore.Rows(vRow).Item("name").Value
-                        drow.Item("state").Value = rsStore.Rows(vRow).Item("state").Value
-                        drow.Item("Address").Value = rsStore.Rows(vRow).Item("Address").Value
-						
-					Case GROUP_AREA
-                        drow.Item("group_seq").Value = rsStore.Rows(vRow).Item("group_seq").Value
-                        drow.Item("name").Value = rsStore.Rows(vRow).Item("name").Value
-						
-					Case GROUP_DISTRICT
-                        drow.Item("area_seq").Value = rsStore.Rows(vRow).Item("area_seq").Value
-                        drow.Item("name").Value = rsStore.Rows(vRow).Item("name").Value
-						
-					Case GROUP_REGION
-                        drow.Item("district_seq").Value = rsStore.Rows(vRow).Item("district_seq").Value
-                        drow.Item("name").Value = rsStore.Rows(vRow).Item("name").Value
-						
-				End Select
+                Select Case sType
+                    Case GROUP_LOCAL
+                        drow.Item("store_id") = vRow.Cells("store_id").Value
+                        drow.Item("store") = vRow.Cells("store").Value
+                        drow.Item("name") = vRow.Cells("name").Value
+                        drow.Item("state") = vRow.Cells("state").Value
+                        drow.Item("Address") = vRow.Cells("Address").Value
+
+                    Case GROUP_AREA
+                        drow.Item("group_seq") = vRow.Cells("group_seq").Value
+                        drow.Item("name") = vRow.Cells("name").Value
+
+                    Case GROUP_DISTRICT
+                        drow.Item("area_seq") = vRow.Cells("area_seq").Value
+                        drow.Item("name") = vRow.Cells("name").Value
+
+                    Case GROUP_REGION
+                        drow.Item("district_seq") = vRow.Cells("district_seq").Value
+                        drow.Item("name") = vRow.Cells("name").Value
+
+                End Select
                 rsMember.Rows.Add(drow)
                 'rsMember.Update()
-				
-				
-				Select Case sType
-					Case GROUP_LOCAL
+
+
+                Select Case sType
+                    Case GROUP_LOCAL
                         'rsMember.Sort = "state, store"
                         rsMember.Select("", "state, store")
-						
-					Case GROUP_AREA
+
+                    Case GROUP_AREA
                         rsMember.Select("", "name")
-						
-					Case GROUP_DISTRICT
+
+                    Case GROUP_DISTRICT
                         rsMember.Select("", "name")
-						
-					Case GROUP_REGION
+
+                    Case GROUP_REGION
                         rsMember.Select("", "name")
-				End Select
-				
-			End If
-            rsStore.Rows.Remove(vRow) 'Delete(ADODB.AffectEnum.adAffectCurrent)
-		Next vRow
+                End Select
+
+            End If
+            rsStore.Rows.RemoveAt(vRow.Index) 'Delete(ADODB.AffectEnum.adAffectCurrent)
+        Next vRow
 		
 	End Sub
 	
 	
 	'Elimina registros de dgStores
 	Private Sub del_dgGroupStore(ByRef sType As String)
-		Dim vRow As Object
+        Dim vRow As Integer
         'Dim sCriteria As String
 		
-		Dim nCandidate As Short
+        Dim nCandidate As Short
+
+        If dgGroupStore.SelectedRows.Count < 1 Then
+            If dgGroupStore.SelectedCells.Count > 0 Then
+                dgGroupStore.CurrentRow.Selected = True
+            End If
+        End If
 		
-		For	Each vRow In dgGroupStore.SelBookmarks
-			'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+        'For Each vRow In dgGroupStore.SelectedRows
+        For rowIndex As Integer = 0 To dgGroupStore.SelectedRows.Count - 1
+            vRow = dgGroupStore.SelectedRows(rowIndex).Index
+            'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsMember.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
-			'Verifico si tienda ya existe en recordset
+            'Verifico si tienda ya existe en recordset
             'sCriteria = "store_id=" + Str(rsMember.item("store_id")) '04.17.2010
-			
-			
-			'If rsStore.RecordCount > 0 Then
-			'    rsStore.MoveFirst
-			'rsStore.Find sCriteria, , adSearchForward, 0
-			'End If
-			
-			Select Case sType
-				Case GROUP_LOCAL
-                    nCandidate = rsMember.Rows(vRow).Item("store_id").Value
-					
-				Case GROUP_AREA
-                    nCandidate = rsMember.Rows(vRow).Item("group_seq").Value
-					
-				Case GROUP_DISTRICT
-                    nCandidate = rsMember.Rows(vRow).Item("area_seq").Value
-					
-				Case GROUP_REGION
-                    nCandidate = rsMember.Rows(vRow).Item("district_seq").Value
-					
-				Case Else
-					write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
-					Exit Sub
-			End Select
-			
-			
-			
-			
+
+
+            'If rsStore.RecordCount > 0 Then
+            '    rsStore.MoveFirst
+            'rsStore.Find sCriteria, , adSearchForward, 0
+            'End If
+
+            Select Case sType
+                Case GROUP_LOCAL
+                    nCandidate = rsMember.Rows(vRow).Item("store_id")
+
+                Case GROUP_AREA
+                    nCandidate = rsMember.Rows(vRow).Item("group_seq")
+
+                Case GROUP_DISTRICT
+                    nCandidate = rsMember.Rows(vRow).Item("area_seq")
+
+                Case GROUP_REGION
+                    nCandidate = rsMember.Rows(vRow).Item("district_seq")
+
+                Case Else
+                    write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
+                    Exit Sub
+            End Select
+
+
+
+
             'If record_exist(rsStore, rsMember.item("store_id")) = False Then
-			If record_exist(rsStore, nCandidate, sType) = False Then
-				
+            If record_exist(rsStore, nCandidate, sType) = False Then
+
                 'rsStore.AddNew()
                 Dim drow As DataRow = rsStore.NewRow
-				Select Case sType
-					Case GROUP_LOCAL
-                        drow.Item("store_id").Value = rsMember.Rows(vRow).Item("store_id").Value
-                        drow.Item("store").Value = rsMember.Rows(vRow).Item("store").Value
-                        drow.Item("name").Value = rsMember.Rows(vRow).Item("name").Value
-                        drow.Item("state").Value = rsMember.Rows(vRow).Item("state").Value
-                        drow.Item("Address").Value = rsMember.Rows(vRow).Item("Address").Value
-						
-					Case GROUP_AREA
-                        drow.Item("group_seq").Value = rsMember.Rows(vRow).Item("group_seq").Value
-                        drow.Item("name").Value = rsMember.Rows(vRow).Item("name").Value
-						
-					Case GROUP_DISTRICT
-                        drow.Item("area_seq").Value = rsMember.Rows(vRow).Item("area_seq").Value
-                        drow.Item("name").Value = rsMember.Rows(vRow).Item("name").Value
-						
-					Case GROUP_REGION
-                        drow.Item("district_seq").Value = rsMember.Rows(vRow).Item("district_seq").Value
-                        drow.Item("name").Value = rsMember.Rows(vRow).Item("name").Value
-				End Select
-				
+                Select Case sType
+                    Case GROUP_LOCAL
+                        drow.Item("store_id") = rsMember.Rows(vRow).Item("store_id")
+                        drow.Item("store") = rsMember.Rows(vRow).Item("store")
+                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+                        drow.Item("state") = rsMember.Rows(vRow).Item("state")
+                        drow.Item("Address") = rsMember.Rows(vRow).Item("Address")
+
+                    Case GROUP_AREA
+                        drow.Item("group_seq") = rsMember.Rows(vRow).Item("group_seq")
+                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+
+                    Case GROUP_DISTRICT
+                        drow.Item("area_seq") = rsMember.Rows(vRow).Item("area_seq")
+                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+
+                    Case GROUP_REGION
+                        drow.Item("district_seq") = rsMember.Rows(vRow).Item("district_seq")
+                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+                End Select
+
                 rsStore.Rows.Add(drow)
                 'rsStore.Update()
-				
-				Select Case sType
-					Case GROUP_LOCAL
+
+                Select Case sType
+                    Case GROUP_LOCAL
                         rsStore.Select("", "state, store")
-						
-					Case GROUP_AREA
+
+                    Case GROUP_AREA
                         rsStore.Select("", "name")
-						
-					Case GROUP_DISTRICT
+
+                    Case GROUP_DISTRICT
                         rsStore.Select("", "name")
-						
-					Case GROUP_REGION
+
+                    Case GROUP_REGION
                         rsStore.Select("", "name")
-				End Select
-				
-			End If
-            rsMember.Rows.Remove(vRow)
-		Next vRow
-		
-	End Sub
+                End Select
+
+            End If
+            rsMember.Rows.RemoveAt(vRow)
+        Next rowIndex
+
+    End Sub
 	
 	'Looks for Candidate in Datagrid
     Private Function record_exist(ByRef rsTmp As SqlDataReader, ByRef nStoreId As Short, ByRef sType As String) As Boolean
@@ -797,4 +818,30 @@ ErrorHandler:
         
 
     End Function
+
+    Private Sub dgGroupStore_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgGroupStore.CellDoubleClick
+        cmdRemove_Click(sender, e)
+    End Sub
+
+    Private Sub dgStores_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStores.CellDoubleClick
+        cmdAdd_Click(sender, e)
+    End Sub
+
+    Private Sub ToolStripButton1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        If val_fields() Then
+            save_group_store()
+            Me.Close()
+        End If
+    End Sub
+
+    Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        If gGroupsRecord.bFlag <> General.modo.SavedRecord And bNewRecord = False Then
+            If (MsgBox("Do you want to save your changes?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes) Then
+                If val_fields() Then
+                    save_group_store()
+                End If
+            End If
+        End If
+        Me.Close()
+    End Sub
 End Class

@@ -14,6 +14,8 @@ Friend Class frmExportCheckList
 	'Funcion que genera informacion para los controles de la forma
 	Private Sub load_controls()
         txtNumChecks.Text = CStr(frmExportCheck.rsCheckList.Rows.Count)
+        Dim theAmount As Double = 0
+        theAmount = total_amount()
 		txtTotalAmount.Text = VB6.Format(total_amount, "###,###,##0.00")
 		
         If frmExportCheck.rsCustCheck.Rows.Count > 1 Then
@@ -42,13 +44,13 @@ Friend Class frmExportCheckList
 		dgCheckList.DataSource = frmExportCheck.rsCheckList
 		dgCheckList.Columns("qb_bank_name").Visible = False
 		dgCheckList.Columns("qb_check_date").Width = VB6.TwipsToPixelsX(1000)
-		dgCheckList.Columns("qb_check_date").Caption = "Date"
+        dgCheckList.Columns("qb_check_date").HeaderText = "Date"
 		'dgCheckList.Columns("qb_vendor_name").Caption = "Vendor"
-		dgCheckList.Columns("qb_vendor_name").Caption = "QB Vendor"
+        dgCheckList.Columns("qb_vendor_name").HeaderText = "QB Vendor"
 		dgCheckList.Columns("vend_name").Width = VB6.TwipsToPixelsX(1800)
-		dgCheckList.Columns("vend_name").Caption = "Vendor"
-		dgCheckList.Columns("qb_check_amount").Caption = "Amount"
-		dgCheckList.Columns("qb_doc_num").Caption = "Check No"
+        dgCheckList.Columns("vend_name").HeaderText = "Vendor"
+        dgCheckList.Columns("qb_check_amount").HeaderText = "Amount"
+        dgCheckList.Columns("qb_doc_num").HeaderText = "Check No"
 		dgCheckList.Columns("Void").Width = VB6.TwipsToPixelsX(500)
 		
 		dgCheckList.Columns("qb_clear").Visible = False
@@ -76,8 +78,8 @@ Friend Class frmExportCheckList
 
         If frmExportCheck.rsCheckList.Rows.Count > 0 Then
             For row As Integer = 0 To frmExportCheck.rsCheckList.Rows.Count - 1
-                If Not IsDBNull(frmExportCheck.rsCheckList.Rows(row).Item("qb_check_amount").Value) Then
-                    dTotal = dTotal + frmExportCheck.rsCheckList.Rows(row).Item("qb_check_amount").Value
+                If Not IsDBNull(frmExportCheck.rsCheckList.Rows(row).Item("qb_check_amount")) Then
+                    dTotal = dTotal + frmExportCheck.rsCheckList.Rows(row).Item("qb_check_amount")
                 End If
             Next
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
@@ -146,30 +148,30 @@ ErrorHandler:
 
         For chkLstRow As Integer = 0 To frmExportCheck.rsCheckList.Rows.Count - 1
             'DATOS PARA LA CABECERA
-            sDate = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_date").value)
-            sTranAccount = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_bank_name").Value
-            sTranName = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_vendor_name").Value
+            sDate = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_date").ToString()
+            sTranAccount = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_bank_name")
+            sTranName = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_vendor_name")
             'UPGRADE_WARNING: Couldn't resolve default property of object sTranAmount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            sTranAmount = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_amount").Value * -1) 'Hago negativa la cantidad
-            sDocNum = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_doc_num").Value)
+            sTranAmount = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_amount") * -1) 'Hago negativa la cantidad
+            sDocNum = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_doc_num"))
 
 
             sTranToPrint = "N"
 
-            If Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("void").Value) = "Y" Then
+            If Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("void")) = "Y" Then
                 sClear = "Y"
-                sTranMemo = "VOID: " & Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_memo").Value)
+                sTranMemo = "VOID: " & Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_memo"))
             Else
                 sClear = "N"
-                sTranMemo = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_memo").Value
+                sTranMemo = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_memo")
             End If
 
-            sAddr1 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr1").Value
-            sAddr2 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr2").Value
-            sAddr3 = Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr3_1").Value) & " " & Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr3_2").Value)
-            sAddr4 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr4").Value
+            sAddr1 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr1")
+            sAddr2 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr2")
+            sAddr3 = Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr3_1")) & " " & Trim(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr3_2"))
+            sAddr4 = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_addr4")
             sAddr5 = ""
-            sBankCustSeq = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("bank_cust_seq").Value)
+            sBankCustSeq = Str(frmExportCheck.rsCheckList.Rows(chkLstRow).Item("bank_cust_seq"))
 
             'Titulo de la transaccion:EJEMPLO
             'sBuffer = "TRNS" + vbTab + "" + vbTab + "CHECK" + vbTab + _
@@ -203,7 +205,7 @@ ErrorHandler:
             '" ORDER BY bcheck.check_detail_no "
 
 
-            sGroupId = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_group_id").Value
+            sGroupId = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_group_id")
 
 
             'Es lo mismo : qb_account.name = customer.qb_account_name
@@ -223,33 +225,33 @@ ErrorHandler:
 
 
             For rsDtlRow As Integer = 0 To rsDetail.Rows.Count - 1
-                sDetailAccount = rsDetail.Rows(rsDtlRow).Item("detail_account").Value
+                sDetailAccount = rsDetail.Rows(rsDtlRow).Item("detail_account")
 
                 'detail_amount
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("detail_amount").Value) Then
+                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("detail_amount")) Then
                     sDetailAmount = CStr(0)
                 Else
-                    sDetailAmount = Str(rsDetail.Rows(rsDtlRow).Item("detail_amount").Value)
+                    sDetailAmount = Str(rsDetail.Rows(rsDtlRow).Item("detail_amount"))
                 End If
 
                 'detail_memo
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("detail_memo").Value) Then
+                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("detail_memo")) Then
                     sDetailMemo = ""
                 Else
-                    sDetailMemo = rsDetail.Rows(rsDtlRow).Item("detail_memo").Value
+                    sDetailMemo = rsDetail.Rows(rsDtlRow).Item("detail_memo")
                 End If
 
-                sCheckDetailNo = Str(rsDetail.Rows(rsDtlRow).Item("check_detail_no").Value)
-                sCustId = rsDetail.Rows(rsDtlRow).Item("cust_id").Value
+                sCheckDetailNo = Str(rsDetail.Rows(rsDtlRow).Item("check_detail_no"))
+                sCustId = rsDetail.Rows(rsDtlRow).Item("cust_id")
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("qb_cust_name").Value) Then
+                If IsDBNull(rsDetail.Rows(rsDtlRow).Item("qb_cust_name")) Then
                     MsgBox("There is not QuickBooks customer name set up " & vbCrLf & "in Customer table for " & sCustId & ". Please review. Aborting export.", MsgBoxStyle.OkOnly, "GLM Error")
                     Exit Function
                 Else
-                    sDetailCustName = rsDetail.Rows(rsDtlRow).Item("qb_cust_name").Value
+                    sDetailCustName = rsDetail.Rows(rsDtlRow).Item("qb_cust_name")
                 End If
 
 
@@ -274,6 +276,7 @@ ErrorHandler:
 
 
         'Cierro archivo
+        'sFilename.close()
         FileClose(1)
         write_iif = True
         Exit Function
@@ -330,7 +333,7 @@ ErrorHandler:
 		cdCheckSave.InitialDirectory = sDir 'Directorio para guardar archivo IIF
 		cdCheckSave.DefaultExt = "iif"
 		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		cdCheckSave.Filter = "QuickBooks Files (*.iif)"
+        cdCheckSave.Filter = "QuickBooks Files (*.iif)|*.iif"
 		cdCheckSave.FileName = "Checks" 'Nombre por defecto de archivo
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
 
@@ -370,33 +373,33 @@ ErrorHandler:
 		End If
 	End Sub
 	
-	Private Sub dgCustCheck_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgCustCheck.ClickEvent
-		'Dim v As Variant
-		'Dim sFilter As String
-		'Dim nCount As Integer
-		
-		
-		'If dgCustCheck.SelBookmarks.Count > 0 Then
-		'    sFilter = ""
-		'    nCount = 1
-		'    For Each v In dgCustCheck.SelBookmarks
-		'        frmExportCheck.rsCustCheck.Bookmark = v
-        '        sFilter = sFilter + "cust_id = '" + frmExportCheck.rsCustCheck.item("cust_id").value + "'"
-		
-		'        If dgCustCheck.SelBookmarks.Count > nCount Then
-		'            sFilter = sFilter + " OR "
-		'        End If
-		
-		'        nCount = nCount + 1
-		'    Next v
-		'    frmExportCheck.rsCheckList.Filter = sFilter
-		'Else
-		'    frmExportCheck.rsCheckList.Filter = adFilterNone
-		'End If
-		
-		
-		
-	End Sub
+    Private Sub dgCustCheck_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'Dim v As Variant
+        'Dim sFilter As String
+        'Dim nCount As Integer
+
+
+        'If dgCustCheck.SelBookmarks.Count > 0 Then
+        '    sFilter = ""
+        '    nCount = 1
+        '    For Each v In dgCustCheck.SelBookmarks
+        '        frmExportCheck.rsCustCheck.Bookmark = v
+        '        sFilter = sFilter + "cust_id = '" + frmExportCheck.rsCustCheck.item("cust_id") + "'"
+
+        '        If dgCustCheck.SelBookmarks.Count > nCount Then
+        '            sFilter = sFilter + " OR "
+        '        End If
+
+        '        nCount = nCount + 1
+        '    Next v
+        '    frmExportCheck.rsCheckList.Filter = sFilter
+        'Else
+        '    frmExportCheck.rsCheckList.Filter = adFilterNone
+        'End If
+
+
+
+    End Sub
 	
 	Private Sub frmExportCheckList_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -421,11 +424,12 @@ ErrorHandler:
             Exit Function
         End If
 		
-
+        cmLocal = cn.CreateCommand()
         For row As Integer = 0 To frmExportCheck.rsCheckList.Rows.Count - 1
-            sStmt = "UPDATE bcheck SET qb_exported_flag='Y' " & " WHERE check_no=" & Str(frmExportCheck.rsCheckList.Rows(row).Item("qb_doc_num").Value) & " AND bank_cust_seq =" & Str(frmExportCheck.rsCheckList.Rows(row).Item("bank_cust_seq").Value)
+            sStmt = "UPDATE bcheck SET qb_exported_flag='Y' " & " WHERE check_no=" & Str(frmExportCheck.rsCheckList.Rows(row).Item("qb_doc_num")) & " AND bank_cust_seq =" & Str(frmExportCheck.rsCheckList.Rows(row).Item("bank_cust_seq"))
 
             'MsgBox sStmt
+
             cmLocal.CommandText = sStmt
             cmLocal.ExecuteNonQuery()
 

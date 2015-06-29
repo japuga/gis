@@ -19,8 +19,7 @@
 	Public ToolTip1 As System.Windows.Forms.ToolTip
 	Public WithEvents cbTypeId As System.Windows.Forms.ComboBox
 	Public WithEvents cbCustId As System.Windows.Forms.ComboBox
-	Public WithEvents dgGroups As AxMSDataGridLib.AxDataGrid
-	Public WithEvents cbCustName As System.Windows.Forms.ComboBox
+    Public WithEvents cbCustName As System.Windows.Forms.ComboBox
 	Public WithEvents _Toolbar1_Button5 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents Toolbar1 As System.Windows.Forms.ToolStrip
 	Public WithEvents label2 As System.Windows.Forms.Label
@@ -29,152 +28,180 @@
 	'It can be modified using the Windows Form Designer.
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-		Dim resources As System.Resources.ResourceManager = New System.Resources.ResourceManager(GetType(frmGroupStore))
-		Me.components = New System.ComponentModel.Container()
-		Me.ToolTip1 = New System.Windows.Forms.ToolTip(components)
-		Me.cbTypeId = New System.Windows.Forms.ComboBox
-		Me.cbCustId = New System.Windows.Forms.ComboBox
-		Me.dgGroups = New AxMSDataGridLib.AxDataGrid
-		Me.cbCustName = New System.Windows.Forms.ComboBox
-		Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-		Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
-		Me.label2 = New System.Windows.Forms.Label
-		Me.Label1 = New System.Windows.Forms.Label
-		Me.Toolbar1.SuspendLayout()
-		Me.SuspendLayout()
-		Me.ToolTip1.Active = True
-		CType(Me.dgGroups, System.ComponentModel.ISupportInitialize).BeginInit()
-		Me.Text = "Group Store Maintenance"
-		Me.ClientSize = New System.Drawing.Size(377, 313)
-		Me.Location = New System.Drawing.Point(4, 23)
-		Me.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation
-		Me.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.BackColor = System.Drawing.SystemColors.Control
-		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable
-		Me.ControlBox = True
-		Me.Enabled = True
-		Me.KeyPreview = False
-		Me.MaximizeBox = True
-		Me.MinimizeBox = True
-		Me.Cursor = System.Windows.Forms.Cursors.Default
-		Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.ShowInTaskbar = True
-		Me.HelpButton = False
-		Me.WindowState = System.Windows.Forms.FormWindowState.Normal
-		Me.Name = "frmGroupStore"
-		Me.cbTypeId.Size = New System.Drawing.Size(209, 21)
-		Me.cbTypeId.Location = New System.Drawing.Point(88, 112)
-		Me.cbTypeId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cbTypeId.TabIndex = 6
-		Me.cbTypeId.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cbTypeId.BackColor = System.Drawing.SystemColors.Window
-		Me.cbTypeId.CausesValidation = True
-		Me.cbTypeId.Enabled = True
-		Me.cbTypeId.ForeColor = System.Drawing.SystemColors.WindowText
-		Me.cbTypeId.IntegralHeight = True
-		Me.cbTypeId.Cursor = System.Windows.Forms.Cursors.Default
-		Me.cbTypeId.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.cbTypeId.Sorted = False
-		Me.cbTypeId.TabStop = True
-		Me.cbTypeId.Visible = True
-		Me.cbTypeId.Name = "cbTypeId"
-		Me.cbCustId.Size = New System.Drawing.Size(65, 21)
-		Me.cbCustId.Location = New System.Drawing.Point(312, 72)
-		Me.cbCustId.TabIndex = 4
-		Me.cbCustId.Text = "Combo1"
-		Me.cbCustId.Visible = False
-		Me.cbCustId.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cbCustId.BackColor = System.Drawing.SystemColors.Window
-		Me.cbCustId.CausesValidation = True
-		Me.cbCustId.Enabled = True
-		Me.cbCustId.ForeColor = System.Drawing.SystemColors.WindowText
-		Me.cbCustId.IntegralHeight = True
-		Me.cbCustId.Cursor = System.Windows.Forms.Cursors.Default
-		Me.cbCustId.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.cbCustId.Sorted = False
-		Me.cbCustId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown
-		Me.cbCustId.TabStop = True
-		Me.cbCustId.Name = "cbCustId"
-		dgGroups.OcxState = CType(resources.GetObject("dgGroups.OcxState"), System.Windows.Forms.AxHost.State)
-		Me.dgGroups.Size = New System.Drawing.Size(337, 137)
-		Me.dgGroups.Location = New System.Drawing.Point(24, 152)
-		Me.dgGroups.TabIndex = 2
-		Me.dgGroups.Name = "dgGroups"
-		Me.cbCustName.Size = New System.Drawing.Size(209, 21)
-		Me.cbCustName.Location = New System.Drawing.Point(88, 72)
-		Me.cbCustName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cbCustName.TabIndex = 1
-		Me.cbCustName.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cbCustName.BackColor = System.Drawing.SystemColors.Window
-		Me.cbCustName.CausesValidation = True
-		Me.cbCustName.Enabled = True
-		Me.cbCustName.ForeColor = System.Drawing.SystemColors.WindowText
-		Me.cbCustName.IntegralHeight = True
-		Me.cbCustName.Cursor = System.Windows.Forms.Cursors.Default
-		Me.cbCustName.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.cbCustName.Sorted = False
-		Me.cbCustName.TabStop = True
-		Me.cbCustName.Visible = True
-		Me.cbCustName.Name = "cbCustName"
-		Me.Toolbar1.ShowItemToolTips = True
-		Me.Toolbar1.Dock = System.Windows.Forms.DockStyle.Top
-		Me.Toolbar1.Size = New System.Drawing.Size(377, 44)
-		Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
-		Me.Toolbar1.TabIndex = 3
-		Me.Toolbar1.ImageList = ImageList2
-		Me.Toolbar1.Name = "Toolbar1"
-		Me._Toolbar1_Button5.Size = New System.Drawing.Size(40, 39)
-		Me._Toolbar1_Button5.AutoSize = False
-		Me._Toolbar1_Button5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText
-		Me._Toolbar1_Button5.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
-		Me._Toolbar1_Button5.ToolTipText = "Print"
-		Me._Toolbar1_Button5.Width = 10
-		Me._Toolbar1_Button5.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-		Me.label2.Text = "Type"
-		Me.label2.Size = New System.Drawing.Size(41, 17)
-		Me.label2.Location = New System.Drawing.Point(24, 112)
-		Me.label2.TabIndex = 5
-		Me.label2.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.label2.TextAlign = System.Drawing.ContentAlignment.TopLeft
-		Me.label2.BackColor = System.Drawing.SystemColors.Control
-		Me.label2.Enabled = True
-		Me.label2.ForeColor = System.Drawing.SystemColors.ControlText
-		Me.label2.Cursor = System.Windows.Forms.Cursors.Default
-		Me.label2.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.label2.UseMnemonic = True
-		Me.label2.Visible = True
-		Me.label2.AutoSize = False
-		Me.label2.BorderStyle = System.Windows.Forms.BorderStyle.None
-		Me.label2.Name = "label2"
-		Me.Label1.Text = "Customer"
-		Me.Label1.Size = New System.Drawing.Size(57, 25)
-		Me.Label1.Location = New System.Drawing.Point(24, 72)
-		Me.Label1.TabIndex = 0
-		Me.Label1.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopLeft
-		Me.Label1.BackColor = System.Drawing.SystemColors.Control
-		Me.Label1.Enabled = True
-		Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-		Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
-		Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.Label1.UseMnemonic = True
-		Me.Label1.Visible = True
-		Me.Label1.AutoSize = False
-		Me.Label1.BorderStyle = System.Windows.Forms.BorderStyle.None
-		Me.Label1.Name = "Label1"
-		Me.Controls.Add(cbTypeId)
-		Me.Controls.Add(cbCustId)
-		Me.Controls.Add(dgGroups)
-		Me.Controls.Add(cbCustName)
-		Me.Controls.Add(Toolbar1)
-		Me.Controls.Add(label2)
-		Me.Controls.Add(Label1)
-		Me.Toolbar1.Items.Add(_Toolbar1_Button5)
-		CType(Me.dgGroups, System.ComponentModel.ISupportInitialize).EndInit()
-		Me.Toolbar1.ResumeLayout(False)
-		Me.ResumeLayout(False)
-		Me.PerformLayout()
-	End Sub
+        Me.components = New System.ComponentModel.Container
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmGroupStore))
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.cbTypeId = New System.Windows.Forms.ComboBox
+        Me.cbCustId = New System.Windows.Forms.ComboBox
+        Me.cbCustName = New System.Windows.Forms.ComboBox
+        Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
+        Me.label2 = New System.Windows.Forms.Label
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.dgGroups = New System.Windows.Forms.DataGridView
+        Me.btNew = New System.Windows.Forms.ToolStripButton
+        Me.btSave = New System.Windows.Forms.ToolStripButton
+        Me.btDelete = New System.Windows.Forms.ToolStripButton
+        Me.btExit = New System.Windows.Forms.ToolStripButton
+        Me.Toolbar1.SuspendLayout()
+        CType(Me.dgGroups, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'cbTypeId
+        '
+        Me.cbTypeId.BackColor = System.Drawing.SystemColors.Window
+        Me.cbTypeId.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cbTypeId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbTypeId.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbTypeId.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.cbTypeId.Location = New System.Drawing.Point(88, 112)
+        Me.cbTypeId.Name = "cbTypeId"
+        Me.cbTypeId.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cbTypeId.Size = New System.Drawing.Size(209, 22)
+        Me.cbTypeId.TabIndex = 6
+        '
+        'cbCustId
+        '
+        Me.cbCustId.BackColor = System.Drawing.SystemColors.Window
+        Me.cbCustId.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cbCustId.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbCustId.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.cbCustId.Location = New System.Drawing.Point(312, 72)
+        Me.cbCustId.Name = "cbCustId"
+        Me.cbCustId.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cbCustId.Size = New System.Drawing.Size(65, 22)
+        Me.cbCustId.TabIndex = 4
+        Me.cbCustId.Text = "Combo1"
+        Me.cbCustId.Visible = False
+        '
+        'cbCustName
+        '
+        Me.cbCustName.BackColor = System.Drawing.SystemColors.Window
+        Me.cbCustName.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cbCustName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbCustName.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbCustName.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.cbCustName.Location = New System.Drawing.Point(88, 72)
+        Me.cbCustName.Name = "cbCustName"
+        Me.cbCustName.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cbCustName.Size = New System.Drawing.Size(209, 22)
+        Me.cbCustName.TabIndex = 1
+        '
+        'Toolbar1
+        '
+        Me.Toolbar1.ImageScalingSize = New System.Drawing.Size(32, 32)
+        Me.Toolbar1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btNew, Me.btSave, Me.btDelete, Me._Toolbar1_Button5, Me.btExit})
+        Me.Toolbar1.Location = New System.Drawing.Point(0, 0)
+        Me.Toolbar1.Name = "Toolbar1"
+        Me.Toolbar1.Size = New System.Drawing.Size(377, 39)
+        Me.Toolbar1.TabIndex = 3
+        '
+        '_Toolbar1_Button5
+        '
+        Me._Toolbar1_Button5.AutoSize = False
+        Me._Toolbar1_Button5.Name = "_Toolbar1_Button5"
+        Me._Toolbar1_Button5.Size = New System.Drawing.Size(10, 39)
+        '
+        'label2
+        '
+        Me.label2.BackColor = System.Drawing.SystemColors.Control
+        Me.label2.Cursor = System.Windows.Forms.Cursors.Default
+        Me.label2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.label2.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.label2.Location = New System.Drawing.Point(24, 112)
+        Me.label2.Name = "label2"
+        Me.label2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.label2.Size = New System.Drawing.Size(58, 22)
+        Me.label2.TabIndex = 5
+        Me.label2.Text = "Type"
+        '
+        'Label1
+        '
+        Me.Label1.BackColor = System.Drawing.SystemColors.Control
+        Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label1.Location = New System.Drawing.Point(24, 72)
+        Me.Label1.Name = "Label1"
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label1.Size = New System.Drawing.Size(69, 22)
+        Me.Label1.TabIndex = 0
+        Me.Label1.Text = "Customer"
+        '
+        'dgGroups
+        '
+        Me.dgGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgGroups.Location = New System.Drawing.Point(12, 151)
+        Me.dgGroups.Name = "dgGroups"
+        Me.dgGroups.Size = New System.Drawing.Size(337, 150)
+        Me.dgGroups.TabIndex = 7
+        '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 36)
+        Me.btNew.Text = "New"
+        '
+        'btSave
+        '
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 36)
+        Me.btSave.Text = "Save"
+        '
+        'btDelete
+        '
+        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
+        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btDelete.Name = "btDelete"
+        Me.btDelete.Size = New System.Drawing.Size(36, 36)
+        Me.btDelete.Text = "Delete"
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
+        '
+        'frmGroupStore
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.SystemColors.Control
+        Me.ClientSize = New System.Drawing.Size(377, 313)
+        Me.Controls.Add(Me.dgGroups)
+        Me.Controls.Add(Me.cbTypeId)
+        Me.Controls.Add(Me.cbCustId)
+        Me.Controls.Add(Me.cbCustName)
+        Me.Controls.Add(Me.Toolbar1)
+        Me.Controls.Add(Me.label2)
+        Me.Controls.Add(Me.Label1)
+        Me.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Location = New System.Drawing.Point(4, 23)
+        Me.Name = "frmGroupStore"
+        Me.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Text = "Group Store Maintenance"
+        Me.Toolbar1.ResumeLayout(False)
+        Me.Toolbar1.PerformLayout()
+        CType(Me.dgGroups, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub
+    Friend WithEvents dgGroups As System.Windows.Forms.DataGridView
+    Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btSave As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btDelete As System.Windows.Forms.ToolStripButton
+    Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
 #End Region 
 End Class
