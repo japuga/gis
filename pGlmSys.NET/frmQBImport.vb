@@ -183,38 +183,40 @@ Friend Class frmQBImport
 		cdFileOpen.FilterIndex = 1
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-		cdFileOpen.ShowDialog()
-		
-		
-		
-		If Trim(cdFileOpen.FileName) = "" Then
-			sFilename = ""
-			MsgBox("Unable to Load Info, Please provide a Data FIle.", MsgBoxStyle.OKOnly, "GLM Warning")
-		Else
-			If fs.FileExists(cdFileOpen.FileName) Then
-				sFilename = cdFileOpen.FileName
-				txtFile.Text = cdFileOpen.FileName
-			Else
-				sFilename = ""
-				MsgBox("Such  files does not exist.")
-			End If
-		End If
-		
-		Exit Sub
-		
-ErrorHandler: 
-		
-		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
-		If Err.Number = DialogResult.Cancel Then
-			'Usuario selecciono cancel en OpenDialog
-			MsgBox("Operation was cancelled by user.", MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		Else
-			save_error(Me.Name, "cmdOk")
-			MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			
-		End If
-	End Sub
+        If DialogResult.Cancel = cdFileOpen.ShowDialog() Then
+            Exit Sub
+        End If
+
+
+
+        If Trim(cdFileOpen.FileName) = "" Then
+            sFilename = ""
+            MsgBox("Unable to Load Info, Please provide a Data FIle.", MsgBoxStyle.OkOnly, "GLM Warning")
+        Else
+            If fs.FileExists(cdFileOpen.FileName) Then
+                sFilename = cdFileOpen.FileName
+                txtFile.Text = cdFileOpen.FileName
+            Else
+                sFilename = ""
+                MsgBox("Such  files does not exist.")
+            End If
+        End If
+
+        Exit Sub
+
+ErrorHandler:
+
+        'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
+        If Err.Number = DialogResult.Cancel Then
+            'Usuario selecciono cancel en OpenDialog
+            MsgBox("Operation was cancelled by user.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        Else
+            save_error(Me.Name, "cmdOk")
+            MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+
+        End If
+    End Sub
 	
 	Private Sub frmQBImport_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		sFilename = ""
@@ -226,7 +228,9 @@ ErrorHandler:
 		If gbDebug Then
 			Me.Width = VB6.TwipsToPixelsX(9885)
 			Me.Height = VB6.TwipsToPixelsY(7605)
-		End If
+        End If
+
+        txtFile.Text = ""
 		
 		sStmt = "SELECT qb_group_desc, qb_group_id " & " FROM qb_group  ORDER BY qb_group_desc "
 		load_cb_query2(cbQBGroupDesc, sStmt, 1, True)

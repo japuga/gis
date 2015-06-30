@@ -110,7 +110,9 @@ ErrorHandler:
 		cdFileSave.FileName = "Vendors" 'Nombre por defecto de archivo
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-		cdFileSave.ShowDialog()
+        If DialogResult.Cancel = cdFileSave.ShowDialog() Then
+            Exit Sub
+        End If
 		
 		
 		
@@ -216,13 +218,15 @@ ErrorHandler:
 	Private Sub init_vars()
         rsLocal = Nothing
 		
-		sStmt = "SELECT cust_name, cust_id FROM customer " & " ORDER BY cust_name"
+        sStmt = "SELECT cust_name, cust_id FROM customer " & " ORDER BY cust_name"
+        cbCustName.Items.Clear()
 		cbCustName.Items.Insert(0, "<All>")
-		load_cb_query2(cbCustName, sStmt, 1, False)
+        load_cb_query2(cbCustName, sStmt, 1, False)
 		
-		sStmt = "SELECT cust_id, cust_id FROM customer " & " ORDER BY cust_name"
+        sStmt = "SELECT cust_id, cust_id FROM customer " & " ORDER BY cust_name"
+        cbCustId.Items.Clear()
 		cbCustId.Items.Insert(0, "--")
-		load_cb_query2(cbCustId, sStmt, 1, False)
+        load_cb_query2(cbCustId, sStmt, 1, False)
 		
 		If cbCustName.Items.Count > 0 Then
 			cbCustName.SelectedIndex = 0

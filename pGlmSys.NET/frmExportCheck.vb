@@ -368,7 +368,7 @@ ErrorHandler:
         get_criteria = ""
 		Select Case sRadioFlag
 			Case "date"
-                sWhere = " AND bcheck.check_date between '" & Str(dtFrom.Value) & "'  AND '" & Str(dtTo.Value) & "' "
+                sWhere = " AND bcheck.check_date between '" & dtFrom.Value.ToShortDateString() & "'  AND '" & dtTo.Value.ToShortDateString() & "' "
 			Case "check"
 				If Len(txtCheckFrom.Text) = 0 Then
 					MsgBox("You must enter an Starting Check Number.", MsgBoxStyle.OKOnly, "Warning")

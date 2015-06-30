@@ -38,6 +38,7 @@ Friend Class frmExportCheckList
         Else
             'One customer, then move datagrid a little bit up
             Frame1.Top = VB6.TwipsToPixelsY(1920)
+            dgCustCheck.Visible = False
 
         End If
 		

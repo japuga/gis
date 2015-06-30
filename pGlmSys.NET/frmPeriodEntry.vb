@@ -308,8 +308,14 @@ ErrorHandler:
 			Case General.modo.NewRecord
                 'Defaults
                 txtPeriodName.Text = ""
+                txtPeriodName.Enabled = True
+
                 dtStartDate.Value = Today
-				dtEndDate.Value = Today
+                dtEndDate.Value = Today
+
+                dtStartDate.Enabled = True
+                dtEndDate.Enabled = True
+
 				If cbPeriodStatusDesc.Items.Count > 0 Then
 					set_cb(cbPeriodStatusDesc, "New")
 					'cbPeriodStatusDesc.ListIndex = 0
