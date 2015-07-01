@@ -491,9 +491,18 @@ ErrorHandler:
 
             Select Case nOption
                 Case General.modo.NewRecord
+                    cmLocal.Parameters.Clear()
                     'cmLocal.Parameters(0).Value = quotation_mask(txtHeader.Text)
-                    cmLocal.Parameters.AddWithValue("@group_id", txtHeader.Text)
-                    cmLocal.Parameters.Add("@serv_id", SqlDbType.Int, 60)
+                    If cmLocal.Parameters.Contains("@group_id") Then
+                        cmLocal.Parameters("@group_id").Value = txtHeader.Text
+                    Else
+                        cmLocal.Parameters.AddWithValue("@group_id", txtHeader.Text)
+                    End If
+                    If cmLocal.Parameters.Contains("@serv_id") Then
+                    Else
+                        cmLocal.Parameters.Add("@serv_id", SqlDbType.Int, 60)
+                    End If
+
                 Case General.modo.UpdateRecord
                     cmLocal.CommandText = gItplGridSelector2.sInsertStmt
                     cmLocal.Parameters(0).Value = quotation_mask(cbHeader.Text)
@@ -504,7 +513,7 @@ ErrorHandler:
                     cmLocal.Parameters.AddWithValue("serv_id", 0)
                 End If
                 Dim aval As Integer = rsRight.Rows(row).Item("serv_id")
-                cmLocal.Parameters(1).Value = rsRight.Rows(row).Item("serv_id")
+                cmLocal.Parameters("@serv_id").Value = rsRight.Rows(row).Item("serv_id")
                 nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords <= 0 Then
                     Exit For

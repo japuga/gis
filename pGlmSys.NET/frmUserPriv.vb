@@ -375,4 +375,9 @@ ErrorHandler:
     Private Sub dgAssgState_DblClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgAssgState.CellContentDoubleClick
         del_member()
     End Sub
+
+
+    Private Sub dgAssgState_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgAssgState.CellDoubleClick
+        del_member()
+    End Sub
 End Class

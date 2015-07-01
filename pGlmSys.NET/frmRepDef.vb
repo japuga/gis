@@ -59,8 +59,12 @@ Friend Class frmRepDef
 
     End Sub
     Private Sub save_repDef(ByRef nOption As General.modo)
+        If dgRepDef.SelectedCells.Count > 0 Then
+            dgRepDef.CurrentRow.Selected = True
+        End If
         If nOption = modo.UpdateRecord Then
             If dgRepDef.SelectedRows.Count < 1 Then
+
                 MsgBox("No rows selected. Please select a row.", MsgBoxStyle.Information, "Report Definition Error")
                 Exit Sub
             End If
@@ -203,6 +207,10 @@ ErrorHandler:
     End Sub
 
     Private Sub dgRepDef_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgRepDef.CellContentDoubleClick
+        save_repDef((General.modo.UpdateRecord))
+    End Sub
+
+    Private Sub dgRepDef_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgRepDef.CellDoubleClick
         save_repDef((General.modo.UpdateRecord))
     End Sub
 End Class
