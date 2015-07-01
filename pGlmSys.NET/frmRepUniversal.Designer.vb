@@ -114,8 +114,14 @@
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me._frCriteria_3 = New System.Windows.Forms.GroupBox
+        Me.dgSelContent = New System.Windows.Forms.DataGridView
+        Me.dgContent = New System.Windows.Forms.DataGridView
         Me.cmdAllRightContent = New System.Windows.Forms.Button
         Me.cmdRightContent = New System.Windows.Forms.Button
         Me.cmdLeftContent = New System.Windows.Forms.Button
@@ -123,6 +129,8 @@
         Me._lbTitle_3 = New System.Windows.Forms.Label
         Me.Label14 = New System.Windows.Forms.Label
         Me._frCriteria_2 = New System.Windows.Forms.GroupBox
+        Me.dgSelEquipment = New System.Windows.Forms.DataGridView
+        Me.dgEquipment = New System.Windows.Forms.DataGridView
         Me.Frame2 = New System.Windows.Forms.GroupBox
         Me._obEquipment_2 = New System.Windows.Forms.RadioButton
         Me._obEquipment_1 = New System.Windows.Forms.RadioButton
@@ -158,6 +166,8 @@
         Me._sb_Panel1 = New System.Windows.Forms.ToolStripStatusLabel
         Me._frCriteria_1 = New System.Windows.Forms.GroupBox
         Me.Frame1 = New System.Windows.Forms.GroupBox
+        Me.dtEndDate = New System.Windows.Forms.DateTimePicker
+        Me.dtStartDate = New System.Windows.Forms.DateTimePicker
         Me.cbPeriodName = New System.Windows.Forms.ComboBox
         Me.obSinglePeriod = New System.Windows.Forms.RadioButton
         Me.obRangePeriod = New System.Windows.Forms.RadioButton
@@ -184,6 +194,8 @@
         Me.Label5 = New System.Windows.Forms.Label
         Me._lbTitle_1 = New System.Windows.Forms.Label
         Me._frCriteria_6 = New System.Windows.Forms.GroupBox
+        Me.dgSelVendor = New System.Windows.Forms.DataGridView
+        Me.dgVendor = New System.Windows.Forms.DataGridView
         Me.cmdAllLeftVendor = New System.Windows.Forms.Button
         Me.cmdLeftVendor = New System.Windows.Forms.Button
         Me.cmdRightVendor = New System.Windows.Forms.Button
@@ -191,6 +203,8 @@
         Me.Label17 = New System.Windows.Forms.Label
         Me._lbTitle_6 = New System.Windows.Forms.Label
         Me._frCriteria_5 = New System.Windows.Forms.GroupBox
+        Me.dgSelService = New System.Windows.Forms.DataGridView
+        Me.dgService = New System.Windows.Forms.DataGridView
         Me.cmdAllLeftServ = New System.Windows.Forms.Button
         Me.cmdLeftServ = New System.Windows.Forms.Button
         Me.cmdRightServ = New System.Windows.Forms.Button
@@ -198,6 +212,8 @@
         Me.Label16 = New System.Windows.Forms.Label
         Me._lbTitle_5 = New System.Windows.Forms.Label
         Me._frCriteria_4 = New System.Windows.Forms.GroupBox
+        Me.dgSelLoad = New System.Windows.Forms.DataGridView
+        Me.dgLoad = New System.Windows.Forms.DataGridView
         Me.cmdAllLeftLoad = New System.Windows.Forms.Button
         Me.cmdLeftLoad = New System.Windows.Forms.Button
         Me.cmdRightLoad = New System.Windows.Forms.Button
@@ -207,21 +223,13 @@
         Me.frCriteria = New Microsoft.VisualBasic.Compatibility.VB6.GroupBoxArray(Me.components)
         Me.lbTitle = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.obEquipment = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.dtStartDate = New System.Windows.Forms.DateTimePicker
-        Me.dtEndDate = New System.Windows.Forms.DateTimePicker
-        Me.dgEquipment = New System.Windows.Forms.DataGridView
-        Me.dgSelEquipment = New System.Windows.Forms.DataGridView
-        Me.dgContent = New System.Windows.Forms.DataGridView
-        Me.dgSelContent = New System.Windows.Forms.DataGridView
-        Me.dgLoad = New System.Windows.Forms.DataGridView
-        Me.dgSelLoad = New System.Windows.Forms.DataGridView
-        Me.dgService = New System.Windows.Forms.DataGridView
-        Me.dgSelService = New System.Windows.Forms.DataGridView
-        Me.dgVendor = New System.Windows.Forms.DataGridView
-        Me.dgSelVendor = New System.Windows.Forms.DataGridView
         Me.dgDebug = New System.Windows.Forms.DataGridView
         Me._frCriteria_3.SuspendLayout()
+        CType(Me.dgSelContent, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgContent, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._frCriteria_2.SuspendLayout()
+        CType(Me.dgSelEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Frame2.SuspendLayout()
         Me._frCriteria_0.SuspendLayout()
         Me.sb.SuspendLayout()
@@ -230,21 +238,17 @@
         Me.Frame3.SuspendLayout()
         Me.Frame4.SuspendLayout()
         Me._frCriteria_6.SuspendLayout()
+        CType(Me.dgSelVendor, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgVendor, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._frCriteria_5.SuspendLayout()
+        CType(Me.dgSelService, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgService, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._frCriteria_4.SuspendLayout()
+        CType(Me.dgSelLoad, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgLoad, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.frCriteria, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lbTitle, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.obEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgSelEquipment, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgContent, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgSelContent, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgLoad, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgSelLoad, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgService, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgSelService, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgVendor, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dgSelVendor, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgDebug, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -269,6 +273,38 @@
         Me._frCriteria_3.TabIndex = 17
         Me._frCriteria_3.TabStop = False
         Me._frCriteria_3.Text = "Content"
+        '
+        'dgSelContent
+        '
+        Me.dgSelContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Arial", 8.0!)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgSelContent.DefaultCellStyle = DataGridViewCellStyle1
+        Me.dgSelContent.Location = New System.Drawing.Point(280, 120)
+        Me.dgSelContent.Name = "dgSelContent"
+        Me.dgSelContent.Size = New System.Drawing.Size(169, 199)
+        Me.dgSelContent.TabIndex = 34
+        '
+        'dgContent
+        '
+        Me.dgContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Arial", 8.0!)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgContent.DefaultCellStyle = DataGridViewCellStyle2
+        Me.dgContent.Location = New System.Drawing.Point(13, 120)
+        Me.dgContent.Name = "dgContent"
+        Me.dgContent.Size = New System.Drawing.Size(169, 201)
+        Me.dgContent.TabIndex = 33
         '
         'cmdAllRightContent
         '
@@ -375,6 +411,22 @@
         Me._frCriteria_2.TabIndex = 13
         Me._frCriteria_2.TabStop = False
         Me._frCriteria_2.Text = "Equipment"
+        '
+        'dgSelEquipment
+        '
+        Me.dgSelEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgSelEquipment.Location = New System.Drawing.Point(274, 193)
+        Me.dgSelEquipment.Name = "dgSelEquipment"
+        Me.dgSelEquipment.Size = New System.Drawing.Size(169, 269)
+        Me.dgSelEquipment.TabIndex = 36
+        '
+        'dgEquipment
+        '
+        Me.dgEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgEquipment.Location = New System.Drawing.Point(11, 193)
+        Me.dgEquipment.Name = "dgEquipment"
+        Me.dgEquipment.Size = New System.Drawing.Size(171, 264)
+        Me.dgEquipment.TabIndex = 35
         '
         'Frame2
         '
@@ -604,7 +656,7 @@
         Me.txtReportTitle.MaxLength = 0
         Me.txtReportTitle.Name = "txtReportTitle"
         Me.txtReportTitle.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtReportTitle.Size = New System.Drawing.Size(249, 21)
+        Me.txtReportTitle.Size = New System.Drawing.Size(249, 20)
         Me.txtReportTitle.TabIndex = 65
         '
         'cbCustId
@@ -632,7 +684,7 @@
         Me.txtReportCaption.MaxLength = 0
         Me.txtReportCaption.Name = "txtReportCaption"
         Me.txtReportCaption.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtReportCaption.Size = New System.Drawing.Size(249, 21)
+        Me.txtReportCaption.Size = New System.Drawing.Size(249, 20)
         Me.txtReportCaption.TabIndex = 8
         '
         'cbCustName
@@ -772,7 +824,7 @@
         Me.cmdFinish.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdFinish.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdFinish.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdFinish.Location = New System.Drawing.Point(376, 536)
+        Me.cmdFinish.Location = New System.Drawing.Point(379, 534)
         Me.cmdFinish.Name = "cmdFinish"
         Me.cmdFinish.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdFinish.Size = New System.Drawing.Size(73, 33)
@@ -786,7 +838,7 @@
         Me.cmdNext.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdNext.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdNext.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdNext.Location = New System.Drawing.Point(288, 536)
+        Me.cmdNext.Location = New System.Drawing.Point(291, 534)
         Me.cmdNext.Name = "cmdNext"
         Me.cmdNext.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdNext.Size = New System.Drawing.Size(73, 33)
@@ -800,7 +852,7 @@
         Me.cmdPrev.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdPrev.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdPrev.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdPrev.Location = New System.Drawing.Point(200, 536)
+        Me.cmdPrev.Location = New System.Drawing.Point(203, 534)
         Me.cmdPrev.Name = "cmdPrev"
         Me.cmdPrev.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdPrev.Size = New System.Drawing.Size(73, 33)
@@ -814,7 +866,7 @@
         Me.cmdClose.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdClose.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdClose.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdClose.Location = New System.Drawing.Point(112, 536)
+        Me.cmdClose.Location = New System.Drawing.Point(115, 534)
         Me.cmdClose.Name = "cmdClose"
         Me.cmdClose.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdClose.Size = New System.Drawing.Size(73, 33)
@@ -893,6 +945,22 @@
         Me.Frame1.TabIndex = 70
         Me.Frame1.TabStop = False
         Me.Frame1.Text = "Period/Date Range"
+        '
+        'dtEndDate
+        '
+        Me.dtEndDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtEndDate.Location = New System.Drawing.Point(103, 312)
+        Me.dtEndDate.Name = "dtEndDate"
+        Me.dtEndDate.Size = New System.Drawing.Size(106, 20)
+        Me.dtEndDate.TabIndex = 98
+        '
+        'dtStartDate
+        '
+        Me.dtStartDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtStartDate.Location = New System.Drawing.Point(104, 288)
+        Me.dtStartDate.Name = "dtStartDate"
+        Me.dtStartDate.Size = New System.Drawing.Size(105, 20)
+        Me.dtStartDate.TabIndex = 97
         '
         'cbPeriodName
         '
@@ -1258,6 +1326,22 @@
         Me._frCriteria_6.TabStop = False
         Me._frCriteria_6.Text = "Vendor"
         '
+        'dgSelVendor
+        '
+        Me.dgSelVendor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgSelVendor.Location = New System.Drawing.Point(279, 120)
+        Me.dgSelVendor.Name = "dgSelVendor"
+        Me.dgSelVendor.Size = New System.Drawing.Size(169, 201)
+        Me.dgSelVendor.TabIndex = 68
+        '
+        'dgVendor
+        '
+        Me.dgVendor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgVendor.Location = New System.Drawing.Point(24, 120)
+        Me.dgVendor.Name = "dgVendor"
+        Me.dgVendor.Size = New System.Drawing.Size(169, 201)
+        Me.dgVendor.TabIndex = 67
+        '
         'cmdAllLeftVendor
         '
         Me.cmdAllLeftVendor.BackColor = System.Drawing.SystemColors.Control
@@ -1362,6 +1446,22 @@
         Me._frCriteria_5.TabIndex = 45
         Me._frCriteria_5.TabStop = False
         Me._frCriteria_5.Text = "Service"
+        '
+        'dgSelService
+        '
+        Me.dgSelService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgSelService.Location = New System.Drawing.Point(272, 120)
+        Me.dgSelService.Name = "dgSelService"
+        Me.dgSelService.Size = New System.Drawing.Size(177, 265)
+        Me.dgSelService.TabIndex = 55
+        '
+        'dgService
+        '
+        Me.dgService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgService.Location = New System.Drawing.Point(11, 120)
+        Me.dgService.Name = "dgService"
+        Me.dgService.Size = New System.Drawing.Size(177, 265)
+        Me.dgService.TabIndex = 54
         '
         'cmdAllLeftServ
         '
@@ -1468,6 +1568,38 @@
         Me._frCriteria_4.TabStop = False
         Me._frCriteria_4.Text = "Load"
         '
+        'dgSelLoad
+        '
+        Me.dgSelLoad.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Arial", 8.0!)
+        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgSelLoad.DefaultCellStyle = DataGridViewCellStyle3
+        Me.dgSelLoad.Location = New System.Drawing.Point(283, 120)
+        Me.dgSelLoad.Name = "dgSelLoad"
+        Me.dgSelLoad.Size = New System.Drawing.Size(169, 201)
+        Me.dgSelLoad.TabIndex = 46
+        '
+        'dgLoad
+        '
+        Me.dgLoad.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Arial", 8.0!)
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgLoad.DefaultCellStyle = DataGridViewCellStyle4
+        Me.dgLoad.Location = New System.Drawing.Point(19, 120)
+        Me.dgLoad.Name = "dgLoad"
+        Me.dgLoad.Size = New System.Drawing.Size(169, 201)
+        Me.dgLoad.TabIndex = 45
+        '
         'cmdAllLeftLoad
         '
         Me.cmdAllLeftLoad.BackColor = System.Drawing.SystemColors.Control
@@ -1551,102 +1683,6 @@
         Me._lbTitle_4.TabIndex = 33
         Me._lbTitle_4.Text = "  Step 5. Load Types>>"
         '
-        'dtStartDate
-        '
-        Me.dtStartDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtStartDate.Location = New System.Drawing.Point(104, 288)
-        Me.dtStartDate.Name = "dtStartDate"
-        Me.dtStartDate.Size = New System.Drawing.Size(105, 20)
-        Me.dtStartDate.TabIndex = 97
-        '
-        'dtEndDate
-        '
-        Me.dtEndDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtEndDate.Location = New System.Drawing.Point(103, 312)
-        Me.dtEndDate.Name = "dtEndDate"
-        Me.dtEndDate.Size = New System.Drawing.Size(106, 20)
-        Me.dtEndDate.TabIndex = 98
-        '
-        'dgEquipment
-        '
-        Me.dgEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgEquipment.Location = New System.Drawing.Point(11, 193)
-        Me.dgEquipment.Name = "dgEquipment"
-        Me.dgEquipment.Size = New System.Drawing.Size(171, 264)
-        Me.dgEquipment.TabIndex = 35
-        '
-        'dgSelEquipment
-        '
-        Me.dgSelEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgSelEquipment.Location = New System.Drawing.Point(274, 193)
-        Me.dgSelEquipment.Name = "dgSelEquipment"
-        Me.dgSelEquipment.Size = New System.Drawing.Size(169, 269)
-        Me.dgSelEquipment.TabIndex = 36
-        '
-        'dgContent
-        '
-        Me.dgContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgContent.Location = New System.Drawing.Point(13, 120)
-        Me.dgContent.Name = "dgContent"
-        Me.dgContent.Size = New System.Drawing.Size(169, 201)
-        Me.dgContent.TabIndex = 33
-        '
-        'dgSelContent
-        '
-        Me.dgSelContent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgSelContent.Location = New System.Drawing.Point(280, 120)
-        Me.dgSelContent.Name = "dgSelContent"
-        Me.dgSelContent.Size = New System.Drawing.Size(169, 199)
-        Me.dgSelContent.TabIndex = 34
-        '
-        'dgLoad
-        '
-        Me.dgLoad.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgLoad.Location = New System.Drawing.Point(19, 120)
-        Me.dgLoad.Name = "dgLoad"
-        Me.dgLoad.Size = New System.Drawing.Size(169, 201)
-        Me.dgLoad.TabIndex = 45
-        '
-        'dgSelLoad
-        '
-        Me.dgSelLoad.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgSelLoad.Location = New System.Drawing.Point(283, 120)
-        Me.dgSelLoad.Name = "dgSelLoad"
-        Me.dgSelLoad.Size = New System.Drawing.Size(169, 201)
-        Me.dgSelLoad.TabIndex = 46
-        '
-        'dgService
-        '
-        Me.dgService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgService.Location = New System.Drawing.Point(11, 120)
-        Me.dgService.Name = "dgService"
-        Me.dgService.Size = New System.Drawing.Size(177, 265)
-        Me.dgService.TabIndex = 54
-        '
-        'dgSelService
-        '
-        Me.dgSelService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgSelService.Location = New System.Drawing.Point(272, 120)
-        Me.dgSelService.Name = "dgSelService"
-        Me.dgSelService.Size = New System.Drawing.Size(177, 265)
-        Me.dgSelService.TabIndex = 55
-        '
-        'dgVendor
-        '
-        Me.dgVendor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgVendor.Location = New System.Drawing.Point(24, 120)
-        Me.dgVendor.Name = "dgVendor"
-        Me.dgVendor.Size = New System.Drawing.Size(169, 201)
-        Me.dgVendor.TabIndex = 67
-        '
-        'dgSelVendor
-        '
-        Me.dgSelVendor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgSelVendor.Location = New System.Drawing.Point(279, 120)
-        Me.dgSelVendor.Name = "dgSelVendor"
-        Me.dgSelVendor.Size = New System.Drawing.Size(169, 201)
-        Me.dgSelVendor.TabIndex = 68
-        '
         'dgDebug
         '
         Me.dgDebug.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
@@ -1682,9 +1718,14 @@
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Universal Report"
         Me._frCriteria_3.ResumeLayout(False)
+        CType(Me.dgSelContent, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgContent, System.ComponentModel.ISupportInitialize).EndInit()
         Me._frCriteria_2.ResumeLayout(False)
+        CType(Me.dgSelEquipment, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Frame2.ResumeLayout(False)
         Me._frCriteria_0.ResumeLayout(False)
+        Me._frCriteria_0.PerformLayout()
         Me.sb.ResumeLayout(False)
         Me.sb.PerformLayout()
         Me._frCriteria_1.ResumeLayout(False)
@@ -1692,21 +1733,17 @@
         Me.Frame3.ResumeLayout(False)
         Me.Frame4.ResumeLayout(False)
         Me._frCriteria_6.ResumeLayout(False)
+        CType(Me.dgSelVendor, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgVendor, System.ComponentModel.ISupportInitialize).EndInit()
         Me._frCriteria_5.ResumeLayout(False)
+        CType(Me.dgSelService, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgService, System.ComponentModel.ISupportInitialize).EndInit()
         Me._frCriteria_4.ResumeLayout(False)
+        CType(Me.dgSelLoad, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgLoad, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.frCriteria, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lbTitle, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.obEquipment, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgEquipment, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgSelEquipment, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgContent, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgSelContent, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgLoad, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgSelLoad, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgService, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgSelService, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgVendor, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dgSelVendor, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgDebug, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

@@ -3,6 +3,7 @@ Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
 Imports CrystalDecisions.CrystalReports.Engine
+Imports System.Threading
 Friend Class frmRepUniversal
 	Inherits System.Windows.Forms.Form
 	Private nReport As Integer
@@ -149,7 +150,9 @@ Friend Class frmRepUniversal
 		On Error GoTo ErrorHandler
 		
 		
-		sb.Text = "Validating Criteria"
+        sb.Items(0).Text = "Validating Criteria"
+
+        Thread.Sleep(1000)
 		
 		If val_fields Then
 			If get_criteria Then
@@ -229,7 +232,7 @@ Friend Class frmRepUniversal
 					bFlagInvoiceEqpt = False
 				End If
 				
-				sb.Text = "Building query...."
+                sb.Items(0).Text = "Building query...."
 
 				System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 				
@@ -258,7 +261,7 @@ Friend Class frmRepUniversal
 					
 					
 					
-					sb.Text = "Processing Report..."
+                    sb.Items(0).Text = "Processing Report..."
                     System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 					
 					ReportHandler2()
@@ -269,7 +272,7 @@ Friend Class frmRepUniversal
 			End If
 		End If
 		
-		sb.Text = ""
+        sb.Items(0).Text = "Done"
 		Exit Sub
 		
 ErrorHandler: 
@@ -967,7 +970,7 @@ ErrorHandler:
 		Dim i As Short
 		
 		Me.Width = VB6.TwipsToPixelsX(7320)
-		Me.Height = VB6.TwipsToPixelsY(9390)
+        Me.Height = VB6.TwipsToPixelsY(9550) '9450
 		For i = 0 To frCriteria.Count - 1
 			frCriteria(i).Top = VB6.TwipsToPixelsY(480)
 			frCriteria(i).Left = VB6.TwipsToPixelsX(240)
@@ -1000,6 +1003,8 @@ ErrorHandler:
         dgSelService.ColumnHeadersVisible = False
         dgVendor.ColumnHeadersVisible = False
         dgSelVendor.ColumnHeadersVisible = False
+
+        dgSelEquipment.DefaultCellStyle.ForeColor = Color.Black
 		
         'rsEquipment.CursorLocation = ADODB.CursorLocationEnum.adUseClient
         'rsSelEquipment.CursorLocation = ADODB.CursorLocationEnum.adUseClient
@@ -1121,7 +1126,11 @@ ErrorHandler:
 		load_service()
 		load_SelService()
 		
-		'******************* Vendor **********************
+        '******************* Vendor **********************
+        sb.Enabled = True
+        sb.ForeColor = Color.Black
+        sb.Items(0).Text = "Universal Report"
+        sb.Visible = True
 		
 	End Sub
 	Private Sub period_enable(ByRef bOption As Boolean)
@@ -1854,7 +1863,7 @@ ErrorHandler:
         cmReport.Parameters("@nError").Direction = ParameterDirection.Output
 		
 		
-		sb.Text = "Executing Procedure..."
+        sb.Items(0).Text = "Executing Procedure..."
 		
 		log_report_parameters(sLocalReport, cmReport)
 		
@@ -1909,7 +1918,7 @@ ErrorHandler:
         System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 
         'Cargo la plantilla de Crystal Reports con los datos
-        sb.Text = "Loading Report..."
+        sb.Items(0).Text = "Loading Report..."
 
         load_report(rsReport)
 
@@ -2162,9 +2171,9 @@ ErrorHandler:
 			load_SelVendor()
 		Else
             'If rsVendor.State = ADODB.ObjectStateEnum.adStateOpen Then
-            If rsVendor.Rows.Count > 0 Then
-                Exit Sub 'Do not requery if same Customer and State
-            End If
+            'If rsVendor.Rows.Count > 0 Then
+            Exit Sub 'Do not requery if same Customer and State
+            'End If
         End If
 
         If cbStateId.SelectedIndex = 0 Then
@@ -2179,7 +2188,13 @@ ErrorHandler:
         da.Fill(ds)
         rsVendor = ds.Tables(0) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
         addPrimaryKey(rsVendor, "vend_id")
+
+        Dim numRecs As Integer = rsVendor.Rows.Count()
+
         dgVendor.DataSource = rsVendor
+        dgVendor.Refresh()
+
+
 
         If rsVendor.Rows.Count = 0 Then
             MsgBox("Vendors have not been found for this Customer " & vbCrLf & "in the selected State", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
