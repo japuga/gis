@@ -1948,7 +1948,8 @@ ErrorHandler:
         Try
             'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptUniversal.rpt"
             sFile = get_template(sLocalReport, cbReportTemplate.Text)
-            rptDoc.Load(strReportsSysPath & "rptUniversal.rpt")
+            'rptDoc.Load(strReportsSysPath & "rptUniversal.rpt")
+            rptDoc.Load(sFile)
         Catch ex As Exception
             MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
