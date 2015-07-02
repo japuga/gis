@@ -68,10 +68,16 @@
         Me.Label1 = New System.Windows.Forms.Label
         Me.dgGroupStore = New System.Windows.Forms.DataGridView
         Me.dgStores = New System.Windows.Forms.DataGridView
+        Me.DataGridView1 = New System.Windows.Forms.DataGridView
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn
+        Me.DataGridView2 = New System.Windows.Forms.DataGridView
+        Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn
         Me.Frame1.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
         CType(Me.dgGroupStore, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgStores, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Frame1
@@ -360,18 +366,54 @@
         'dgGroupStore
         '
         Me.dgGroupStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgGroupStore.Location = New System.Drawing.Point(16, 240)
+        Me.dgGroupStore.Location = New System.Drawing.Point(16, 256)
         Me.dgGroupStore.Name = "dgGroupStore"
-        Me.dgGroupStore.Size = New System.Drawing.Size(297, 241)
+        Me.dgGroupStore.Size = New System.Drawing.Size(297, 225)
         Me.dgGroupStore.TabIndex = 15
         '
         'dgStores
         '
         Me.dgStores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgStores.Location = New System.Drawing.Point(385, 240)
+        Me.dgStores.Location = New System.Drawing.Point(385, 256)
         Me.dgStores.Name = "dgStores"
-        Me.dgStores.Size = New System.Drawing.Size(296, 241)
+        Me.dgStores.Size = New System.Drawing.Size(296, 225)
         Me.dgStores.TabIndex = 16
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1})
+        Me.DataGridView1.Enabled = False
+        Me.DataGridView1.Location = New System.Drawing.Point(16, 239)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.RowHeadersVisible = False
+        Me.DataGridView1.Size = New System.Drawing.Size(297, 21)
+        Me.DataGridView1.TabIndex = 17
+        '
+        'Column1
+        '
+        Me.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.Column1.HeaderText = "Group Members"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
+        '
+        'DataGridView2
+        '
+        Me.DataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView2.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn1})
+        Me.DataGridView2.Enabled = False
+        Me.DataGridView2.Location = New System.Drawing.Point(385, 239)
+        Me.DataGridView2.Name = "DataGridView2"
+        Me.DataGridView2.RowHeadersVisible = False
+        Me.DataGridView2.Size = New System.Drawing.Size(296, 21)
+        Me.DataGridView2.TabIndex = 18
+        '
+        'DataGridViewTextBoxColumn1
+        '
+        Me.DataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.DataGridViewTextBoxColumn1.HeaderText = "Available"
+        Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
+        Me.DataGridViewTextBoxColumn1.ReadOnly = True
         '
         'frmGroupStoreEntry
         '
@@ -379,6 +421,8 @@
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(702, 536)
+        Me.Controls.Add(Me.DataGridView2)
+        Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.dgStores)
         Me.Controls.Add(Me.dgGroupStore)
         Me.Controls.Add(Me.Frame1)
@@ -406,6 +450,8 @@
         Me.Toolbar1.PerformLayout()
         CType(Me.dgGroupStore, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgStores, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -414,5 +460,9 @@
     Friend WithEvents dgStores As System.Windows.Forms.DataGridView
     Friend WithEvents btNew As System.Windows.Forms.ToolStripButton
     Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
+    Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
+    Friend WithEvents Column1 As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents DataGridView2 As System.Windows.Forms.DataGridView
+    Friend WithEvents DataGridViewTextBoxColumn1 As System.Windows.Forms.DataGridViewTextBoxColumn
 #End Region 
 End Class

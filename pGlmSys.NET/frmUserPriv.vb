@@ -114,21 +114,28 @@ ErrorHandler:
             'Verifico si tienda ya existe en recordset
 
             If record_exist(rsAssgState, rsState.Rows(vRow.Index).Item("state")) = False Then
-                Dim drow As DataRow = rsAssgState.NewRow()
+                'Dim drow As DataRow = rsAssgState.NewRow()
+
+                Dim stateName As String = dgState.SelectedRows(0).Cells("state").Value
+                Dim aDataRow() As DataRow = rsState.Select("state like '" + stateName + "'")
+                rsAssgState.ImportRow(aDataRow(0))
+                stateName = aDataRow(0).Item("state")
+
+
                 'rsAssgState.Item("state") = rsState.Item("state")
-                drow.Item("state") = rsState.Rows(vRow.Index).Item("state")
+                'drow.Item("state") = rsState.Rows(vRow.Index).Item("state")
 
                 'rsAssgState.Item("name") = rsState.Item("name")
-                drow.Item("name") = rsState.Rows(vRow.Index).Item("name")
+                'drow.Item("name") = rsState.Rows(vRow.Index).Item("name")
 
-                rsAssgState.Rows.Add(drow)
+                'rsAssgState.Rows.Add(drow)
                 dgAssgState.Sort(dgAssgState.Columns("state"), System.ComponentModel.ListSortDirection.Ascending)
                 dgAssgState.Refresh()
                 'rsAssgState.Select("state")
-
+                rsState.Rows.Remove(aDataRow(0))
+                dgState.Refresh()
             End If
-            rsState.Rows.RemoveAt(vRow.Index)
-            dgState.Refresh()
+            
         Next vRow
 		Exit Sub
 		
@@ -170,9 +177,9 @@ ErrorHandler:
 	Private Sub del_member()
         Dim vRow As DataGridViewRow
         If dgAssgState.SelectedRows.Count < 1 Then
-            For Each dcDataCell As DataGridViewCell In dgAssgState.SelectedCells
-                dgAssgState.Rows(dcDataCell.RowIndex).Selected = True
-            Next
+            If dgAssgState.SelectedCells.Count > 0 Then
+                dgAssgState.CurrentRow.Selected = True
+            End If
         End If
         For Each vRow In dgAssgState.SelectedRows
             'rsAssgState.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
@@ -180,24 +187,40 @@ ErrorHandler:
 
             If record_exist(rsState, rsAssgState.Rows(vRow.Index).Item("state")) = False Then
 
-                Dim drow As DataRow = rsState.NewRow()
-                drow = rsState.NewRow()
+                Dim assgStateName As String = dgAssgState.SelectedRows(0).Cells("state").Value
+                Dim aDataRow() As DataRow = rsAssgState.Select("state like '" + assgStateName + "'")
+                rsState.ImportRow(aDataRow(0))
+                assgStateName = aDataRow(0).Item("state")
+
+                'assgStateName = rsAssgState.Rows(vRow.Index).Item("state")
+                'assgStateName = rsAssgState.Rows(0).Item("state")
+                'assgStateName = rsAssgState.Rows(1).Item("state")
+                'assgStateName = rsAssgState.Rows(2).Item("state")
+                'assgStateName = rsAssgState.Rows(3).Item("state")
+
+                'rsState.ImportRow(rsAssgState.Rows(vRow.Index))
+
+                'Dim drow As DataRow = rsState.NewRow()
+                'rsState.NewRow()
+                'drow = rsState.NewRow()
                 'rsState.AddNew()
                 'rsState.Item("state") = rsAssgState.Item("state")
-                drow("state") = rsAssgState.Rows(vRow.Index).Item("state")
+                'drow("state") = rsAssgState.Rows(vRow.Index).Item("state")
                 'rsState.Item("name") = rsAssgState.Item("name")
-                drow("name") = rsAssgState.Rows(vRow.Index).Item("name")
-                rsState.Rows.Add(drow)
-                dgState.DataSource = Nothing
+                'drow("name") = rsAssgState.Rows(vRow.Index).Item("name")
+                'rsState.Rows.Add(drow)
+                'dgState.DataSource = Nothing
                 dgState.Refresh()
-                dgState.DataSource = rsState
+                'dgState.DataSource = rsState
 
                 dgState.Sort(dgState.Columns("state"), System.ComponentModel.ListSortDirection.Ascending)
+                rsAssgState.Rows.Remove(aDataRow(0)) '.Delete(ADODB.AffectEnum.adAffectCurrent)
+                dgAssgState.Refresh()
             End If
-            rsAssgState.Rows.RemoveAt(vRow.Index) '.Delete(ADODB.AffectEnum.adAffectCurrent)
+
         Next vRow
 
-        dgAssgState.DataSource = rsAssgState
+        'dgAssgState.DataSource = rsAssgState
         dgAssgState.Refresh()
         dgState.Refresh()
 

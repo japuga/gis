@@ -69,7 +69,10 @@ Friend Class frmGroupStoreEntry
 		'UPGRADE_WARNING: TextBox property txtText.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
 		txtText.Maxlength = 512
 		
-		
+        DataGridView1.Font = New Font("Arial", 8)
+        DataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+        DataGridView2.Font = New Font("Arial", 8)
+        DataGridView2.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
 		
 		
 		

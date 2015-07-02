@@ -469,7 +469,7 @@ ErrorHandler:
             cmLocal.CommandText = gItplGridSelector2.sInsertStmt
 
             If cmLocal.Parameters.Count = 0 Then
-                cmLocal.Parameters.AddWithValue("group_id", cbHeader.Text)
+                cmLocal.Parameters.AddWithValue("@group_id", cbHeader.Text)
             End If
 
             'cm.Parameters.Append cm.CreateParameter("group_id", adChar, adParamInput, 20)
@@ -509,11 +509,21 @@ ErrorHandler:
             End Select
 
             For row As Integer = 0 To rsRight.Rows.Count - 1
-                If (cmLocal.Parameters.Count < 2) Then
-                    cmLocal.Parameters.AddWithValue("serv_id", 0)
+                'If (cmLocal.Parameters.Contains("@serv_id")) Then
+                '    cmLocal.Parameters("@serv_id").Value = 0
+                'End If
+                'If (cmLocal.Parameters.Count < 2) Then
+                '    cmLocal.Parameters.AddWithValue("serv_id", 0)
+                'End If
+                'Dim aval As Integer = rsRight.Rows(row).Item("serv_id")
+
+                If (cmLocal.Parameters.Contains("@serv_id")) Then
+                    cmLocal.Parameters("@serv_id").Value = rsRight.Rows(row).Item("serv_id")
+                Else
+                    cmLocal.Parameters.AddWithValue("@serv_id", rsRight.Rows(row).Item("serv_id"))
                 End If
-                Dim aval As Integer = rsRight.Rows(row).Item("serv_id")
-                cmLocal.Parameters("@serv_id").Value = rsRight.Rows(row).Item("serv_id")
+
+                'cmLocal.Parameters("@serv_id").Value = rsRight.Rows(row).Item("serv_id")
                 nRecords = cmLocal.ExecuteNonQuery()
                 If nRecords <= 0 Then
                     Exit For
