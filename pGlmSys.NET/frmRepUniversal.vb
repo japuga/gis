@@ -1061,7 +1061,8 @@ ErrorHandler:
 			
 		End If
 		
-		'Combo State
+        'Combo State
+        cbStateId.Items.Clear()
 		cbStateId.Items.Insert(0, "<All>")
 		
 		sStmt = "SELECT state_id FROM state"
@@ -1109,24 +1110,58 @@ ErrorHandler:
 		
 		obEquipment(2).Text = "All"
 		obEquipment(2).Checked = True
-		
+
+        DataGridView1.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+        'DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black
+        'DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.White
+
+        DataGridView2.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView2.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+        'DataGridView2.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black
+        'DataGridView2.ColumnHeadersDefaultCellStyle.BackColor = Color.White
+
 		load_equipment()
 		load_SelEquipment()
 		
-		'******************* Content ************************
-		load_content()
+        '******************* Content ************************
+        DataGridView3.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView3.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
+        DataGridView4.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView4.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
+        load_content()
 		load_SelContent()
 		
 		
-		'******************* Load ************************
+        '******************* Load ************************
+        DataGridView5.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView5.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
+        DataGridView6.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView6.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
 		load_load()
 		load_SelLoad()
 		
-		'******************* Service *********************
+        '******************* Service *********************
+        DataGridView6.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView6.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
+        DataGridView7.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView7.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
 		load_service()
 		load_SelService()
 		
         '******************* Vendor **********************
+        DataGridView8.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView8.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
+        DataGridView9.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8.5)
+        DataGridView9.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+
         sb.Enabled = True
         sb.ForeColor = Color.Black
         sb.Items(0).Text = "Universal Report"
@@ -1216,10 +1251,15 @@ ErrorHandler:
         dgEquipment.DataSource = rsEquipment
         addPrimaryKey(rsEquipment, "eqpt_id")
 
+        'dgEquipment.ColumnHeadersVisible = True
+
+        'dgEquipment.Columns("eqpt_desc").HeaderText = "Equipment Types"
 		dgEquipment.Columns("eqpt_id").Visible = False
 		dgEquipment.Columns("eqpt_type_desc").Visible = False
 		dgEquipment.Columns("eqpt_size").Visible = False
-		dgEquipment.Columns("eqpt_id").Width = VB6.TwipsToPixelsX(2400)
+        dgEquipment.Columns("eqpt_id").Width = VB6.TwipsToPixelsX(2400)
+        dgEquipment.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgEquipment.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 
@@ -1242,11 +1282,15 @@ ErrorHandler:
         dgSelEquipment.DataSource = rsSelEquipment
 
 		
-		
+        'dgSelEquipment.ColumnHeadersVisible = True
+        'dgSelEquipment.Columns("eqpt_desc").HeaderText = "Selected Equipment"
+
 		dgSelEquipment.Columns("eqpt_id").Visible = False
 		dgSelEquipment.Columns("eqpt_type_desc").Visible = False
 		dgSelEquipment.Columns("eqpt_size").Visible = False
-		dgSelEquipment.Columns("eqpt_id").Width = VB6.TwipsToPixelsX(2400)
+        dgSelEquipment.Columns("eqpt_id").Width = VB6.TwipsToPixelsX(2400)
+        dgSelEquipment.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelEquipment.DefaultCellStyle.ForeColor = Color.Black
 		
 	End Sub
 	Private Sub add_all_member_equipment()
@@ -1531,8 +1575,14 @@ ErrorHandler:
         addPrimaryKey(rsContent, "content_id")
 		dgContent.DataSource = rsContent
 		
-		dgContent.Columns("Description").Width = VB6.TwipsToPixelsX(2000)
-		dgContent.Columns("content_id").Visible = False
+        dgContent.Columns("Description").Width = VB6.TwipsToPixelsX(2000)
+        dgContent.ColumnHeadersDefaultCellStyle = dgContent.DefaultCellStyle
+        dgContent.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+        dgContent.Columns("content_id").Visible = False
+        dgContent.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgContent.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8)
+        dgContent.DefaultCellStyle.ForeColor = Color.Black
+
 		Exit Sub
 		
 ErrorHandler: 
@@ -1555,7 +1605,11 @@ ErrorHandler:
 		dgSelContent.DataSource = rsSelContent
 		
 		dgSelContent.Columns("Description").Width = VB6.TwipsToPixelsX(2400)
-		dgSelContent.Columns("content_id").Visible = False
+        dgSelContent.Columns("content_id").Visible = False
+        dgSelContent.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelContent.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelContent.DefaultCellStyle.ForeColor = Color.Black
+
 		Exit Sub
 		
 ErrorHandler: 
@@ -2013,7 +2067,9 @@ ErrorHandler:
 		dgLoad.DataSource = rsLoad
 		
 		dgLoad.Columns("load_desc").Width = VB6.TwipsToPixelsX(2400)
-		dgLoad.Columns("load_id").Visible = False
+        dgLoad.Columns("load_id").Visible = False
+        dgLoad.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgLoad.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 
@@ -2037,7 +2093,9 @@ ErrorHandler:
 		dgSelLoad.DataSource = rsSelLoad
 		
 		dgSelLoad.Columns("load_desc").Width = VB6.TwipsToPixelsX(2400)
-		dgSelLoad.Columns("load_id").Visible = False
+        dgSelLoad.Columns("load_id").Visible = False
+        dgSelLoad.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelLoad.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 
@@ -2063,7 +2121,9 @@ ErrorHandler:
 		
 		
 		dgService.Columns("serv_desc").Width = VB6.TwipsToPixelsX(2000)
-		dgService.Columns("serv_id").Visible = False
+        dgService.Columns("serv_id").Visible = False
+        dgService.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgService.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 
@@ -2089,7 +2149,9 @@ ErrorHandler:
 		
 		
 		dgSelService.Columns("serv_desc").Width = VB6.TwipsToPixelsX(2000)
-		dgSelService.Columns("serv_id").Visible = False
+        dgSelService.Columns("serv_id").Visible = False
+        dgSelService.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelService.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 
@@ -2204,6 +2266,8 @@ ErrorHandler:
 
         dgVendor.Columns("vend_name").Width = VB6.TwipsToPixelsX(2000)
         dgVendor.Columns("vend_id").Visible = False
+        dgVendor.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgVendor.DefaultCellStyle.ForeColor = Color.Black
         Exit Sub
 
 ErrorHandler:
@@ -2223,7 +2287,9 @@ ErrorHandler:
 		dgSelVendor.DataSource = rsSelVendor
 		
 		dgSelVendor.Columns("vend_name").Width = VB6.TwipsToPixelsX(2000)
-		dgSelVendor.Columns("vend_id").Visible = False
+        dgSelVendor.Columns("vend_id").Visible = False
+        dgSelVendor.DefaultCellStyle.Font = New Font("Arial", 8)
+        dgSelVendor.DefaultCellStyle.ForeColor = Color.Black
 		Exit Sub
 		
 ErrorHandler: 

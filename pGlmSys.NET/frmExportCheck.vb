@@ -272,7 +272,7 @@ ErrorHandler:
 		'Borrar cualquier cheque previo
 		sStmt = "DELETE FROM CheckException "
 
-        cm.CommandText = sStmt
+        cmd.CommandText = sStmt
         nRecords = cm.ExecuteNonQuery()
 		
             For cloneRow As Integer = 0 To rsClone.Rows.Count - 1

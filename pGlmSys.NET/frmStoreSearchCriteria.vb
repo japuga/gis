@@ -47,9 +47,10 @@ Friend Class frmStoreSearchCriteria
         rsLocal = Nothing
 		gDump.str1 = ""
 		
-		sStmt = "SELECT state_id FROM state ORDER BY state_id "
+        sStmt = "SELECT state_id FROM state ORDER BY state_id "
+        cbState.Items.Clear()
 		cbState.Items.Insert(0, "<All>")
-		load_cb_query2(cbState, sStmt, 1, False)
+        load_cb_query2(cbState, sStmt, 1, False)
 		If cbState.Items.Count > 0 Then
 			cbState.SelectedIndex = 0
 		End If

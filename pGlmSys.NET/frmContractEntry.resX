@@ -120,14 +120,11 @@
   <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="ckbFreqDay.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>105, 17</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="cmdVendorSearch.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAAFuSURBVFhHxZABssQgCEP3/qfqzfY3EBaqYLXt7n8zjBol
+        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAAFuSURBVFhHxZABssQgCEP3/qfqzfY3EBaqYLXt7n8zjBol
         oX3tvB+qy7zvYP1Yxe0CYnCV2I+9OC7C9mu0/TiL6wJsdSBt23a66tv90ABNnCdh2zWqfujiPgFbHEij
         L7fStxKUlvacI0ZLoCepOBx8w34IXR1I2nhcZTNT4nFjgJQYEMyt2nv42p3G1DDBgaSN/ZebactHT94y
         p4QWAxpDYPtMuz0ApNbsaOhydo6C3o9hbEEwsrB2n2my2Uu1MUxyomE0UjO/yzTb9301jC3ojPIBrEwz
@@ -136,4 +133,10 @@
         9k/g8JWyAab+RHz8rfq3AaK/hce7n2GhsXj1O47hr9cfOobNEJdkMroAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="ckbFreqDay.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>105, 17</value>
+  </metadata>
+  <metadata name="ckbFreqDay.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>105, 17</value>
+  </metadata>
 </root>

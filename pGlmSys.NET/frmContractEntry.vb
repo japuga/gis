@@ -579,7 +579,7 @@ ErrorHandler:
 		'cbVendName.AddItem "<New>", 0
 		'cbVendName.ItemData(0) = 0
 		
-		load_cb_query2(cbVendName, sStmt, 2, False)
+        load_cb_query2(cbVendName, sStmt, 2, True)
 		
 		
 		'Combo Equipment
@@ -652,7 +652,8 @@ ErrorHandler:
 				If cbVendName.Items.Count > 0 Then
 					cbVendName.SelectedIndex = 0
 				End If
-				
+                cbEqptDesc.Enabled = True
+                cbServDesc.Enabled = True
 				
 				
 				set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)
@@ -668,7 +669,9 @@ ErrorHandler:
 				txtCurrRate.Text = CStr(0)
 				txtGlmRate.Text = CStr(0)
 				txtVendName.Tag = 0
-				txtFreqTimes.Text = CStr(0)
+                txtFreqTimes.Text = CStr(0)
+                txtContractComments.Text = ""
+                txtFreqComments.Text = ""
 				
 			Case General.modo.UpdateRecord
 				txtVendName.Text = gContractRecord.sVendor

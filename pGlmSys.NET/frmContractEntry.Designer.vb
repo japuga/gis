@@ -359,7 +359,7 @@
         Me.txtFreqComments.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtFreqComments.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtFreqComments.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.txtFreqComments.Location = New System.Drawing.Point(16, 272)
+        Me.txtFreqComments.Location = New System.Drawing.Point(16, 279)
         Me.txtFreqComments.MaxLength = 40
         Me.txtFreqComments.Name = "txtFreqComments"
         Me.txtFreqComments.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -378,7 +378,7 @@
         Me.Frame3.Controls.Add(Me._ckbFreqDay_0)
         Me.Frame3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Frame3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Frame3.Location = New System.Drawing.Point(16, 88)
+        Me.Frame3.Location = New System.Drawing.Point(16, 68)
         Me.Frame3.Name = "Frame3"
         Me.Frame3.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Frame3.Size = New System.Drawing.Size(113, 185)
@@ -517,10 +517,10 @@
         Me.lbTimes.Cursor = System.Windows.Forms.Cursors.Default
         Me.lbTimes.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbTimes.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lbTimes.Location = New System.Drawing.Point(72, 40)
+        Me.lbTimes.Location = New System.Drawing.Point(72, 30)
         Me.lbTimes.Name = "lbTimes"
         Me.lbTimes.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lbTimes.Size = New System.Drawing.Size(57, 20)
+        Me.lbTimes.Size = New System.Drawing.Size(97, 35)
         Me.lbTimes.TabIndex = 30
         Me.lbTimes.Text = "times"
         '
