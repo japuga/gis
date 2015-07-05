@@ -782,21 +782,21 @@ ErrorHandler:
     End Function
     'Looks for Candidate in Datagrid
     Private Function record_exist(ByRef rsTmp As DataTable, ByRef nStoreId As Short, ByRef sType As String) As Boolean
-
+        record_exist = False
         Dim sCriteria As String
 
         Select Case sType
             Case GROUP_LOCAL
-                sCriteria = "store_id=" & Str(nStoreId)
+                sCriteria = String.Format("store_id={0}", nStoreId.ToString())
 
             Case GROUP_AREA
-                sCriteria = "group_seq=" & Str(nStoreId)
+                sCriteria = String.Format("group_seq={0}", nStoreId.ToString())
 
             Case GROUP_DISTRICT
-                sCriteria = "area_seq=" & Str(nStoreId)
+                sCriteria = String.Format("area_seq={0}", nStoreId.ToString())
 
             Case GROUP_REGION
-                sCriteria = "district_seq=" & Str(nStoreId)
+                sCriteria = String.Format("district_seq={0}", nStoreId.ToString())
             Case Else
                 Exit Function
         End Select
@@ -810,9 +810,10 @@ ErrorHandler:
         End If
 
         Try
-            Dim tmprow As DataRow = rsTmp.Rows.Find(sCriteria) ', , ADODB.SearchDirectionEnum.adSearchForward)
-            Dim tmpobj As Object = tmprow(0)
-            record_exist = True
+            Dim tmprow() As DataRow = rsTmp.Select(sCriteria) '.Rows.Find(sCriteria) ', , ADODB.SearchDirectionEnum.adSearchForward)
+            If tmprow.Length > 0 Then
+                record_exist = True
+            End If
 
         Catch ex As Exception
             record_exist = False
