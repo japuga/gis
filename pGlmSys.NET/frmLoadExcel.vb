@@ -264,7 +264,9 @@ ErrorHandler:
 				''    " AND a.store_id = a.store_id " + _
 				''    " AND b.store_id =-1"
 				
-				sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," & " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " & " a.eqpt_size_capacity, b.store_number  FROM storeeqpt a, Store b " & " WHERE a.cust_id= b.cust_id " & " AND a.store_id = a.store_id " & " AND b.store_id =-1"
+                sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," & _
+                       " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " & _
+                       " a.eqpt_size_capacity, a.eqpt_actual_qty, b.store_number  FROM storeeqpt a, Store b " & " WHERE a.cust_id= b.cust_id " & " AND a.store_id = a.store_id " & " AND b.store_id =-1"
 		End Select
 		
         rsTable = getDataTable(sTmp) '.Open(sTmp, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
