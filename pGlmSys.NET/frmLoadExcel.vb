@@ -1,12 +1,23 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports ExcelMOI = Microsoft.Office.Interop.Excel
+Imports Microsoft.Office
 Friend Class frmLoadExcel
-	Inherits System.Windows.Forms.Form
-	Public XLApp As Microsoft.Office.Interop.Excel.Application
-	Public XL_wbook As Microsoft.Office.Interop.Excel.Workbook
-	Public XL_wsheet As Microsoft.Office.Interop.Excel.Worksheet
-	Private sFilename As String
+    Inherits System.Windows.Forms.Form
+
+    'Public XLApp As Microsoft.Office.Interop.Excel.Application
+    Public XLApp As ExcelMOI.Application = Nothing
+
+    Public xlWorkBooks As ExcelMOI.Workbooks = Nothing
+    'Public XL_wbook As Microsoft.Office.Interop.Excel.Workbook
+    Public XL_wbook As ExcelMOI.Workbook = Nothing
+
+    'Public XL_wsheet As Microsoft.Office.Interop.Excel.Worksheet
+    Public XL_wsheet As ExcelMOI.Worksheet = Nothing
+    Dim oRng As Excel.Range
+
+    Private sFilename As String
     Private rsLocal As DataTable
     Private rsTable As DataTable
 	Private sWhere As String
@@ -48,7 +59,7 @@ Friend Class frmLoadExcel
 	
 	
 	Private Sub load_excel_data(ByRef sFilename As String, ByRef sSheetName As String)
-		Dim sheetTmp As Microsoft.Office.Interop.Excel.Worksheet
+        Dim sheetTmp As ExcelMOI.Worksheet
 		Dim bFound As Boolean
 		Dim nRows As Short
 		Dim nNumCols As Short
@@ -57,70 +68,86 @@ Friend Class frmLoadExcel
 		
 		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
 		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-		sbLoad.Text = "Opening Excel File...."
-		If open_excel_file(sFilename) = True Then
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-			'Buscar Hoja con Datos
-			bFound = False
-			sbLoad.Text = "Searching Excel Sheet..."
-			For	Each sheetTmp In XL_wbook.Worksheets
-				'Set XL_wsheet = XL_wbook.Sheets("tiendas")
-				If LCase(sheetTmp.name) = LCase(sSheetName) Then
-					XL_wsheet = sheetTmp
-					bFound = True
-					Exit For
-				End If
-			Next sheetTmp
-			If Not bFound Then
-				MsgBox("Excel File does not include expected WorkSheet: '" & sSheetName & "'" & vbCrLf & "Please select another file and try again.")
-				
-				close_excel_file()
-				Exit Sub
-			Else
-				sbLoad.Text = "Found Excel Worksheet"
-				'MsgBox "Found"
-			End If
-		End If
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		
-		
-		'Verificar Columnas
-		sbLoad.Text = "Checking column headers..."
-		nNumCols = check_header(sSheetName)
-		If nNumCols <= 0 Then
-			close_excel_file()
-			Exit Sub
-		End If
-		
-		nRows = count_sheet_rows
-		
-		'Cargar Datos
-		sbLoad.Text = "Verifying data...."
-		load_sheet(sSheetName, nNumCols, nRows)
-		
-		
-		close_excel_file()
-		sbLoad.Text = "Done"
-		Exit Sub
-		
-ErrorHandler: 
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		save_error(Me.Name, "load_excel_data")
-		MsgBox("Unexpected error found when loading Excel Data. " & vbCrLf & "Check log file for details.")
-	End Sub
+        sbLoad.Items(0).Text = "Opening Excel File...."
+        If IO.File.Exists(sFilename) Then
+            If open_excel_file(sFilename) = True Then
+                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+                'Buscar Hoja con Datos
+                bFound = False
+                sbLoad.Items(0).Text = "Searching Excel Sheet..."
+                For Each sheetTmp In XL_wbook.Worksheets
+                    'Set XL_wsheet = XL_wbook.Sheets("tiendas")
+                    If LCase(sheetTmp.Name) = LCase(sSheetName) Then
+                        XL_wsheet = sheetTmp
+                        bFound = True
+                        Exit For
+                    End If
+                Next sheetTmp
+                If Not bFound Then
+                    MsgBox("Excel File does not include expected WorkSheet: '" & sSheetName & "'" & vbCrLf & "Please select another file and try again.")
+
+                    close_excel_file()
+                    Exit Sub
+                Else
+                    sbLoad.Items(0).Text = "Found Excel Worksheet"
+                    'MsgBox "Found"
+                End If
+            End If
+            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+
+
+            'Verificar Columnas
+            sbLoad.Items(0).Text = "Checking column headers..."
+            nNumCols = check_header(sSheetName)
+            If nNumCols <= 0 Then
+                close_excel_file()
+                Exit Sub
+            End If
+
+            nRows = count_sheet_rows()
+
+            'Cargar Datos
+            sbLoad.Items(0).Text = "Verifying data...."
+            load_sheet(sSheetName, nNumCols, nRows)
+
+
+            close_excel_file()
+            sbLoad.Items(0).Text = "Done"
+            Exit Sub
+        Else
+            MsgBox("File not found")
+        End If
+
+ErrorHandler:
+        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        save_error(Me.Name, "load_excel_data")
+        MsgBox("Unexpected error found when loading Excel Data. " & vbCrLf & "Check log file for details.")
+    End Sub
 	
 	Private Function open_excel_file(ByRef sFilename As String) As Boolean
 		
 		On Error GoTo ErrorHandler
 		
-		open_excel_file = False
+        open_excel_file = False
+        'Dim XLApp As ExcelMOI.Application = Nothing
+        'Dim XL_wbook As ExcelMOI.Workbook = Nothing
+        'Dim xlWorkSheet As ExcelMOI.Worksheet = Nothing
+        'Dim xlWorkSheets As ExcelMOI.Sheets = Nothing
+
+
+        XLApp = New ExcelMOI.Application()
+        XLApp.DisplayAlerts = False
+        xlWorkBooks = XLApp.Workbooks
+        XL_wbook = xlWorkBooks.Open(sFilename)
+        XLApp.Visible = False
+        'xlWorkSheets = xlWorkBook.Sheets
 		
-		XLApp = GetObject( , "excel.application")
-		XL_wbook = XLApp.Workbooks.Open(sFilename)
-		XLApp.Visible = False
+        'XLApp = CreateObject("Excel.Application") 'GetObject( , "excel.application")
+        'XL_wbook = XLApp.Workbooks.Open(sFilename)
+        'XLApp.Visible = False
 		open_excel_file = True
 		
 ErrorEnd: 
@@ -129,7 +156,7 @@ ErrorEnd:
 ErrorHandler: 
 		If Err.Number = XL_NOTRUNNING Then
 			'Comentado para eliminar referencia a Excel Lib
-			XLApp = New Microsoft.Office.Interop.Excel.Application
+            'XLApp = New Microsoft.Office.Interop.Excel.Application
 			
 			Resume Next
 		End If
@@ -138,7 +165,7 @@ ErrorHandler:
 	End Function
 	Private Sub close_excel_file()
 		XL_wbook.Saved = True
-		XL_wbook.Close()
+        XL_wbook.Close()
 		'UPGRADE_NOTE: Object XLApp may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		XLApp = Nothing
 		
@@ -167,7 +194,7 @@ ErrorHandler:
                     nCount = nCount + 1
 
                     sCell = Chr(nCount) & "1"
-                    If rsLocal.Rows(row).Item("name").Value = XL_wsheet.Range(sCell)._Default Then
+                    If rsLocal.Rows(row).Item("name") = XL_wsheet.Range(sCell)._Default Then
                         'ok
                         nNumCols = nNumCols + 1
                     Else
@@ -208,136 +235,148 @@ ErrorHandler:
 		Dim nRow As Short
 		Dim sCell As String
 		
-		On Error GoTo ErrorHandler
-		
-		bOk = True
-		nCount = 0
-		nRow = 1
-		
-		Do While bOk
-			nRow = nRow + 1
-			sCell = "A" & Trim(Str(nRow))
-			'UPGRADE_WARNING: IsEmpty was upgraded to IsNothing and has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-			If IsNothing(XL_wsheet.Range(sCell).value) Or XL_wsheet.Range(sCell).value = "" Or nRow >= 10000 Then
-				bOk = False
-				
-			Else
-				nCount = nCount + 1
-			End If
-		Loop 
-		count_sheet_rows = nCount
-		Exit Function
-		
-ErrorHandler: 
-		save_error(Me.Name, "count_sheet_rows")
-		MsgBox("Unexpected error when counting records.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-	End Function
+        Try
+            bOk = True
+            nCount = 0
+            nRow = 1
+
+            Do While bOk
+                nRow = nRow + 1
+                sCell = "A" & Trim(Str(nRow))
+                If IsNothing(XL_wsheet.Range(sCell).Value) Or XL_wsheet.Range(sCell).Value.ToString() = "" Or nRow >= 10000 Then
+                    bOk = False
+                Else
+                    nCount = nCount + 1
+                End If
+            Loop
+            count_sheet_rows = nCount
+            Exit Function
+
+        Catch e As Exception
+            count_sheet_rows = nCount
+            'save_error(Me.Name, "count_sheet_rows")
+            'MsgBox("Unexpected error when counting records.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        End Try
+    End Function
 	Private Sub load_sheet(ByRef sTableName As String, ByRef nNumCols As Short, ByRef nExcelRows As Short)
 		Dim bOk As Boolean
 		Dim nCount As Short
 		Dim nRow As Short
-		Dim sCell As String
+        Dim sCell As String = ""
 		Dim nCol As Short
 		Dim i As Short
-		Dim sTableField As String
+        Dim sTableField As String = ""
         Dim sTmp As String = ""
 		Dim nRecords As Short
 		Dim nPercent As Short
 		
-		On Error GoTo ErrorHandler
-		prbLoad.Value = 0
-		prbLoad.Visible = True
-		bOk = True
-		nCount = 0
-		nRow = 1
-		nRecords = 0
-		
-		
-		Select Case sTableName
-			Case "store"
-				sTmp = "SELECT cust_id, store_id, store_number, store_name, store_phone1, " & " store_phone2, store_fax1, store_fax2, store_address," & " store_city, state_id, store_zip, store_contact, store_status," & " store_folder, store_co_code " & " FROM store WHERE store_id = -1"
-			Case "storeeqpt"
-				'sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," + _
-				''    " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " + _
-				''    " b.store_number  FROM storeeqpt a, Store b " + _
-				''    " WHERE a.cust_id= b.cust_id " + _
-				''    " AND a.store_id = a.store_id " + _
-				''    " AND b.store_id =-1"
-				
-                sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," & _
-                       " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " & _
-                       " a.eqpt_size_capacity, a.eqpt_actual_qty, b.store_number  FROM storeeqpt a, Store b " & " WHERE a.cust_id= b.cust_id " & " AND a.store_id = a.store_id " & " AND b.store_id =-1"
-		End Select
-		
-        rsTable = getDataTable(sTmp) '.Open(sTmp, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
-        nNumCols = rsTable.Columns.Count
-		If gbDebug Then
-			dg1.DataSource = rsTable
-		End If
-		
-        Do While bOk
-            Dim row As DataRow = rsTable.NewRow
-            nRow = nRow + 1
-            nCol = 64
-            'rsTable.AddNew()
-            For i = 0 To nNumCols - 1
-                nCol = nCol + 1
-                sCell = Chr(nCol) & Trim(Str(nRow))
-                If nCol = 65 Then 'Col A
-                    'Si la primera columna Cliente esta vacia se detiene
-                    If IsNothing(XL_wsheet.Range(sCell).Value) Or XL_wsheet.Range(sCell).Value = "" Or nRow >= 10000 Then
-                        bOk = False
-                        'rsTable.Delete(ADODB.AffectEnum.adAffectCurrent)
-                        Exit For
+        Try
+            prbLoad.Value = 0
+            prbLoad.Visible = True
+            bOk = True
+            nCount = 0
+            nRow = 1
+            nRecords = 0
+
+
+            Select Case sTableName
+                Case "store"
+                    sTmp = "SELECT cust_id, store_id, store_number, store_name, store_phone1, " & _
+                            " store_phone2, store_fax1, store_fax2, store_address," & _
+                            " store_city, state_id, store_zip, store_contact, store_status," & " store_folder, store_co_code " & _
+                            " FROM store WHERE store_id = -1"
+                Case "storeeqpt"
+                    'sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," + _
+                    ''    " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " + _
+                    ''    " b.store_number  FROM storeeqpt a, Store b " + _
+                    ''    " WHERE a.cust_id= b.cust_id " + _
+                    ''    " AND a.store_id = a.store_id " + _
+                    ''    " AND b.store_id =-1"
+
+                    sTmp = "SELECT a.cust_id, a.store_id, a.eqpt_seq, a.eqpt_id, a.load_id," & _
+                           " a.eqpt_status, a.eqpt_desc, a.content_id, a.eqpt_qty, a.eqpt_temp, " & _
+                           " a.eqpt_size_capacity, a.eqpt_actual_qty, b.store_number  FROM storeeqpt a, Store b " & _
+                           " WHERE a.cust_id= b.cust_id " & " AND a.store_id = a.store_id " & " AND b.store_id =-1"
+            End Select
+
+            rsTable = getDataTable(sTmp) '.Open(sTmp, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockBatchOptimistic)
+            nNumCols = rsTable.Columns.Count
+            If gbDebug Then
+                dg1.DataSource = rsTable
+            End If
+
+            Do While bOk
+                Dim row As DataRow = rsTable.NewRow
+                nRow = nRow + 1
+                nCol = 64
+                rsTable.Rows.Add(row)
+                For i = 0 To nNumCols - 1
+                    nCol = nCol + 1
+                    sCell = Chr(nCol) & Trim(Str(nRow))
+                    If nCol = 65 Then 'Col A
+                        'Si la primera columna Cliente esta vacia se detiene
+                        Try
+                            If IsNothing(XL_wsheet.Range(sCell).Value) Or XL_wsheet.Range(sCell).Value = "" Or nRow >= 10000 Then
+                                bOk = False
+                                rsTable.Rows.RemoveAt(rsTable.Rows.Count - 1)
+                                'rsTable.Delete(ADODB.AffectEnum.adAffectCurrent)
+                                Exit For
+                            End If
+                        Catch e As Exception
+                            bOk = False
+                            rsTable.Rows.RemoveAt(rsTable.Rows.Count - 1)
+                            'rsTable.Delete(ADODB.AffectEnum.adAffectCurrent)
+                            Exit For
+                        End Try
+                    End If
+                    'Guardar registro
+
+                    If IsDBNull(XL_wsheet.Range(sCell)._Default) Or IsNothing(XL_wsheet.Range(sCell)._Default) Then
+                        sExcelData = ""
+                    Else
+                        sExcelData = XL_wsheet.Range(sCell)._Default
+                    End If
+                    sTableField = rsTable.Columns(i).ColumnName 'rsTable.Rows(0).Item(i)
+
+                    If val_field(sTableName, sTableField, sCell, nRow) Then
+                        'ok
+                        rsTable.Rows(nRow).Item(i) = Trim(sExcelData)
+                    Else
+                        prbLoad.Visible = False
+                        MsgBox("An error was found at line " & Str(nRow) & " in the Excel file. Correct it and try again. " & vbCrLf & " No record was loaded.", MsgBoxStyle.Exclamation, "GLM Warning")
+                        Exit Sub
+                    End If
+
+                Next i
+                If nExcelRows > 0 Then
+                    nPercent = nRow * 100 / nExcelRows
+                    If nPercent <= prbLoad.Maximum Then
+                        prbLoad.Value = nPercent
                     End If
                 End If
-                'Guardar registro
-                
-                If IsDBNull(XL_wsheet.Range(sCell)._Default) Or IsNothing(XL_wsheet.Range(sCell)._Default) Then
-                    sExcelData = ""
-                Else
-                    sExcelData = XL_wsheet.Range(sCell)._Default
-                End If
-                sTableField = rsTable.Rows(0).Item(i).name
+            Loop
+            'rsTable.UpdateBatch adAffectAll
+            sbLoad.Items(0).Text = "Loading to database..."
+            nRecords = save_table(sTableName)
+            MsgBox("Number of Records loaded:" & Str(nRecords))
 
-                If val_field(sTableName, sTableField, sCell, nRow) Then
-                    'ok
-                    rsTable.Rows(0).Item(i).Value = Trim(sExcelData)
-                Else
-                    prbLoad.Visible = False
-                    MsgBox("An error was found at line " & Str(nRow) & " in the Excel file. Correct it and try again. " & vbCrLf & " No record was loaded.", MsgBoxStyle.Exclamation, "GLM Warning")
-                    Exit Sub
-                End If
-
-            Next i
-            If nExcelRows > 0 Then
-                nPercent = nRow * 100 / nExcelRows
-                If nPercent <= prbLoad.Maximum Then
-                    prbLoad.Value = nPercent
-                End If
+            If gbDebug Then
+                'No cerrar recordset
+            Else
+                'rsTable.Close()
             End If
-        Loop
-		'rsTable.UpdateBatch adAffectAll
-		sbLoad.Text = "Loading to database..."
-		nRecords = save_table(sTableName)
-		MsgBox("Number of Records loaded:" & Str(nRecords))
-		
-		If gbDebug Then
-			'No cerrar recordset
-		Else
-            'rsTable.Close()
-		End If
-		
-		prbLoad.Visible = False
-		Exit Sub
-		
-ErrorHandler: 
-		prbLoad.Visible = False
-		sStmt = "load_sheet: Table:" & sTableName & " Field:" & sTableField & " Excel Data:" & sExcelData & " Excel Cell:" & sCell
-		
-		save_error(Me.Name, sStmt)
-		MsgBox("Error loading data from Excel. " & "Check log file for details.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-	End Sub
+
+            prbLoad.Visible = False
+            Exit Sub
+
+        Catch e As Exception
+            prbLoad.Visible = False
+            sStmt = "load_sheet: Table:" & sTableName & " Field:" & sTableField & " Excel Data:" & sExcelData & " Excel Cell:" & sCell
+
+            save_error(Me.Name, sStmt)
+            MsgBox("Error loading data from Excel. " & "Check log file for details.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+        End Try
+    End Sub
 	'Validar Campos antes de insertar
 	Private Function val_field(ByRef sTableName As String, ByRef sTableField As String, ByRef sCell As String, ByRef nRow As Short) As Boolean
 		
@@ -417,8 +456,8 @@ ErrorHandler:
                         End If
 
                         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                        If (IsDBNull(rsTable.Rows(0).Item("store_phone1").Value) Or Trim(rsTable.Rows(0).Item("store_phone1").Value) = "") And (IsDBNull(sExcelData) Or Trim(sExcelData) = "") Then
-                            MsgBox("At least one phone number should be provided" & "for Store:" + rsTable.Rows(0).Item("store_number").Value + vbCrLf + "Excel Row:" + Str(nRow) + " Cell:" + sCell, MsgBoxStyle.Exclamation, "GLM Warning")
+                        If (IsDBNull(rsTable.Rows(0).Item("store_phone1")) Or Trim(rsTable.Rows(0).Item("store_phone1")) = "") And (IsDBNull(sExcelData) Or Trim(sExcelData) = "") Then
+                            MsgBox("At least one phone number should be provided" & "for Store:" + rsTable.Rows(0).Item("store_number") + vbCrLf + "Excel Row:" + Str(nRow) + " Cell:" + sCell, MsgBoxStyle.Exclamation, "GLM Warning")
                             val_field = False
                             Exit Function
                         End If
@@ -592,12 +631,12 @@ ErrorHandler:
 						
 						'Verificar llave primaria
 						If IsNumeric(sExcelData) Then
-                            sStmt = "SELECT eqpt_seq FROM storeEqpt " & " WHERE cust_id = '" & cbCustId.Text & "' " & " AND store_id = " & Str(rsTable.Rows(0).Item("store_id").Value) & " AND eqpt_seq = " & Str(CDbl(sExcelData))
+                            sStmt = "SELECT eqpt_seq FROM storeEqpt " & " WHERE cust_id = '" & cbCustId.Text & "' " & " AND store_id = " & Str(rsTable.Rows(0).Item("store_id")) & " AND eqpt_seq = " & Str(CDbl(sExcelData))
 
                             rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                             If rsLocal.Rows.Count > 0 Then
-                                MsgBox("Primary Key violation." & "Cust:" & cbCustId.Text & " StoreId:" & Str(rsTable.Rows(0).Item("store_id").Value) & " EqptSeq:" & sExcelData)
+                                MsgBox("Primary Key violation." & "Cust:" & cbCustId.Text & " StoreId:" & Str(rsTable.Rows(0).Item("store_id")) & " EqptSeq:" & sExcelData)
                                 val_field = False
                                 Exit Function
                             End If
@@ -631,7 +670,7 @@ ErrorHandler:
 
                         If rsLocal.Rows.Count > 0 Then
                             'Tipo de carga existe
-                            sExcelData = rsLocal.Rows(0).Item("load_id").Value
+                            sExcelData = rsLocal.Rows(0).Item("load_id")
                         Else
                             MsgBox("Load id does not exist in LoadType table." & vbCrLf & "Excel Row:" & Str(nRow) & " Cell:" & sCell, MsgBoxStyle.Exclamation, "GLM Warning")
                             val_field = False
@@ -651,12 +690,12 @@ ErrorHandler:
 
                     Case "eqpt_desc"
                         'Este campo no necesita validacion, se toma de Equipment
-                        sStmt = "SELECT eqpt_desc FROM equipment " & " WHERE eqpt_id =" & Str(rsTable.Rows(0).Item("eqpt_id").Value)
+                        sStmt = "SELECT eqpt_desc FROM equipment " & " WHERE eqpt_id =" & Str(rsTable.Rows(0).Item("eqpt_id"))
                         
                         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                         If rsLocal.Rows.Count > 0 Then
-                            sExcelData = rsLocal.Rows(0).Item("eqpt_desc").Value
+                            sExcelData = rsLocal.Rows(0).Item("eqpt_desc")
                         Else
                             MsgBox("Load id does not exist in LoadType table." & vbCrLf & "Excel Row:" & Str(nRow) & " Cell:" & sCell, MsgBoxStyle.Exclamation, "GLM Warning")
                             val_field = False
@@ -701,7 +740,7 @@ ErrorHandler:
 
                         If rsLocal.Rows.Count > 0 Then
                             'Codigo de Equipo temporal existe
-                            sExcelData = rsLocal.Rows(0).Item("eqpt_temp").Value
+                            sExcelData = rsLocal.Rows(0).Item("eqpt_temp")
                         Else
                             MsgBox("Incorrect Eqpt Temp Flag." & vbCrLf & "Excel Row:" & Str(nRow) & " Cell:" & sCell, MsgBoxStyle.Exclamation, "GLM Warning")
                             val_field = False
@@ -715,9 +754,9 @@ ErrorHandler:
                         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                         If rsLocal.Rows.Count > 0 Then
-                            rsTable.Rows(0).Item("store_id").Value = rsLocal.Rows(0).Item("store_id").Value
+                            rsTable.Rows(0).Item("store_id") = rsLocal.Rows(0).Item("store_id")
                         Else
-                            MsgBox("Store " & sExcelData & "does not exists.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+                            MsgBox("Store " & sExcelData & " does not exists.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                             val_field = False
                             Exit Function
                         End If
@@ -891,89 +930,94 @@ ErrorHandler:
 
                 nTran = cn.BeginTransaction()
                 For row As Integer = 0 To rsTable.Rows.Count - 1
-                    'Check dups Store_number
-                    sStmt = "SELECT store_id FROM store " & " WHERE cust_id = '" & cbCustId.Text & "'" & " AND store_number ='" & Trim(rsTable.Rows(row).Item("store_number").Value) & "'"
-                    
-                    rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                    If Not IsDBNull(rsTable.Rows(row).Item("store_number")) Then
+                        'Check dups Store_number
+                        sStmt = "SELECT store_id FROM store " & " WHERE cust_id = '" & cbCustId.Text & "'" & _
+                                " AND store_number ='" & Trim(rsTable.Rows(row).Item("store_number")) & "'"
 
-                    If rsLocal.Rows.Count > 0 Then
-                        MsgBox("Duplicate store:" + rsTable.Rows(row).Item("store_number").Value, MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-                        nTran.Rollback()
+                        rsLocal = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                        save_table = 0
-                        Exit Function
-                    End If
+                        If rsLocal.Rows.Count > 0 Then
+                            MsgBox("Duplicate store:" + rsTable.Rows(row).Item("store_number"), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                            nTran.Rollback()
+
+                            save_table = 0
+                            Exit Function
+                        End If
 
 
-                    'Obtener siguiente store_id
-                    sStmt = "SELECT MAX(store_id) FROM Store " & " WHERE cust_id='" & cbCustId.Text & "' "
+                        'Obtener siguiente store_id
+                        sStmt = "SELECT MAX(store_id) FROM Store " & " WHERE cust_id='" & cbCustId.Text & "' "
 
-                    rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                        rsLocal = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-                    If rsLocal.Rows.Count > 0 Then
-                        If IsDBNull(rsLocal.Rows(row).Item(0).Value) Then
-                            rsTable.Rows(row).Item("store_id").Value = 1
+                        If rsLocal.Rows.Count > 0 Then
+                            If IsDBNull(rsLocal.Rows(row).Item(0)) Then
+                                rsTable.Rows(row).Item("store_id") = 1
+                            Else
+                                rsTable.Rows(row).Item("store_id") = rsLocal.Rows(row).Item(0) + 1
+                            End If
+                        End If
+
+
+                        'insertar en store
+                        sStmt = "INSERT INTO Store (cust_id, store_id, store_number," & "store_name, store_phone1, store_phone2, store_fax1, " & "store_fax2, store_address, store_city, state_id," & "store_zip, store_contact, store_status, store_folder, " & "store_co_code) VALUES ('" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id")) & "," & "'" & UCase(Trim(rsTable.Rows(row).Item("store_number"))) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_name")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone1")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone2")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax1")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax2")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_address")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_city")) & "'," & "'" & Trim(rsTable.Rows(row).Item("state_id")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_zip")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_contact")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_status")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_folder")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_co_code")) & "')"
+
+                        'MsgBox sStmt
+                        cm.CommandType = CommandType.Text
+                        cm.CommandText = sStmt
+                        cm.Transaction = nTran
+                        nResult = cm.ExecuteNonQuery()
+                        If nResult = 1 Then
+                            'ok
+                            'Insertar tienda a grupo All
+                            If bFirstTime = False Then
+                                sStmt = "SELECT group_seq FROM groups " & " WHERE cust_id = '" & Trim(cbCustId.Text) & "'" & " AND group_name = 'All' "
+
+                                rsLocal = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+                                If rsLocal.Rows.Count > 0 Then
+                                    'ok
+                                    nGroupSeq = rsLocal.Rows(row).Item("group_seq")
+                                Else
+                                    If MsgBox("Group Store ALL was not found. " & vbCrLf & "Do you want to continue?", MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.No Then
+                                        nTran.Rollback()
+                                        save_table = 0
+                                        Exit Function
+
+                                    End If
+                                    nGroupSeq = -1
+                                End If
+
+                            End If 'bFirstTime
+
+                            If nGroupSeq > 0 Then
+                                sStmt = "INSERT INTO GroupStore (group_seq, cust_id, " & " store_id) VALUES (" & Str(nGroupSeq) & "," & "'" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id")) & ")"
+
+                                'MsgBox sStmt
+                                cm.CommandType = CommandType.Text
+                                cm.CommandText = sStmt
+                                cm.Transaction = nTran
+                                nResult = cm.ExecuteNonQuery()
+                                If nResult = 1 Then
+                                    'ok
+                                Else
+                                    If MsgBox("Failed to add Store " + rsTable.Rows(row).Item("store_number") + " to Group ALL." + vbCrLf + "If you continue will have to add it using " + "Store Group program." + vbCrLf + "Do you want to continue?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.No Then
+                                        nTran.Rollback()
+                                        save_table = 0
+                                        Exit Function
+                                    End If
+                                End If
+                            End If
+
+
+                            nRecords = nRecords + 1
                         Else
-                            rsTable.Rows(row).Item("store_id").Value = rsLocal.Rows(row).Item(0).Value + 1
+                            nTran.Rollback()
+                            save_table = 0
+                            Exit Function
                         End If
-                    End If
-
-
-                    'insertar en store
-                    sStmt = "INSERT INTO Store (cust_id, store_id, store_number," & "store_name, store_phone1, store_phone2, store_fax1, " & "store_fax2, store_address, store_city, state_id," & "store_zip, store_contact, store_status, store_folder, " & "store_co_code) VALUES ('" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id").Value) & "," & "'" & UCase(Trim(rsTable.Rows(row).Item("store_number").Value)) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_name").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone1").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone2").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax1").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax2").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_address").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_city").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("state_id").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_zip").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_contact").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_status").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_folder").Value) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_co_code").Value) & "')"
-
-                    'MsgBox sStmt
-                    cm.CommandType = CommandType.Text
-                    cm.CommandText = sStmt
-                    nResult = cm.ExecuteNonQuery()
-                    If nResult = 1 Then
-                        'ok
-                        'Insertar tienda a grupo All
-                        If bFirstTime = False Then
-                            sStmt = "SELECT group_seq FROM groups " & " WHERE cust_id = '" & Trim(cbCustId.Text) & "'" & " AND group_name = 'All' "
-                            
-                            rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-
-                            If rsLocal.Rows.Count > 0 Then
-                                'ok
-                                nGroupSeq = rsLocal.Rows(row).Item("group_seq").Value
-                            Else
-                                If MsgBox("Group Store ALL was not found. " & vbCrLf & "Do you want to continue?", MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.No Then
-                                    nTran.Rollback()
-                                    save_table = 0
-                                    Exit Function
-
-                                End If
-                                nGroupSeq = -1
-                            End If
-
-                        End If 'bFirstTime
-
-                        If nGroupSeq > 0 Then
-                            sStmt = "INSERT INTO GroupStore (group_seq, cust_id, " & " store_id) VALUES (" & Str(nGroupSeq) & "," & "'" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id").Value) & ")"
-
-                            'MsgBox sStmt
-                            cm.CommandType = CommandType.Text
-                            cm.CommandText = sStmt
-                            nResult = cm.ExecuteNonQuery()
-                            If nResult = 1 Then
-                                'ok
-                            Else
-                                If MsgBox("Failed to add Store " + rsTable.Rows(row).Item("store_number").Value + " to Group ALL." + vbCrLf + "If you continue will have to add it using " + "Store Group program." + vbCrLf + "Do you want to continue?", MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.No Then
-                                    nTran.Rollback()
-                                    save_table = 0
-                                    Exit Function
-                                End If
-                            End If
-                        End If
-
-
-                        nRecords = nRecords + 1
-                    Else
-                        nTran.Rollback()
-                        save_table = 0
-                        Exit Function
-                    End If
+                    End If ' END IF del if dbnull()
                 Next row
                 
                 nTran.Commit()
@@ -983,53 +1027,56 @@ ErrorHandler:
 
                 nTran = cn.BeginTransaction()
                 For row As Integer = 0 To rsTable.Rows.Count - 1
-                    sStmt = "SELECT MAX(eqpt_seq) FROM storeEqpt " & " WHERE cust_id='" & cbCustId.Text & "' " & " AND store_id =" & Str(rsTable.Rows(row).Item("store_id").Value)
-                    
-                    rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-                    If rsLocal.Rows.Count > 0 Then
-                        If IsDBNull(rsLocal.Rows(0).Item(0).Value) Then
-                            rsTable.Rows(0).Item("eqpt_seq").Value = 1
+                    If Not IsDBNull(rsTable.Rows(row).Item("store_id")) Then
+                        sStmt = "SELECT MAX(eqpt_seq) FROM storeEqpt " & " WHERE cust_id='" & cbCustId.Text & "' " & " AND store_id =" & Str(rsTable.Rows(row).Item("store_id"))
+
+                        rsLocal = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                        If rsLocal.Rows.Count > 0 Then
+                            If IsDBNull(rsLocal.Rows(0).Item(0)) Then
+                                rsTable.Rows(0).Item("eqpt_seq") = 1
+                            Else
+                                rsTable.Rows(0).Item("eqpt_seq") = rsLocal.Rows(0).Item(0) + 1
+                            End If
+                        End If
+
+
+                        'sStmt = "INSERT INTO storeEqpt (cust_id, store_id, eqpt_seq, " + _
+                        ''    "eqpt_id, load_id, eqpt_status, eqpt_desc, content_id, " + _
+                        ''    "eqpt_qty, eqpt_temp)  VALUES " + _
+                        ''    "('" + cbCustId + "'," + _
+                        ''    Str(rsTable.item("store_id")) + "," + _
+                        ''    Str(rsTable.item("eqpt_seq")) + "," + _
+                        ''    Str(rsTable.item("eqpt_id")) + "," + _
+                        ''    "'" + rsTable.item("load_id") + "'," + _
+                        ''    "'" + rsTable.item("eqpt_status") + "','" + _
+                        ''    Trim(rsTable.item("eqpt_desc")) + "'," + _
+                        ''    Str(rsTable.item("content_id")) + "," + _
+                        ''    Str(rsTable.item("eqpt_qty")) + "," + _
+                        ''    "'" + rsTable.item("eqpt_temp") + "')"
+
+                        sStmt = "INSERT INTO storeEqpt (cust_id, store_id, eqpt_seq, " & "eqpt_id, load_id, eqpt_status, eqpt_desc, content_id, " & "eqpt_qty, eqpt_temp, eqpt_size_capacity)  VALUES " & _
+                            "('" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id")) & "," & Str(rsTable.Rows(row).Item("eqpt_seq")) & "," & _
+                             Str(rsTable.Rows(row).Item("eqpt_id")) & "," & "'" + rsTable.Rows(row).Item("load_id") + "'," + "'" + rsTable.Rows(row).Item("eqpt_status") + "','" + Trim(rsTable.Rows(row).Item("eqpt_desc")) + _
+                             "'," + Str(rsTable.Rows(row).Item("content_id")) + "," + Str(rsTable.Rows(row).Item("eqpt_qty")) + "," + "'" + rsTable.Rows(row).Item("eqpt_temp") + "'," + Str(rsTable.Rows(0).Item("eqpt_size_capacity")) + ")"
+
+
+                        'MsgBox sStmt
+                        cm.CommandText = sStmt
+                        cm.CommandType = CommandType.Text
+                        cm.Transaction = nTran
+                        nResult = cm.ExecuteNonQuery()
+
+                        If nResult = 1 Then
+                            'ok
+                            nRecords = nRecords + 1
                         Else
-                            rsTable.Rows(0).Item("eqpt_seq").Value = rsLocal.Rows(0).Item(0).Value + 1
+                            nTran.Rollback()
+                            save_table = 0
+                            Exit Function
                         End If
                     End If
-
-
-                    'sStmt = "INSERT INTO storeEqpt (cust_id, store_id, eqpt_seq, " + _
-                    ''    "eqpt_id, load_id, eqpt_status, eqpt_desc, content_id, " + _
-                    ''    "eqpt_qty, eqpt_temp)  VALUES " + _
-                    ''    "('" + cbCustId + "'," + _
-                    ''    Str(rsTable.item("store_id")) + "," + _
-                    ''    Str(rsTable.item("eqpt_seq")) + "," + _
-                    ''    Str(rsTable.item("eqpt_id")) + "," + _
-                    ''    "'" + rsTable.item("load_id") + "'," + _
-                    ''    "'" + rsTable.item("eqpt_status") + "','" + _
-                    ''    Trim(rsTable.item("eqpt_desc")) + "'," + _
-                    ''    Str(rsTable.item("content_id")) + "," + _
-                    ''    Str(rsTable.item("eqpt_qty")) + "," + _
-                    ''    "'" + rsTable.item("eqpt_temp") + "')"
-
-                    sStmt = "INSERT INTO storeEqpt (cust_id, store_id, eqpt_seq, " & "eqpt_id, load_id, eqpt_status, eqpt_desc, content_id, " & "eqpt_qty, eqpt_temp, eqpt_size_capacity)  VALUES " & _
-                        "('" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id").Value) & "," & Str(rsTable.Rows(row).Item("eqpt_seq").Value) & "," & _
-                         Str(rsTable.Rows(row).Item("eqpt_id").Value) & "," & "'" + rsTable.Rows(row).Item("load_id").Value + "'," + "'" + rsTable.Rows(row).Item("eqpt_status").Value + "','" + Trim(rsTable.Rows(row).Item("eqpt_desc").Value) + _
-                         "'," + Str(rsTable.Rows(row).Item("content_id").Value) + "," + Str(rsTable.Rows(row).Item("eqpt_qty").Value) + "," + "'" + rsTable.Rows(row).Item("eqpt_temp").Value + "'," + Str(rsTable.Rows(0).Item("eqpt_size_capacity").Value) + ")"
-
-
-                    'MsgBox sStmt
-                    cm.CommandText = sStmt
-                    cm.CommandType = CommandType.Text
-                    nResult = cm.ExecuteNonQuery()
-
-                    If nResult = 1 Then
-                        'ok
-                        nRecords = nRecords + 1
-                    Else
-                        nTran.Rollback()
-                        save_table = 0
-                        Exit Function
-                    End If
                 Next row
-                
+
 
                 nTran.Commit()
 
