@@ -1,12 +1,12 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmReportReprint
 	Inherits System.Windows.Forms.Form
     Private rsLocal As DataTable
-    Private ImageList1 As New ImageList()
 	'--------Crystal Reports-----------------
-    'Private rsReport As sqldatareader
+    Private rsReport As DataTable
 	
 	
 	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -20,8 +20,7 @@ Friend Class frmReportReprint
 	End Sub
 	
 	Private Sub load_dgReport()
-        Dim dt As DataTable
-		
+        
 		If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
 			sStmt = "SELECT a.cust_id 'Cust', a.report_id 'Report', a.state_id 'State', b.group_name 'Group', " & "c.period_name 'Period' , a.start_date 'Period Start', a.end_date 'Period End', " & " a.is_final_version 'Final Version', a.is_period_seq, a.rep_template_name " & " FROM rptCriteriaCostCont a " & " LEFT OUTER JOIN Groups b " & " ON  a.group_seq = b.group_seq " & " AND a.cust_id = b.cust_id " & " LEFT OUTER JOIN Period c " & " ON a.cust_id = c.cust_id " & " AND a.period_seq = c.period_seq " & " WHERE a.cust_id IS NOT NULL "
 			
@@ -37,14 +36,14 @@ Friend Class frmReportReprint
 		
 		sStmt = sStmt & " ORDER BY a.cust_id, a.report_id "
 		
-        dt = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
-        If dt.Rows.Count > 0 Then
-            dgReport.DataSource = dt
-            dgReport.Columns("is_period_seq").Visible = False
-            dgReport.Columns("Group").Width = VB6.TwipsToPixelsX(800)
-            dgReport.Columns("Period Start").Width = VB6.TwipsToPixelsX(900)
-            dgReport.Columns("Period End").Width = VB6.TwipsToPixelsX(900)
-        End If
+        rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
+
+        dgReport.DataSource = rsReport
+        dgReport.Columns("is_period_seq").Visible = False
+        dgReport.Columns("Group").Width = VB6.TwipsToPixelsX(800)
+        dgReport.Columns("Period Start").Width = VB6.TwipsToPixelsX(900)
+        dgReport.Columns("Period End").Width = VB6.TwipsToPixelsX(900)
+
 		
 		
 	End Sub
@@ -65,12 +64,12 @@ Friend Class frmReportReprint
 		
 		
 		
-		
+        cbCustId.Items.Clear()
 		cbCustId.Items.Insert(0, "All")
 		sStmt = "SELECT cust_id, cust_name FROM customer ORDER BY cust_name "
 		load_cb_query2(cbCustId, sStmt, 1, False)
 		
-		
+        cbCustName.Items.Clear()
 		cbCustName.Items.Insert(0, "<All>")
 		sStmt = "SELECT cust_name FROM customer ORDER BY cust_name "
 		load_cb_query2(cbCustName, sStmt, 1, False)
@@ -110,7 +109,7 @@ Friend Class frmReportReprint
 	End Sub
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         Dim Button As System.Windows.Forms.ToolStripItem = CType(eventSender, System.Windows.Forms.ToolStripItem)
-        Dim bm As Object
+        Dim bm As DataGridViewRow
         Dim nRecords As Short
         Dim nTran As SqlTransaction
         'dim rsLocal as DataTable
@@ -120,19 +119,19 @@ Friend Class frmReportReprint
         Dim nId As Integer
         Select Case Button.Name
             Case "preview"
-                If Me.dgReport.SelBookmarks.Count = 0 Then
+                If Me.dgReport.SelectedRows.Count = 0 Then
                     MsgBox("Please select a record before attempting this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
                     Exit Sub
                 Else
                     'Bookmark first record in the selected datagrid
                     'UPGRADE_WARNING: Couldn't resolve default property of object dgReport.SelBookmarks(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                    bm = dgReport.SelBookmarks(0)
+                    bm = dgReport.SelectedRows(0)
                     'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     'rsLocal.Bookmark = bm
                     If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
 
-                        ReportHandler((rsLocal.Rows(0).Item("Report").Value), COST_CONTAINMENT_REPORT, (rsLocal.Rows(0).Item("rep_template_name").Value))
+                        ReportHandler((rsLocal.Rows(0).Item("Report")), COST_CONTAINMENT_REPORT, (rsLocal.Rows(0).Item("rep_template_name")))
 
                     Else
                         MsgBox("This function is not yet implement for:" & cbRepCaption.Text, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Glm Warning")
@@ -142,23 +141,23 @@ Friend Class frmReportReprint
             Case "delete"
                 MsgBox("This function s not yet implemented", MsgBoxStyle.OkOnly, "Message")
             Case "flag"
-                If Me.dgReport.SelBookmarks.Count = 0 Then
+                If Me.dgReport.SelectedRows.Count = 0 Then
                     MsgBox("Please select a record before attempting this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
                     Exit Sub
                 Else
                     'Bookmark first record in the selected datagrid
-                    'UPGRADE_WARNING: Couldn't resolve default property of object dgReport.SelBookmarks(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                    'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                    bm = dgReport.SelBookmarks(0)
-                    'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                    bm = dgReport.SelectedRows(0)
                     'rsLocal.Bookmark = bm
                     If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
-                        If Trim(rsLocal.Rows(0).Item("Final Version").Value) = "TRUE" Then
+                        If Trim(rsLocal.Rows(0).Item("Final Version")) = "TRUE" Then
                             If MsgBox("Do you want to turn off Final Version flag?. The Web Report records will be removed as well", MsgBoxStyle.Information + MsgBoxStyle.YesNo, "Message") = MsgBoxResult.Yes Then
 
 
                                 nTran = cn.BeginTransaction()
-                                sStmt = "UPDATE rptCriteriaCostCont " & " SET is_final_version = 'FALSE' " & " WHERE cust_id = '" & Trim(rsLocal.Rows(0).Item("Cust").Value) & "' " & " AND rep_no = " & Str(VB6.GetItemData(cbRepCaption, cbRepCaption.SelectedIndex)) & " AND report_id = " & Str(rsLocal.Rows(0).Item("Report").Value)
+                                sStmt = "UPDATE rptCriteriaCostCont " & " SET is_final_version = 'FALSE' " & _
+                                        " WHERE cust_id = '" & Trim(rsLocal.Rows(0).Item("Cust")) & "' " & _
+                                        " AND rep_no = " & Str(VB6.GetItemData(cbRepCaption, cbRepCaption.SelectedIndex)) & _
+                                        " AND report_id = " & Str(rsLocal.Rows(0).Item("Report"))
 
                                 cm = cn.CreateCommand() '.let_ActiveConnection(cn)
                                 cm.CommandType = CommandType.Text
@@ -168,7 +167,7 @@ Friend Class frmReportReprint
                                 nRecords = cm.ExecuteNonQuery()
                                 If nRecords > 0 Then
                                     'Delete from GlmCostCont
-                                    sStmt = "DELETE FROM GlmCostCont " & " WHERE report_id =" & Str(rsLocal.Rows(0).Item("Report").Value)
+                                    sStmt = "DELETE FROM GlmCostCont " & " WHERE report_id =" & Str(rsLocal.Rows(0).Item("Report"))
 
                                     cm.CommandText = sStmt
                                     nRecords = cm.ExecuteNonQuery()
@@ -178,7 +177,7 @@ Friend Class frmReportReprint
 
                                 nId = get_next_seq("glmCostContDeleted", "id")
 
-                                sStmt = "INSERT INTO glmCostContDeleted (id, cust_id, report_id) " & " VALUES (" & Str(nId) & ",'" & Trim(rsLocal.Rows(0).Item("Cust").Value) & "'," & Str(rsLocal.Rows(0).Item("Report").Value) & ")"
+                                sStmt = "INSERT INTO glmCostContDeleted (id, cust_id, report_id) " & " VALUES (" & Str(nId) & ",'" & Trim(rsLocal.Rows(0).Item("Cust")) & "'," & Str(rsLocal.Rows(0).Item("Report")) & ")"
 
                                 cm.CommandText = sStmt
                                 nRecords = cm.ExecuteNonQuery()
@@ -317,25 +316,29 @@ ErrorHandler:
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
 
-        On Error GoTo ErrorHandler
-
 
         'Open Crystal Reports app
         'crysApp = CreateObject("Crystal.CRPE.Application")
 
-        'sFile = get_template(sLocalReport, sReportTemplate)
-        'If fileTmp.FileExists(sFile) Then
-        '    crysRepCostCont = crysApp.OpenReport(sFile)
-        'Else
-        '    sFile = get_local_template(sLocalReport)
-        '    If fileTmp.FileExists(sFile) Then
-        '        crysRepCostCont = crysApp.OpenReport(sFile)
-        '    Else
-        '        MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-        '        Exit Function
-        '    End If
-        'End If
+        sFile = get_template(sLocalReport, sReportTemplate)
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        Try
+            If fileTmp.FileExists(sFile) Then
+                rptDoc.Load(sFile)
+            Else
+                
+                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+                Exit Function
+            End If
+        Catch e As Exception
+            MsgBox(Err.Description)
+        End Try
 
+        rptDoc.SetDataSource(rsReport)
+        frmReportReprintViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmReportReprintViewer.CrystalReportViewer1.Visible = True
+        frmReportReprintViewer.CrystalReportViewer1.Show()
+        frmReportReprintViewer.Show()
 
         'Assign printer selected by user
         'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
@@ -357,9 +360,6 @@ ErrorHandler:
 
         Exit Function
 
-ErrorHandler:
-        MsgBox(Err.Description)
-
     End Function
 	
 	
@@ -379,4 +379,107 @@ ErrorHandler:
 	'End If
 	
 	'End Sub
+
+    Private Sub btPreview_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btPreview.Click
+
+        If Me.dgReport.SelectedRows.Count = 0 Then
+            If dgReport.SelectedCells.Count < 1 Then
+                MsgBox("Please select a record before attempting this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
+                Exit Sub
+            Else
+                dgReport.CurrentRow.Selected = True
+            End If
+
+        End If
+        If Me.dgReport.SelectedRows.Count > 0 Then
+            'Bookmark first record in the selected datagrid
+            'UPGRADE_WARNING: Couldn't resolve default property of object dgReport.SelBookmarks(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'bm = dgReport.SelectedRows(0)
+            'rsLocal.ImportRow(bm.DataBoundItem)
+
+            'UPGRADE_WARNING: Couldn't resolve default property of object bm. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'rsLocal.Bookmark = bm
+            If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
+                ReportHandler((dgReport.SelectedRows(0).Cells("Report").Value), COST_CONTAINMENT_REPORT, (dgReport.SelectedRows(0).Cells("rep_template_name").Value))
+            Else
+                MsgBox("This function is not yet implement for:" & cbRepCaption.Text, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Glm Warning")
+                Exit Sub
+            End If
+        End If
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        MsgBox("This function s not yet implemented", MsgBoxStyle.OkOnly, "Message")
+    End Sub
+
+    Private Sub btFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btFlag.Click
+        Dim bm As DataGridViewRow
+        Dim nRecords As Short
+        Dim nTran As SqlTransaction
+        Dim nId As Integer
+
+        If Me.dgReport.SelectedRows.Count = 0 Then
+            MsgBox("Please select a record before attempting this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
+            Exit Sub
+        Else
+            'Bookmark first record in the selected datagrid
+            bm = dgReport.SelectedRows(0)
+            'rsLocal.Bookmark = bm
+            If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
+                If Trim(rsLocal.Rows(0).Item("Final Version")) = "TRUE" Then
+                    If MsgBox("Do you want to turn off Final Version flag?. The Web Report records will be removed as well", MsgBoxStyle.Information + MsgBoxStyle.YesNo, "Message") = MsgBoxResult.Yes Then
+
+
+                        nTran = cn.BeginTransaction()
+                        sStmt = "UPDATE rptCriteriaCostCont " & " SET is_final_version = 'FALSE' " & _
+                                " WHERE cust_id = '" & Trim(rsLocal.Rows(0).Item("Cust")) & "' " & _
+                                " AND rep_no = " & Str(VB6.GetItemData(cbRepCaption, cbRepCaption.SelectedIndex)) & _
+                                " AND report_id = " & Str(rsLocal.Rows(0).Item("Report"))
+
+                        cm = cn.CreateCommand() '.let_ActiveConnection(cn)
+                        cm.CommandType = CommandType.Text
+                        cm.CommandText = sStmt
+
+
+                        nRecords = cm.ExecuteNonQuery()
+                        If nRecords > 0 Then
+                            'Delete from GlmCostCont
+                            sStmt = "DELETE FROM GlmCostCont " & " WHERE report_id =" & Str(rsLocal.Rows(0).Item("Report"))
+
+                            cm.CommandText = sStmt
+                            nRecords = cm.ExecuteNonQuery()
+                        End If
+
+                        'Insert deleted record in glmCostContDeleted table for QlikView
+
+                        nId = get_next_seq("glmCostContDeleted", "id")
+
+                        sStmt = "INSERT INTO glmCostContDeleted (id, cust_id, report_id) " & " VALUES (" & Str(nId) & ",'" & Trim(rsLocal.Rows(0).Item("Cust")) & "'," & Str(rsLocal.Rows(0).Item("Report")) & ")"
+
+                        cm.CommandText = sStmt
+                        nRecords = cm.ExecuteNonQuery()
+                        If nRecords = 0 Then
+                            MsgBox("An error occurred when removing report flag. Please check log file for details", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                            nTran.Rollback()
+                            Exit Sub
+                        End If
+
+                        nTran.Commit()
+
+                        load_dgReport()
+                        MsgBox("Report was successfully updated", MsgBoxStyle.OkOnly, "Message")
+
+                    End If
+                Else
+                    MsgBox("No action is required since selected report is not Final Version", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Message")
+
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class
