@@ -17,12 +17,20 @@ Friend Class frmMain
 		General.bcnStatus = General.cnStatus.NoTrans
 	End Sub
 	
-	Private Sub frmMain_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
-		'Message in toolbar
-        sbMain.Text = "Login: " & Trim(get_user_name(gsUser)) & vbTab & vbTab & Str(TimeOfDay.ToOADate)
-		
-		load_menu((gsUser))
-	End Sub
+    Private Sub frmMain_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
+        Dim am_pm As String = "AM"
+        Dim hour As String = TimeOfDay.Hour.ToString()
+        If TimeOfDay.Hour > 12 Then
+            am_pm = "PM"
+            hour = Convert.ToString(Convert.ToInt16(hour) - 12)
+        End If
+        'Message in toolbar
+        sbMain.Items(0).Text = "Login: " & Trim(get_user_name(gsUser))
+        sbMain.Items(1).Text = hour + ":" + TimeOfDay.Minute.ToString() + ":" + TimeOfDay.Second.ToString() + _
+                                " " + am_pm '.ToOADate)
+
+        load_menu((gsUser))
+    End Sub
 	'1.8.8 Returns full user name
 	Private Function get_user_name(ByRef sUserName As String) As String
 		

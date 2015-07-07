@@ -71,18 +71,24 @@ ErrorHandler:
 		txtFilename.Maxlength = 250
 		
 		Select Case gCustInvTemplate.bFlag
-			Case General.modo.NewRecord
-				
-			Case General.modo.UpdateRecord
-				
-				txtTemplateName.Text = gCustInvTemplate.sTemplateName
-				txtDescription.Text = gCustInvTemplate.sDescription
-				txtFilename.Text = gCustInvTemplate.sFilename
-				
-				txtTemplateName.Enabled = False
-				txtTemplateName.ReadOnly = True
-				
-		End Select
+            Case General.modo.NewRecord
+                txtTemplateName.Text = ""
+                txtDescription.Text = ""
+                txtFilename.Text = ""
+
+                txtTemplateName.Enabled = True
+                txtTemplateName.ReadOnly = False
+
+            Case General.modo.UpdateRecord
+
+                txtTemplateName.Text = gCustInvTemplate.sTemplateName
+                txtDescription.Text = gCustInvTemplate.sDescription
+                txtFilename.Text = gCustInvTemplate.sFilename
+
+                txtTemplateName.Enabled = False
+                txtTemplateName.ReadOnly = True
+
+        End Select
 	End Sub
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         Dim Button As System.Windows.Forms.ToolStripItem = CType(eventSender, System.Windows.Forms.ToolStripItem)
@@ -138,14 +144,15 @@ ErrorHandler:
 				
 				nTemplateId = get_next_seq("CustomerInvoiceTemplate", "template_id")
 				
-				sStmt = "INSERT INTO CustomerInvoiceTemplate (template_id, template_name," & "    description, filename) " & " VALUES (?, ?, ?, ?)"
+                sStmt = "INSERT INTO CustomerInvoiceTemplate (template_id, template_name," & "    description, filename) " & _
+                        " VALUES (@template_id, @templateName, @description, @filename)"
 				
                 cm = cn.CreateCommand
 				
-                create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, nTemplateId, cm, 6)
-                create_param_rs("templateName", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
-                create_param_rs("description", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
-                create_param_rs("filename", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
+                create_param_rs("@template_id", SqlDbType.Int, ParameterDirection.Input, nTemplateId, cm, 6)
+                create_param_rs("@templateName", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
+                create_param_rs("@description", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
+                create_param_rs("@filename", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
 
 
 
@@ -194,4 +201,17 @@ ErrorHandler:
 
         End Select
 	End Function
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If val_fields() Then
+            If save_template(gCustInvTemplate.bFlag) Then
+                gCustInvTemplate.bFlag = General.modo.SavedRecord
+                Me.Close()
+            End If
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

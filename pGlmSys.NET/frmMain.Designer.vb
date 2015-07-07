@@ -18,8 +18,7 @@
 	Private components As System.ComponentModel.IContainer
 	Public ToolTip1 As System.Windows.Forms.ToolTip
 	Public WithEvents pbMain As System.Windows.Forms.ProgressBar
-	Public WithEvents _sbMain_Panel1 As System.Windows.Forms.ToolStripStatusLabel
-	Public WithEvents sbMain As System.Windows.Forms.StatusStrip
+    Public WithEvents sbMain As System.Windows.Forms.StatusStrip
 	Public WithEvents ImageList1 As System.Windows.Forms.ImageList
     Public WithEvents _Toolbar1_Button4 As System.Windows.Forms.ToolStripSeparator
 	Public WithEvents _Toolbar1_Button6 As System.Windows.Forms.ToolStripSeparator
@@ -191,7 +190,6 @@
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.pbMain = New System.Windows.Forms.ProgressBar
         Me.sbMain = New System.Windows.Forms.StatusStrip
-        Me._sbMain_Panel1 = New System.Windows.Forms.ToolStripStatusLabel
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
         Me.btInvoiceBooking = New System.Windows.Forms.ToolStripButton
@@ -357,6 +355,8 @@
         Me.mnuVendorPayments = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.mnuVendors = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel
+        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel
         Me.sbMain.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -434,23 +434,11 @@
         'sbMain
         '
         Me.sbMain.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.sbMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._sbMain_Panel1})
-        Me.sbMain.Location = New System.Drawing.Point(76, 397)
+        Me.sbMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.ToolStripStatusLabel2})
+        Me.sbMain.Location = New System.Drawing.Point(76, 400)
         Me.sbMain.Name = "sbMain"
-        Me.sbMain.Size = New System.Drawing.Size(643, 25)
+        Me.sbMain.Size = New System.Drawing.Size(643, 22)
         Me.sbMain.TabIndex = 1
-        '
-        '_sbMain_Panel1
-        '
-        Me._sbMain_Panel1.AutoSize = False
-        Me._sbMain_Panel1.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
-        Me._sbMain_Panel1.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
-        Me._sbMain_Panel1.Margin = New System.Windows.Forms.Padding(0)
-        Me._sbMain_Panel1.Name = "_sbMain_Panel1"
-        Me._sbMain_Panel1.Size = New System.Drawing.Size(96, 25)
-        Me._sbMain_Panel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'ImageList1
         '
@@ -1317,6 +1305,25 @@
         Me.MainMenu1.Size = New System.Drawing.Size(719, 24)
         Me.MainMenu1.TabIndex = 4
         '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.AutoSize = False
+        Me.ToolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(200, 17)
+        Me.ToolStripStatusLabel1.Text = "Login:"
+        Me.ToolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'ToolStripStatusLabel2
+        '
+        Me.ToolStripStatusLabel2.AutoSize = False
+        Me.ToolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
+        Me.ToolStripStatusLabel2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(430, 17)
+        Me.ToolStripStatusLabel2.Text = "HH:MM:SS PM"
+        Me.ToolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1411,5 +1418,7 @@
     Friend WithEvents btInvoiceBooking As System.Windows.Forms.ToolStripButton
     Friend WithEvents ToolStripButton1 As System.Windows.Forms.ToolStripButton
     Friend WithEvents btExit As System.Windows.Forms.ToolStripButton
+    Friend WithEvents ToolStripStatusLabel1 As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel2 As System.Windows.Forms.ToolStripStatusLabel
 #End Region
 End Class
