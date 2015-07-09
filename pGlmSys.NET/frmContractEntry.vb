@@ -654,6 +654,7 @@ ErrorHandler:
 				End If
                 cbEqptDesc.Enabled = True
                 cbServDesc.Enabled = True
+                cbVendName.Enabled = True
 				
 				
 				set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)

@@ -29,7 +29,9 @@ Friend Class frmRepDefEntry
 
         'no se para que es esta linea
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-		cdFileOpen.ShowDialog()
+        If (DialogResult.Cancel = cdFileOpen.ShowDialog()) Then
+            Exit Sub
+        End If
 		
 		
 		
