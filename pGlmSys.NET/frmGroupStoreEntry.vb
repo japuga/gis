@@ -553,7 +553,7 @@ ErrorHandler:
 	'Add records to dgGroupStore
 	Private Sub add_dgGroupStore(ByRef sType As String)
         Dim vRow As DataGridViewRow
-        'Dim sCriteria As String
+        Dim sCriteria As String = ""
 		
         Dim nCandidate As Short
 
@@ -577,17 +577,22 @@ ErrorHandler:
             'End If
 
             Select Case sType
+
                 Case GROUP_LOCAL
                     nCandidate = vRow.Cells("store_id").Value
+                    sCriteria = "store_id"
 
                 Case GROUP_AREA
                     nCandidate = vRow.Cells("group_seq").Value
+                    sCriteria = "group_seq"
 
                 Case GROUP_DISTRICT
                     nCandidate = vRow.Cells("area_seq").Value
+                    sCriteria = "area_seq"
 
                 Case GROUP_REGION
                     nCandidate = vRow.Cells("district_seq").Value
+                    sCriteria = "district_seq"
 
                 Case Else
                     write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
@@ -623,6 +628,7 @@ ErrorHandler:
 
                 End Select
                 rsMember.Rows.Add(drow)
+
                 'rsMember.Update()
 
 
@@ -642,16 +648,33 @@ ErrorHandler:
                 End Select
 
             End If
-            rsStore.Rows.RemoveAt(vRow.Index) 'Delete(ADODB.AffectEnum.adAffectCurrent)
+            Dim sSelectQuery As String = sCriteria + " = '" + nCandidate.ToString() + "'"
+            Dim remRow As DataRow() = rsStore.Select(sSelectQuery)
+            If remRow.Length > 0 Then
+                rsStore.Rows.Remove(remRow(0)) '(vRow.Index) 'Delete(ADODB.AffectEnum.adAffectCurrent)
+            End If
         Next vRow
-		
+
+        dgGroupStore.DataSource = Nothing
+        dgGroupStore.Refresh()
+        dgGroupStore.DataSource = rsMember
+        dgGroupStore.Refresh()
+
+        dgStores.DataSource = Nothing
+        dgStores.DataSource = rsStore
+
+        dgStores.Columns(sCriteria).Visible = False
+        dgGroupStore.Columns(sCriteria).Visible = False
+
+        dgStores.Refresh()
+
 	End Sub
 	
 	
 	'Elimina registros de dgStores
 	Private Sub del_dgGroupStore(ByRef sType As String)
         Dim vRow As Integer
-        'Dim sCriteria As String
+        Dim sCriteria As String = ""
 		
         Dim nCandidate As Short
 
@@ -677,16 +700,20 @@ ErrorHandler:
 
             Select Case sType
                 Case GROUP_LOCAL
-                    nCandidate = rsMember.Rows(vRow).Item("store_id")
+                    nCandidate = dgGroupStore.Rows(vRow).Cells("store_id").Value
+                    sCriteria = "store_id"
 
                 Case GROUP_AREA
-                    nCandidate = rsMember.Rows(vRow).Item("group_seq")
+                    nCandidate = dgGroupStore.Rows(vRow).Cells("group_seq").Value
+                    sCriteria = "group_seq"
 
                 Case GROUP_DISTRICT
-                    nCandidate = rsMember.Rows(vRow).Item("area_seq")
+                    nCandidate = dgGroupStore.Rows(vRow).Cells("area_seq").Value
+                    sCriteria = "area_seq"
 
                 Case GROUP_REGION
-                    nCandidate = rsMember.Rows(vRow).Item("district_seq")
+                    nCandidate = dgGroupStore.Rows(vRow).Cells("district_seq").Value
+                    sCriteria = "district_seq"
 
                 Case Else
                     write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
@@ -696,30 +723,30 @@ ErrorHandler:
 
 
 
-            'If record_exist(rsStore, rsMember.item("store_id")) = False Then
+            'If record_exist(rsStore, dgGroupStore.item("store_id")) = False Then
             If record_exist(rsStore, nCandidate, sType) = False Then
 
                 'rsStore.AddNew()
                 Dim drow As DataRow = rsStore.NewRow
                 Select Case sType
                     Case GROUP_LOCAL
-                        drow.Item("store_id") = rsMember.Rows(vRow).Item("store_id")
-                        drow.Item("store") = rsMember.Rows(vRow).Item("store")
-                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
-                        drow.Item("state") = rsMember.Rows(vRow).Item("state")
-                        drow.Item("Address") = rsMember.Rows(vRow).Item("Address")
+                        drow.Item("store_id") = dgGroupStore.Rows(vRow).Cells("store_id").Value
+                        drow.Item("store") = dgGroupStore.Rows(vRow).Cells("store").Value
+                        drow.Item("name") = dgGroupStore.Rows(vRow).Cells("name").Value
+                        drow.Item("state") = dgGroupStore.Rows(vRow).Cells("state").Value
+                        drow.Item("Address") = dgGroupStore.Rows(vRow).Cells("Address").Value
 
                     Case GROUP_AREA
-                        drow.Item("group_seq") = rsMember.Rows(vRow).Item("group_seq")
-                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+                        drow.Item("group_seq") = dgGroupStore.Rows(vRow).Cells("group_seq").Value
+                        drow.Item("name") = dgGroupStore.Rows(vRow).Cells("name").Value
 
                     Case GROUP_DISTRICT
-                        drow.Item("area_seq") = rsMember.Rows(vRow).Item("area_seq")
-                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+                        drow.Item("area_seq") = dgGroupStore.Rows(vRow).Cells("area_seq").Value
+                        drow.Item("name") = dgGroupStore.Rows(vRow).Cells("name").Value
 
                     Case GROUP_REGION
-                        drow.Item("district_seq") = rsMember.Rows(vRow).Item("district_seq")
-                        drow.Item("name") = rsMember.Rows(vRow).Item("name")
+                        drow.Item("district_seq") = dgGroupStore.Rows(vRow).Cells("district_seq").Value
+                        drow.Item("name") = dgGroupStore.Rows(vRow).Cells("name").Value
                 End Select
 
                 rsStore.Rows.Add(drow)
@@ -740,8 +767,16 @@ ErrorHandler:
                 End Select
 
             End If
-            rsMember.Rows.RemoveAt(vRow)
+
+            Dim remDataRow As DataRow = rsMember.Select("name = '" + dgGroupStore.Rows(vRow).Cells("name").Value.ToString() + "'")(0)
+            rsMember.Rows.Remove(remDataRow) '(vRow)
         Next rowIndex
+
+        dgStores.Refresh()
+        dgGroupStore.Refresh()
+
+        dgStores.Columns(sCriteria).Visible = False
+        dgGroupStore.Columns(sCriteria).Visible = False
 
     End Sub
 	

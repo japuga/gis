@@ -114,59 +114,64 @@ Friend Class frmContract
         gContractRecord.sCustId = rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id")
         gContractRecord.nStoreId = rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")
         gContractRecord.sStoreNumber = rsStore.Rows(dgStore.CurrentRow.Index).Item("Store")
-        gContractRecord.nEqptSeq = rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq")
-		gContractRecord.nServId = -1
-		
-		If bFlag = General.modo.UpdateRecord Then
+        If IsNothing(dgEquipment.SelectedRows(0).Cells("eqpt_seq").Value) Then
+            gContractRecord.nEqptSeq = -1
+        Else
+            gContractRecord.nEqptSeq = rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq")
+        End If
+
+        gContractRecord.nServId = -1
+
+        If bFlag = General.modo.UpdateRecord Then
             gContractRecord.nVendSeq = rsContract.Rows(dgContract.CurrentRow.Index).Item("vend_seq")
             'gContractRecord.nEqptSeq = rsContract.item("eqpt_seq")
             gContractRecord.nServId = rsContract.Rows(dgContract.CurrentRow.Index).Item("serv_id")
-			
+
             gContractRecord.nFreqId = rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_id")
-			
+
             gContractRecord.sFreqComments = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_comments")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_comments"))
-			
+
             gContractRecord.sContractComments = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("contract_comments")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("contract_comments"))
-			
+
             gContractRecord.sFreqTimes = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_times")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_times"))
-			
+
             gContractRecord.sFreqPeriod = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_period")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_period"))
-			
+
             gContractRecord.nGlmRate = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("GLM Rate")), 0, rsContract.Rows(dgContract.CurrentRow.Index).Item("GLM Rate"))
-			
+
             gContractRecord.nOldRate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Prev Rate")
             gContractRecord.nCurrRate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Rate")
             gContractRecord.sOpeningDate = rsContract.Rows(dgContract.CurrentRow.Index).Item("Started")
 
             gContractRecord.sExpirationDate = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("Until")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("Until"))
-			
+
             gContractRecord.sFreqDay1 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day1")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day1"))
-			
+
             gContractRecord.sFreqDay2 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day2")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day2"))
-			
+
             gContractRecord.sFreqDay3 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day3")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day3"))
-			
+
             gContractRecord.sFreqDay4 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day4")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day4"))
-			
+
             gContractRecord.sFreqDay5 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day5")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day5"))
-			
+
             gContractRecord.sFreqDay6 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day6")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day6"))
-			
+
             gContractRecord.sFreqDay7 = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day7")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("freq_day7"))
-			
+
             gContractRecord.sVendor = rsContract.Rows(dgContract.CurrentRow.Index).Item("Vendor")
-			
+
             gContractRecord.sRateStatus = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("rate_status")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("rate_status"))
-			
+
             gContractRecord.sOverrideExpFlag = IIf(IsDBNull(rsContract.Rows(dgContract.CurrentRow.Index).Item("override_exp_flag")), "", rsContract.Rows(dgContract.CurrentRow.Index).Item("override_exp_flag"))
-		End If
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "set_contract_data")
-		MsgBox("An unexpected has occurred, please check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "Glm Error")
-		
-	End Sub
+        End If
+        Exit Sub
+
+ErrorHandler:
+        save_error(Me.Name, "set_contract_data")
+        MsgBox("An unexpected has occurred, please check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "Glm Error")
+
+    End Sub
     'Private Sub dgEquipment_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
     '    'jp BEG 01.29.03
     '    'If dgEquipment.Row >= 0 Then

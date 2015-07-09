@@ -60,7 +60,8 @@ Friend Class frmRepDef
     End Sub
     Private Sub save_repDef(ByRef nOption As General.modo)
         If dgRepDef.SelectedCells.Count > 0 Then
-            dgRepDef.CurrentRow.Selected = True
+            Dim rowIndx As Integer = dgRepDef.SelectedCells(0).RowIndex
+            dgRepDef.Rows(rowIndx).Selected = True
         End If
         If nOption = modo.UpdateRecord Then
             If dgRepDef.SelectedRows.Count < 1 Then
