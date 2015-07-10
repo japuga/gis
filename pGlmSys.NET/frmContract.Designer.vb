@@ -99,7 +99,7 @@
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(16, 32)
         Me.dgStore.Name = "dgStore"
-        Me.dgStore.Size = New System.Drawing.Size(321, 97)
+        Me.dgStore.Size = New System.Drawing.Size(321, 101)
         Me.dgStore.TabIndex = 17
         '
         'Label6

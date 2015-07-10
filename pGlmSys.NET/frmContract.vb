@@ -55,7 +55,12 @@ Friend Class frmContract
 			Case General.modo.NewRecord
                 If dgStore.SelectedRows.Count > 0 Then
                     'Se escogio una tienda. OK
-                    If dgEquipment.SelectedRows.Count > 0 Then
+                    If IsNothing(dgEquipment.Rows(0).Cells("eqpt_seq").Value) Then
+                        MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+                        Exit Sub
+                    End If
+                    Dim eqpt_id As String = dgEquipment.Rows(0).Cells("eqpt_seq").Value.ToString()
+                    If dgEquipment.SelectedRows.Count > 0 And (Not eqpt_id = "") Then
                         'OK Equipment
                     Else
                         MsgBox("Please choose an Equipment before Entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
@@ -91,10 +96,10 @@ Friend Class frmContract
                     MsgBox("Please choose an Store before entering Contract Info.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
                     Exit Sub
                 End If
-				
-			Case Else
-				Exit Sub
-		End Select
+
+            Case Else
+                Exit Sub
+        End Select
 		
 		gContractRecord.bFlag = bFlag
 		set_contract_data(bFlag)
@@ -230,7 +235,11 @@ ErrorHandler:
                 "    WHEN (VContract.default_service='T') THEN 'Yes' " & _
                 " END AS 'Default Freq' "
 
-        sStmt = sStmt & " FROM StoreEqpt, VContract, Content, Service, VBranch, Frequency " & " WHERE vContract.cust_id = StoreEqpt.cust_id " & " AND VContract.store_id = StoreEqpt.store_id " & " AND VContract.eqpt_seq = StoreEqpt.eqpt_seq " & " AND StoreEqpt.content_id = Content.content_id " & " AND VContract.serv_id = Service.serv_id " & " AND VContract.vend_seq = VBranch.vend_seq " & " AND VContract.cust_id = '" & Trim(sCustId) & "' " & " AND VContract.store_id = " & Str(nStoreId) & " " & " AND VContract.freq_id = Frequency.freq_id "
+        sStmt = sStmt & " FROM StoreEqpt, VContract, Content, Service, VBranch, Frequency " & _
+            " WHERE vContract.cust_id = StoreEqpt.cust_id " & " AND VContract.store_id = StoreEqpt.store_id " & _
+            " AND VContract.eqpt_seq = StoreEqpt.eqpt_seq " & " AND StoreEqpt.content_id = Content.content_id " & " AND VContract.serv_id = Service.serv_id " & _
+            " AND VContract.vend_seq = VBranch.vend_seq " & " AND VContract.cust_id = '" & Trim(sCustId) & "' " & " AND VContract.store_id = " & Str(nStoreId) & _
+            " " & " AND VContract.freq_id = Frequency.freq_id "
 
         'Solo se incluye si usuario selecciono un Vendor
         If nVendSeq > 0 Then
@@ -420,8 +429,11 @@ ErrorHandler:
             nVendSeq = 0
         End If
 
-        get_dgContractData(False, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("cust_id"), rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("store_id"), _
-                            nVendSeq, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq"))
+        Dim cust_id As String = dgEquipment.CurrentRow.Cells("cust_id").Value.ToString()
+        If Not cust_id = "" Then
+            get_dgContractData(False, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("cust_id"), rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("store_id"), _
+                                nVendSeq, rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq"))
+        End If
         'no se como implementar el bookmark
         'If dgContract.CurrentRow.Index >= 0 Then
         'dgContract.SelBookmarks.Add(rsContract.Bookmark)
@@ -543,16 +555,23 @@ ErrorHandler:
 		If (MsgBox("Do you want to delete the selected contract?", MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.No) Then
 			Exit Sub
 		End If
-		
+
+        'rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + " AND VInvoiceDet.store_id = " + _
+        '                Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + " AND VInvoiceDet.vend_seq = " + _
+        '                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("vend_seq")) + " AND VInvoiceDet.eqpt_seq = " + _
+        '                Str(rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq")) + " AND VInvoiceDet.serv_id =" + _
+        '                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("serv_id"))
+
+
 		'Solo se puede borrar contratos sin facturas asociadas.
 		'Las facturas deben ser impresas en cheques invoice_status=PRT
 		'y dichos cheques debieron ser transferidos a Quick Books.
-        sStmt = "SELECT DISTINCT VInvoiceDet.invoice_no, " & "VInvoiceDet.account_no, VInvoice.vinvoice_status " & " FROM VInvoice, VInvoiceDet " & " WHERE VInvoice.invoice_no = VInvoiceDet.invoice_no " & " AND VInvoice.cust_id = VInvoiceDet.cust_id " & " AND VInvoice.store_id = VInvoiceDet.store_id " & " AND VInvoice.vend_seq = VInvoiceDet.vend_seq " & " AND VInvoice.account_no = VInvoiceDet.account_no " & " AND VInvoiceDet.cust_id = '" + _
-                rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + " AND VInvoiceDet.store_id = " + _
-                Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + " AND VInvoiceDet.vend_seq = " + _
-                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("vend_seq")) + " AND VInvoiceDet.eqpt_seq = " + _
-                Str(rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq")) + " AND VInvoiceDet.serv_id =" + _
-                Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("serv_id"))
+        sStmt = "SELECT DISTINCT VInvoiceDet.invoice_no, " & "VInvoiceDet.account_no, VInvoice.vinvoice_status " & " FROM VInvoice, VInvoiceDet " & " WHERE VInvoice.invoice_no = VInvoiceDet.invoice_no " & " AND VInvoice.cust_id = VInvoiceDet.cust_id " & " AND VInvoice.store_id = VInvoiceDet.store_id " & " AND VInvoice.vend_seq = VInvoiceDet.vend_seq " & " AND VInvoice.account_no = VInvoiceDet.account_no " & _
+                " AND VInvoiceDet.cust_id = '" + dgStore.CurrentRow.Cells("cust_id").Value.ToString() + "' " + _
+                " AND VInvoiceDet.store_id = " + dgStore.CurrentRow.Cells("store_id").Value.ToString() + _
+                " AND VInvoiceDet.vend_seq = " + dgContract.CurrentRow.Cells("vend_seq").Value.ToString() + _
+                " AND VInvoiceDet.eqpt_seq = " + dgEquipment.CurrentRow.Cells("eqpt_seq").Value.ToString() + _
+                " AND VInvoiceDet.serv_id = " + dgContract.CurrentRow.Cells("serv_id").Value.ToString
         cmd.CommandText = sStmt
 		
         rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
@@ -569,9 +588,11 @@ ErrorHandler:
                 Else
 
                     sStmt = "SELECT COUNT(*) " & " FROM VInvoice ,Bcheck " & " WHERE VInvoice.invoice_no = Bcheck.invoice_no " & " AND VInvoice.cust_id = Bcheck.cust_id " & " AND VInvoice.store_id = Bcheck.store_id " & " AND VInvoice.vend_seq = Bcheck.vend_seq " & " AND VInvoice.account_no = Bcheck.account_no " & " AND VInvoice.invoice_no = '" & Trim(sInvoiceNo) & "' " & " AND VInvoice.cust_id = '" + _
-                            rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + " AND VInvoice.store_id = " + _
-                            Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + " AND VInvoice.vend_seq = " + _
-                            Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("vend_seq").Value) + " AND VInvoice.account_no = '" + Trim(sAccountNo) + "' " + " AND Bcheck.qb_exported_flag IS NULL "
+                            dgStore.CurrentRow.Cells("cust_id").Value + "' " + _
+                            " AND VInvoice.store_id = " + Str(dgStore.CurrentRow.Cells("store_id").Value) + _
+                            " AND VInvoice.vend_seq = " + Str(dgContract.CurrentRow.Cells("vend_seq").Value) + _
+                            " AND VInvoice.account_no = '" + Trim(sAccountNo) + "' " + _
+                            " AND Bcheck.qb_exported_flag IS NULL "
                     cmd.CommandText = sStmt
                     'qb_exported_flag puede ser : NULL o Y
 
@@ -595,10 +616,11 @@ ErrorHandler:
         End If
 		
 		'Eliminar contrato
-        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id") + "' " + _
-        " AND store_id = " + Str(rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")) + _
-        " AND vend_seq = " + Str(rsContract.Rows(dgContract.CurrentRow.Index).Item("vend_seq")) + _
-        " AND eqpt_seq = " + Str(rsEquipment.Rows(dgEquipment.CurrentRow.Index).Item("eqpt_seq")) + " AND serv_id = " + Str(rsContract.Rows(dgStore.CurrentRow.Index).Item("serv_id"))
+        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + dgStore.CurrentRow.Cells("cust_id").Value + "' " + _
+        " AND store_id = " + Str(dgStore.CurrentRow.Cells("store_id").Value) + _
+        " AND vend_seq = " + Str(dgContract.CurrentRow.Cells("vend_seq").Value) + _
+        " AND eqpt_seq = " + Str(dgEquipment.CurrentRow.Cells("eqpt_seq").Value) + _
+        " AND serv_id = " + Str(dgContract.CurrentRow.Cells("serv_id").Value)
 		'MsgBox sStmt
 		
 		cmLocal.CommandText = sStmt
@@ -606,9 +628,9 @@ ErrorHandler:
 		If nRecords > 0 Then
 			MsgBox("Contract info successfully deleted.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
 			'Refresco datagrid de Contratos
-            get_dgContractData(False, rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id"), _
-                                rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id"), _
-                                CShort(txtVendName.Tag), rsEquipment.Rows(dgStore.CurrentRow.Index).Item("eqpt_seq"))
+            get_dgContractData(False, dgStore.CurrentRow.Cells("cust_id").Value, _
+                                dgStore.CurrentRow.Cells("store_id").Value, _
+                                CShort(txtVendName.Tag), dgEquipment.CurrentRow.Cells("eqpt_seq").Value)
 			
 		End If
 		
@@ -702,5 +724,22 @@ ErrorHandler:
 
     Private Sub dgContract_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgContract.CellDoubleClick
         data_entry((General.modo.UpdateRecord))
+    End Sub
+
+    Private Sub dgEquipment_CellMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.CellMouseClick
+        dgEquipment_CellContentClick(sender, Nothing)
+    End Sub
+
+    Private Sub dgStore_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgStore.RowHeaderMouseClick
+        dgStore_CellContentClick(sender, Nothing)
+    End Sub
+
+    Private Sub dgStore_SelectionChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles dgStore.SelectionChanged
+        If dgStore.SelectedRows.Count > 1 Then
+            Dim store_id As String = dgStore.SelectedRows(0).Cells("Store").Value
+            store_id = dgStore.SelectedRows(1).Cells("Store").Value
+            dgStore.SelectedRows(0).Selected = False
+        End If
+        dgStore_CellContentClick(sender, Nothing)
     End Sub
 End Class
