@@ -137,7 +137,7 @@ ErrorHandler:
 		Select Case bFlag
 			Case General.modo.NewRecord
 				gCustFeeRecord.nFeeValue = 0
-			Case General.modo.UpdateRecord
+            Case General.modo.UpdateRecord
                 If dgFee.SelectedRows.Count > 0 Then
                     gCustFeeRecord.nFeeValue = CDbl(dgFee.CurrentRow.Cells("Value").Value)
                     gCustFeeRecord.sFeeDesc = dgFee.CurrentRow.Cells("Desc").Value
@@ -149,11 +149,16 @@ ErrorHandler:
                     MsgBox(" You must select a record to update.")
                     Exit Sub
                 End If
-		End Select
+        End Select
 		
 	End Sub
 	Private Sub update_fee()
-		gCustFeeRecord.bFlag = General.modo.UpdateRecord
+        gCustFeeRecord.bFlag = General.modo.UpdateRecord
+        If dgFee.SelectedRows.Count < 1 Then
+            If dgFee.SelectedCells.Count > 0 Then
+                dgFee.CurrentRow.Selected = True
+            End If
+        End If
         set_fee_record((General.modo.UpdateRecord))
         If dgFee.SelectedRows.Count > 0 Then
             VB6.ShowForm(frmCustFeeEntry, VB6.FormShowConstants.Modal, Me)
@@ -167,7 +172,7 @@ ErrorHandler:
     End Sub
 	Private Function delete_fee() As Boolean
 		Dim nRecords As Short
-        Dim nTran As SqlTransaction
+        Dim nTran As SqlTransaction = Nothing
         'Dim nDetailCount As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim nNumFeeServices As Integer = 0
@@ -177,9 +182,14 @@ ErrorHandler:
         nTran = cn.BeginTransaction()
         Try
             If dgFee.SelectedRows.Count = 0 Then
-                MsgBox("You must select a row before atempting this command.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
-                delete_fee = False
-                Exit Function
+                If dgFee.SelectedCells.Count > 0 Then
+                    dgFee.Rows(dgFee.SelectedCells(0).RowIndex).Selected = True
+                Else
+                    MsgBox("You must select a row before atempting this command.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                    delete_fee = False
+                    nTran.Rollback()
+                    Exit Function
+                End If
             End If
 
             If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
