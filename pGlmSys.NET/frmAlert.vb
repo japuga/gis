@@ -773,7 +773,7 @@ ErrorHandler:
 	Private Sub frmAlert_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
 		clear_data()
-		test_sql()
+        'test_sql()
 	End Sub
 	Private Sub test_sql()
 		
