@@ -13,47 +13,52 @@ Friend Class frmImportInvoice
 		
 		On Error GoTo ErrorHandler
 		
-		If Len(sFilename) > 0 Then
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-			sbLoad.Text = "Opening Excel File...."
-			'UPGRADE_WARNING: Couldn't resolve default property of object openExcelFile(sFilename, XLApp, XL_wbook). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If openExcelFile(sFilename, XLApp, XL_wbook) = True Then
-				sbLoad.Text = "Searching Excel Sheet..."
-				'1.Read spreadsheets
-				XL_header_wsheet = getExcelWorksheet("header", XL_wbook)
-				
-				If XL_header_wsheet Is Nothing Then
-					closeExcelFile(XLApp, XL_wbook)
-				Else
-					sbLoad.Text = "Found Header Worksheet"
-				End If
-				
-				XL_detail_wsheet = getExcelWorksheet("detail", XL_wbook)
-				
-				If XL_detail_wsheet Is Nothing Then
-					closeExcelFile(XLApp, XL_wbook)
-				Else
-					sbLoad.Text = "Found Detail Worksheet"
-				End If
-				
-				'2.Validate Invoice Header records
-				validate_header()
-				'3.Validate Invoice Detail records
-				
-			End If
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-		Else
-			MsgBox("Please select an Excel file before attempting this command", MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		End If
+        If Len(sFilename) > 0 Then
+
+            'funcion no desarrollado todavia (Javier)
+            MsgBox("Import Invoices not implemented yet")
+            Exit Sub
+
+            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+            sbLoad.Items(0).Text = "Opening Excel File...."
+            'UPGRADE_WARNING: Couldn't resolve default property of object openExcelFile(sFilename, XLApp, XL_wbook). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If openExcelFile(sFilename, XLApp, XL_wbook) = True Then
+                sbLoad.Items(0).Text = "Searching Excel Sheet..."
+                '1.Read spreadsheets
+                XL_header_wsheet = getExcelWorksheet("header", XL_wbook)
+
+                If XL_header_wsheet Is Nothing Then
+                    closeExcelFile(XLApp, XL_wbook)
+                Else
+                    sbLoad.Items(0).Text = "Found Header Worksheet"
+                End If
+
+                XL_detail_wsheet = getExcelWorksheet("detail", XL_wbook)
+
+                If XL_detail_wsheet Is Nothing Then
+                    closeExcelFile(XLApp, XL_wbook)
+                Else
+                    sbLoad.Items(0).Text = "Found Detail Worksheet"
+                End If
+
+                '2.Validate Invoice Header records
+                validate_header()
+                '3.Validate Invoice Detail records
+
+            End If
+            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        Else
+            MsgBox("Please select an Excel file before attempting this command", MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
 		
 		
 		
 		
 		'Verificar Columnas
-		sbLoad.Text = "Checking column headers..."
+        sbLoad.Items(0).Text = "Checking column headers..."
 		'nNumCols = check_header(sSheetName)
 		'If nNumCols <= 0 Then
 		'    close_excel_file
@@ -63,12 +68,12 @@ Friend Class frmImportInvoice
 		'nRows = count_sheet_rows
 		
 		'Cargar Datos
-		'sbLoad.SimpleText = "Verifying data...."
+        'sbLoad.Items(0).SimpleText = "Verifying data...."
 		'load_sheet sSheetName, nNumCols, nRows
 		
 		
 		'close_excel_file
-		sbLoad.Text = "Done"
+        sbLoad.Items(0).Text = "Done"
 		
 		
 		Exit Sub
@@ -112,7 +117,7 @@ ErrorHandler:
 		
 		fs = New Scripting.FileSystemObject
 		
-		sDir = "c:\glm"
+        sDir = OSdriveLetter + "glm"
 		If Not fs.FolderExists(sDir) Then
 			sDir = "c:\"
 		End If
@@ -121,41 +126,45 @@ ErrorHandler:
 		cdFileOpen.InitialDirectory = sDir 'Directorio para guardar archivo IIF
 		cdFileOpen.DefaultExt = ".xls"
 		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		cdFileOpen.Filter = "Excel Files (*.xls)|*.xls|*.xlsx"
+        cdFileOpen.Filter = "Excel Files (*.xls;*xlsx)|*.xls;*.xlsx"
 		cdFileOpen.FilterIndex = 1
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-		cdFileOpen.ShowDialog()
-		
-		
-		
-		If Trim(cdFileOpen.FileName) = "" Then
-			sFilename = ""
-			MsgBox("Unable to Load Info, Please provide an Excel File.", MsgBoxStyle.OKOnly, "GLM Warning")
-		Else
-			If fs.FileExists(cdFileOpen.FileName) Then
-				sFilename = cdFileOpen.FileName
-				txtFile.Text = cdFileOpen.FileName
-			Else
-				sFilename = ""
-				MsgBox("Such  files does not exist.")
-			End If
-		End If
-		
-		Exit Sub
-		
-ErrorHandler: 
-		
-		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
-		If Err.Number = DialogResult.Cancel Then
-			'Usuario selecciono cancel en OpenDialog
-			MsgBox("Operation was cancelled by user.", MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		Else
-			save_error(Me.Name, "cmdOk")
-			MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			
-		End If
-		
-	End Sub
+        If cdFileOpen.ShowDialog() = Windows.Forms.DialogResult.Cancel Then
+            Exit Sub
+        Else
+
+            If Trim(cdFileOpen.FileName) = "" Then
+                sFilename = ""
+                MsgBox("Unable to Load Info, Please provide an Excel File.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Else
+                If fs.FileExists(cdFileOpen.FileName) Then
+                    sFilename = cdFileOpen.FileName
+                    txtFile.Text = cdFileOpen.FileName
+                Else
+                    sFilename = ""
+                    MsgBox("Such  files does not exist.")
+                End If
+            End If
+        End If
+        Exit Sub
+
+ErrorHandler:
+
+        'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
+        If Err.Number = DialogResult.Cancel Then
+            'Usuario selecciono cancel en OpenDialog
+            MsgBox("Operation was cancelled by user.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        Else
+            save_error(Me.Name, "cmdOk")
+            MsgBox("An error occurred while opening file. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+
+        End If
+
+    End Sub
+
+    Private Sub frmImportInvoice_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        txtFile.Text = ""
+    End Sub
 End Class

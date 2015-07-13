@@ -3,7 +3,7 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmInvoiceBillSummary
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	Private XLApp As Microsoft.Office.Interop.Excel.Application
 	
 	
@@ -35,31 +35,35 @@ Friend Class frmInvoiceBillSummary
 		
 		
 		cdFileSave.InitialDirectory = sDir 'Directorio para guardar archivo IIF
-		cdFileSave.DefaultExt = ".xls"
+        cdFileSave.DefaultExt = ".xlsx"
 		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		cdFileSave.Filter = "Excel Files (*.xls)|*.xls"
+        cdFileSave.Filter = "Excel Files (*.xlsx)|*.xlsx"
 		cdFileSave.FilterIndex = 1
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
 
         ' no entiendo esta linea, preguntar a javier.
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
 
-        cdFileSave.ShowDialog()
+        If cdFileSave.ShowDialog() = Windows.Forms.DialogResult.Cancel Then
+            Exit Sub
+        Else
+            If Trim(cdFileSave.FileName) = "" Then
+                sFilename = ""
+                MsgBox("Unable to Load Info, Please provide a Data FIle.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Else
+                If fs.FileExists(cdFileSave.FileName) Then
+                    sFilename = cdFileSave.FileName
+                    txtExcelFile.Text = cdFileSave.FileName
+                Else
+                    sFilename = ""
+                    MsgBox("Such  files does not exist.")
+                End If
+            End If
+        End If
 		
 		
 		
-		If Trim(cdFileSave.FileName) = "" Then
-			sFilename = ""
-			MsgBox("Unable to Load Info, Please provide a Data FIle.", MsgBoxStyle.OKOnly, "GLM Warning")
-		Else
-			If fs.FileExists(cdFileSave.FileName) Then
-				sFilename = cdFileSave.FileName
-				txtExcelFile.Text = cdFileSave.FileName
-			Else
-				sFilename = ""
-				MsgBox("Such  files does not exist.")
-			End If
-		End If
+		
 		
 		Exit Sub
 		
@@ -88,13 +92,13 @@ ErrorHandler:
 	
 	Private Function val_fields() As Boolean
 		val_fields = True
-		
-		If cbGroupName.SelectedIndex < 0 Then
-			MsgBox("Please select a group before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			val_fields = False
-			cbGroupName.Focus()
-			Exit Function
-		End If
+        Dim groupName As String = cbGroupName.Text
+        If Trim(groupName) = "" Then 'cbGroupName.SelectedIndex < 0 Then
+            MsgBox("Please select a group before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            val_fields = False
+            cbGroupName.Focus()
+            Exit Function
+        End If
 		
 	End Function
 	
@@ -173,7 +177,7 @@ ErrorHandler:
 		On Error GoTo ErrorHandler
 		
 		fs = New Scripting.FileSystemObject
-		sDir = "c:\glm"
+        sDir = OSdriveLetter + "glm"
 		dDate = Today
 		
 		If Not fs.FolderExists(sDir) Then
@@ -182,9 +186,9 @@ ErrorHandler:
 		
 		
 		cdFileSave.InitialDirectory = sDir 'Folder to save invoice data file
-		cdFileSave.DefaultExt = "xls"
+        cdFileSave.DefaultExt = "xlsx"
 		'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-		cdFileSave.Filter = "Excel Files (*.xls)"
+        cdFileSave.Filter = "Excel Files (*.xlsx)|*.xlsx"
 		
 		
 		cdFileSave.FileName = "Invoices-" & VB6.Format(dDate, "mmddyy") 'Default file name
@@ -193,31 +197,32 @@ ErrorHandler:
         'preguntar a javier
         'cdFile.CancelError = True 'Raises an error 32755 if user Cancels operation
 
-        cdFileSave.ShowDialog()
-		
-		If Trim(cdFileSave.FileName) = "" Then
-			MsgBox("Unable to Export Invoices. Please provide a file to save data.", MsgBoxStyle.OKOnly, "GLM Warning")
-		Else
-			'Build Excel file
-			txtExcelFile.Text = cdFileSave.FileName
-			If Not unload_data(sCustId, nGroupSeq, sGroupName, (cdFileSave.FileName)) Then
-				MsgBox("An error has ocurred. Unable to export data", MsgBoxStyle.OKOnly, "GLM Error")
-			Else
-				If update_invoice_status Then
-					MsgBox("Data exported successfully", MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					MsgBox("Unable to update Invoice Info. Please try again.", MsgBoxStyle.OKOnly, "GLM Error")
-				End If
-			End If
-			Me.Close()
-		End If
-		Exit Function
-		
-ErrorHandler: 
-		save_data = False
-		MsgBox("Unexpected error while saving invoice data." & vbCrLf & "Please check log file for further details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-		
-	End Function
+        If Not cdFileSave.ShowDialog() = Windows.Forms.DialogResult.Cancel Then
+
+            If Trim(cdFileSave.FileName) = "" Then
+                MsgBox("Unable to Export Invoices. Please provide a file to save data.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Else
+                'Build Excel file
+                txtExcelFile.Text = cdFileSave.FileName
+                If Not unload_data(sCustId, nGroupSeq, sGroupName, (cdFileSave.FileName)) Then
+                    MsgBox("An error has ocurred. Unable to export data", MsgBoxStyle.OkOnly, "GLM Error")
+                Else
+                    If update_invoice_status() Then
+                        MsgBox("Data exported successfully", MsgBoxStyle.OkOnly, "GLM Message")
+                    Else
+                        MsgBox("Unable to update Invoice Info. Please try again.", MsgBoxStyle.OkOnly, "GLM Error")
+                    End If
+                End If
+                Me.Close()
+            End If
+        End If
+        Exit Function
+
+ErrorHandler:
+        save_data = False
+        MsgBox("Unexpected error while saving invoice data." & vbCrLf & "Please check log file for further details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+
+    End Function
 	Private Function count_invoices(ByRef sCustId As String, ByRef nGroupSeq As Short) As Short
         Dim cmd As SqlCommand = cn.CreateCommand()
 		count_invoices = -1
@@ -225,19 +230,23 @@ ErrorHandler:
 		sStmt = "SELECT COUNT(DISTINCT a.invoice_no) " & "FROM vinvoice  a, vinvoiceDet b, store c " & "WHERE a.cust_id ='" & sCustId & "'" & "AND a.group_seq=" & Str(nGroupSeq) & "AND a.cust_id = b.cust_id " & "AND a.invoice_no = b.invoice_no " & "AND a.store_id = b.store_id " & "AND a.account_no = b.account_no " & "AND a.vend_seq = b.vend_seq " & "AND a.cust_id = c.cust_id " & "AND a.store_id = c.store_id "
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader()
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
 
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rsLocal.Item(0).Value) Then
+        If rsLocal.Rows.Count < 1 Then
+            MsgBox("Could not determine number of invoices to process. " & "Please try again", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+            Exit Function
+        End If
+        If IsDBNull(rsLocal.Rows(0).Item(0)) Then
             MsgBox("Could not determine number of invoices to process. " & "Please try again", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
             Exit Function
         Else
-            count_invoices = rsLocal.Item(0).Value
+            count_invoices = rsLocal.Rows(0).Item(0)
         End If
 
 
-        MsgBox("NUmber of invoices to process:" & Str(rsLocal.Item(0).Value))
-	End Function
+        MsgBox("Number of invoices to process:" & Str(rsLocal.Rows(0).Item(0)))
+    End Function
 	Private Function add_header(ByRef ws As Microsoft.Office.Interop.Excel.Worksheet) As Boolean
 		
 		On Error GoTo ErrorHandler
@@ -295,12 +304,12 @@ ErrorHandler:
 		sStmt = "SELECT a.invoice_no, a.vinvoice_date," & " a.work_order, a.account_no, c.store_number,SUM(b.subtotal) tot " & "FROM vinvoice  a, vinvoiceDet b, store c " & "WHERE a.cust_id ='" & sCustId & "'" & "AND a.group_seq=" & Str(nGroupSeq) & "AND a.cust_id = b.cust_id " & "AND a.invoice_no = b.invoice_no " & "AND a.store_id = b.store_id " & "AND a.account_no = b.account_no " & "AND a.vend_seq = b.vend_seq " & "AND a.cust_id = c.cust_id " & "AND a.store_id = c.store_id " & "GROUP BY a.invoice_no, a.vinvoice_date," & " a.work_order, a.account_no, c.store_number"
         cmd.CommandText = sStmt
 		
-        rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenForwardOnly, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.HasRows() Then
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenForwardOnly, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsLocal.Rows.Count > 0 Then
             'Details sent to Excel file
             nRow = 1
 
-            While rsLocal.Read()
+            For arow As Integer = 0 To rsLocal.Rows.Count - 1 'While rsLocal.Read()
                 'nPercent = nRow * 100 / nCountInvoices
                 'prbLoad.Value = nPercent
 
@@ -314,32 +323,32 @@ ErrorHandler:
                 nCol = 1
 
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 1).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 1).Value = rsLocal.Item("invoice_no").Value
+                ws.Cells._Default(nRow, 1).Value = rsLocal.Rows(arow).Item("invoice_no")
 
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 2).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 2).Value = CDate(rsLocal.Item("vinvoice_date").Value)
+                ws.Cells._Default(nRow, 2).Value = CDate(rsLocal.Rows(arow).Item("vinvoice_date"))
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsLocal.Item("tot").Value) Then
+                If IsDBNull(rsLocal.Rows(arow).Item("tot")) Then
                     'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     ws.Cells._Default(nRow, 3).Value = ""
                 Else
                     'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 3).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                    ws.Cells._Default(nRow, 3).Value = rsLocal.Item("work_order").Value
+                    ws.Cells._Default(nRow, 3).Value = rsLocal.Rows(arow).Item("work_order")
                 End If
 
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 4).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 4).Value = rsLocal.Item("tot").Value
+                ws.Cells._Default(nRow, 4).Value = rsLocal.Rows(arow).Item("tot")
                 'Hard Coded
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ws.Cells._Default(nRow, 5).Value = 0 'Tax
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 6).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 5).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 6).Value = rsLocal.Item("tot").Value + ws.Cells._Default(nRow, 5).Value
+                ws.Cells._Default(nRow, 6).Value = rsLocal.Rows(arow).Item("tot") + ws.Cells._Default(nRow, 5).Value
 
-                nFee = get_fee(sCustId, rsLocal.Item("tot").Value)
+                nFee = get_fee(sCustId, rsLocal.Rows(arow).Item("tot"))
                 If nFee <= 0 Then
-                    MsgBox("Could not retrieve Fee information for invoice:" + rsLocal.Item("invoice_no").Value, MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                    MsgBox("Could not retrieve Fee information for invoice: " + rsLocal.Rows(arow).Item("invoice_no"), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                     add_detail = False
                     Exit Function
                 End If
@@ -347,20 +356,18 @@ ErrorHandler:
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ws.Cells._Default(nRow, 7).Value = nFee
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 8).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 8).Value = rsLocal.Item("tot").Value + nFee
-                sDescription = Trim(quotation_mask(sGroupName)) & " Waste - Acct." & Trim(quotation_mask(rsLocal.Item("account_no").Value))
+                ws.Cells._Default(nRow, 8).Value = rsLocal.Rows(arow).Item("tot") + nFee
+                sDescription = Trim(quotation_mask(sGroupName)) & " Waste - Acct." & Trim(quotation_mask(rsLocal.Rows(arow).Item("account_no")))
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ws.Cells._Default(nRow, 9).Value = sDescription
                 'Hard Coded
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells(nRow, 10).Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                ws.Cells._Default(nRow, 10).Value = rsLocal.Item("store_number").Value
+                ws.Cells._Default(nRow, 10).Value = rsLocal.Rows(arow).Item("store_number")
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ws.Cells._Default(nRow, 11).Value = "N/A"
                 'UPGRADE_WARNING: Couldn't resolve default property of object ws.Cells().Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ws.Cells._Default(nRow, 12).Value = 0
-
-
-            End While
+            Next arow
         End If
 		prbLoad.Visible = False
 		add_detail = True
@@ -381,10 +388,10 @@ ErrorHandler:
 
         If rs.Rows.Count > 0 Then
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rs.Rows(0).Item("range_fee_value").Value) Then
+            If IsDBNull(rs.Rows(0).Item("range_fee_value")) Then
                 get_fee = 0
             Else
-                get_fee = rs.Rows(0).Item("range_fee_value").Value
+                get_fee = rs.Rows(0).Item("range_fee_value")
             End If
         End If
 
@@ -395,7 +402,7 @@ ErrorHandler:
 		
 		open_excel_app = False
 		
-		XLApp = GetObject( , "excel.application")
+        XLApp = CreateObject("Excel.Application") 'GetObject( , "excel.application")
 		XLApp.Visible = False
 		open_excel_app = True
 		
@@ -424,6 +431,7 @@ ErrorHandler:
 	Private Sub init_vars()
 		
         rsLocal = Nothing
+        txtExcelFile.Text = ""
 		
 		'CustName
 		sStmt = "SELECT DISTINCT c.cust_name, u.cust_id " & " FROM suser_data u, customer c " & " WHERE u.cust_id = c.cust_id " & " AND u.suser_name = '" & gsUser & "' " & " ORDER BY c.cust_name"

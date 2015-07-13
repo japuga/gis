@@ -621,7 +621,7 @@ ErrorHandler:
 		
         openExcelFile = False
 		
-		XLApp = GetObject( , "excel.application")
+        XLApp = CreateObject("Excel.Application") 'GetObject( , "excel.application")
 		XL_wbook = XLApp.Workbooks.Open(sFilename)
 		XLApp.Visible = False
         openExcelFile = True
