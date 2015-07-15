@@ -19,26 +19,26 @@ Friend Class frmAlert
 	
 	Private Sub Command1_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles Command1.Click
 		
-		If Me.dgEquipment.Row > -1 Then
-            show_vendor((oRS.Rows(0).Item("cust_id").value), (oRS.Rows(0).Item("store_id").value), dgEquipment.Columns("Seq").Text)
-		End If
+        If Me.dgEquipment.SelectedRows.Count > 0 Then
+            show_vendor((oRS.Rows(0).Item("cust_id").value), (oRS.Rows(0).Item("store_id").value), dgEquipment.SelectedRows(0).Cells("Seq").Value)
+        End If
 		'dgEquipment.Columns("eqpt_desc"), dgEquipment.Columns("load_id")
 		
 	End Sub
 	
-	Private Sub dgEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgEquipment.DblClick
-		Command1_Click(Command1, New System.EventArgs())
-	End Sub
+    Private Sub dgEquipment_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        Command1_Click(Command1, New System.EventArgs())
+    End Sub
 	
-	Private Sub dgNotes_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgNotes.DblClick
-		If Not (dgNotes Is Nothing) Then
-			update_alert()
-		End If
-	End Sub
+    Private Sub dgNotes_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        If Not (dgNotes Is Nothing) Then
+            update_alert()
+        End If
+    End Sub
 	
-	Private Sub dgVendor_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgVendor.ClickEvent
+    Private Sub dgVendor_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         get_dgContractData()
-	End Sub
+    End Sub
 	
 	
 	
@@ -95,8 +95,8 @@ Friend Class frmAlert
 		'    For iIndice = dgService.Columns.Count - 1 To 2 Step -1
 		'        dgService.Columns.Remove iIndice
 		'    Next
-		dgNotes.Columns(0).Caption = "Date"
-		dgNotes.Columns(1).Caption = "Regarding"
+        dgNotes.Columns.Add("Date", "Date")
+        dgNotes.Columns.Add("Regarding", "Regarding")
 		
 		dgNotes.Columns("Date").Width = VB6.TwipsToPixelsX(1000)
 		dgNotes.Columns("Regarding").Width = VB6.TwipsToPixelsX(9000)
@@ -109,11 +109,11 @@ Friend Class frmAlert
 		For iIndice = dgEquipment.Columns.Count - 1 To 2 Step -1
 			dgEquipment.Columns.Remove(iIndice)
 		Next 
-		dgEquipment.Columns(0).Caption = "Equipment"
-		dgEquipment.Columns(1).Caption = "Load Type"
-		dgEquipment.Columns.Add(2).Caption = "Content"
-		dgEquipment.Columns.Add(3).Caption = "Qty"
-		dgEquipment.Columns.Add(4).Caption = "Permanent/Temporary"
+        dgEquipment.Columns.Add("Equipment", "Equipment")
+        dgEquipment.Columns.Add("Load Type", "Load Type")
+        dgEquipment.Columns.Add("Content", "Content")
+        dgEquipment.Columns.Add("Qty", "Qty")
+        dgEquipment.Columns.Add("Permanent/Temporary", "Permanent/Temporary")
 		
 		dgEquipment.Columns("Equipment").Width = VB6.TwipsToPixelsX(1000)
 		dgEquipment.Columns("Load Type").Width = VB6.TwipsToPixelsX(1200)
@@ -128,15 +128,15 @@ Friend Class frmAlert
 		For iIndice = dgVendor.Columns.Count - 1 To 2 Step -1
 			dgVendor.Columns.Remove(iIndice)
 		Next 
-		dgVendor.Columns(0).Caption = "Equipment"
-		dgVendor.Columns(1).Caption = "Load Type"
-		dgVendor.Columns.Add(2).Caption = "Account No"
-		dgVendor.Columns.Add(3).Caption = "Area"
-		dgVendor.Columns.Add(4).Caption = "Contact"
-		dgVendor.Columns.Add(5).Caption = "Phone1"
-		dgVendor.Columns.Add(6).Caption = "Phone2"
-		dgVendor.Columns.Add(7).Caption = "Fax1"
-		dgVendor.Columns.Add(8).Caption = "Fax2"
+        dgVendor.Columns.Add("Equipment", "Equipment")
+        dgVendor.Columns.Add("Load Type", "Load Type")
+        dgVendor.Columns.Add("Account No", "Account No")
+        dgVendor.Columns.Add("Area", "Area")
+        dgVendor.Columns.Add("Contact", "Contact")
+        dgVendor.Columns.Add("Phone1", "Phone1")
+        dgVendor.Columns.Add("Phone2", "Phone2")
+        dgVendor.Columns.Add("Fax1", "Fax1")
+        dgVendor.Columns.Add("Fax2", "Fax2")
 		
 		dgVendor.Columns("Equipment").Width = VB6.TwipsToPixelsX(1000)
 		dgVendor.Columns("Load Type").Width = VB6.TwipsToPixelsX(1000)
@@ -156,14 +156,14 @@ Friend Class frmAlert
 		For iIndice = dgService.Columns.Count - 1 To 2 Step -1
 			dgService.Columns.Remove(iIndice)
 		Next 
-		dgService.Columns(0).Caption = "Vendor"
-		dgService.Columns(1).Caption = "Equipment"
-		dgService.Columns.Add(2).Caption = "Content"
-		dgService.Columns.Add(3).Caption = "Service"
-		dgService.Columns.Add(4).Caption = "Rate"
-		dgService.Columns.Add(5).Caption = "Prev Rate"
-		dgService.Columns.Add(6).Caption = "Started"
-		dgService.Columns.Add(7).Caption = "Until"
+        dgService.Columns.Add("Vendor", "Vendor")
+        dgService.Columns.Add("Equipment", "Equipment")
+        dgService.Columns.Add("Content", "Content")
+        dgService.Columns.Add("Service", "Service")
+        dgService.Columns.Add("Rate", "Rate")
+        dgService.Columns.Add("Prev Rate", "Prev Rate")
+        dgService.Columns.Add("Started", "Started")
+        dgService.Columns.Add("Until", "Until")
 		
 		dgService.Columns("Vendor").Width = VB6.TwipsToPixelsX(2000)
 		dgService.Columns("Equipment").Width = VB6.TwipsToPixelsX(1000)
@@ -403,18 +403,18 @@ Friend Class frmAlert
         'End If
         '()
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        cbCustId.Text = IIf(IsDBNull(oRS.Rows(0).Item("cust_id").Value), "", oRS.Rows(0).Item("cust_id").Value)
+        cbCustId.Text = IIf(IsDBNull(oRS.Rows(0).Item("cust_id")), "", oRS.Rows(0).Item("cust_id"))
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreName.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_name").Value), "", Trim(oRS.Rows(0).Item("store_name").Value))
+        txtStoreName.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_name")), "", Trim(oRS.Rows(0).Item("store_name")))
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreCity.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_city").Value), "", Trim(oRS.Rows(0).Item("store_city").Value))
+        txtStoreCity.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_city")), "", Trim(oRS.Rows(0).Item("store_city")))
 		
 		n = mtxtStorePhone1.Mask
 		mtxtStorePhone1.Mask = ""
 		'UPGRADE_ISSUE: MSMask.MaskEdBox property mtxtStorePhone1.Format was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
         'mtxtStorePhone1.form = ""
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        mtxtStorePhone1.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_phone1").Value), "", VB6.Format(Trim(oRS.Rows(0).Item("store_phone1").Value), "(###)-###-####"))
+        mtxtStorePhone1.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_phone1")), "", VB6.Format(Trim(oRS.Rows(0).Item("store_phone1")), "(###)-###-####"))
 		mtxtStorePhone1.Mask = n
 		
 		n = mtxtStorePhone2.Mask
@@ -422,7 +422,7 @@ Friend Class frmAlert
 		'UPGRADE_ISSUE: MSMask.MaskEdBox property mtxtStorePhone2.Format was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
         'mtxtStorePhone2.Format = ""
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        mtxtStorePhone2.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_phone2").Value), "", VB6.Format(Trim(oRS.Rows(0).Item("store_phone2").Value), "(###)-###-####"))
+        mtxtStorePhone2.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_phone2")), "", VB6.Format(Trim(oRS.Rows(0).Item("store_phone2")), "(###)-###-####"))
 		mtxtStorePhone2.Mask = n
 		
 		n = mtxtStoreFax1.Mask
@@ -430,7 +430,7 @@ Friend Class frmAlert
 		'UPGRADE_ISSUE: MSMask.MaskEdBox property mtxtStoreFax1.Format was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
         'mtxtStoreFax1.Format = ""
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        mtxtStoreFax1.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_fax1").Value), "", VB6.Format(Trim(oRS.Rows(0).Item("store_fax1").Value), "(###)-###-####"))
+        mtxtStoreFax1.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_fax1")), "", VB6.Format(Trim(oRS.Rows(0).Item("store_fax1")), "(###)-###-####"))
 		mtxtStoreFax1.Mask = n
 		
 		n = mtxtStoreFax2.Mask
@@ -438,21 +438,21 @@ Friend Class frmAlert
 		'UPGRADE_ISSUE: MSMask.MaskEdBox property mtxtStoreFax2.Format was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="CC4C7EC0-C903-48FC-ACCC-81861D12DA4A"'
         'mtxtStoreFax2.Format = ""
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        mtxtStoreFax2.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_fax2").Value), "", Trim(oRS.Rows(0).Item("store_fax2").Value))
+        mtxtStoreFax2.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_fax2")), "", Trim(oRS.Rows(0).Item("store_fax2")))
 		mtxtStoreFax2.Mask = n
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreContact.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_contact").Value), "", Trim(oRS.Rows(0).Item("store_contact").Value))
+        txtStoreContact.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_contact")), "", Trim(oRS.Rows(0).Item("store_contact")))
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreFolder.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_folder").Value), "", Trim(oRS.Rows(0).Item("store_folder").Value))
+        txtStoreFolder.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_folder")), "", Trim(oRS.Rows(0).Item("store_folder")))
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        cbStoreNo.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_number").Value), "", Trim(oRS.Rows(0).Item("store_number").Value))
+        cbStoreNo.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_number")), "", Trim(oRS.Rows(0).Item("store_number")))
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreAddress.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_address").Value), "", Trim(oRS.Rows(0).Item("store_address").Value))
+        txtStoreAddress.Text = IIf(IsDBNull(oRS.Rows(0).Item("store_address")), "", Trim(oRS.Rows(0).Item("store_address")))
 		
 		For iIndice = 0 To Me.cbState.Items.Count - 1
 			'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If VB6.GetItemString(cbState, iIndice) = IIf(IsDBNull(oRS.Rows(0)("state_id").Value), "", Trim(oRS.Rows(0)("state_id").Value)) Then
+            If VB6.GetItemString(cbState, iIndice) = IIf(IsDBNull(oRS.Rows(0)("state_id")), "", Trim(oRS.Rows(0)("state_id"))) Then
                 cbState.SelectedIndex = iIndice
                 Exit For
             End If
@@ -461,20 +461,20 @@ Friend Class frmAlert
         'cbState.Text = IIf(IsNull(oRS.Rows(0)("state_id")), "", Trim(oRS.Rows(0)("state_id")))
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreZip.Text = IIf(IsDBNull(oRS.Rows(0)("store_zip").Value), "", Trim(oRS.Rows(0)("store_zip").Value))
+        txtStoreZip.Text = IIf(IsDBNull(oRS.Rows(0)("store_zip")), "", Trim(oRS.Rows(0)("store_zip")))
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IIf(IsDBNull(oRS.Rows(0)("stORe_status").Value), "", oRS.Rows(0)("stORe_status").Value) = "A" Then
+        If IIf(IsDBNull(oRS.Rows(0)("stORe_status")), "", oRS.Rows(0)("stORe_status")) = "A" Then
             cbStoreStatus.SelectedIndex = 1
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        ElseIf IIf(IsDBNull(oRS.Rows(0)("state_status").Value), "", oRS.Rows(0)("state_status").Value) = "I" Then
+        ElseIf IIf(IsDBNull(oRS.Rows(0)("state_status")), "", oRS.Rows(0)("state_status")) = "I" Then
             cbStoreStatus.SelectedIndex = 2
         Else
             cbStoreStatus.SelectedIndex = 0
         End If
 		
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        txtStoreCoCode.Text = IIf(IsDBNull(oRS.Rows(0)("store_co_code").Value), "", oRS.Rows(0)("store_co_code").Value)
+        txtStoreCoCode.Text = IIf(IsDBNull(oRS.Rows(0)("store_co_code")), "", oRS.Rows(0)("store_co_code"))
 		show_equipment()
 		
 	End Sub
@@ -484,19 +484,19 @@ Friend Class frmAlert
         Dim cmd As SqlCommand = cn.CreateCommand()
 		'    On Error GoTo ErrorHandler
 		SSTab1.SelectedIndex = 0
-        Dim rsLocal As SqlDataReader
+        Dim rsLocal As DataTable
 		
-        sStmt = "SELECT tb1.eqpt_desc as Equipment, tb1.load_id as [Load Type], " & " tb2.content_desc, tb1.eqpt_qty as Qty, " & " tb1.eqpt_temp as [Permanent/Temporary], tb1.eqpt_seq as Seq" & " FROM storeEqpt tb1 INNER JOIN content tb2" & " ON (tb1.content_id = tb2.content_id) " & " WHERE cust_id = '" & oRS.Rows(0)("cust_id").value & "'" & " AND store_id = " & oRS.Rows(0)("store_id").value & " " & " AND eqpt_status = 'A' " & " ORDER BY eqpt_seq"
+        sStmt = "SELECT tb1.eqpt_desc as Equipment, tb1.load_id as [Load Type], " & " tb2.content_desc, tb1.eqpt_qty as Qty, " & " tb1.eqpt_temp as [Permanent/Temporary], tb1.eqpt_seq as Seq" & " FROM storeEqpt tb1 INNER JOIN content tb2" & " ON (tb1.content_id = tb2.content_id) " & " WHERE cust_id = '" & oRS.Rows(0)("cust_id") & "'" & " AND store_id = " & oRS.Rows(0)("store_id") & " " & " AND eqpt_status = 'A' " & " ORDER BY eqpt_seq"
         cmd.CommandText = sStmt
 		'UPGRADE_NOTE: Object dgEquipment.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		dgEquipment.DataSource = Nothing
-        rsLocal = cmd.ExecuteReader()
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
 		
-        If rsLocal.HasRows() Then
+        If rsLocal.Rows.Count > 0 Then
             dgEquipment.DataSource = rsLocal
         Else
             'UPGRADE_NOTE: Object dgEquipment.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-            dgEquipment.DataSource = Nothing
+            dgEquipment.DataSource = rsLocal
             Exit Sub
         End If
 		
@@ -535,21 +535,20 @@ Friend Class frmAlert
 		SSTab1.SelectedIndex = 1
 		
 		'    On Error GoTo ErrorHandler
-        Dim rsLocal As SqlDataReader
+        Dim rsLocal As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
-		sStmt = "SELECT '" & Trim(dgEquipment.Columns("Equipment").Text) & "' as Equipment, " & "'" & Trim(dgEquipment.Columns("Load Type").Text) & "' as [Load Type]," & " tb1.account_no as [Account No], tb2.vend_name, tb2.vend_area as Area, " & " tb2.vend_repre as Contact, tb2.vend_phone1 as Phone1, tb2.vend_phone2 as Phone2, " & " tb2.vend_fax1 as Fax1, tb2.vend_fax2 as Fax2, tb2.vend_id, TB2.vend_seq " & " FROM vAccountEqpt tb1 INNER JOIN vBranch tb2 " & " ON (tb1.vend_seq = tb2.vend_seq ) " & " WHERE tb1.cust_id = '" & Trim(cust_id) & "'" & " AND tb1.store_id = '" & Trim(store_id) & "'" & " AND tb1.eqpt_seq='" & Trim(eqpt_seq) & "' "
+        'sStmt = "SELECT '" & Trim(dgEquipment.Columns("Equipment").Text) & "' as Equipment, " & "'" & Trim(dgEquipment.Columns("Load Type").Text) & "' as [Load Type]," & " tb1.account_no as [Account No], tb2.vend_name, tb2.vend_area as Area, " & " tb2.vend_repre as Contact, tb2.vend_phone1 as Phone1, tb2.vend_phone2 as Phone2, " & " tb2.vend_fax1 as Fax1, tb2.vend_fax2 as Fax2, tb2.vend_id, TB2.vend_seq " & " FROM vAccountEqpt tb1 INNER JOIN vBranch tb2 " & " ON (tb1.vend_seq = tb2.vend_seq ) " & " WHERE tb1.cust_id = '" & Trim(cust_id) & "'" & " AND tb1.store_id = '" & Trim(store_id) & "'" & " AND tb1.eqpt_seq='" & Trim(eqpt_seq) & "' "
+        sStmt = "SELECT '" & Trim(dgEquipment.Columns("Equipment").Name) & "' as Equipment, " & "'" & Trim(dgEquipment.Columns("Load Type").Name) & "' as [Load Type]," & " tb1.account_no as [Account No], tb2.vend_name, tb2.vend_area as Area, " & " tb2.vend_repre as Contact, tb2.vend_phone1 as Phone1, tb2.vend_phone2 as Phone2, " & " tb2.vend_fax1 as Fax1, tb2.vend_fax2 as Fax2, tb2.vend_id, TB2.vend_seq " & " FROM vAccountEqpt tb1 INNER JOIN vBranch tb2 " & " ON (tb1.vend_seq = tb2.vend_seq ) " & " WHERE tb1.cust_id = '" & Trim(cust_id) & "'" & " AND tb1.store_id = '" & Trim(store_id) & "'" & " AND tb1.eqpt_seq='" & Trim(eqpt_seq) & "' "
         cmd.CommandText = sStmt
-		'UPGRADE_NOTE: Object dgVendor.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		dgVendor.DataSource = Nothing
+        dgVendor.DataSource = Nothing
 		
 		
-        rsLocal = cmd.ExecuteReader()
+        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
 		
-        If rsLocal.HasRows() Then
+        If rsLocal.Rows.Count > 0 Then
             dgVendor.DataSource = rsLocal
         Else
-            'UPGRADE_NOTE: Object dgVendor.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-            dgVendor.DataSource = Nothing
+            dgVendor.DataSource = rsLocal
             struct_dgVendor()
             struct_dgServices()
             Exit Sub
@@ -603,7 +602,7 @@ Friend Class frmAlert
         On Error GoTo ErrorHandler
         Dim cmd As SqlCommand = cn.CreateCommand()
 
-        If dgVendor.Row < 0 Then
+        If dgVendor.SelectedRows.Count < 1 Then
             'MsgBox "Please select an Store before attempting this command", vbCritical, "GLM Error"
             struct_dgServices()
             Exit Sub
@@ -637,16 +636,16 @@ Friend Class frmAlert
         '" VContract.contract_comments, VContract.rate_status,  " + _
         '" VContract.override_exp_flag "
 
-        sStmt = sStmt & " FROM StoreEqpt, VContract, Content, Service, VBranch, Frequency " & " WHERE vContract.cust_id = StoreEqpt.cust_id " & " AND VContract.store_id = StoreEqpt.store_id " & " AND VContract.eqpt_seq = StoreEqpt.eqpt_seq " & " AND StoreEqpt.content_id = Content.content_id " & " AND VContract.serv_id = Service.serv_id " & " AND VContract.vend_seq = VBranch.vend_seq " & " AND VContract.cust_id = '" & Trim(oRS.Rows(0)("cust_id").Value) & "' " & " AND VContract.store_id = " & Str(oRS.Rows(0)("store_id").Value) & " " & " AND VContract.freq_id = Frequency.freq_id "
+        sStmt = sStmt & " FROM StoreEqpt, VContract, Content, Service, VBranch, Frequency " & " WHERE vContract.cust_id = StoreEqpt.cust_id " & " AND VContract.store_id = StoreEqpt.store_id " & " AND VContract.eqpt_seq = StoreEqpt.eqpt_seq " & " AND StoreEqpt.content_id = Content.content_id " & " AND VContract.serv_id = Service.serv_id " & " AND VContract.vend_seq = VBranch.vend_seq " & " AND VContract.cust_id = '" & Trim(oRS.Rows(0)("cust_id")) & "' " & " AND VContract.store_id = " & Str(oRS.Rows(0)("store_id")) & " " & " AND VContract.freq_id = Frequency.freq_id "
 
         'Solo se incluye si usuario selecciono un Vendor
         'If nVendSeq > 0 Then
-        sStmt = sStmt & " AND VContract.vend_seq = " & Str(CDbl(dgVendor.Columns("vend_seq").Text))
+        sStmt = sStmt & " AND VContract.vend_seq = " & Str(CDbl(dgVendor.SelectedRows(0).Cells("vend_seq").Value))
         'End If
 
         'Se agrega si ha seleccionado un equipo.
         'If nEqptSeq > 0 Then
-        sStmt = sStmt & " AND VContract.eqpt_seq = " & Str(CDbl(dgEquipment.Columns("seq").Text))
+        sStmt = sStmt & " AND VContract.eqpt_seq = " & Str(CDbl(dgEquipment.SelectedRows(0).Cells("seq").Value))
         'End If
 
         'MsgBox sStmt
@@ -655,16 +654,16 @@ Friend Class frmAlert
         '    sStmt = sStmt + " AND VContract.eqpt_seq = -1"
         'End If
 
-        Dim rsContract As SqlDataReader
+        Dim rsContract As DataTable
 
         'UPGRADE_NOTE: Object Me.dgService.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         Me.dgService.DataSource = Nothing
         cmd.CommandText = sStmt
-        rsContract = cmd.ExecuteReader()
+        rsContract = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-        If rsContract.HasRows() Then
-            dgService.DataSource = rsContract
-        End If
+        'If rsContract.Rows.Count > 0 Then
+        dgService.DataSource = rsContract
+        'End If
 
         'Formato
         '    dgContract.Columns("cust_id").Visible = False
@@ -731,8 +730,8 @@ ErrorHandler:
 		cbCustName.Items.Add("<All>")
 
         For row As Integer = 0 To rsLocal.Rows.Count - 1
-            cbCustId.Items.Add(rsLocal.Rows(row).Item("cust_id").Value) ', nCounter
-            cbCustName.Items.Add(rsLocal.Rows(row).Item("cust_name").Value) ', nCounter
+            cbCustId.Items.Add(rsLocal.Rows(row).Item("cust_id")) ', nCounter
+            cbCustName.Items.Add(rsLocal.Rows(row).Item("cust_name")) ', nCounter
             nCounter = nCounter + 1
         Next
 
@@ -745,24 +744,24 @@ ErrorHandler:
 	Private Sub load_storeNo()
 		Dim sStmt As String
 		
-		If cbCustId.SelectedIndex > 0 Then
-			
-			sStmt = "SELECT store_number, store_id FROM store"
-			If cbCustId.SelectedIndex > 0 Then
-				sStmt = sStmt & " WHERE cust_id = '" & cbCustId.Text & "'"
-			End If
-			
-			load_cb_query4(cbStoreNo, sStmt, 2, True, 100)
-			
-			If cbStoreNo.Items.Count > 0 Then
-				cbStoreNo.SelectedIndex = 0
-			End If
-			
-		Else
-			
-			Me.cbStoreNo.Items.Clear()
-			
-		End If
+        If cbCustId.SelectedIndex > -1 Then
+
+            sStmt = "SELECT store_number, store_id FROM store"
+            If cbCustId.SelectedIndex > 0 Then
+                sStmt = sStmt & " WHERE cust_id = '" & cbCustId.Text & "'"
+            End If
+
+            load_cb_query4(cbStoreNo, sStmt, 2, True, 100)
+
+            If cbStoreNo.Items.Count > 0 Then
+                cbStoreNo.SelectedIndex = 0
+            End If
+
+        Else
+
+            Me.cbStoreNo.Items.Clear()
+
+        End If
 		
 		
 	End Sub
@@ -773,15 +772,15 @@ ErrorHandler:
 	Private Sub frmAlert_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
 		clear_data()
-        'test_sql()
+		test_sql()
 	End Sub
 	Private Sub test_sql()
 		
-        Dim rsTest As SqlDataReader
+        Dim rsTest As DataTable
         Dim cmTest As SqlCommand = cn.CreateCommand()
         Dim paramTest As SqlParameter
 
-        cmTest.CommandText = "SELECT store_id, store_number FROM store WHERE cust_id = ?  "
+        cmTest.CommandText = "SELECT store_id, store_number FROM store WHERE cust_id = '" + "ND" + "'"
 
 
         '("custId", SqlDbType.VarChar, ParameterDirection.Input, 2, "ND")
@@ -799,9 +798,9 @@ ErrorHandler:
 
         'Dim nrecords As Short
 
-        rsTest = cmTest.ExecuteReader()
+        rsTest = getDataTable(cmTest.CommandText) 'getDataTable() 'cmTest.ExecuteReader()
         'MsgBox(rsTest.RecordCount)
-        MsgBox(rsTest.Item("store_number").Value)
+        MsgBox(rsTest.Rows(0).Item("store_number"))
 		
 		
 	End Sub
@@ -855,20 +854,20 @@ ErrorHandler:
         '	Exit Sub
         'End If
 		
-		If dgNotes.Row < 0 Then
-			MsgBox("Please select an Store before attempting this command", MsgBoxStyle.Critical, "GLM Error")
-			Exit Sub
-		End If
+        If dgNotes.SelectedRows.Count < 1 Then
+            MsgBox("Please select an Store before attempting this command", MsgBoxStyle.Critical, "GLM Error")
+            Exit Sub
+        End If
 		
 		gAlertRecord.bFlag = General.modo.UpdateRecord
 		
 		
 		gAlertRecord.nAlertSeq = 1
-		frmAlertEntry.secAlert = CShort(dgNotes.Columns("alert_seq").Text)
-		frmAlertEntry.alert_date = dgNotes.Columns("date").Text
+        frmAlertEntry.secAlert = CShort(dgNotes.SelectedRows(0).Cells("alert_seq").Value)
+        frmAlertEntry.alert_date = dgNotes.SelectedRows(0).Cells("date").Value
         frmAlertEntry.cust_id = oRS.Rows(0)("cust_id").value
         frmAlertEntry.store_id = oRS.Rows(0)("store_id").value
-		frmAlertEntry.alert_message_rtf = dgNotes.Columns("Regarding_rtf").Text
+        frmAlertEntry.alert_message_rtf = dgNotes.SelectedRows(0).Cells("Regarding_rtf").Value
 		frmAlertEntry.init_vars()
 		VB6.ShowForm(frmAlertEntry, VB6.FormShowConstants.Modal, Me)
 		
@@ -890,7 +889,7 @@ ErrorHandler:
         '	Exit Sub
         'End If
 		
-        Dim rsNotes As SqlDataReader
+        Dim rsNotes As DataTable
 		
 		'UPGRADE_NOTE: Object dgNotes.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		dgNotes.DataSource = Nothing
@@ -900,7 +899,7 @@ ErrorHandler:
         sStmt = "SELECT alert_date as Date, alert_message_rtf as Regarding, ' ' as Regarding_txt, alert_seq" & " FROM alert " & " WHERE " & "  cust_id = '" & Trim(oRS.Rows(0)("cust_id").value) & "' " & " AND store_id = " & Str(oRS.Rows(0)("store_id").value) & " " & " AND (alert_date between '" & dtFrom.Value & "' AND '" & dtTo.Value & CDbl("') ") + IIf(Trim(txtMessage.Text) <> "", " AND alert_message_rtf like '%" & txtMessage.Text & "%'", "") + CDbl(" ORDER BY alert_seq ")
         cmd.CommandText = sStmt
 		
-        rsNotes = cmd.ExecuteReader()
+        rsNotes = getDataTable(sStmt) 'cmd.ExecuteReader()
 		
         dCol = New DataColumn("Date")
         dCol.DataType = System.Type.GetType("System.String")
@@ -916,19 +915,21 @@ ErrorHandler:
 		'Dim lNotes As clNotes
 		
 
-        While rsNotes.Read()
+        'While rsNotes.Read()
+        For Each dr As DataRow In rsNotes.Rows
             Dim drowTmp As DataRow = rsTemp.NewRow()
 
-            drowTmp("Date") = IIf(IsDBNull(rsNotes.Item("date").Value), "", rsNotes.Item("date").Value)
-            drowTmp("Regarding_rtf") = IIf(IsDBNull(rsNotes.Item("Regarding").Value), "", rsNotes.Item("Regarding").Value)
+            drowTmp("Date") = IIf(IsDBNull(dr.Item("date")), "", dr.Item("date"))
+            drowTmp("Regarding_rtf") = IIf(IsDBNull(dr.Item("Regarding")), "", dr.Item("Regarding"))
 
-            tmpRitchTxt.Text = IIf(IsDBNull(rsNotes.Item("Regarding").Value), "", rsNotes.Item("Regarding").Value)
+            tmpRitchTxt.Text = IIf(IsDBNull(dr.Item("Regarding")), "", dr.Item("Regarding"))
             drowTmp("Regarding") = tmpRitchTxt.Text
 
-            drowTmp("alert_Seq").value = IIf(IsDBNull(rsNotes.Item("alert_seq").Value), "", rsNotes.Item("alert_seq").Value)
+            drowTmp("alert_Seq").value = IIf(IsDBNull(dr.Item("alert_seq")), "", dr.Item("alert_seq"))
             rsTemp.Rows.Add(drowTmp)
+        Next dr
 
-        End While
+        'End While
 
 
         dgNotes.DataSource = rsTemp
@@ -946,4 +947,32 @@ ErrorHandler:
         Exit Sub
 		
 	End Sub
+
+    Private Sub btFind_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btFind.Click
+
+    End Sub
+
+    Private Sub btClear_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btClear.Click
+
+    End Sub
+
+    Private Sub btFirst_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btFirst.Click
+
+    End Sub
+
+    Private Sub btBack_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btBack.Click
+
+    End Sub
+
+    Private Sub btForward_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btForward.Click
+
+    End Sub
+
+    Private Sub btLast_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btLast.Click
+
+    End Sub
+
+    Private Sub _SSTab1_TabPage0_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _SSTab1_TabPage0.Click
+
+    End Sub
 End Class
