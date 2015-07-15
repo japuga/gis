@@ -1025,18 +1025,19 @@ ErrorHandler:
     End Function
 	
 	
-	Private Sub frmInvoiceBooking_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
-		'Variables Initialization
-		init_vars()
-		bClearAll = False
-		bInvoiceSaved = False
-		
-		clear_form("HEADER")
-		clear_form("VARS") 'Inicia contadores y banderas
-		
-		nMode = mode.adInsert
-		
-		
+    Private Sub frmInvoiceBooking_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
+
+        'Variables Initialization
+        init_vars()
+        bClearAll = False
+        bInvoiceSaved = False
+
+        clear_form("HEADER")
+        clear_form("VARS") 'Inicia contadores y banderas
+
+        nMode = mode.adInsert
+
+
         sdfService = New DataGridViewCellStyle() 'StdFormat.StdDataFormat
         sdfEquipment = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
         sdfDate = New DataGridViewCellStyle() 'New StdFormat.StdDataFormat
@@ -1047,20 +1048,52 @@ ErrorHandler:
         cmTmp = cn.CreateCommand
         'cmDetail = New ADODB.Command
         'cmDetail.let_ActiveConnection(cn)
-		
-		'Carga combos, solo se requiere hacer una vez.
-		sStmt = "SELECT DISTINCT cust_id FROM suser_data " & "WHERE suser_data.suser_name ='" & gsUser & "' " & "ORDER BY 1"
-		load_cb_query(cbCustomer, sStmt, 1)
-		If cbCustomer.Items.Count > 0 Then
-			cbCustomer.SelectedIndex = 0
-		End If
-		'load_combo cbCustomer
+
+        'Carga combos, solo se requiere hacer una vez.
+        sStmt = "SELECT DISTINCT cust_id FROM suser_data " & "WHERE suser_data.suser_name ='" & gsUser & "' " & "ORDER BY 1"
+        load_cb_query(cbCustomer, sStmt, 1)
+        If cbCustomer.Items.Count > 0 Then
+            cbCustomer.SelectedIndex = 0
+        End If
+        'load_combo cbCustomer
         'load_combo cbState
 
         daDetail = New SqlDataAdapter()
         dgDetail.DataSource = bindingSource1
-		load_detail("NEW")
-	End Sub
+        load_detail("NEW")
+
+        'verificar quien esta llamando la forma
+        Try
+            Dim sCustId As String = ""
+            Dim sStoreId As String = ""
+            Dim sStoreNumber As String = ""
+            Dim sStateId As String = ""
+            Dim sVendSeq As String = ""
+            Dim sAccountNo As String = ""
+            Dim sInvoiceNo As String = ""
+            Dim parentName As String = Me.Owner.Name.ToString
+            If parentName = "frmInvoiceImport" Then
+                With frmInvoiceImport
+                    sCustId = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Cust").Value)
+                    sStoreId = Trim(.dgPendingInvoices.SelectedRows(0).Cells("store_id").Value)
+                    sStoreNumber = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Store No").Value)
+                    sStateId = Trim(.dgPendingInvoices.SelectedRows(0).Cells("state_id").Value)
+                    sVendSeq = Trim(.dgPendingInvoices.SelectedRows(0).Cells("vend_seq").Value)
+                    sAccountNo = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Account").Value)
+                    sInvoiceNo = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Invoice").Value)
+                End With
+                populateHeader(sCustId, sStoreId, sStoreNumber, sStateId, CShort(sVendSeq), sAccountNo, sInvoiceNo)
+            End If
+
+            'populateHeader(.sCustId, .sStoreId, .sStoreNumber, .sStateId, CShort(.sVendSeq), .sAccountNo, .sInvoiceNo)
+            bImportedFromLF = True
+            btNew.Enabled = False
+            btSave.Enabled = True
+            btSearch.Enabled = False
+            btDelete.Enabled = True
+        Catch e As Exception
+        End Try
+    End Sub
 	'Inicializa variables
 	Private Sub init_vars()
 		'DEBUG
@@ -2267,7 +2300,7 @@ ErrorHandler:
 
                     'If invoice was imported from LF, update status in lf2gis_vinvoice table
                     If nMode = mode.adInsert And bImportedFromLF Then
-                        update_lf2gis_vinvoice((cbCustomer.Text), CShort(txtStoreId.Text), (cbAccount.Text), VB6.GetItemData(cbVendor, cbVendor.SelectedIndex), txtInvoice.Text, "IMPORTED", "Invoice was successfully imported to GIS")
+                        update_lf2gis_vinvoice((cbCustomer.Text), CShort(txtStoreId.Text), (cbAccount.Text), VB6.GetItemData(cbVendor, cbVendor.SelectedIndex), txtInvoice.Text, "IMPORTED", "Invoice was successfully imported to GIS", nTran)
                     End If
 
                     nResult = cmTmp.ExecuteNonQuery() 'INSERT / UPDATE VINVOICE
@@ -2546,14 +2579,17 @@ EventExitSub:
 		
 		
 		
-		sStr = "SELECT store_id, store_number ," & "store_address , " & "store_city ," & "store_zip  " & "FROM store " & "WHERE cust_id ='" & Me.cbCustomer.Text & "' " & "AND state_id ='" & Me.cbState.Text & "' " & "AND store_number='" & txtStore.Text & "'"
+        sStr = "SELECT store_id, store_number ," & "store_address , " & "store_city ," & "store_zip  " & "FROM store " & _
+                "WHERE cust_id ='" & Me.cbCustomer.Text & "' " & "AND state_id ='" & Me.cbState.Text & "' " & "AND store_number='" & txtStore.Text & "'"
 		
         rs = getDataTable(sStr) '.Open(sStr, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
         If rs.Rows.Count = 1 Then
             txtStore.Tag = rs.Rows(0).Item("store_id")
             txtStoreId.Text = rs.Rows(0).Item("store_id")
-            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_city")) & " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip"))
+            lVendorAddress.Text = Trim(rs.Rows(0).Item("store_address")) & _
+                                " " & vbCrLf & Trim(rs.Rows(0).Item("store_city")) & _
+                                " " & vbCrLf & Trim(rs.Rows(0).Item("store_zip"))
         Else
             If rs.Rows.Count = 0 And bUserCancel = False Then
                 MsgBox("Could not find Store. Please check Customer, State or Store Number" & vbCrLf & "Click Help button for further assistance.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "Warning")
@@ -2798,12 +2834,13 @@ ErrorHandler:
 	Public Sub populateVendor(ByRef nVendSeq As Short)
 		Dim i As Short
 		
-		For i = 0 To cbVendor.Items.Count - 1
-			If VB6.GetItemData(cbVendor, i) = nVendSeq Then
-				cbVendor.SelectedIndex = i
-				Exit For
-			End If
-		Next i
+        For i = 0 To cbVendor.Items.Count - 1
+            Dim vendSeq As Integer = VB6.GetItemData(cbVendor, i)
+            If VB6.GetItemData(cbVendor, i) = nVendSeq Then
+                cbVendor.SelectedIndex = i
+                Exit For
+            End If
+        Next i
 		
 		
 	End Sub

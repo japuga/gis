@@ -588,19 +588,23 @@ ErrorHandler:
 		
 	End Function
 	
-	Public Sub update_lf2gis_vinvoice(ByRef sCustId As String, ByRef nStoreId As Short, ByRef sAccountNo As String, ByRef nVendSeq As Short, ByRef sInvoiceNo As String, ByRef sStatusFlag As String, ByRef sValidationComments As String)
-		Dim stmt As Object
+    Public Sub update_lf2gis_vinvoice(ByRef sCustId As String, ByRef nStoreId As Short, ByRef sAccountNo As String, ByRef nVendSeq As Short, ByRef sInvoiceNo As String, ByRef sStatusFlag As String, ByRef sValidationComments As String, Optional ByRef nTran As SqlTransaction = Nothing)
+        Dim stmt As String
         Dim cmInvoice As New SqlCommand
-		
+
         stmt = "UPDATE lf2gis_vinvoice SET status_flag ='" & sStatusFlag & "', " & " validation_comments ='" & sValidationComments & "' " & " WHERE cust_id = '" & sCustId & "'" & " AND store_id = " & Str(nStoreId) & " AND account_no ='" & sAccountNo & "' " & " AND vend_seq = " & Str(nVendSeq) & " AND invoice_no = '" & sInvoiceNo & "' "
 
         cmInvoice = cn.CreateCommand '.let_ActiveConnection(cn)
         cmInvoice.CommandType = CommandType.Text
 
-		cmInvoice.CommandText = stmt
-		cmInvoice.Executenonquery()
-		
-	End Sub
+        If Not IsNothing(nTran) Then
+            cmInvoice.Transaction = nTran
+        End If
+
+        cmInvoice.CommandText = stmt
+        cmInvoice.ExecuteNonQuery()
+
+    End Sub
 	
 	Public Sub insertInvoiceHeader(ByRef sCustId As String, ByRef sStoreId As String, ByRef sAccountNo As String, ByRef sVendSeq As String, ByRef sInvoiceNo As String)
         Dim stmt As String = ""

@@ -2,9 +2,9 @@ Option Strict Off
 Option Explicit On
 Friend Class frmInvoiceImport
 	Inherits System.Windows.Forms.Form
-    Dim rsLocal As DataTable
+    Public rsLocal As DataTable
     Dim custList As String
-    Private ImageList2 As New ImageList()
+
 	
 	
 	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -73,7 +73,7 @@ Friend Class frmInvoiceImport
 				cbCustId.SelectedIndex = i
 				custList = custList & "'" & cbCustId.Text & "'"
 				
-				'frmMain.pbMain.value = i
+                'frmMain.pbMain = i
 				'validate_invoiceImport "'" + cbCustId.Text + "'"
 				
 				If i + 1 < cbCustId.Items.Count Then
@@ -162,20 +162,21 @@ Friend Class frmInvoiceImport
 		
         rsLocal = getDataTable(stmt) '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
 		
-        If rsLocal.Rows.Count > 0 Then
-            lbRecordCount.Text = "Total Records:" & Str(rsLocal.Rows.Count)
+        'If rsLocal.Rows.Count > 0 Then
+        lbRecordCount.Text = "Total Records:" & Str(rsLocal.Rows.Count)
 
-            dgPendingInvoices.DataSource = rsLocal
-            dgPendingInvoices.Columns("store_id").Visible = False
-            dgPendingInvoices.Columns("vend_seq").Visible = False
-            dgPendingInvoices.Columns("state_id").Visible = False
-            dgPendingInvoices.Columns("Vendor").Width = VB6.TwipsToPixelsX(3000)
-            dgPendingInvoices.Columns("State").Width = VB6.TwipsToPixelsX(300)
-            dgPendingInvoices.Columns("Store No").Width = VB6.TwipsToPixelsX(1200)
-            If gsUserType <> CStr(General.UserType.Administrator) Then
-                dgPendingInvoices.Columns("Status").Visible = False
-            End If
+        dgPendingInvoices.DataSource = rsLocal
+        dgPendingInvoices.Columns("store_id").Visible = False
+        dgPendingInvoices.Columns("vend_seq").Visible = False
+        dgPendingInvoices.Columns("state_id").Visible = False
+        dgPendingInvoices.Columns("Vendor").Width = VB6.TwipsToPixelsX(3000)
+        dgPendingInvoices.Columns("State").Width = VB6.TwipsToPixelsX(300)
+        dgPendingInvoices.Columns("Store No").Width = VB6.TwipsToPixelsX(1200)
+        dgPendingInvoices.Columns("Status").Visible = True
+        If gsUserType <> CStr(General.UserType.Administrator) Then
+            dgPendingInvoices.Columns("Status").Visible = False
         End If
+        'End If
 		
 	End Sub
 	
@@ -184,12 +185,15 @@ Friend Class frmInvoiceImport
 
         Select Case Button.Name
             Case "upload"
-                If dgPendingInvoices.SelBookmarks.Count = 0 Then
+                If dgPendingInvoices.SelectedRows.Count = 0 Then
                     MsgBox("Please select at least one record to perform this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                     Exit Sub
                 End If
 
-                uploadToGis((dgPendingInvoices.Columns("Cust").Text), (dgPendingInvoices.Columns("store_id").Text), (dgPendingInvoices.Columns("Store No").Text), (dgPendingInvoices.Columns("vend_seq").Text), (dgPendingInvoices.Columns("Account").Text), (dgPendingInvoices.Columns("Invoice").Text), (dgPendingInvoices.Columns("state_id").Text))
+                uploadToGis((dgPendingInvoices.SelectedRows(0).Cells("Cust").Value), _
+                            (dgPendingInvoices.SelectedRows(0).Cells("store_id").Value), (dgPendingInvoices.SelectedRows(0).Cells("Store No").Value), _
+                            (dgPendingInvoices.SelectedRows(0).Cells("vend_seq").Value), (dgPendingInvoices.SelectedRows(0).Cells("Account").Value), _
+                            (dgPendingInvoices.SelectedRows(0).Cells("Invoice").Value), (dgPendingInvoices.SelectedRows(0).Cells("state_id").Value))
 
 
             Case "search"
@@ -218,13 +222,21 @@ Friend Class frmInvoiceImport
 		
 		'Populate Invoice form with header info
 		'UPGRADE_ISSUE: Load statement is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
-        frmInvoiceBooking.Show()
+        frmInvoiceBooking.ShowDialog(Me)
+        'VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
+        'frmInvoiceBooking.Show()
 
-		frmInvoiceBooking.populateHeader(sCustId, sStoreId, sStoreNumber, sStateId, CShort(sVendSeq), sAccountNo, sInvoiceNo)
+        'frmInvoiceBooking.populateHeader(sCustId, sStoreId, sStoreNumber, sStateId, CShort(sVendSeq), sAccountNo, sInvoiceNo)
 		
-		frmInvoiceBooking.bImportedFromLF = True
-		
-		VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
+        'frmInvoiceBooking.bImportedFromLF = True
+        'frmInvoiceBooking.btNew.Enabled = False
+        'frmInvoiceBooking.btSave.Enabled = True
+        'frmInvoiceBooking.btSearch.Enabled = False
+        'frmInvoiceBooking.btDelete.Enabled = True
+
+
+        'frmInvoiceBooking.Visible = False
+        'VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
 		
 		load_dgInvoiceImport(False)
 		
@@ -235,14 +247,52 @@ Friend Class frmInvoiceImport
 		
 		isInvoiceDuplicate = False
 		
-		sStmt = "SELECT count(*) FROM vInvoice WHERE cust_Id = '" & sCustId & "'" & " AND store_id = " & sStoreId & " AND vend_seq = " & sVendSeq & " AND account_no = '" & sAccountNo & "' " & " AND invoice_no = '" & sInvoiceNo & "' "
+        sStmt = "SELECT count(*) FROM vInvoice WHERE cust_Id = '" & sCustId & "'" & _
+                " AND store_id = " & sStoreId & " AND vend_seq = " & sVendSeq & " AND account_no = '" & sAccountNo & "' " & _
+                " AND invoice_no = '" & sInvoiceNo & "' "
 		
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic)
         If rs.Rows.Count Then
-            If rs.Rows(0).Item(0).value > 0 Then
+            If rs.Rows(0).Item(0) > 0 Then
                 isInvoiceDuplicate = True
             End If
         End If
 		
 	End Function
+
+    Private Sub btUpload_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btUpload.Click
+
+        If dgPendingInvoices.SelectedRows.Count < 1 Then
+            Try
+                If Not Trim(dgPendingInvoices.Rows(dgPendingInvoices.SelectedCells(0).RowIndex).Cells("Cust").Value) = "" Then
+                    dgPendingInvoices.Rows(dgPendingInvoices.SelectedCells(0).RowIndex).Selected = True
+                End If
+            Catch ex As Exception
+
+            End Try
+        End If
+
+        If dgPendingInvoices.SelectedRows.Count = 0 Then
+            MsgBox("Please select at least one record to perform this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        End If
+
+        uploadToGis((dgPendingInvoices.SelectedRows(0).Cells("Cust").Value), _
+                    (dgPendingInvoices.SelectedRows(0).Cells("store_id").Value), (dgPendingInvoices.SelectedRows(0).Cells("Store No").Value), _
+                    (dgPendingInvoices.SelectedRows(0).Cells("vend_seq").Value), (dgPendingInvoices.SelectedRows(0).Cells("Account").Value), _
+                    (dgPendingInvoices.SelectedRows(0).Cells("Invoice").Value), (dgPendingInvoices.SelectedRows(0).Cells("state_id").Value))
+
+
+    End Sub
+
+    Private Sub btSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSearch.Click
+        validateAndLoadInvoices()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+    Public Function getCustId() As String
+        Return "ggg"
+    End Function
 End Class
