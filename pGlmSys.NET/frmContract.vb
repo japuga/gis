@@ -357,9 +357,13 @@ ErrorHandler:
             'dgStore.SelBookmarks.Add(rsStore.Bookmark)
             'get_dgEquipmentData(False, rsStore.Item("store_id").Value)
             get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
-            If dgEquipment.CurrentRow.Index >= 0 Then
-                'dgEquipment.SelBookmarks.Add(rsEquipment.Bookmark)
-                set_dgContractData()
+            If dgEquipment.SelectedRows.Count > 0 Then
+                If dgEquipment.CurrentRow.Index >= 0 Then
+                    'dgEquipment.SelBookmarks.Add(rsEquipment.Bookmark)
+                    set_dgContractData()
+                Else
+                    get_dgContractData(True)
+                End If
             Else
                 get_dgContractData(True)
             End If
@@ -368,8 +372,8 @@ ErrorHandler:
             get_dgEquipmentData(True)
             get_dgContractData(True)
         End If
-		
-	End Sub
+
+    End Sub
 	'Busca y carga dgStore
     Private Sub get_dgStoreData(ByRef bInit As Boolean)
         Dim cmd As SqlCommand = cn.CreateCommand()

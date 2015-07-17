@@ -263,7 +263,7 @@ ErrorHandler:
         Dim bCharFlag As Boolean
         Dim cmd As SqlCommand = cn.CreateCommand()
 		
-        rsClone = rsCheckList
+        rsClone = rsCheckList.Copy()
 		
 		dup_check = False
 		
@@ -273,7 +273,7 @@ ErrorHandler:
 		sStmt = "DELETE FROM CheckException "
 
         cmd.CommandText = sStmt
-        nRecords = cm.ExecuteNonQuery()
+        nRecords = cmd.ExecuteNonQuery()
 		
             For cloneRow As Integer = 0 To rsClone.Rows.Count - 1
             nRecords = 0
@@ -289,22 +289,28 @@ ErrorHandler:
 
                         For i = 0 To rsCheckList.Columns.Count - 1
                             If rsCheckList.Rows(rsRow).Item(i) <> rsClone.Rows(cloneRow).Item(i) Then
-                                Dim prm As SqlParameter = New SqlParameter()
-                                prm.SqlDbType = SqlDbType.VarChar
+                                Dim sTypeCompare As String = ""
                                 bCharFlag = False
-                                rsCheckList.Rows(rsRow).Item(0).GetType()
 
-                                If rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.VarChar Or _
-                                    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.NChar Or _
-                                    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.Char Or _
-                                    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.NVarChar Or _
-                                    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.Text Then
-
+                                If Object.ReferenceEquals(rsCheckList.Rows(rsRow).Item(i).GetType(), sTypeCompare.GetType()) = True Then
                                     bCharFlag = True
                                     sStmt = sStmt + rsCheckList.Rows(rsRow).Item(i)
                                 Else
                                     sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i))
                                 End If
+
+                                'Dim itemType As String = rsCheckList.Rows(rsRow).Item(i).ToString
+                                'If rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.VarChar Or _
+                                '    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.NChar Or _
+                                '    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.Char Or _
+                                '    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.NVarChar Or _
+                                '    rsCheckList.Rows(rsRow).Item(i).Type = SqlDbType.Text Then
+
+                                '    bCharFlag = True
+                                '    sStmt = sStmt + rsCheckList.Rows(rsRow).Item(i)
+                                'Else
+                                '    sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i))
+                                'End If
                                 Exit For
                             End If
                         Next i
@@ -322,26 +328,32 @@ ErrorHandler:
                         'End If
 
                         'MsgBox sStmt
+                        If Not i = rsCheckList.Columns.Count Then
+                            sStmt = "INSERT INTO CheckException(cust_id,check_no, field_name, " & _
+                                                                "conflict_value1, conflict_value2)" & _
+                                                                " VALUES " & _
+                                                                "('" & cbCustId.Text & "'," & _
+                                                                Str(rsCheckList.Rows(rsRow).Item("qb_doc_num")) & "," & _
+                                                                "'" & rsCheckList.Columns(i).ColumnName & "',"
+                            '"'" & rsCheckList.Rows(rsRow).Item(i).name & "',"
+                            If bCharFlag Then
+                                sStmt = sStmt & "'" + Trim(rsCheckList.Rows(rsRow).Item(i)) + "','" + Trim(rsClone.Rows(cloneRow).Item(i)) + "')"
+                            Else
+                                sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i)) & "," & Str(rsClone.Rows(cloneRow).Item(i)) & ")"
+                            End If
 
-                        sStmt = "INSERT INTO CheckException(cust_id,check_no, field_name, " & "conflict_value1, conflict_value2) VALUES " & "('" & cbCustId.Text & "'," & Str(rsCheckList.Rows(rsRow).Item("qb_doc_num")) & "," & "'" & rsCheckList.Rows(rsRow).Item(i).name & "',"
-
-                        If bCharFlag Then
-                            sStmt = sStmt & "'" + rsCheckList.Rows(rsRow).Item(i) + "','" + rsClone.Rows(cloneRow).Item(i) + "')"
-                        Else
-                            sStmt = sStmt & Str(rsCheckList.Rows(rsRow).Item(i)) & "," & Str(rsClone.Rows(cloneRow).Item(i)) & ")"
-                        End If
-
-                        cmd.CommandText = sStmt
-                        nRecords = cmd.ExecuteNonQuery()
-                        If nRecords = 1 Then
-                            'ok
-                        Else
-                            MsgBox("Failed to log Error Exception", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-                            Exit Function
+                            cmd.CommandText = sStmt
+                            nRecords = cmd.ExecuteNonQuery()
+                            If nRecords = 1 Then
+                                'ok
+                            Else
+                                MsgBox("Failed to log Error Exception", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                                Exit Function
+                            End If
                         End If
                     End If
                 Else
-                    Exit For
+                    'Exit For
                 End If
 
             Next rsRow

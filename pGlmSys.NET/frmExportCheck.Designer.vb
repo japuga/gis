@@ -67,14 +67,14 @@
         Me.Label4 = New System.Windows.Forms.Label
         Me.Label3 = New System.Windows.Forms.Label
         Me.frDateRange = New System.Windows.Forms.GroupBox
+        Me.dtTo = New System.Windows.Forms.DateTimePicker
+        Me.dtFrom = New System.Windows.Forms.DateTimePicker
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.radioVendor = New System.Windows.Forms.RadioButton
         Me.radioCheckRange = New System.Windows.Forms.RadioButton
         Me.radioDateRange = New System.Windows.Forms.RadioButton
         Me.Label6 = New System.Windows.Forms.Label
-        Me.dtFrom = New System.Windows.Forms.DateTimePicker
-        Me.dtTo = New System.Windows.Forms.DateTimePicker
         Me.Frame1.SuspendLayout()
         Me.frVendor.SuspendLayout()
         Me.frCheckRange.SuspendLayout()
@@ -204,10 +204,10 @@
         Me.Label5.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label5.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label5.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label5.Location = New System.Drawing.Point(16, 16)
+        Me.Label5.Location = New System.Drawing.Point(6, 16)
         Me.Label5.Name = "Label5"
         Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(33, 17)
+        Me.Label5.Size = New System.Drawing.Size(43, 22)
         Me.Label5.TabIndex = 18
         Me.Label5.Text = "Name"
         '
@@ -268,7 +268,7 @@
         Me.txtCheckTo.MaxLength = 10
         Me.txtCheckTo.Name = "txtCheckTo"
         Me.txtCheckTo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtCheckTo.Size = New System.Drawing.Size(73, 19)
+        Me.txtCheckTo.Size = New System.Drawing.Size(73, 20)
         Me.txtCheckTo.TabIndex = 16
         '
         'txtCheckFrom
@@ -282,7 +282,7 @@
         Me.txtCheckFrom.MaxLength = 10
         Me.txtCheckFrom.Name = "txtCheckFrom"
         Me.txtCheckFrom.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtCheckFrom.Size = New System.Drawing.Size(73, 19)
+        Me.txtCheckFrom.Size = New System.Drawing.Size(73, 20)
         Me.txtCheckFrom.TabIndex = 15
         '
         'Label8
@@ -352,6 +352,22 @@
         Me.frDateRange.Size = New System.Drawing.Size(297, 97)
         Me.frDateRange.TabIndex = 4
         Me.frDateRange.TabStop = False
+        '
+        'dtTo
+        '
+        Me.dtTo.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtTo.Location = New System.Drawing.Point(56, 56)
+        Me.dtTo.Name = "dtTo"
+        Me.dtTo.Size = New System.Drawing.Size(94, 20)
+        Me.dtTo.TabIndex = 14
+        '
+        'dtFrom
+        '
+        Me.dtFrom.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtFrom.Location = New System.Drawing.Point(56, 19)
+        Me.dtFrom.Name = "dtFrom"
+        Me.dtFrom.Size = New System.Drawing.Size(94, 20)
+        Me.dtFrom.TabIndex = 13
         '
         'Label2
         '
@@ -437,22 +453,6 @@
         Me.Label6.TabIndex = 19
         Me.Label6.Text = "Customer"
         '
-        'dtFrom
-        '
-        Me.dtFrom.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtFrom.Location = New System.Drawing.Point(56, 19)
-        Me.dtFrom.Name = "dtFrom"
-        Me.dtFrom.Size = New System.Drawing.Size(94, 20)
-        Me.dtFrom.TabIndex = 13
-        '
-        'dtTo
-        '
-        Me.dtTo.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtTo.Location = New System.Drawing.Point(56, 56)
-        Me.dtTo.Name = "dtTo"
-        Me.dtTo.Size = New System.Drawing.Size(94, 20)
-        Me.dtTo.TabIndex = 14
-        '
         'frmExportCheck
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -473,6 +473,7 @@
         Me.Frame1.ResumeLayout(False)
         Me.frVendor.ResumeLayout(False)
         Me.frCheckRange.ResumeLayout(False)
+        Me.frCheckRange.PerformLayout()
         Me.frDateRange.ResumeLayout(False)
         Me.ResumeLayout(False)
 

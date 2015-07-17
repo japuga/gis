@@ -149,7 +149,10 @@ ErrorHandler:
 
         For chkLstRow As Integer = 0 To frmExportCheck.rsCheckList.Rows.Count - 1
             'DATOS PARA LA CABECERA
+            Dim dt As DateTime
             sDate = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_check_date").ToString()
+            dt = DateTime.Parse(sDate)
+            sDate = dt.Month.ToString + "/" + dt.Day.ToString + "/" + dt.Year.ToString()
             sTranAccount = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_bank_name")
             sTranName = frmExportCheck.rsCheckList.Rows(chkLstRow).Item("qb_vendor_name")
             'UPGRADE_WARNING: Couldn't resolve default property of object sTranAmount. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -339,40 +342,42 @@ ErrorHandler:
 		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
 
         'cdCheck.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-		cdCheckSave.ShowDialog()
-		
-		
-		
-		If Trim(cdCheckSave.FileName) = "" Then
-			MsgBox("Unable to Export Check Info, Please provide a file to save data.", MsgBoxStyle.OKOnly, "GLM Warning")
-		Else
-			'Creamos el archivo IIF para QuickBooksPro
-			If write_iif((cdCheckSave.FileName)) = False Then
-				MsgBox("An error has ocurred. Unable to export data", MsgBoxStyle.OKOnly, "GLM Error")
-			Else
-				If update_check_status Then
-					MsgBox("Data exported successfully", MsgBoxStyle.OKOnly, "GLM Message")
-				Else
-					MsgBox("Unable to update Check Info. Please try again.", MsgBoxStyle.OKOnly, "GLM Error")
-				End If
-			End If
-			Me.Close()
-		End If
-		Exit Sub
-		
-ErrorHandler: 
-		
-		'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
-		If Err.Number = DialogResult.Cancel Then
-			'Usuario selecciono cancel en SaveDialog
-			MsgBox("Operation was cancelled by user.", MsgBoxStyle.OKOnly, "GLM Warning")
-			Exit Sub
-		Else
-			save_error("frmExportCheckList", "cmdok")
-			MsgBox("An error occurred when saving check. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
-			
-		End If
-	End Sub
+        If Not cdCheckSave.ShowDialog() = Windows.Forms.DialogResult.Cancel Then
+
+
+
+            If Trim(cdCheckSave.FileName) = "" Then
+                MsgBox("Unable to Export Check Info, Please provide a file to save data.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Else
+                'Creamos el archivo IIF para QuickBooksPro
+                If write_iif((cdCheckSave.FileName)) = False Then
+                    MsgBox("An error has ocurred. Unable to export data", MsgBoxStyle.OkOnly, "GLM Error")
+                Else
+                    If update_check_status() Then
+                        MsgBox("Data exported successfully", MsgBoxStyle.OkOnly, "GLM Message")
+                    Else
+                        MsgBox("Unable to update Check Info. Please try again.", MsgBoxStyle.OkOnly, "GLM Error")
+                    End If
+                End If
+                Me.Close()
+            End If
+            Exit Sub
+        Else
+            Exit Sub
+        End If
+ErrorHandler:
+
+        'UPGRADE_WARNING: The CommonDialog CancelError property is not supported in Visual Basic .NET. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="8B377936-3DF7-4745-AA26-DD00FA5B9BE1"'
+        If Err.Number = DialogResult.Cancel Then
+            'Usuario selecciono cancel en SaveDialog
+            MsgBox("Operation was cancelled by user.", MsgBoxStyle.OkOnly, "GLM Warning")
+            Exit Sub
+        Else
+            save_error("frmExportCheckList", "cmdok")
+            MsgBox("An error occurred when saving check. Try again.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
+
+        End If
+    End Sub
 	
     Private Sub dgCustCheck_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         'Dim v As Variant
@@ -426,8 +431,11 @@ ErrorHandler:
         End If
 		
         cmLocal = cn.CreateCommand()
+        Dim numRows As Integer = frmExportCheck.rsCheckList.Rows.Count
         For row As Integer = 0 To frmExportCheck.rsCheckList.Rows.Count - 1
-            sStmt = "UPDATE bcheck SET qb_exported_flag='Y' " & " WHERE check_no=" & Str(frmExportCheck.rsCheckList.Rows(row).Item("qb_doc_num")) & " AND bank_cust_seq =" & Str(frmExportCheck.rsCheckList.Rows(row).Item("bank_cust_seq"))
+            sStmt = "UPDATE bcheck SET qb_exported_flag='Y' " & _
+            " WHERE check_no=" & Str(frmExportCheck.rsCheckList.Rows(row).Item("qb_doc_num")) & _
+            " AND bank_cust_seq =" & Str(frmExportCheck.rsCheckList.Rows(row).Item("bank_cust_seq"))
 
             'MsgBox sStmt
 

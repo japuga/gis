@@ -35,7 +35,7 @@ Friend Class frmGroupStore
 
         If dgGroups.SelectedRows.Count < 1 Then
             If dgGroups.SelectedCells.Count > 0 Then
-                dgGroups.CurrentRow.Selected = True
+                dgGroups.Rows(dgGroups.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
         If dgGroups.SelectedRows.Count > 0 Then
@@ -176,7 +176,7 @@ ErrorHandler:
 
         If dgGroups.SelectedRows.Count < 1 Then
             If dgGroups.SelectedCells.Count > 0 Then
-                dgGroups.CurrentRow.Selected = True
+                dgGroups.Rows(dgGroups.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
 

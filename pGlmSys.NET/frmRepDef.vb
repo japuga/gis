@@ -96,7 +96,10 @@ Friend Class frmRepDef
 				gRepDef.sTableName = ""
 				
             Case General.modo.UpdateRecord
-                Dim localIndex As Integer = dgRepDef.CurrentRow.Index
+                If Not dgRepDef.SelectedRows.Count > 0 Then
+                    Return False
+                End If
+                Dim localIndex As Integer = dgRepDef.SelectedRows(0).Index
 
                 'rsLocal.LoadDataRow(dgRepDef.CurrentRow., True)
                 If dgRepDef.SelectedRows.Count < 0 Then
@@ -121,28 +124,28 @@ Friend Class frmRepDef
                 End If
 
                 If Not IsDBNull(rsLocal.Rows(localIndex).Item("Stored Procedure")) Then
-                    gRepDef.sRepSpName = dgRepDef.CurrentRow.Cells("Stored Procedure").Value
+                    gRepDef.sRepSpName = dgRepDef.Rows(localIndex).Cells("Stored Procedure").Value
                 Else
                     MsgBox("Could not find report stored procedure.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 
                 If Not IsDBNull(rsLocal.Rows(localIndex).Item("Default Template")) Then
-                    gRepDef.sRepTemplateFile = dgRepDef.CurrentRow.Cells("Default Template").Value
+                    gRepDef.sRepTemplateFile = dgRepDef.Rows(localIndex).Cells("Default Template").Value
                 Else
                     MsgBox("Could not find template file.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 
                 If Not IsDBNull(rsLocal.Rows(localIndex).Item("table_name")) Then
-                    gRepDef.sTableName = dgRepDef.CurrentRow.Cells("table_name").Value
+                    gRepDef.sTableName = dgRepDef.Rows(localIndex).Cells("table_name").Value
                 Else
                     MsgBox("Could not find data table name.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                     Exit Function
                 End If
 
         End Select
-		set_RepDef = True
+        set_RepDef = True
 		Exit Function
 		
 ErrorHandler: 

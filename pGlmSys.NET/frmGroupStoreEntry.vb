@@ -663,6 +663,9 @@ ErrorHandler:
         dgStores.DataSource = Nothing
         dgStores.DataSource = rsStore
 
+        dgStores.Sort(dgStores.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
+        dgGroupStore.Sort(dgGroupStore.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
+
         dgStores.Columns(sCriteria).Visible = False
         dgGroupStore.Columns(sCriteria).Visible = False
 
@@ -679,11 +682,13 @@ ErrorHandler:
         Dim nCandidate As Short
 
         If dgGroupStore.SelectedRows.Count < 1 Then
-            If dgGroupStore.SelectedCells.Count > 0 Then
-                dgGroupStore.CurrentRow.Selected = True
+            Dim rowIndx As Integer = dgGroupStore.SelectedCells(0).RowIndex
+            Dim str As String = dgGroupStore.Rows(rowIndx).Cells(0).Value
+            If dgGroupStore.SelectedCells.Count > 0 And Not str = "" Then
+                dgGroupStore.Rows(rowIndx).Selected = True
             End If
         End If
-		
+
         'For Each vRow In dgGroupStore.SelectedRows
         For rowIndex As Integer = 0 To dgGroupStore.SelectedRows.Count - 1
             vRow = dgGroupStore.SelectedRows(rowIndex).Index
@@ -774,6 +779,9 @@ ErrorHandler:
 
         dgStores.Refresh()
         dgGroupStore.Refresh()
+
+        dgStores.Sort(dgStores.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
+        dgGroupStore.Sort(dgGroupStore.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
 
         dgStores.Columns(sCriteria).Visible = False
         dgGroupStore.Columns(sCriteria).Visible = False
