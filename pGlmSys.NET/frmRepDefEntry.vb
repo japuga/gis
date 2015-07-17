@@ -331,6 +331,9 @@ ErrorHandler:
                 End If
             End If
         End If
+        frmRepDef.dgRepDef.ClearSelection()
+        frmRepDef.dgRepDef.CurrentCell = Nothing
+        frmRepDef.dgRepDef.Rows(0).Selected = True
     End Sub
 
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _Toolbar1_Button5.Click
