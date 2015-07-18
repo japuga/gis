@@ -99,10 +99,17 @@ ErrorHandler:
 	Private Sub cmdEditTemplate_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEditTemplate.Click
 		If gRepDef.bFlag = General.modo.SavedRecord Then
             'Header was saved
+
             If dgRepDefTemplate.SelectedRows.Count > 0 Or dgRepDefTemplate.SelectedCells.Count > 0 Then
-                set_RepDefTemplate((General.modo.UpdateRecord))
-                VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
-                load_dgRepDefTemplate()
+                If Not Trim(dgRepDefTemplate.Rows(dgRepDefTemplate.SelectedCells(0).RowIndex).Cells("Template").Value) = "" Then
+                    set_RepDefTemplate((General.modo.UpdateRecord))
+                    VB6.ShowForm(frmRepDefTemplateEntry, VB6.FormShowConstants.Modal, Me)
+                    load_dgRepDefTemplate()
+                Else
+                    MsgBox("No Templates selected. Please select a template.", MsgBoxStyle.Exclamation, "Report Settings")
+                End If
+            Else
+                MsgBox("No Templates selected. Please select a template.", MsgBoxStyle.Exclamation, "Report Settings")
             End If
         Else
             If val_fields() Then

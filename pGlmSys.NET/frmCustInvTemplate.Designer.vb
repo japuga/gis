@@ -144,6 +144,7 @@
         '
         'dgTemplate
         '
+        Me.dgTemplate.AllowUserToAddRows = False
         Me.dgTemplate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgTemplate.Location = New System.Drawing.Point(24, 138)
         Me.dgTemplate.Name = "dgTemplate"

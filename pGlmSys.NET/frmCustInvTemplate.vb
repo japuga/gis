@@ -78,7 +78,7 @@ Friend Class frmCustInvTemplate
 	Private Sub update_template()
         If dgTemplate.SelectedRows.Count <= 0 Then
             If dgTemplate.SelectedCells.Count > 0 Then
-                dgTemplate.CurrentRow.Selected = True
+                dgTemplate.Rows(dgTemplate.SelectedCells(0).RowIndex).Selected = True
             Else
                 MsgBox("Please select a record before attempting this command.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
                 Exit Sub
