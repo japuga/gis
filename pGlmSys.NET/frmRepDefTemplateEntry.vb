@@ -27,18 +27,19 @@ Friend Class frmRepDefTemplateEntry
 
         'no se para que es esta linea
         'cdFile.CancelError = True 'Genera un error 32755 si el usuario escoge Cancel al guardar Save
-        cdFileOpen.ShowDialog()
+        If Not cdFileOpen.ShowDialog() = Windows.Forms.DialogResult.Cancel Then
 
 
 
-        If Trim(cdFileOpen.FileName) = "" Then
-            txtRepTemplateFile.Text = ""
-        Else
-            If fs.FileExists(cdFileOpen.FileName) Then
-                txtRepTemplateFile.Text = cdFileOpen.FileName
-            Else
+            If Trim(cdFileOpen.FileName) = "" Then
                 txtRepTemplateFile.Text = ""
-                MsgBox("Such  file does not exist.")
+            Else
+                If fs.FileExists(cdFileOpen.FileName) Then
+                    txtRepTemplateFile.Text = cdFileOpen.FileName
+                Else
+                    txtRepTemplateFile.Text = ""
+                    MsgBox("Such  file does not exist.")
+                End If
             End If
         End If
 

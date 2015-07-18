@@ -293,6 +293,7 @@
         '
         'dgRepDefTemplate
         '
+        Me.dgRepDefTemplate.AllowUserToAddRows = False
         Me.dgRepDefTemplate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgRepDefTemplate.Location = New System.Drawing.Point(27, 199)
         Me.dgRepDefTemplate.Name = "dgRepDefTemplate"
