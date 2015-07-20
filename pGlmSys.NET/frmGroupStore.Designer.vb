@@ -35,14 +35,14 @@
         Me.cbCustId = New System.Windows.Forms.ComboBox
         Me.cbCustName = New System.Windows.Forms.ComboBox
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-        Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
-        Me.label2 = New System.Windows.Forms.Label
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.dgGroups = New System.Windows.Forms.DataGridView
         Me.btNew = New System.Windows.Forms.ToolStripButton
         Me.btSave = New System.Windows.Forms.ToolStripButton
         Me.btDelete = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button5 = New System.Windows.Forms.ToolStripSeparator
         Me.btExit = New System.Windows.Forms.ToolStripButton
+        Me.label2 = New System.Windows.Forms.Label
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.dgGroups = New System.Windows.Forms.DataGridView
         Me.Toolbar1.SuspendLayout()
         CType(Me.dgGroups, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -96,11 +96,47 @@
         Me.Toolbar1.Size = New System.Drawing.Size(377, 39)
         Me.Toolbar1.TabIndex = 3
         '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 36)
+        Me.btNew.Text = "New"
+        '
+        'btSave
+        '
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 36)
+        Me.btSave.Text = "Save"
+        '
+        'btDelete
+        '
+        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
+        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btDelete.Name = "btDelete"
+        Me.btDelete.Size = New System.Drawing.Size(36, 36)
+        Me.btDelete.Text = "Delete"
+        '
         '_Toolbar1_Button5
         '
         Me._Toolbar1_Button5.AutoSize = False
         Me._Toolbar1_Button5.Name = "_Toolbar1_Button5"
         Me._Toolbar1_Button5.Size = New System.Drawing.Size(10, 39)
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
         '
         'label2
         '
@@ -130,47 +166,12 @@
         '
         'dgGroups
         '
+        Me.dgGroups.AllowUserToAddRows = False
         Me.dgGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgGroups.Location = New System.Drawing.Point(12, 151)
         Me.dgGroups.Name = "dgGroups"
         Me.dgGroups.Size = New System.Drawing.Size(337, 150)
         Me.dgGroups.TabIndex = 7
-        '
-        'btNew
-        '
-        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
-        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btNew.Name = "btNew"
-        Me.btNew.Size = New System.Drawing.Size(36, 36)
-        Me.btNew.Text = "New"
-        '
-        'btSave
-        '
-        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
-        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btSave.Name = "btSave"
-        Me.btSave.Size = New System.Drawing.Size(36, 36)
-        Me.btSave.Text = "Save"
-        '
-        'btDelete
-        '
-        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
-        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btDelete.Name = "btDelete"
-        Me.btDelete.Size = New System.Drawing.Size(36, 36)
-        Me.btDelete.Text = "Delete"
-        '
-        'btExit
-        '
-        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
-        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btExit.Name = "btExit"
-        Me.btExit.Size = New System.Drawing.Size(36, 36)
-        Me.btExit.Text = "Exit"
         '
         'frmGroupStore
         '

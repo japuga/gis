@@ -559,7 +559,7 @@ ErrorHandler:
 
         If dgStores.SelectedRows.Count < 1 Then
             If dgStores.SelectedCells.Count > 0 Then
-                dgStores.Rows(dgStores.CurrentRow.Index).Selected = True
+                dgStores.Rows(dgStores.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
 		
@@ -682,10 +682,12 @@ ErrorHandler:
         Dim nCandidate As Short
 
         If dgGroupStore.SelectedRows.Count < 1 Then
-            Dim rowIndx As Integer = dgGroupStore.SelectedCells(0).RowIndex
-            Dim str As String = dgGroupStore.Rows(rowIndx).Cells(0).Value
-            If dgGroupStore.SelectedCells.Count > 0 And Not str = "" Then
-                dgGroupStore.Rows(rowIndx).Selected = True
+            If dgGroupStore.SelectedCells.Count > 0 Then
+                Dim rowIndx As Integer = dgGroupStore.SelectedCells(0).RowIndex
+                Dim str As String = dgGroupStore.Rows(rowIndx).Cells(0).Value
+                If dgGroupStore.SelectedCells.Count > 0 And Not str = "" Then
+                    dgGroupStore.Rows(rowIndx).Selected = True
+                End If
             End If
         End If
 
@@ -780,11 +782,13 @@ ErrorHandler:
         dgStores.Refresh()
         dgGroupStore.Refresh()
 
-        dgStores.Sort(dgStores.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
-        dgGroupStore.Sort(dgGroupStore.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
-
-        dgStores.Columns(sCriteria).Visible = False
-        dgGroupStore.Columns(sCriteria).Visible = False
+        If Not Trim(sCriteria) = "" Then
+            dgStores.Sort(dgStores.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
+            dgGroupStore.Sort(dgGroupStore.Columns(sCriteria), System.ComponentModel.ListSortDirection.Ascending)
+            dgStores.Columns(sCriteria).Visible = False
+            dgGroupStore.Columns(sCriteria).Visible = False
+        End If
+  
 
     End Sub
 	

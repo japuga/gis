@@ -217,7 +217,7 @@ ErrorHandler:
                 nSubtotal = 0
 
                 'CABECERA
-                sStmt = "INSERT INTO VInvoice(invoice_no, cust_id, " & "store_id, account_no, vend_seq, total, " & " vinvoice_status, vinvoice_date, create_user, " & " change_user, change_time, period_seq) " & " VALUES ('" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & "'" & cbCustId.Text & "'," & Str(nStoreId) & "," & "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & Str(nSubtotal) & "," & "'" & sInvoiceStatus & "','" & Str(dtInvoiceDate._Value) & "','" & gsUser & "'," & "'" & gsUser & "','" & Str(dtInvoiceDate._Value) & "'," & Str(nPeriodSeq) & ")"
+                sStmt = "INSERT INTO VInvoice(invoice_no, cust_id, " & "store_id, account_no, vend_seq, total, " & " vinvoice_status, vinvoice_date, create_user, " & " change_user, change_time, period_seq) " & " VALUES ('" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & "'" & cbCustId.Text & "'," & Str(nStoreId) & "," & "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & Str(nSubtotal) & "," & "'" & sInvoiceStatus & "','" & Str(dtInvoiceDate.Value) & "','" & gsUser & "'," & "'" & gsUser & "','" & Str(dtInvoiceDate.Value) & "'," & Str(nPeriodSeq) & ")"
 
                 'MsgBox sStmt
                 cmd.CommandText = sStmt
@@ -316,7 +316,7 @@ ErrorHandler:
 			cbCustName.SelectedIndex = 0
 		End If
 		
-		dtInvoiceDate._Value = Today
+        dtInvoiceDate.Value = Today
 		
 	End Sub
 	

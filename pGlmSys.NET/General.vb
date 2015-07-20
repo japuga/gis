@@ -1395,7 +1395,7 @@ ErrorHandler:
         If cb.Items.Count = 0 Then
             Exit Sub
         End If
-
+        Dim cbVal As String = VB6.GetItemData(cb, i).ToString
         For i = 0 To cb.Items.Count - 1
             If VB6.GetItemData(cb, i) = nItemData Then
                 cb.SelectedIndex = i

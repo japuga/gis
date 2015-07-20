@@ -171,49 +171,47 @@ Friend Class frmCustInvGenSearch
             cmd.CommandText = sStmt
 			
             rsLocal2 = getDataTable(sStmt) 'cmd.ExecuteReader()
-            If rsLocal2.Rows.Count > 0 Then
-                dgData.DataSource = rsLocal2
-            End If
-			
-		Else
+            dgData.DataSource = rsLocal2
+
+
+        Else
             rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader()
-            If rsLocal.Rows.Count > 0 Then
-                dgData.DataSource = rsLocal
-            Else
-                'UPGRADE_NOTE: Object dgData.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-                'dgData.DataSource = Nothing
-                Exit Sub
-            End If
-		End If
-		
-		'Format Datagrid
-		'Cust_invoice_seq , invoice_date, billing_period
-		
-		
-		'dgData.Columns("range_seq").Visible = False
-		dgData.Columns("Cust").Width = VB6.TwipsToPixelsX(1000)
-		dgData.Columns("Invoice Date").Width = VB6.TwipsToPixelsX(1800)
-		dgData.Columns("Account").Width = VB6.TwipsToPixelsX(2000)
-		dgData.Columns("Period").Width = VB6.TwipsToPixelsX(1800)
-		dgData.Columns("Invoice").Width = VB6.TwipsToPixelsX(1800)
-		dgData.Columns("Total").Width = VB6.TwipsToPixelsX(1500)
-		
-		dgData.Columns("cust_invoice_seq").Visible = False
-		dgData.Columns("invoice_date").Visible = False
-		dgData.Columns("group_seq").Visible = False
-		dgData.Columns("Account").Visible = False
-		dgData.Columns("Invoice").Visible = False
-		dgData.Columns("Total").Visible = False
-		
-		
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+            dgData.DataSource = rsLocal
+
+            'UPGRADE_NOTE: Object dgData.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+            'dgData.DataSource = Nothing
+            Exit Sub
+        End If
+
+
+        'Format Datagrid
+        'Cust_invoice_seq , invoice_date, billing_period
+
+
+        'dgData.Columns("range_seq").Visible = False
+        dgData.Columns("Cust").Width = VB6.TwipsToPixelsX(1000)
+        dgData.Columns("Invoice Date").Width = VB6.TwipsToPixelsX(1800)
+        dgData.Columns("Account").Width = VB6.TwipsToPixelsX(2000)
+        dgData.Columns("Period").Width = VB6.TwipsToPixelsX(1800)
+        dgData.Columns("Invoice").Width = VB6.TwipsToPixelsX(1800)
+        dgData.Columns("Total").Width = VB6.TwipsToPixelsX(1500)
+
+        dgData.Columns("cust_invoice_seq").Visible = False
+        dgData.Columns("invoice_date").Visible = False
+        dgData.Columns("group_seq").Visible = False
+        dgData.Columns("Account").Visible = False
+        dgData.Columns("Invoice").Visible = False
+        dgData.Columns("Total").Visible = False
+
+
+        'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgData.Refresh()
-		
-		Exit Sub
-		
-ErrorHandler: 
-		save_error(Me.Name, "load_Data")
-		MsgBox("Unexpected error found while loading Invoice list." & vbCrLf & "Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
+
+        Exit Sub
+
+ErrorHandler:
+        save_error(Me.Name, "load_Data")
+        MsgBox("Unexpected error found while loading Invoice list." & vbCrLf & "Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
 	End Sub
 	
 	'UPGRADE_WARNING: Event cbGroupName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'

@@ -71,7 +71,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count() > 0 Then
-            lbPeriodEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbPeriodEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
 
@@ -96,8 +96,8 @@ ErrorHandler:
 
         If rsLocal.Rows.Count > 0 Then
 
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -118,7 +118,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbPeriodStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
+            lbPeriodStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
         End If
 
 
@@ -182,10 +182,10 @@ ErrorHandler:
 			rptRecycleTonParam.sPeriodSeq = "D"
 			rptRecycleTonParam.nPeriodSeqFrom = 0
 			rptRecycleTonParam.nPeriodSeqTo = 0
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			rptRecycleTonParam.sStartDate = dtStartDate._Value
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			rptRecycleTonParam.sEndDate = dtEndDate._Value
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            rptRecycleTonParam.sStartDate = dtStartDate.Value
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            rptRecycleTonParam.sEndDate = dtEndDate.Value
 		End If
 		
 		'Caption
@@ -283,13 +283,13 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		'obDetail - obSummary
@@ -340,7 +340,7 @@ ErrorHandler:
 
             If rs.Rows.Count > 0 Then
                 For row As Integer = 0 To rs.Rows.Count - 1
-                    sPeriod = sPeriod & Str(rs.Rows(row).Item("period_seq").Value) & ","
+                    sPeriod = sPeriod & Str(rs.Rows(row).Item("period_seq")) & ","
                 Next row
                 
                 sPeriod = VB.Left(sPeriod, Len(sPeriod) - 1)
@@ -349,7 +349,7 @@ ErrorHandler:
 
             sWhere = sWhere & " AND vInvoice.period_seq IN (" & sPeriod & ")"
         ElseIf obRange.Checked Then
-            sWhere = sWhere & "AND vInvoice.vinvoice_date BETWEEN " & "'" & Str(dtStartDate._Value) & "' " & " AND '" & Str(dtEndDate._Value) & "'"
+            sWhere = sWhere & "AND vInvoice.vinvoice_date BETWEEN " & "'" & Str(dtStartDate.Value) & "' " & " AND '" & Str(dtEndDate.Value) & "'"
         End If
 
         get_criteria = True
@@ -488,7 +488,7 @@ ErrorHandler:
         Try
             rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If rsLocal.Rows(0).Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Encontro registros
             Else
                 MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
@@ -617,7 +617,7 @@ ErrorHandler:
 		range_enable(True)
 		
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		'Report Type

@@ -34,37 +34,33 @@
 	Public cdFont As System.Windows.Forms.FontDialog
 	Public cdColor As System.Windows.Forms.ColorDialog
 	Public cdPrint As System.Windows.Forms.PrintDialog
-	Public WithEvents DataGrid1 As AxMSDataGridLib.AxDataGrid
-	Public WithEvents cmdCancel As System.Windows.Forms.Button
-	Public WithEvents cmdOk As System.Windows.Forms.Button
-	Public WithEvents dtEndDate As AxMSComCtl2.AxDTPicker
-	Public WithEvents dtStartDate As AxMSComCtl2.AxDTPicker
-	Public WithEvents cbPeriodName As System.Windows.Forms.ComboBox
-	Public WithEvents obRange As System.Windows.Forms.RadioButton
-	Public WithEvents obPeriod As System.Windows.Forms.RadioButton
-	Public WithEvents lbEndDate As System.Windows.Forms.Label
-	Public WithEvents lbStartDate As System.Windows.Forms.Label
-	Public WithEvents Label7 As System.Windows.Forms.Label
-	Public WithEvents Label6 As System.Windows.Forms.Label
-	Public WithEvents Label5 As System.Windows.Forms.Label
-	Public WithEvents Label4 As System.Windows.Forms.Label
-	Public WithEvents Frame1 As System.Windows.Forms.GroupBox
-	Public WithEvents cbGroupName As System.Windows.Forms.ComboBox
-	Public WithEvents cbStateId As System.Windows.Forms.ComboBox
-	Public WithEvents cbCustId As System.Windows.Forms.ComboBox
-	Public WithEvents cbCustName As System.Windows.Forms.ComboBox
-	Public WithEvents Label10 As System.Windows.Forms.Label
-	Public WithEvents Label9 As System.Windows.Forms.Label
-	Public WithEvents Label8 As System.Windows.Forms.Label
-	Public WithEvents label3 As System.Windows.Forms.Label
-	Public WithEvents Label2 As System.Windows.Forms.Label
-	Public WithEvents Label1 As System.Windows.Forms.Label
-	'NOTE: The following procedure is required by the Windows Form Designer
-	'It can be modified using the Windows Form Designer.
-	'Do not modify it using the code editor.
-	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+    Public WithEvents cmdCancel As System.Windows.Forms.Button
+    Public WithEvents cmdOk As System.Windows.Forms.Button
+    Public WithEvents cbPeriodName As System.Windows.Forms.ComboBox
+    Public WithEvents obRange As System.Windows.Forms.RadioButton
+    Public WithEvents obPeriod As System.Windows.Forms.RadioButton
+    Public WithEvents lbEndDate As System.Windows.Forms.Label
+    Public WithEvents lbStartDate As System.Windows.Forms.Label
+    Public WithEvents Label7 As System.Windows.Forms.Label
+    Public WithEvents Label6 As System.Windows.Forms.Label
+    Public WithEvents Label5 As System.Windows.Forms.Label
+    Public WithEvents Label4 As System.Windows.Forms.Label
+    Public WithEvents Frame1 As System.Windows.Forms.GroupBox
+    Public WithEvents cbGroupName As System.Windows.Forms.ComboBox
+    Public WithEvents cbStateId As System.Windows.Forms.ComboBox
+    Public WithEvents cbCustId As System.Windows.Forms.ComboBox
+    Public WithEvents cbCustName As System.Windows.Forms.ComboBox
+    Public WithEvents Label10 As System.Windows.Forms.Label
+    Public WithEvents Label9 As System.Windows.Forms.Label
+    Public WithEvents Label8 As System.Windows.Forms.Label
+    Public WithEvents label3 As System.Windows.Forms.Label
+    Public WithEvents Label2 As System.Windows.Forms.Label
+    Public WithEvents Label1 As System.Windows.Forms.Label
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmRepCostContSearch))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.ckPrintFinal = New System.Windows.Forms.CheckBox
         Me.ckGlmVendor = New System.Windows.Forms.CheckBox
@@ -83,12 +79,9 @@
         Me.cdFont = New System.Windows.Forms.FontDialog
         Me.cdColor = New System.Windows.Forms.ColorDialog
         Me.cdPrint = New System.Windows.Forms.PrintDialog
-        Me.DataGrid1 = New AxMSDataGridLib.AxDataGrid
         Me.cmdCancel = New System.Windows.Forms.Button
         Me.cmdOk = New System.Windows.Forms.Button
         Me.Frame1 = New System.Windows.Forms.GroupBox
-        Me.dtEndDate = New AxMSComCtl2.AxDTPicker
-        Me.dtStartDate = New AxMSComCtl2.AxDTPicker
         Me.cbPeriodName = New System.Windows.Forms.ComboBox
         Me.obRange = New System.Windows.Forms.RadioButton
         Me.obPeriod = New System.Windows.Forms.RadioButton
@@ -109,10 +102,9 @@
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.ListView1 = New System.Windows.Forms.ListView
-        CType(Me.DataGrid1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.dtStartDate = New System.Windows.Forms.DateTimePicker
+        Me.dtEndDate = New System.Windows.Forms.DateTimePicker
         Me.Frame1.SuspendLayout()
-        CType(Me.dtEndDate, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dtStartDate, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ckPrintFinal
@@ -283,16 +275,6 @@
         Me.ckPrintStatus.Text = "Print Equipment Status"
         Me.ckPrintStatus.UseVisualStyleBackColor = False
         '
-        'DataGrid1
-        '
-        Me.DataGrid1.DataSource = Nothing
-        Me.DataGrid1.Location = New System.Drawing.Point(464, 192)
-        Me.DataGrid1.Name = "DataGrid1"
-        Me.DataGrid1.OcxState = CType(resources.GetObject("DataGrid1.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.DataGrid1.Size = New System.Drawing.Size(257, 137)
-        Me.DataGrid1.TabIndex = 19
-        Me.DataGrid1.Visible = False
-        '
         'cmdCancel
         '
         Me.cmdCancel.BackColor = System.Drawing.SystemColors.Control
@@ -344,22 +326,6 @@
         Me.Frame1.TabIndex = 8
         Me.Frame1.TabStop = False
         Me.Frame1.Text = "Period/Date"
-        '
-        'dtEndDate
-        '
-        Me.dtEndDate.Location = New System.Drawing.Point(120, 160)
-        Me.dtEndDate.Name = "dtEndDate"
-        Me.dtEndDate.OcxState = CType(resources.GetObject("dtEndDate.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.dtEndDate.Size = New System.Drawing.Size(89, 21)
-        Me.dtEndDate.TabIndex = 16
-        '
-        'dtStartDate
-        '
-        Me.dtStartDate.Location = New System.Drawing.Point(120, 136)
-        Me.dtStartDate.Name = "dtStartDate"
-        Me.dtStartDate.OcxState = CType(resources.GetObject("dtStartDate.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.dtStartDate.Size = New System.Drawing.Size(89, 21)
-        Me.dtStartDate.TabIndex = 14
         '
         'cbPeriodName
         '
@@ -622,6 +588,22 @@
         Me.ListView1.UseCompatibleStateImageBehavior = False
         Me.ListView1.Visible = False
         '
+        'dtStartDate
+        '
+        Me.dtStartDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtStartDate.Location = New System.Drawing.Point(120, 136)
+        Me.dtStartDate.Name = "dtStartDate"
+        Me.dtStartDate.Size = New System.Drawing.Size(89, 20)
+        Me.dtStartDate.TabIndex = 24
+        '
+        'dtEndDate
+        '
+        Me.dtEndDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtEndDate.Location = New System.Drawing.Point(120, 159)
+        Me.dtEndDate.Name = "dtEndDate"
+        Me.dtEndDate.Size = New System.Drawing.Size(89, 20)
+        Me.dtEndDate.TabIndex = 25
+        '
         'frmRepCostContSearch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -641,7 +623,6 @@
         Me.Controls.Add(Me.cbReportTemplate)
         Me.Controls.Add(Me.txtReportCaption)
         Me.Controls.Add(Me.ckPrintStatus)
-        Me.Controls.Add(Me.DataGrid1)
         Me.Controls.Add(Me.cmdCancel)
         Me.Controls.Add(Me.cmdOk)
         Me.Controls.Add(Me.Frame1)
@@ -662,18 +643,17 @@
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Cost Cont Report Selection Criteria"
-        CType(Me.DataGrid1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Frame1.ResumeLayout(False)
-        CType(Me.dtEndDate, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dtStartDate, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-#End Region 
+#End Region
 
     Private Sub cbCustName_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cbCustName.Click
 
     End Sub
     Friend WithEvents ListView1 As System.Windows.Forms.ListView
+    Friend WithEvents dtEndDate As System.Windows.Forms.DateTimePicker
+    Friend WithEvents dtStartDate As System.Windows.Forms.DateTimePicker
 End Class

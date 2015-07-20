@@ -136,7 +136,7 @@
         Me.txtCity.MaxLength = 0
         Me.txtCity.Name = "txtCity"
         Me.txtCity.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtCity.Size = New System.Drawing.Size(241, 21)
+        Me.txtCity.Size = New System.Drawing.Size(241, 20)
         Me.txtCity.TabIndex = 12
         '
         'ckZip
@@ -314,6 +314,7 @@
         '
         'dgRates
         '
+        Me.dgRates.AllowUserToAddRows = False
         Me.dgRates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgRates.Location = New System.Drawing.Point(8, 215)
         Me.dgRates.Name = "dgRates"
@@ -344,6 +345,7 @@
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text = "Rate Search"
         Me.Frame1.ResumeLayout(False)
+        Me.Frame1.PerformLayout()
         CType(Me.dgRates, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

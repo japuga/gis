@@ -789,6 +789,7 @@
         '
         'DataGrid1
         '
+        Me.DataGrid1.AllowUserToAddRows = False
         Me.DataGrid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGrid1.Location = New System.Drawing.Point(417, 112)
         Me.DataGrid1.Name = "DataGrid1"
@@ -907,6 +908,7 @@
         '
         'dgDetail
         '
+        Me.dgDetail.AllowUserToAddRows = False
         Me.dgDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgDetail.Location = New System.Drawing.Point(6, 39)
         Me.dgDetail.Name = "dgDetail"

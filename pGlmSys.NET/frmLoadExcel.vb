@@ -340,7 +340,7 @@ ErrorHandler:
 
                     If val_field(sTableName, sTableField, sCell, nRow) Then
                         'ok
-                        rsTable.Rows(nRow).Item(i) = Trim(sExcelData)
+                        rsTable.Rows(rsTable.Rows.Count - 1).Item(i) = Trim(sExcelData)
                     Else
                         prbLoad.Visible = False
                         MsgBox("An error was found at line " & Str(nRow) & " in the Excel file. Correct it and try again. " & vbCrLf & " No record was loaded.", MsgBoxStyle.Exclamation, "GLM Warning")
@@ -952,16 +952,35 @@ ErrorHandler:
                         rsLocal = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
                         If rsLocal.Rows.Count > 0 Then
-                            If IsDBNull(rsLocal.Rows(row).Item(0)) Then
+                            If IsDBNull(rsLocal.Rows(0).Item(0)) Then
                                 rsTable.Rows(row).Item("store_id") = 1
                             Else
-                                rsTable.Rows(row).Item("store_id") = rsLocal.Rows(row).Item(0) + 1
+                                rsTable.Rows(row).Item("store_id") = rsLocal.Rows(0).Item(0) + 1
                             End If
                         End If
 
 
                         'insertar en store
-                        sStmt = "INSERT INTO Store (cust_id, store_id, store_number," & "store_name, store_phone1, store_phone2, store_fax1, " & "store_fax2, store_address, store_city, state_id," & "store_zip, store_contact, store_status, store_folder, " & "store_co_code) VALUES ('" & cbCustId.Text & "'," & Str(rsTable.Rows(row).Item("store_id")) & "," & "'" & UCase(Trim(rsTable.Rows(row).Item("store_number"))) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_name")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone1")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_phone2")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax1")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_fax2")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_address")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_city")) & "'," & "'" & Trim(rsTable.Rows(row).Item("state_id")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_zip")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_contact")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_status")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_folder")) & "'," & "'" & Trim(rsTable.Rows(row).Item("store_co_code")) & "')"
+                        sStmt = "INSERT INTO Store (cust_id, store_id, store_number," & _
+                            "store_name, store_phone1, store_phone2, store_fax1, " & _
+                            "store_fax2, store_address, store_city, state_id," & _
+                            "store_zip, store_contact, store_status, store_folder, " & _
+                            "store_co_code) VALUES ('" & _cbCustId.Text & "'," & _
+                                Str(rsTable.Rows(row).Item("store_id")) & "," & _
+                                "'" & UCase(Trim(rsTable.Rows(row).Item("store_number"))) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_name")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_phone1")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_phone2")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_fax1")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_fax2")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_address")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_city")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("state_id")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_zip")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_contact")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_status")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_folder")) & "'," & _
+                                "'" & Trim(rsTable.Rows(row).Item("store_co_code")) & "')"
 
                         'MsgBox sStmt
                         cm.CommandType = CommandType.Text
@@ -978,7 +997,7 @@ ErrorHandler:
 
                                 If rsLocal.Rows.Count > 0 Then
                                     'ok
-                                    nGroupSeq = rsLocal.Rows(row).Item("group_seq")
+                                    nGroupSeq = rsLocal.Rows(0).Item("group_seq")
                                 Else
                                     If MsgBox("Group Store ALL was not found. " & vbCrLf & "Do you want to continue?", MsgBoxStyle.YesNo, "GLM Warning") = MsgBoxResult.No Then
                                         nTran.Rollback()

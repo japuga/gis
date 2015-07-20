@@ -35,7 +35,9 @@ Friend Class frmExportCheck
         Dim cmd As SqlCommand = cn.CreateCommand()
 		'Informacion del Customer
 		
-		'jp.pending.begin
+        'jp.pending.begin
+        cbCustName.Items.Clear()
+        cbCustId.Items.Clear()
 		cbCustName.Items.Insert(0, "<All>")
 		cbCustId.Items.Insert(0, "<All>")
 		'jp.pending.end

@@ -124,7 +124,8 @@ Friend Class frmRateSearch
 		
 		
 		stmt = " SELECT DISTINCT a.serv_desc, a.serv_id FROM service a, vcontract b" & " WHERE a.serv_id = b.serv_id  " & " ORDER BY a.serv_desc "
-		
+
+        cbService.Items.Clear()
 		cbService.Items.Insert(0, "<All>")
 		load_cb_query2(cbService, stmt, 2, False)
 		
@@ -133,7 +134,8 @@ Friend Class frmRateSearch
 		End If
 		
 		stmt = "SELECT DISTINCT a.eqpt_desc, a.eqpt_id " & " FROM equipment a, vcontract b, storeEqpt c " & " WHERE a.eqpt_id = c.eqpt_id " & " AND b.cust_id = c.cust_id " & " AND b.store_id = c.store_id " & " AND b.eqpt_seq = c.eqpt_seq " & " ORDER BY a.eqpt_desc "
-		
+
+        cbEquipment.Items.Clear()
 		cbEquipment.Items.Insert(0, "<All>")
 		load_cb_query2(cbEquipment, stmt, 2, False)
 		
@@ -142,7 +144,9 @@ Friend Class frmRateSearch
 		End If
 		
 		stmt = "SELECT DISTINCT a.content_desc, a.content_id" & " FROM content a, vcontract b, storeEqpt c " & " WHERE a.content_id = c.content_id " & " AND b.cust_id = c.cust_id " & " AND b.store_id = c.store_id " & " AND b.eqpt_seq = c.eqpt_seq " & " ORDER BY a.content_desc"
-		cbContent.Items.Insert(0, "<All>")
+
+        cbContent.Items.Clear()
+        cbContent.Items.Insert(0, "<All>")
 		load_cb_query2(cbContent, stmt, 2, False)
 		
 		If cbContent.Items.Count > 0 Then
@@ -151,7 +155,8 @@ Friend Class frmRateSearch
 		
 		
 		stmt = "SELECT DISTINCT state_id " & " FROM vcontract a , vbranch b " & " Where a.vend_seq = b.vend_seq " & " ORDER BY state_id "
-		cbState.Items.Insert(0, "<All>")
+        cbState.Items.Clear()
+        cbState.Items.Insert(0, "<All>")
 		load_cb_query2(cbState, stmt, 1, False)
 		
 		If cbState.Items.Count > 0 Then
@@ -159,7 +164,8 @@ Friend Class frmRateSearch
 		End If
 		
 		stmt = "SELECT DISTINCT vend_zip" & " FROM vcontract a , vbranch b " & " WHERE a.vend_seq = b.vend_seq " & " ORDER BY vend_zip "
-		cbZip.Items.Insert(0, "<All>")
+        cbZip.Items.Clear()
+        cbZip.Items.Insert(0, "<All>")
 		load_cb_query2(cbZip, stmt, 1, False)
 		If cbZip.Items.Count > 0 Then
 			cbZip.SelectedIndex = 0
@@ -167,7 +173,8 @@ Friend Class frmRateSearch
 		
 		
 		ckStateCity.Checked = True
-		
+
+        cbAccountStatus.Items.Clear()
 		cbAccountStatus.Items.Insert(0, "<All>")
 		cbAccountStatus.Items.Insert(1, "Active")
 		cbAccountStatus.Items.Insert(2, "Inactive")

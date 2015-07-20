@@ -219,6 +219,7 @@
         '
         'dgSelected
         '
+        Me.dgSelected.AllowUserToAddRows = False
         Me.dgSelected.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgSelected.Location = New System.Drawing.Point(344, 216)
         Me.dgSelected.Name = "dgSelected"
@@ -227,6 +228,7 @@
         '
         'dgPending
         '
+        Me.dgPending.AllowUserToAddRows = False
         Me.dgPending.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgPending.Location = New System.Drawing.Point(16, 216)
         Me.dgPending.Name = "dgPending"

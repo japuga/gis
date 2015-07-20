@@ -365,6 +365,7 @@
         '
         'dgGroupStore
         '
+        Me.dgGroupStore.AllowUserToAddRows = False
         Me.dgGroupStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgGroupStore.Location = New System.Drawing.Point(16, 256)
         Me.dgGroupStore.Name = "dgGroupStore"
@@ -373,6 +374,7 @@
         '
         'dgStores
         '
+        Me.dgStores.AllowUserToAddRows = False
         Me.dgStores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStores.Location = New System.Drawing.Point(385, 256)
         Me.dgStores.Name = "dgStores"

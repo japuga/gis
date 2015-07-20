@@ -167,10 +167,10 @@ ErrorHandler:
 			.nPeriodSeq = VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex) '16
 			.nGroupSeq = VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex) '3
 			.bPeriodSeq = obPeriod.Checked 'True
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sStartDate = dtStartDate._Value '"01/01/2003"
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sEndDate = dtEndDate._Value ' "01/31/2003"
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            .sStartDate = dtStartDate.Value '"01/01/2003"
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            .sEndDate = dtEndDate.Value ' "01/31/2003"
 			
 		End With
 		If cbStateId.Text = "<All>" Then
@@ -358,7 +358,7 @@ ErrorHandler:
 		End If
 		
 		
-		insert_costcont_report_criteria((cbCustId.Text), nRepNo, nReport, rptCostContParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (Me.cbReportTemplate).Text, (Me.txtReportCaption).Text, sIsPeriodSeq, VB6.GetItemData(Me.cbPeriodName, cbPeriodName.SelectedIndex), (Me.dtStartDate)._Value, (Me.dtEndDate)._Value, sPrintEquipmentStatus, sDetailedCharges, sContractRange, sSavingsPercent, sPublish, (Me.txtReportCaption.Text), sUseGlmRate, sGlmVendor, sPrintFinal)
+        insert_costcont_report_criteria((cbCustId.Text), nRepNo, nReport, rptCostContParam.sStateId, VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex), (Me.cbReportTemplate).Text, (Me.txtReportCaption).Text, sIsPeriodSeq, VB6.GetItemData(Me.cbPeriodName, cbPeriodName.SelectedIndex), (Me.dtStartDate).Value, (Me.dtEndDate).Value, sPrintEquipmentStatus, sDetailedCharges, sContractRange, sSavingsPercent, sPublish, (Me.txtReportCaption.Text), sUseGlmRate, sGlmVendor, sPrintFinal)
 		
 	End Sub
 	'Verifies data entered is correct
@@ -427,13 +427,13 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate.Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		If ckDetailedCharges.CheckState = System.Windows.Forms.CheckState.Checked Then
@@ -944,7 +944,7 @@ ErrorHandler:
 		period_enable(False)
 		range_enable(False)
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		ckPrintStatus.CheckState = System.Windows.Forms.CheckState.Checked
@@ -965,7 +965,8 @@ ErrorHandler:
 			cbCustName.SelectedIndex = 0
 		End If
 		
-		'Combo State
+        'Combo State
+        cbStateId.Items.Clear()
 		cbStateId.Items.Insert(0, "<All>")
 		
 		sStmt = "SELECT state_id FROM state"

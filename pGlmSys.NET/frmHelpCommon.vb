@@ -128,7 +128,8 @@ ErrorHandler:
 			cbCustName.SelectedIndex = 0
 		End If
 		
-		'State
+        'State
+        cbState.Items.Clear()
 		cbState.Items.Insert(0, UI_ALL)
 		sStmt = "SELECT state_id, state_name FROM state "
 		load_cb_query2(cbState, sStmt, 1, False)

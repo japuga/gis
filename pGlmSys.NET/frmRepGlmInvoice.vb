@@ -785,7 +785,8 @@ ErrorHandler:
 			cbCustName.SelectedIndex = 0
 		End If
 		
-		'Combo State
+        'Combo State
+        cbStateId.Items.Clear()
 		cbStateId.Items.Insert(0, "<All>")
 		
 		sStmt = "SELECT state_id FROM state"

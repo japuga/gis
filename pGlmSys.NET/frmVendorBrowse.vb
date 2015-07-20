@@ -107,7 +107,8 @@ Friend Class frmVendorBrowse
 		sStmt = "SELECT vend_name, vend_id FROM vendor ORDER BY vend_name"
 		load_cb_query(cbVendor, sStmt, 2)
 		
-		'Combo State
+        'Combo State
+        cbState.Items.Clear()
 		cbState.Items.Insert(0, "<All>")
 		sStmt = "SELECT state_id FROM state"
 		load_cb_query2(cbState, sStmt, 1, False)

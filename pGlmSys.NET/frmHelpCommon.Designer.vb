@@ -422,6 +422,7 @@
         '
         'dgStore
         '
+        Me.dgStore.AllowUserToAddRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(24, 233)
         Me.dgStore.Name = "dgStore"
