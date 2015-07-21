@@ -37,6 +37,9 @@ Friend Class frmExportCheckExcp
         dgException.Refresh()
         dgException.DataSource = rsLocal
 
+        dgCheckDetail.DataSource = Nothing
+        dgCheckDetail.Refresh()
+
         'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
         dgException.Refresh()
 

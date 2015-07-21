@@ -44,7 +44,7 @@ Friend Class frmGroupStoreEntry
     End Sub
 	
 	Private Sub frmGroupStoreEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
-		init_vars()
+        init_vars()
 	End Sub
 	
 	Private Sub init_vars()
@@ -562,7 +562,29 @@ ErrorHandler:
                 dgStores.Rows(dgStores.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
-		
+
+        If dgStores.SelectedRows.Count < 1 Then
+            MsgBox("No available stores selected. Please select an available store to add.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Message")
+            Exit Sub
+        End If
+        Select Case sType
+            Case GROUP_LOCAL
+                sCriteria = "store_id"
+
+            Case GROUP_AREA
+                sCriteria = "group_seq"
+
+            Case GROUP_DISTRICT
+                sCriteria = "area_seq"
+
+            Case GROUP_REGION
+                sCriteria = "district_seq"
+
+            Case Else
+                write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
+                Exit Sub
+        End Select
+
         For Each vRow In dgStores.SelectedRows
             'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsStore.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
@@ -580,19 +602,15 @@ ErrorHandler:
 
                 Case GROUP_LOCAL
                     nCandidate = vRow.Cells("store_id").Value
-                    sCriteria = "store_id"
 
                 Case GROUP_AREA
                     nCandidate = vRow.Cells("group_seq").Value
-                    sCriteria = "group_seq"
 
                 Case GROUP_DISTRICT
                     nCandidate = vRow.Cells("area_seq").Value
-                    sCriteria = "area_seq"
 
                 Case GROUP_REGION
                     nCandidate = vRow.Cells("district_seq").Value
-                    sCriteria = "district_seq"
 
                 Case Else
                     write_msg("add_dgGroupStore", "Invalid parameter sType:" & sType)
