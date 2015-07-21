@@ -52,6 +52,9 @@
         Me.cbCustId = New System.Windows.Forms.ComboBox
         Me.cbCustName = New System.Windows.Forms.ComboBox
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me.btUpload = New System.Windows.Forms.ToolStripButton
+        Me.btSearch = New System.Windows.Forms.ToolStripButton
+        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.Label6 = New System.Windows.Forms.Label
         Me.Label5 = New System.Windows.Forms.Label
         Me.Label4 = New System.Windows.Forms.Label
@@ -61,9 +64,6 @@
         Me.lbStatusFlag = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.dgPendingInvoices = New System.Windows.Forms.DataGridView
-        Me.btUpload = New System.Windows.Forms.ToolStripButton
-        Me.btSearch = New System.Windows.Forms.ToolStripButton
-        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.Toolbar1.SuspendLayout()
         CType(Me.dgPendingInvoices, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -200,6 +200,33 @@
         Me.Toolbar1.Size = New System.Drawing.Size(741, 39)
         Me.Toolbar1.TabIndex = 0
         '
+        'btUpload
+        '
+        Me.btUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btUpload.Image = CType(resources.GetObject("btUpload.Image"), System.Drawing.Image)
+        Me.btUpload.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btUpload.Name = "btUpload"
+        Me.btUpload.Size = New System.Drawing.Size(36, 36)
+        Me.btUpload.Text = "Upload"
+        '
+        'btSearch
+        '
+        Me.btSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSearch.Image = CType(resources.GetObject("btSearch.Image"), System.Drawing.Image)
+        Me.btSearch.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSearch.Name = "btSearch"
+        Me.btSearch.Size = New System.Drawing.Size(36, 36)
+        Me.btSearch.Text = "Search"
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
+        '
         'Label6
         '
         Me.Label6.BackColor = System.Drawing.SystemColors.Control
@@ -308,38 +335,12 @@
         '
         'dgPendingInvoices
         '
+        Me.dgPendingInvoices.AllowUserToAddRows = False
         Me.dgPendingInvoices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgPendingInvoices.Location = New System.Drawing.Point(24, 212)
         Me.dgPendingInvoices.Name = "dgPendingInvoices"
         Me.dgPendingInvoices.Size = New System.Drawing.Size(697, 309)
         Me.dgPendingInvoices.TabIndex = 19
-        '
-        'btUpload
-        '
-        Me.btUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btUpload.Image = CType(resources.GetObject("btUpload.Image"), System.Drawing.Image)
-        Me.btUpload.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btUpload.Name = "btUpload"
-        Me.btUpload.Size = New System.Drawing.Size(36, 36)
-        Me.btUpload.Text = "Upload"
-        '
-        'btSearch
-        '
-        Me.btSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btSearch.Image = CType(resources.GetObject("btSearch.Image"), System.Drawing.Image)
-        Me.btSearch.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btSearch.Name = "btSearch"
-        Me.btSearch.Size = New System.Drawing.Size(36, 36)
-        Me.btSearch.Text = "Search"
-        '
-        'btExit
-        '
-        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
-        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btExit.Name = "btExit"
-        Me.btExit.Size = New System.Drawing.Size(36, 36)
-        Me.btExit.Text = "Exit"
         '
         'frmInvoiceImport
         '

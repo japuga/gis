@@ -23,7 +23,8 @@ Friend Class frmContract
 		cbStateId.Items.Clear()
 		
 		sStmt = "SELECT state_id FROM state " & " WHERE state_id IN (SELECT state_id FROM suser_data " & " WHERE suser_data.cust_id ='" & Trim(sCustId) & "' " & " AND suser_data.suser_name='" & Trim(gsUser) & "') "
-		cbStateId.Items.Insert(0, "<All>")
+        cbStateId.Items.Clear()
+        cbStateId.Items.Insert(0, "<All>")
 		load_cb_query2(cbStateId, sStmt, 1, False)
 		cbStateId.SelectedIndex = 0
 		
@@ -358,7 +359,7 @@ ErrorHandler:
             'get_dgEquipmentData(False, rsStore.Item("store_id").Value)
             get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
             If dgEquipment.SelectedRows.Count > 0 Then
-                If dgEquipment.CurrentRow.Index >= 0 Then
+                If dgEquipment.SelectedRows(0).Index >= 0 Then
                     'dgEquipment.SelBookmarks.Add(rsEquipment.Bookmark)
                     set_dgContractData()
                 Else
@@ -535,10 +536,19 @@ ErrorHandler:
         Dim cmd As SqlCommand = cn.CreateCommand()
         cmLocal = cn.CreateCommand
         cmLocal.CommandType = CommandType.Text
-		
+
+        If IsNothing(dgStore.CurrentRow) Then
+            MsgBox("Please select a Store to delete.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
+
+        If dgStore.Rows.Count < 1 Or dgStore.SelectedRows.Count < 1 Then
+            MsgBox("Please choose a Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
         If dgStore.CurrentRow.Index >= 0 Then
             'Se escogio una tienda. OK
-            If dgEquipment.CurrentRow.Index >= 0 Then
+            If dgEquipment.SelectedRows.Count > 0 Then
                 'OK Equipment
                 If dgContract.CurrentRow.Index >= 0 Then
                     'OK. Escogio contrato
@@ -551,7 +561,7 @@ ErrorHandler:
                 Exit Sub
             End If
         Else
-            MsgBox("Please choose an Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
+            MsgBox("Please choose a Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
             Exit Sub
         End If
 		

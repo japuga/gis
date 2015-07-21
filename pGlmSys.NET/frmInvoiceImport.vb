@@ -51,7 +51,8 @@ Friend Class frmInvoiceImport
 		Dim i As Short
         rsLocal = Nothing
 		
-		sStmt = "SELECT state_id FROM state ORDER BY state_id"
+        sStmt = "SELECT state_id FROM state ORDER BY state_id"
+        cbState.Items.Clear()
 		cbState.Items.Insert(0, "<All>")
 		load_cb_query2(cbState, sStmt, 1, False)
 		

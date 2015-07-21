@@ -43,26 +43,26 @@
         Me.cbGroupName = New System.Windows.Forms.ComboBox
         Me.ckInvoiceDates = New System.Windows.Forms.CheckBox
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
+        Me.btNew = New System.Windows.Forms.ToolStripButton
+        Me.btSave = New System.Windows.Forms.ToolStripButton
+        Me.btDelete = New System.Windows.Forms.ToolStripButton
         Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
+        Me.btPrint = New System.Windows.Forms.ToolStripButton
+        Me.btDunno = New System.Windows.Forms.ToolStripButton
+        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.cbCustId = New System.Windows.Forms.ComboBox
         Me.cbFill = New System.Windows.Forms.Button
         Me.cbPeriod = New System.Windows.Forms.ComboBox
         Me.cbCustName = New System.Windows.Forms.ComboBox
         Me.frInvoiceDates = New System.Windows.Forms.GroupBox
+        Me.dtTo = New System.Windows.Forms.DateTimePicker
+        Me.dtFrom = New System.Windows.Forms.DateTimePicker
         Me.Label3 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label5 = New System.Windows.Forms.Label
         Me.Label4 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.dgData = New System.Windows.Forms.DataGridView
-        Me.dtFrom = New System.Windows.Forms.DateTimePicker
-        Me.dtTo = New System.Windows.Forms.DateTimePicker
-        Me.btNew = New System.Windows.Forms.ToolStripButton
-        Me.btSave = New System.Windows.Forms.ToolStripButton
-        Me.btDelete = New System.Windows.Forms.ToolStripButton
-        Me.btPrint = New System.Windows.Forms.ToolStripButton
-        Me.btDunno = New System.Windows.Forms.ToolStripButton
-        Me.btExit = New System.Windows.Forms.ToolStripButton
         Me.Toolbar1.SuspendLayout()
         Me.frInvoiceDates.SuspendLayout()
         CType(Me.dgData, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -118,11 +118,65 @@
         Me.Toolbar1.Size = New System.Drawing.Size(739, 39)
         Me.Toolbar1.TabIndex = 12
         '
+        'btNew
+        '
+        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
+        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btNew.Name = "btNew"
+        Me.btNew.Size = New System.Drawing.Size(36, 36)
+        Me.btNew.Text = "New"
+        '
+        'btSave
+        '
+        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
+        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(36, 36)
+        Me.btSave.Text = "Save"
+        '
+        'btDelete
+        '
+        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
+        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btDelete.Name = "btDelete"
+        Me.btDelete.Size = New System.Drawing.Size(36, 36)
+        Me.btDelete.Text = "Delete"
+        '
         '_Toolbar1_Button4
         '
         Me._Toolbar1_Button4.AutoSize = False
         Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
         Me._Toolbar1_Button4.Size = New System.Drawing.Size(40, 39)
+        '
+        'btPrint
+        '
+        Me.btPrint.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btPrint.Image = CType(resources.GetObject("btPrint.Image"), System.Drawing.Image)
+        Me.btPrint.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btPrint.Name = "btPrint"
+        Me.btPrint.Size = New System.Drawing.Size(36, 36)
+        Me.btPrint.Text = "Print"
+        '
+        'btDunno
+        '
+        Me.btDunno.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btDunno.Image = CType(resources.GetObject("btDunno.Image"), System.Drawing.Image)
+        Me.btDunno.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btDunno.Name = "btDunno"
+        Me.btDunno.Size = New System.Drawing.Size(36, 36)
+        Me.btDunno.Text = "Dunno"
+        '
+        'btExit
+        '
+        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
+        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(36, 36)
+        Me.btExit.Text = "Exit"
         '
         'cbCustId
         '
@@ -195,6 +249,22 @@
         Me.frInvoiceDates.TabStop = False
         Me.frInvoiceDates.Text = "Search For"
         '
+        'dtTo
+        '
+        Me.dtTo.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtTo.Location = New System.Drawing.Point(287, 35)
+        Me.dtTo.Name = "dtTo"
+        Me.dtTo.Size = New System.Drawing.Size(97, 20)
+        Me.dtTo.TabIndex = 8
+        '
+        'dtFrom
+        '
+        Me.dtFrom.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtFrom.Location = New System.Drawing.Point(64, 32)
+        Me.dtFrom.Name = "dtFrom"
+        Me.dtFrom.Size = New System.Drawing.Size(97, 20)
+        Me.dtFrom.TabIndex = 7
+        '
         'Label3
         '
         Me.Label3.BackColor = System.Drawing.SystemColors.Control
@@ -230,7 +300,7 @@
         Me.Label5.Location = New System.Drawing.Point(24, 96)
         Me.Label5.Name = "Label5"
         Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(57, 17)
+        Me.Label5.Size = New System.Drawing.Size(57, 29)
         Me.Label5.TabIndex = 14
         Me.Label5.Text = "Store Group"
         '
@@ -262,81 +332,12 @@
         '
         'dgData
         '
+        Me.dgData.AllowUserToAddRows = False
         Me.dgData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgData.Location = New System.Drawing.Point(24, 263)
         Me.dgData.Name = "dgData"
         Me.dgData.Size = New System.Drawing.Size(689, 185)
         Me.dgData.TabIndex = 17
-        '
-        'dtFrom
-        '
-        Me.dtFrom.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtFrom.Location = New System.Drawing.Point(64, 32)
-        Me.dtFrom.Name = "dtFrom"
-        Me.dtFrom.Size = New System.Drawing.Size(97, 20)
-        Me.dtFrom.TabIndex = 7
-        '
-        'dtTo
-        '
-        Me.dtTo.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtTo.Location = New System.Drawing.Point(287, 35)
-        Me.dtTo.Name = "dtTo"
-        Me.dtTo.Size = New System.Drawing.Size(97, 20)
-        Me.dtTo.TabIndex = 8
-        '
-        'btNew
-        '
-        Me.btNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btNew.Image = CType(resources.GetObject("btNew.Image"), System.Drawing.Image)
-        Me.btNew.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btNew.Name = "btNew"
-        Me.btNew.Size = New System.Drawing.Size(36, 36)
-        Me.btNew.Text = "New"
-        '
-        'btSave
-        '
-        Me.btSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btSave.Image = CType(resources.GetObject("btSave.Image"), System.Drawing.Image)
-        Me.btSave.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btSave.Name = "btSave"
-        Me.btSave.Size = New System.Drawing.Size(36, 36)
-        Me.btSave.Text = "Save"
-        '
-        'btDelete
-        '
-        Me.btDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btDelete.Image = CType(resources.GetObject("btDelete.Image"), System.Drawing.Image)
-        Me.btDelete.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btDelete.Name = "btDelete"
-        Me.btDelete.Size = New System.Drawing.Size(36, 36)
-        Me.btDelete.Text = "Delete"
-        '
-        'btPrint
-        '
-        Me.btPrint.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btPrint.Image = CType(resources.GetObject("btPrint.Image"), System.Drawing.Image)
-        Me.btPrint.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btPrint.Name = "btPrint"
-        Me.btPrint.Size = New System.Drawing.Size(36, 36)
-        Me.btPrint.Text = "Print"
-        '
-        'btDunno
-        '
-        Me.btDunno.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btDunno.Image = CType(resources.GetObject("btDunno.Image"), System.Drawing.Image)
-        Me.btDunno.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btDunno.Name = "btDunno"
-        Me.btDunno.Size = New System.Drawing.Size(36, 36)
-        Me.btDunno.Text = "Dunno"
-        '
-        'btExit
-        '
-        Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.btExit.Image = CType(resources.GetObject("btExit.Image"), System.Drawing.Image)
-        Me.btExit.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btExit.Name = "btExit"
-        Me.btExit.Size = New System.Drawing.Size(36, 36)
-        Me.btExit.Text = "Exit"
         '
         'frmCustInvGenSearch
         '

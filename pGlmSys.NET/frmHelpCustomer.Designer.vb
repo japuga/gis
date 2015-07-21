@@ -75,7 +75,7 @@
         Me.txtStore.MaxLength = 0
         Me.txtStore.Name = "txtStore"
         Me.txtStore.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtStore.Size = New System.Drawing.Size(233, 21)
+        Me.txtStore.Size = New System.Drawing.Size(233, 20)
         Me.txtStore.TabIndex = 13
         '
         'frStoreFilter
@@ -114,7 +114,7 @@
         Me.txtVendName.MaxLength = 0
         Me.txtVendName.Name = "txtVendName"
         Me.txtVendName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtVendName.Size = New System.Drawing.Size(129, 19)
+        Me.txtVendName.Size = New System.Drawing.Size(129, 20)
         Me.txtVendName.TabIndex = 18
         '
         'txtAccountMask
@@ -128,7 +128,7 @@
         Me.txtAccountMask.MaxLength = 0
         Me.txtAccountMask.Name = "txtAccountMask"
         Me.txtAccountMask.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtAccountMask.Size = New System.Drawing.Size(129, 19)
+        Me.txtAccountMask.Size = New System.Drawing.Size(129, 20)
         Me.txtAccountMask.TabIndex = 17
         '
         'cmdShowAll
@@ -154,7 +154,7 @@
         Me.cmdFilter.Location = New System.Drawing.Point(536, 32)
         Me.cmdFilter.Name = "cmdFilter"
         Me.cmdFilter.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdFilter.Size = New System.Drawing.Size(65, 25)
+        Me.cmdFilter.Size = New System.Drawing.Size(65, 41)
         Me.cmdFilter.TabIndex = 11
         Me.cmdFilter.Text = "Apply Filter"
         Me.cmdFilter.UseVisualStyleBackColor = False
@@ -170,7 +170,7 @@
         Me.txtStoreAddress.MaxLength = 0
         Me.txtStoreAddress.Name = "txtStoreAddress"
         Me.txtStoreAddress.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtStoreAddress.Size = New System.Drawing.Size(177, 19)
+        Me.txtStoreAddress.Size = New System.Drawing.Size(177, 20)
         Me.txtStoreAddress.TabIndex = 10
         '
         'txtStoreName
@@ -184,7 +184,7 @@
         Me.txtStoreName.MaxLength = 0
         Me.txtStoreName.Name = "txtStoreName"
         Me.txtStoreName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtStoreName.Size = New System.Drawing.Size(113, 19)
+        Me.txtStoreName.Size = New System.Drawing.Size(113, 20)
         Me.txtStoreName.TabIndex = 9
         '
         'txtStoreNumber
@@ -198,7 +198,7 @@
         Me.txtStoreNumber.MaxLength = 0
         Me.txtStoreNumber.Name = "txtStoreNumber"
         Me.txtStoreNumber.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtStoreNumber.Size = New System.Drawing.Size(89, 19)
+        Me.txtStoreNumber.Size = New System.Drawing.Size(89, 20)
         Me.txtStoreNumber.TabIndex = 8
         '
         'Label5
@@ -207,10 +207,10 @@
         Me.Label5.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label5.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label5.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label5.Location = New System.Drawing.Point(256, 56)
+        Me.Label5.Location = New System.Drawing.Point(249, 56)
         Me.Label5.Name = "Label5"
         Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(41, 17)
+        Me.Label5.Size = New System.Drawing.Size(48, 20)
         Me.Label5.TabIndex = 16
         Me.Label5.Text = "Vendor"
         '
@@ -220,7 +220,7 @@
         Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label1.Location = New System.Drawing.Point(256, 24)
+        Me.Label1.Location = New System.Drawing.Point(248, 24)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label1.Size = New System.Drawing.Size(49, 17)
@@ -233,7 +233,7 @@
         Me.Label4.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label4.Location = New System.Drawing.Point(16, 88)
+        Me.Label4.Location = New System.Drawing.Point(6, 88)
         Me.Label4.Name = "Label4"
         Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label4.Size = New System.Drawing.Size(49, 17)
@@ -246,7 +246,7 @@
         Me.Label3.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label3.Location = New System.Drawing.Point(16, 56)
+        Me.Label3.Location = New System.Drawing.Point(6, 56)
         Me.Label3.Name = "Label3"
         Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label3.Size = New System.Drawing.Size(65, 17)
@@ -259,10 +259,10 @@
         Me.Label2.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label2.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label2.Location = New System.Drawing.Point(16, 24)
+        Me.Label2.Location = New System.Drawing.Point(6, 24)
         Me.Label2.Name = "Label2"
         Me.Label2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label2.Size = New System.Drawing.Size(65, 17)
+        Me.Label2.Size = New System.Drawing.Size(75, 20)
         Me.Label2.TabIndex = 5
         Me.Label2.Text = "Number"
         '
@@ -322,8 +322,9 @@
         '
         'dgStore
         '
+        Me.dgStore.AllowUserToAddRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgStore.Location = New System.Drawing.Point(16, 180)
+        Me.dgStore.Location = New System.Drawing.Point(12, 180)
         Me.dgStore.Name = "dgStore"
         Me.dgStore.Size = New System.Drawing.Size(616, 241)
         Me.dgStore.TabIndex = 15
@@ -349,8 +350,10 @@
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Customer Information"
         Me.frStoreFilter.ResumeLayout(False)
+        Me.frStoreFilter.PerformLayout()
         CType(Me.dgStore, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents dgStore As System.Windows.Forms.DataGridView

@@ -88,6 +88,7 @@
         '
         'dgEquipment
         '
+        Me.dgEquipment.AllowUserToAddRows = False
         Me.dgEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgEquipment.Location = New System.Drawing.Point(16, 172)
         Me.dgEquipment.Name = "dgEquipment"
@@ -96,6 +97,7 @@
         '
         'dgStore
         '
+        Me.dgStore.AllowUserToAddRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(16, 32)
         Me.dgStore.Name = "dgStore"
@@ -333,6 +335,7 @@
         '
         'dgContract
         '
+        Me.dgContract.AllowUserToAddRows = False
         Me.dgContract.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgContract.Location = New System.Drawing.Point(16, 380)
         Me.dgContract.Name = "dgContract"

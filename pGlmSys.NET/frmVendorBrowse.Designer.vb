@@ -157,6 +157,7 @@
         '
         'dgVendor
         '
+        Me.dgVendor.AllowUserToAddRows = False
         Me.dgVendor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgVendor.Location = New System.Drawing.Point(16, 144)
         Me.dgVendor.Name = "dgVendor"

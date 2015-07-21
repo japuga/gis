@@ -322,7 +322,7 @@ ErrorHandler:
 		range_enable(True)
 		
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		
@@ -432,7 +432,7 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-            If dtStartDate._Value > dtEndDate._Value Then
+            If dtStartDate.Value > dtEndDate.Value Then
                 MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
                 val_fields = False
                 Exit Function

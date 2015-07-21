@@ -58,7 +58,8 @@ Friend Class frmInvoiceBooking
 	Private bRequiresUpdate As Boolean
 	Private bLastDeleted As Boolean
 	Private vMark As Object
-	Public bImportedFromLF As Boolean
+    Public bImportedFromLF As Boolean
+    Private ignoreStateValidation As Boolean = False
 	
 	
 	
@@ -388,49 +389,54 @@ ErrorHandler:
 		Dim sText As String
 		Dim bFound As Boolean
 		Dim i As Short
-		
-		bFound = False
-		sText = UCase(cbState.Text)
-		For i = 0 To cbState.Items.Count - 1
-			If sText = VB6.GetItemString(cbState, i) Then
-				bFound = True
-				cbState.SelectedIndex = i
-				
-				'Limpiar campos relacionados cuando se selecciona un estado
-				
-				Exit For
-			End If
-		Next i
-		
-		If bFound = False Then
-			MsgBox("Please select a state from the list.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "Warning")
-			cbState.SelectedIndex = 0
-			Cancel = True
-		Else
-			If sCurrState = "" Then
-				sCurrState = cbState.Text
-				GoTo EventExitSub
-			End If
-			If sCurrState <> "" And sCurrState <> cbState.Text Then
-				'Guardo el state_id para verificar cuando se cambia
-				sPrevState = sCurrState
-				sCurrState = cbState.Text
-				If (MsgBox("This change will clear some fields," & vbCrLf & " do you want to proceed?", MsgBoxStyle.Information + MsgBoxStyle.YesNo, "Warning") = MsgBoxResult.Yes) Then
-					'Limipio campos relacionados
-					txtStore.Text = "Store#"
-					txtStore.Tag = ""
-					txtStoreId.Text = ""
-					cbVendor.Items.Clear()
-					cbAccount.Items.Clear()
-					txtStore.Focus()
-				Else
-					cbState.Text = sPrevState
-				End If
-			End If 'currState=PrevState
-		End If
-EventExitSub: 
-		eventArgs.Cancel = Cancel
-	End Sub
+
+        If ignoreStateValidation Then
+            ignoreStateValidation = False
+            Exit Sub
+        End If
+
+        bFound = False
+        sText = UCase(cbState.Text)
+        For i = 0 To cbState.Items.Count - 1
+            If sText = VB6.GetItemString(cbState, i) Then
+                bFound = True
+                cbState.SelectedIndex = i
+
+                'Limpiar campos relacionados cuando se selecciona un estado
+
+                Exit For
+            End If
+        Next i
+
+        If bFound = False Then
+            MsgBox("Please select a state from the list.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Warning")
+            cbState.SelectedIndex = 0
+            Cancel = True
+        Else
+            If sCurrState = "" Then
+                sCurrState = cbState.Text
+                GoTo EventExitSub
+            End If
+            If sCurrState <> "" And sCurrState <> cbState.Text Then
+                'Guardo el state_id para verificar cuando se cambia
+                sPrevState = sCurrState
+                sCurrState = cbState.Text
+                If (MsgBox("This change will clear some fields," & vbCrLf & " do you want to proceed?", MsgBoxStyle.Information + MsgBoxStyle.YesNo, "Warning") = MsgBoxResult.Yes) Then
+                    'Limipio campos relacionados
+                    txtStore.Text = "Store#"
+                    txtStore.Tag = ""
+                    txtStoreId.Text = ""
+                    cbVendor.Items.Clear()
+                    cbAccount.Items.Clear()
+                    txtStore.Focus()
+                Else
+                    cbState.Text = sPrevState
+                End If
+            End If 'currState=PrevState
+        End If
+EventExitSub:
+        eventArgs.Cancel = Cancel
+    End Sub
 	
 	'UPGRADE_WARNING: Event cbVendor.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbVendor_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbVendor.SelectedIndexChanged
@@ -1083,14 +1089,15 @@ ErrorHandler:
                     sInvoiceNo = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Invoice").Value)
                 End With
                 populateHeader(sCustId, sStoreId, sStoreNumber, sStateId, CShort(sVendSeq), sAccountNo, sInvoiceNo)
+                bImportedFromLF = True
+                btNew.Enabled = False
+                btSave.Enabled = True
+                btSearch.Enabled = False
+                btDelete.Enabled = True
             End If
 
             'populateHeader(.sCustId, .sStoreId, .sStoreNumber, .sStateId, CShort(.sVendSeq), .sAccountNo, .sInvoiceNo)
-            bImportedFromLF = True
-            btNew.Enabled = False
-            btSave.Enabled = True
-            btSearch.Enabled = False
-            btDelete.Enabled = True
+           
         Catch e As Exception
         End Try
     End Sub
@@ -1189,21 +1196,21 @@ ErrorHandler:
                 Dim errMsg As String = ex.Message
             End Try
         End If
-		
-		'Cargo parametros
-        cmDetail.Parameters(0).Value = cbCustomer.SelectedItem.ToString
-        cmDetail.Parameters(1).Value = txtInvoice.Text
-        cmDetail.Parameters(2).Value = nVendId 'cbVendor.ItemData(cbVendor.ListIndex)
-        cmDetail.Parameters(3).Value = cbAccount.Text
-        cmDetail.Parameters(4).Value = txtStore.Text
-
-        'daDetail.SelectCommand.Parameters(0).Value = cbCustomer.SelectedItem.ToString
-        'daDetail.SelectCommand.Parameters(1).Value = txtInvoice.Text
-        'daDetail.SelectCommand.Parameters(2).Value = nVendId 'cbVendor.ItemData(cbVendor.ListIndex)
-        'daDetail.SelectCommand.Parameters(3).Value = cbAccount.Text
-        'daDetail.SelectCommand.Parameters(4).Value = txtStore.Text
-        
         Try
+            'Cargo parametros
+            cmDetail.Parameters(0).Value = cbCustomer.SelectedItem.ToString
+            cmDetail.Parameters(1).Value = txtInvoice.Text
+            cmDetail.Parameters(2).Value = nVendId 'cbVendor.ItemData(cbVendor.ListIndex)
+            cmDetail.Parameters(3).Value = cbAccount.Text
+            cmDetail.Parameters(4).Value = txtStore.Text
+
+            'daDetail.SelectCommand.Parameters(0).Value = cbCustomer.SelectedItem.ToString
+            'daDetail.SelectCommand.Parameters(1).Value = txtInvoice.Text
+            'daDetail.SelectCommand.Parameters(2).Value = nVendId 'cbVendor.ItemData(cbVendor.ListIndex)
+            'daDetail.SelectCommand.Parameters(3).Value = cbAccount.Text
+            'daDetail.SelectCommand.Parameters(4).Value = txtStore.Text
+
+
             'rsDetail.Open sStr, cn, adOpenStatic, adLockBatchOptimistic
             'da.SelectCommand = cmDetail
             daDetail = New SqlDataAdapter(cmDetail)
@@ -1713,7 +1720,8 @@ ErrorHandler:
 		
 		nMode = mode.adInsert
 		enable_pk(True)
-		bClearAll = True
+        bClearAll = True
+        ignoreStateValidation = True
 		clear_form("ALL")
 	End Sub
 	'Limpia la forma

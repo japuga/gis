@@ -361,7 +361,7 @@
         Me.txtLocation.MaxLength = 0
         Me.txtLocation.Name = "txtLocation"
         Me.txtLocation.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtLocation.Size = New System.Drawing.Size(305, 21)
+        Me.txtLocation.Size = New System.Drawing.Size(305, 20)
         Me.txtLocation.TabIndex = 50
         '
         'ckLocation
@@ -522,7 +522,7 @@
         Me.txtInvoiceNo.MaxLength = 0
         Me.txtInvoiceNo.Name = "txtInvoiceNo"
         Me.txtInvoiceNo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtInvoiceNo.Size = New System.Drawing.Size(113, 19)
+        Me.txtInvoiceNo.Size = New System.Drawing.Size(113, 20)
         Me.txtInvoiceNo.TabIndex = 17
         '
         'txtAccountNo
@@ -536,7 +536,7 @@
         Me.txtAccountNo.MaxLength = 0
         Me.txtAccountNo.Name = "txtAccountNo"
         Me.txtAccountNo.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtAccountNo.Size = New System.Drawing.Size(113, 19)
+        Me.txtAccountNo.Size = New System.Drawing.Size(113, 20)
         Me.txtAccountNo.TabIndex = 16
         '
         'txBillingPeriod
@@ -550,7 +550,7 @@
         Me.txBillingPeriod.MaxLength = 0
         Me.txBillingPeriod.Name = "txBillingPeriod"
         Me.txBillingPeriod.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txBillingPeriod.Size = New System.Drawing.Size(225, 21)
+        Me.txBillingPeriod.Size = New System.Drawing.Size(225, 20)
         Me.txBillingPeriod.TabIndex = 13
         '
         'txtInvoiceDate
@@ -564,7 +564,7 @@
         Me.txtInvoiceDate.MaxLength = 0
         Me.txtInvoiceDate.Name = "txtInvoiceDate"
         Me.txtInvoiceDate.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtInvoiceDate.Size = New System.Drawing.Size(249, 21)
+        Me.txtInvoiceDate.Size = New System.Drawing.Size(249, 20)
         Me.txtInvoiceDate.TabIndex = 9
         '
         'txtAddress
@@ -601,10 +601,10 @@
         Me.Label16.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label16.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label16.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label16.Location = New System.Drawing.Point(16, 496)
+        Me.Label16.Location = New System.Drawing.Point(6, 496)
         Me.Label16.Name = "Label16"
         Me.Label16.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label16.Size = New System.Drawing.Size(201, 17)
+        Me.Label16.Size = New System.Drawing.Size(209, 20)
         Me.Label16.TabIndex = 28
         Me.Label16.Text = "Grand Total..............................................."
         '
@@ -614,7 +614,7 @@
         Me.Label15.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label15.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label15.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label15.Location = New System.Drawing.Point(16, 472)
+        Me.Label15.Location = New System.Drawing.Point(6, 472)
         Me.Label15.Name = "Label15"
         Me.Label15.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label15.Size = New System.Drawing.Size(201, 17)
@@ -640,10 +640,10 @@
         Me.Label13.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label13.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label13.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label13.Location = New System.Drawing.Point(16, 448)
+        Me.Label13.Location = New System.Drawing.Point(6, 448)
         Me.Label13.Name = "Label13"
         Me.Label13.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label13.Size = New System.Drawing.Size(201, 17)
+        Me.Label13.Size = New System.Drawing.Size(212, 20)
         Me.Label13.TabIndex = 23
         Me.Label13.Text = "Invoice Fee..............................................."
         '
@@ -653,7 +653,7 @@
         Me.Label12.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label12.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label12.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label12.Location = New System.Drawing.Point(16, 424)
+        Me.Label12.Location = New System.Drawing.Point(6, 424)
         Me.Label12.Name = "Label12"
         Me.Label12.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label12.Size = New System.Drawing.Size(209, 17)
@@ -666,10 +666,10 @@
         Me.Label11.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label11.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label11.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label11.Location = New System.Drawing.Point(16, 400)
+        Me.Label11.Location = New System.Drawing.Point(6, 400)
         Me.Label11.Name = "Label11"
         Me.Label11.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label11.Size = New System.Drawing.Size(209, 17)
+        Me.Label11.Size = New System.Drawing.Size(219, 24)
         Me.Label11.TabIndex = 21
         Me.Label11.Text = "GLM Charges(Savings Percent) ................"
         '
@@ -679,7 +679,7 @@
         Me.Label10.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label10.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label10.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label10.Location = New System.Drawing.Point(16, 376)
+        Me.Label10.Location = New System.Drawing.Point(6, 376)
         Me.Label10.Name = "Label10"
         Me.Label10.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label10.Size = New System.Drawing.Size(209, 17)
@@ -692,7 +692,7 @@
         Me.Label9.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label9.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label9.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label9.Location = New System.Drawing.Point(16, 352)
+        Me.Label9.Location = New System.Drawing.Point(6, 352)
         Me.Label9.Name = "Label9"
         Me.Label9.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label9.Size = New System.Drawing.Size(225, 17)
@@ -718,7 +718,7 @@
         Me.Label7.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label7.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label7.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label7.Location = New System.Drawing.Point(16, 192)
+        Me.Label7.Location = New System.Drawing.Point(6, 187)
         Me.Label7.Name = "Label7"
         Me.Label7.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Label7.Size = New System.Drawing.Size(97, 17)
@@ -731,10 +731,10 @@
         Me.Label6.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label6.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label6.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label6.Location = New System.Drawing.Point(16, 152)
+        Me.Label6.Location = New System.Drawing.Point(2, 152)
         Me.Label6.Name = "Label6"
         Me.Label6.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label6.Size = New System.Drawing.Size(89, 17)
+        Me.Label6.Size = New System.Drawing.Size(96, 17)
         Me.Label6.TabIndex = 12
         Me.Label6.Text = "For the month of"
         '
@@ -757,10 +757,10 @@
         Me.Label4.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label4.Location = New System.Drawing.Point(16, 40)
+        Me.Label4.Location = New System.Drawing.Point(9, 32)
         Me.Label4.Name = "Label4"
         Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label4.Size = New System.Drawing.Size(81, 17)
+        Me.Label4.Size = New System.Drawing.Size(88, 30)
         Me.Label4.TabIndex = 10
         Me.Label4.Text = "Invoice Date"
         '
@@ -800,7 +800,7 @@
         Me.Label18.Location = New System.Drawing.Point(16, 208)
         Me.Label18.Name = "Label18"
         Me.Label18.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label18.Size = New System.Drawing.Size(57, 17)
+        Me.Label18.Size = New System.Drawing.Size(57, 41)
         Me.Label18.TabIndex = 33
         Me.Label18.Text = "Template"
         '
@@ -813,7 +813,7 @@
         Me.Label17.Location = New System.Drawing.Point(16, 168)
         Me.Label17.Name = "Label17"
         Me.Label17.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label17.Size = New System.Drawing.Size(65, 17)
+        Me.Label17.Size = New System.Drawing.Size(65, 40)
         Me.Label17.TabIndex = 31
         Me.Label17.Text = "Store Group"
         '
@@ -826,7 +826,7 @@
         Me.Label3.Location = New System.Drawing.Point(16, 128)
         Me.Label3.Name = "Label3"
         Me.Label3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label3.Size = New System.Drawing.Size(81, 17)
+        Me.Label3.Size = New System.Drawing.Size(81, 40)
         Me.Label3.TabIndex = 7
         Me.Label3.Text = "Invoicing Period"
         '
@@ -852,7 +852,7 @@
         Me.Label1.Location = New System.Drawing.Point(16, 48)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(65, 17)
+        Me.Label1.Size = New System.Drawing.Size(65, 22)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Invoice Date"
         '

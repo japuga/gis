@@ -39,13 +39,13 @@ Friend Class frmCustInvTemplate
 		End If
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-        If rsLocal.Rows.Count > 0 Then
-            dgTemplate.DataSource = rsLocal
-        End If
-				
-		dgTemplate.Columns("template_id").Visible = False
-		
-		dgTemplate.Columns("File Name").Width = VB6.TwipsToPixelsX(2000)
+        'If rsLocal.Rows.Count > 0 Then
+        dgTemplate.DataSource = rsLocal
+        'End If
+
+        dgTemplate.Columns("template_id").Visible = False
+
+        dgTemplate.Columns("File Name").Width = VB6.TwipsToPixelsX(2000)
 		
 	End Sub
 	

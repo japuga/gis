@@ -173,16 +173,18 @@ ErrorHandler:
                 End If
 
             Case General.modo.UpdateRecord
-                sStmt = "UPDATE CustomerInvoiceTemplate " & " SET template_name = ?, description = ?, filename = ? " & " WHERE template_id  = ? "
+                sStmt = "UPDATE CustomerInvoiceTemplate " & _
+                        " SET template_name = @templateName, description = @description, filename = @filename " & _
+                        " WHERE template_id  = @template_id "
 
                 cm = cn.CreateCommand
 
-                create_param_rs("templateName", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
-                create_param_rs("description", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
-                create_param_rs("filename", DbType.String, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
-                create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, gCustInvTemplate.nTemplateId, cm, 6)
+                create_param_rs("@templateName", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtTemplateName.Text)), cm, 100)
+                create_param_rs("@description", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtDescription.Text)), cm, 200)
+                create_param_rs("@filename", SqlDbType.VarChar, ParameterDirection.Input, quotation_mask(Trim(txtFilename.Text)), cm, 250)
+                create_param_rs("@template_id", SqlDbType.Int, ParameterDirection.Input, gCustInvTemplate.nTemplateId, cm, 6)
 
-                cm = cn.CreateCommand '.let_ActiveConnection(cn)
+                'cm = cn.CreateCommand '.let_ActiveConnection(cn)
                 cm.CommandType = CommandType.Text
                 cm.CommandText = sStmt
 

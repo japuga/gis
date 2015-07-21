@@ -243,7 +243,8 @@ ErrorHandler:
 		load_cb2(cbCustomer, rsForm, 0)
 		load_cb2(cbCustomerName, rsForm, 1)
 
-		'Loading State information
+        'Loading State information
+        cbState.Items.Clear()
 		cbState.Items.Insert(0, "<All>")
 		sStmt = "SELECT state_id FROM state"
 		load_cb_query2(cbState, sStmt, 1, False)

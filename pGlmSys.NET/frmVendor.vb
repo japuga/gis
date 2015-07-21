@@ -19,15 +19,17 @@ Friend Class frmVendor
 		
 		
         'If dgVendor.Row >= 0 Then
-        If dgVendor.CurrentRow.Index >= 0 Then
-            'MsgBox "Fila:" + Str(dgVendor.Row)
-            General.gbVendorMode = General.modo.UpdateRecord
-            If get_vendor() Then
-                VB6.ShowForm(frmVendorEntry, VB6.FormShowConstants.Modal, Me)
+        If Not IsNothing(dgVendor.CurrentRow) Then
+            If dgVendor.CurrentRow.Index >= 0 Then
+                'MsgBox "Fila:" + Str(dgVendor.Row)
+                General.gbVendorMode = General.modo.UpdateRecord
+                If get_vendor() Then
+                    VB6.ShowForm(frmVendorEntry, VB6.FormShowConstants.Modal, Me)
+                End If
             End If
         End If
-		
-	End Sub
+
+    End Sub
 	'Obtiene y guarda todo el registro con los datos del Vendor
 	Private Function get_vendor() As Boolean
         Dim cmd As SqlCommand = cn.CreateCommand
