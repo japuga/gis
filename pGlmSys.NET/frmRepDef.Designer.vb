@@ -80,6 +80,7 @@
         '
         'dgRepDef
         '
+        Me.dgRepDef.AllowUserToAddRows = False
         Me.dgRepDef.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgRepDef.Location = New System.Drawing.Point(12, 42)
         Me.dgRepDef.Name = "dgRepDef"

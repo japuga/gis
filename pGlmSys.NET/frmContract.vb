@@ -117,9 +117,9 @@ Friend Class frmContract
 		
 		On Error GoTo ErrorHandler
 		
-        gContractRecord.sCustId = rsStore.Rows(dgStore.CurrentRow.Index).Item("cust_id")
-        gContractRecord.nStoreId = rsStore.Rows(dgStore.CurrentRow.Index).Item("store_id")
-        gContractRecord.sStoreNumber = rsStore.Rows(dgStore.CurrentRow.Index).Item("Store")
+        gContractRecord.sCustId = dgStore.Rows(dgStore.SelectedRows(0).Index).Cells("cust_id").Value
+        gContractRecord.nStoreId = dgStore.Rows(dgStore.SelectedRows(0).Index).Cells("store_id").Value
+        gContractRecord.sStoreNumber = dgStore.Rows(dgStore.SelectedRows(0).Index).Cells("Store").Value
         If IsNothing(dgEquipment.SelectedRows(0).Cells("eqpt_seq").Value) Then
             gContractRecord.nEqptSeq = -1
         Else
@@ -191,20 +191,20 @@ ErrorHandler:
         '01/29/03
         'If dgStore.Row >= 0 Then
         'dgStore.SelBookmarks.Add rsStore.Bookmark
-        If dgStore.SelectedRows.Count > 0 Then
-            'Busco los equipos para esta tienda
-            'no se como implementar el bookmark.
-            'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
-            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
-            If dgEquipment.SelectedRows(0).Index >= 0 Then
-                'rsEquipment.Bookmark()
-                'dgEquipment.SelBookmarks.Add()
-                set_dgContractData()
-            Else
-                get_dgContractData(True)
-            End If
+        'If dgStore.SelectedRows.Count > 0 Then
+        '    'Busco los equipos para esta tienda
+        '    'no se como implementar el bookmark.
+        '    'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+        '    get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+        '    If dgEquipment.SelectedRows(0).Index >= 0 Then
+        '        'rsEquipment.Bookmark()
+        '        'dgEquipment.SelBookmarks.Add()
+        '        set_dgContractData()
+        '    Else
+        '        get_dgContractData(True)
+        '    End If
 
-        End If
+        'End If
     End Sub
 	'Carga el datagrid Contract
     Private Sub get_dgContractData(ByRef bInit As Boolean, Optional ByRef sCustId As String = "", Optional ByRef nStoreId As Short = 0, Optional ByRef nVendSeq As Short = 0, Optional ByRef nEqptSeq As Short = 0)
@@ -269,10 +269,10 @@ ErrorHandler:
 
 
         'Formato
-        dgContract.Columns("cust_id").Visible = False
-        dgContract.Columns("store_id").Visible = False
-        dgContract.Columns("vend_seq").Visible = False
-        dgContract.Columns("eqpt_seq").Visible = False
+        dgContract.Columns("cust_id").Visible = True
+        dgContract.Columns("store_id").Visible = True
+        dgContract.Columns("vend_seq").Visible = True
+        dgContract.Columns("eqpt_seq").Visible = True
         dgContract.Columns("serv_id").Visible = False
         dgContract.Columns("freq_times").Visible = False
         dgContract.Columns("freq_period").Visible = False
@@ -493,9 +493,9 @@ ErrorHandler:
 
 
         'Formato
-        dgEquipment.Columns("cust_id").Visible = False
-        dgEquipment.Columns("store_id").Visible = False
-        dgEquipment.Columns("eqpt_seq").Visible = False
+        dgEquipment.Columns("cust_id").Visible = True
+        dgEquipment.Columns("store_id").Visible = True
+        dgEquipment.Columns("eqpt_seq").Visible = True
 
         'Columnas
         dgEquipment.Columns("eqpt").Width = VB6.TwipsToPixelsX(1100)
@@ -546,7 +546,7 @@ ErrorHandler:
             MsgBox("Please choose a Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
             Exit Sub
         End If
-        If dgStore.CurrentRow.Index >= 0 Then
+        If dgStore.SelectedRows(0).Index >= 0 Then
             'Se escogio una tienda. OK
             If dgEquipment.SelectedRows.Count > 0 Then
                 'OK Equipment
@@ -581,8 +581,8 @@ ErrorHandler:
 		'Las facturas deben ser impresas en cheques invoice_status=PRT
 		'y dichos cheques debieron ser transferidos a Quick Books.
         sStmt = "SELECT DISTINCT VInvoiceDet.invoice_no, " & "VInvoiceDet.account_no, VInvoice.vinvoice_status " & " FROM VInvoice, VInvoiceDet " & " WHERE VInvoice.invoice_no = VInvoiceDet.invoice_no " & " AND VInvoice.cust_id = VInvoiceDet.cust_id " & " AND VInvoice.store_id = VInvoiceDet.store_id " & " AND VInvoice.vend_seq = VInvoiceDet.vend_seq " & " AND VInvoice.account_no = VInvoiceDet.account_no " & _
-                " AND VInvoiceDet.cust_id = '" + dgStore.CurrentRow.Cells("cust_id").Value.ToString() + "' " + _
-                " AND VInvoiceDet.store_id = " + dgStore.CurrentRow.Cells("store_id").Value.ToString() + _
+                " AND VInvoiceDet.cust_id = '" + dgStore.SelectedRows(0).Cells("cust_id").Value.ToString() + "' " + _
+                " AND VInvoiceDet.store_id = " + dgStore.SelectedRows(0).Cells("store_id").Value.ToString() + _
                 " AND VInvoiceDet.vend_seq = " + dgContract.CurrentRow.Cells("vend_seq").Value.ToString() + _
                 " AND VInvoiceDet.eqpt_seq = " + dgEquipment.CurrentRow.Cells("eqpt_seq").Value.ToString() + _
                 " AND VInvoiceDet.serv_id = " + dgContract.CurrentRow.Cells("serv_id").Value.ToString
@@ -602,8 +602,8 @@ ErrorHandler:
                 Else
 
                     sStmt = "SELECT COUNT(*) " & " FROM VInvoice ,Bcheck " & " WHERE VInvoice.invoice_no = Bcheck.invoice_no " & " AND VInvoice.cust_id = Bcheck.cust_id " & " AND VInvoice.store_id = Bcheck.store_id " & " AND VInvoice.vend_seq = Bcheck.vend_seq " & " AND VInvoice.account_no = Bcheck.account_no " & " AND VInvoice.invoice_no = '" & Trim(sInvoiceNo) & "' " & " AND VInvoice.cust_id = '" + _
-                            dgStore.CurrentRow.Cells("cust_id").Value + "' " + _
-                            " AND VInvoice.store_id = " + Str(dgStore.CurrentRow.Cells("store_id").Value) + _
+                            dgStore.SelectedRows(0).Cells("cust_id").Value + "' " + _
+                            " AND VInvoice.store_id = " + Str(dgStore.SelectedRows(0).Cells("store_id").Value) + _
                             " AND VInvoice.vend_seq = " + Str(dgContract.CurrentRow.Cells("vend_seq").Value) + _
                             " AND VInvoice.account_no = '" + Trim(sAccountNo) + "' " + _
                             " AND Bcheck.qb_exported_flag IS NULL "
@@ -630,8 +630,8 @@ ErrorHandler:
         End If
 		
 		'Eliminar contrato
-        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + dgStore.CurrentRow.Cells("cust_id").Value + "' " + _
-        " AND store_id = " + Str(dgStore.CurrentRow.Cells("store_id").Value) + _
+        sStmt = "DELETE FROM VContract " & " WHERE cust_id = '" + dgStore.SelectedRows(0).Cells("cust_id").Value + "' " + _
+        " AND store_id = " + Str(dgStore.SelectedRows(0).Cells("store_id").Value) + _
         " AND vend_seq = " + Str(dgContract.CurrentRow.Cells("vend_seq").Value) + _
         " AND eqpt_seq = " + Str(dgEquipment.CurrentRow.Cells("eqpt_seq").Value) + _
         " AND serv_id = " + Str(dgContract.CurrentRow.Cells("serv_id").Value)
@@ -642,8 +642,8 @@ ErrorHandler:
 		If nRecords > 0 Then
 			MsgBox("Contract info successfully deleted.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Message")
 			'Refresco datagrid de Contratos
-            get_dgContractData(False, dgStore.CurrentRow.Cells("cust_id").Value, _
-                                dgStore.CurrentRow.Cells("store_id").Value, _
+            get_dgContractData(False, dgStore.SelectedRows(0).Cells("cust_id").Value, _
+                                dgStore.SelectedRows(0).Cells("store_id").Value, _
                                 CShort(txtVendName.Tag), dgEquipment.CurrentRow.Cells("eqpt_seq").Value)
 			
 		End If
@@ -651,7 +651,7 @@ ErrorHandler:
     End Sub
 
     Private Sub dgEquipment_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellClick
-        dgEquipment_CellContentClick(sender, e)
+        'dgEquipment_CellContentClick(sender, e)
     End Sub
 
     'Private Sub dgEquipment_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellClick
@@ -664,55 +664,55 @@ ErrorHandler:
     'End Sub
     Private Sub dgEquipment_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellContentClick
         'jp BEG 01.29.03
-        If dgEquipment.SelectedRows.Count = 0 Then
-            For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
-                dgEquipment.Rows(aCell.RowIndex).Selected = True
-            Next aCell
-        End If
-        'If dgEquipment.Row >= 0 Then
-        'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
-        If dgEquipment.SelectedRows.Count > 0 Then
-            set_dgContractData()
-        End If
+        'If dgEquipment.SelectedRows.Count = 0 Then
+        '    For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
+        '        dgEquipment.Rows(aCell.RowIndex).Selected = True
+        '    Next aCell
+        'End If
+        ''If dgEquipment.Row >= 0 Then
+        ''dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+        'If dgEquipment.SelectedRows.Count > 0 Then
+        '    set_dgContractData()
+        'End If
     End Sub
 
 
     Private Sub dgStore_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellClick
-        dgStore_CellContentClick(sender, e)
+        'dgStore_CellContentClick(sender, e)
     End Sub
 
     Private Sub dgStore_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.CellContentClick
         '01/29/03
-        If dgStore.SelectedRows.Count = 0 Then
-            For Each aCell As DataGridViewCell In dgStore.SelectedCells()
-                dgStore.Rows(aCell.RowIndex).Selected = True
-            Next aCell
-        End If
-        'If dgStore.Row >= 0 Then
-        'dgStore.SelBookmarks.Add rsStore.Bookmark
-        If dgStore.SelectedRows.Count > 0 Then
-            'Busco los equipos para esta tienda
-            'no se como implementar el bookmark.
-            'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
-            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
-            If dgEquipment.Rows.Count > 0 Then
-                dgEquipment.Rows(0).Selected = True
-            End If
+        'If dgStore.SelectedRows.Count = 0 Then
+        '    For Each aCell As DataGridViewCell In dgStore.SelectedCells()
+        '        dgStore.Rows(aCell.RowIndex).Selected = True
+        '    Next aCell
+        'End If
+        ''If dgStore.Row >= 0 Then
+        ''dgStore.SelBookmarks.Add rsStore.Bookmark
+        'If dgStore.SelectedRows.Count > 0 Then
+        '    'Busco los equipos para esta tienda
+        '    'no se como implementar el bookmark.
+        '    'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+        '    get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+        '    If dgEquipment.Rows.Count > 0 Then
+        '        dgEquipment.Rows(0).Selected = True
+        '    End If
 
-            If dgEquipment.SelectedRows.Count = 0 Then
-                If dgEquipment.SelectedCells.Count > 0 Then
-                    dgEquipment.Rows(dgEquipment.SelectedCells(0).RowIndex).Selected = True
-                End If
-            End If
-            If rsEquipment.Rows.Count > 0 Then
-                'rsEquipment.Bookmark()
-                'dgEquipment.SelBookmarks.Add()
-                set_dgContractData()
-            Else
-                get_dgContractData(True)
-            End If
+        '    If dgEquipment.SelectedRows.Count = 0 Then
+        '        If dgEquipment.SelectedCells.Count > 0 Then
+        '            dgEquipment.Rows(dgEquipment.SelectedCells(0).RowIndex).Selected = True
+        '        End If
+        '    End If
+        '    If rsEquipment.Rows.Count > 0 Then
+        '        'rsEquipment.Bookmark()
+        '        'dgEquipment.SelBookmarks.Add()
+        '        set_dgContractData()
+        '    Else
+        '        get_dgContractData(True)
+        '    End If
 
-        End If
+        'End If
     End Sub
 
    
@@ -741,11 +741,28 @@ ErrorHandler:
     End Sub
 
     Private Sub dgEquipment_CellMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.CellMouseClick
-        dgEquipment_CellContentClick(sender, Nothing)
+        'dgEquipment_CellContentClick(sender, Nothing)
     End Sub
 
     Private Sub dgStore_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgStore.RowHeaderMouseClick
-        dgStore_CellContentClick(sender, Nothing)
+        'dgStore_CellContentClick(sender, Nothing)
+        If dgStore.SelectedRows.Count > 0 Then
+            'Busco los equipos para esta tienda
+            'no se como implementar el bookmark.
+            'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+            get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+            If dgEquipment.SelectedRows.Count > 0 Then
+                If dgEquipment.SelectedRows(0).Index >= 0 Then
+                    'rsEquipment.Bookmark()
+                    'dgEquipment.SelBookmarks.Add()
+                    set_dgContractData()
+                Else
+                    get_dgContractData(True)
+                End If
+            Else
+                get_dgContractData(True)
+            End If
+        End If
     End Sub
 
     Private Sub dgStore_SelectionChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles dgStore.SelectionChanged
@@ -754,6 +771,20 @@ ErrorHandler:
             store_id = dgStore.SelectedRows(1).Cells("Store").Value
             dgStore.SelectedRows(0).Selected = False
         End If
-        dgStore_CellContentClick(sender, Nothing)
+        dgStore_RowHeaderMouseClick(sender, Nothing)
+    End Sub
+
+    Private Sub dgEquipment_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.RowHeaderMouseClick
+        'jp BEG 01.29.03
+        If dgEquipment.SelectedRows.Count = 0 Then
+            For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
+                dgEquipment.Rows(aCell.RowIndex).Selected = True
+            Next aCell
+        End If
+        'If dgEquipment.Row >= 0 Then
+        'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+        If dgEquipment.SelectedRows.Count > 0 Then
+            set_dgContractData()
+        End If
     End Sub
 End Class

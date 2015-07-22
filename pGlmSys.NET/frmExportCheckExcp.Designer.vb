@@ -63,6 +63,7 @@
         '
         'dgException
         '
+        Me.dgException.AllowUserToAddRows = False
         Me.dgException.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgException.Location = New System.Drawing.Point(32, 28)
         Me.dgException.Name = "dgException"
@@ -81,6 +82,7 @@
         '
         'dgCheckDetail
         '
+        Me.dgCheckDetail.AllowUserToAddRows = False
         Me.dgCheckDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgCheckDetail.Location = New System.Drawing.Point(32, 257)
         Me.dgCheckDetail.Name = "dgCheckDetail"

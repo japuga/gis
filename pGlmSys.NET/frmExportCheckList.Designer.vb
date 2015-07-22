@@ -40,16 +40,16 @@
         Me.txtNumChecks = New System.Windows.Forms.TextBox
         Me.cdCheckSave = New System.Windows.Forms.SaveFileDialog
         Me.Frame1 = New System.Windows.Forms.GroupBox
+        Me.dgCheckList = New System.Windows.Forms.DataGridView
         Me.cmdCancel = New System.Windows.Forms.Button
         Me.cmdOk = New System.Windows.Forms.Button
         Me.lblCustomer = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.label1 = New System.Windows.Forms.Label
         Me.dgCustCheck = New System.Windows.Forms.DataGridView
-        Me.dgCheckList = New System.Windows.Forms.DataGridView
         Me.Frame1.SuspendLayout()
-        CType(Me.dgCustCheck, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgCheckList, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgCustCheck, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'cbCustId
@@ -92,7 +92,7 @@
         Me.txtTotalAmount.MaxLength = 0
         Me.txtTotalAmount.Name = "txtTotalAmount"
         Me.txtTotalAmount.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtTotalAmount.Size = New System.Drawing.Size(81, 21)
+        Me.txtTotalAmount.Size = New System.Drawing.Size(81, 20)
         Me.txtTotalAmount.TabIndex = 7
         '
         'txtNumChecks
@@ -107,7 +107,7 @@
         Me.txtNumChecks.MaxLength = 0
         Me.txtNumChecks.Name = "txtNumChecks"
         Me.txtNumChecks.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtNumChecks.Size = New System.Drawing.Size(41, 21)
+        Me.txtNumChecks.Size = New System.Drawing.Size(41, 20)
         Me.txtNumChecks.TabIndex = 6
         '
         'Frame1
@@ -125,6 +125,15 @@
         Me.Frame1.TabIndex = 0
         Me.Frame1.TabStop = False
         Me.Frame1.Text = "Checks to be Exported"
+        '
+        'dgCheckList
+        '
+        Me.dgCheckList.AllowUserToAddRows = False
+        Me.dgCheckList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgCheckList.Location = New System.Drawing.Point(15, 33)
+        Me.dgCheckList.Name = "dgCheckList"
+        Me.dgCheckList.Size = New System.Drawing.Size(473, 249)
+        Me.dgCheckList.TabIndex = 4
         '
         'cmdCancel
         '
@@ -196,19 +205,12 @@
         '
         'dgCustCheck
         '
+        Me.dgCustCheck.AllowUserToAddRows = False
         Me.dgCustCheck.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgCustCheck.Location = New System.Drawing.Point(24, 129)
         Me.dgCustCheck.Name = "dgCustCheck"
         Me.dgCustCheck.Size = New System.Drawing.Size(505, 89)
         Me.dgCustCheck.TabIndex = 12
-        '
-        'dgCheckList
-        '
-        Me.dgCheckList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgCheckList.Location = New System.Drawing.Point(15, 33)
-        Me.dgCheckList.Name = "dgCheckList"
-        Me.dgCheckList.Size = New System.Drawing.Size(473, 249)
-        Me.dgCheckList.TabIndex = 4
         '
         'frmExportCheckList
         '
@@ -232,9 +234,10 @@
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text = "Check List "
         Me.Frame1.ResumeLayout(False)
-        CType(Me.dgCustCheck, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgCheckList, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgCustCheck, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents dgCheckList As System.Windows.Forms.DataGridView
