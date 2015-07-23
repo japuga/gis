@@ -95,6 +95,7 @@
         '
         'dgBank
         '
+        Me.dgBank.AllowUserToAddRows = False
         Me.dgBank.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgBank.Location = New System.Drawing.Point(12, 42)
         Me.dgBank.Name = "dgBank"

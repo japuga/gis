@@ -573,203 +573,206 @@ ErrorHandler:
 		ckbOverrideExpFlag.CheckState = System.Windows.Forms.CheckState.Unchecked
 		
 		
-		'Combo Vendor
-		sStmt = "SELECT RTRIM(vendor.vend_name)+' - '+vbranch.vend_area , " & " vbranch.vend_seq " & " FROM vbranch,vendor " & " WHERE vbranch.vend_id = vendor.vend_id " & " AND vbranch.vend_seq IN ( " & "   SELECT DISTINCT vend_seq  " & "   FROM VAccountEqpt   " & "   WHERE  VAccountEqpt.cust_id ='" & gContractRecord.sCustId & "' " & "   AND VAccountEqpt.store_id =" & Str(gContractRecord.nStoreId) & "   AND VAccountEqpt.eqpt_seq =" & Str(gContractRecord.nEqptSeq) & "   AND VAccountEqpt.account_status ='A')"
-		
-		'cbVendName.AddItem "<New>", 0
-		'cbVendName.ItemData(0) = 0
-		
+        'Combo Vendor
+        If General.modo.NewRecord = bFlag Then
+            sStmt = "SELECT RTRIM(vendor.vend_name)+' - '+vbranch.vend_area , " & " vbranch.vend_seq " & " FROM vbranch,vendor " & " WHERE vbranch.vend_id = vendor.vend_id " & " AND vbranch.vend_seq IN ( " & "   SELECT DISTINCT vend_seq  " & "   FROM VAccountEqpt   " & "   WHERE  VAccountEqpt.cust_id ='" & gContractRecord.sCustId & "' " & "   AND VAccountEqpt.store_id =" & Str(gContractRecord.nStoreId) & "   AND VAccountEqpt.eqpt_seq =" & Str(gContractRecord.nEqptSeq) & "   AND VAccountEqpt.account_status ='A')"
+        Else
+            sStmt = "SELECT RTRIM(vendor.vend_name)+' - '+vbranch.vend_area , " & " vbranch.vend_seq " & " FROM vbranch,vendor " & " WHERE vbranch.vend_id = vendor.vend_id " & " AND vbranch.vend_seq IN ( " & "   SELECT DISTINCT vend_seq  " & "   FROM VAccountEqpt   " & "   WHERE  VAccountEqpt.cust_id ='" & gContractRecord.sCustId & "' " & "   AND VAccountEqpt.store_id =" & Str(gContractRecord.nStoreId) & "   AND VAccountEqpt.eqpt_seq =" & Str(gContractRecord.nEqptSeq) & " )"
+        End If
+        'cbVendName.AddItem "<New>", 0
+        'cbVendName.ItemData(0) = 0
+
         load_cb_query2(cbVendName, sStmt, 2, True)
-		
-		
-		'Combo Equipment
-		sStmt = "SELECT eqpt_desc, eqpt_seq " & " FROM StoreEqpt " & " WHERE cust_id = '" & gContractRecord.sCustId & "' " & " AND store_id = " & Str(gContractRecord.nStoreId) & " "
-		
-		load_cb_query(cbEqptDesc, sStmt, 2)
-		
-		'Combo Service
-		sStmt = "SELECT serv_desc, serv_id " & " FROM service " & " WHERE serv_rate_contract = 'T' " & " ORDER BY serv_desc "
-		
-		load_cb_query(cbServDesc, sStmt, 2)
-		
-		
-		'Combo Frequency Periods BEGIN
-		sStmt = "SELECT freq_name, freq_id " & " FROM frequency " & " ORDER BY freq_name "
-		
-		load_cb_query2(cbFreqPeriod, sStmt, 2, True)
-		
-		'Mapping
-		'   freq_id = int_field1
-		'   freq_name = str_field2
-		'   freq_sched_flag = str_field3
-		'   freq_times_flag =str_field4
-		'   freq_acronym = str_field5
-		sStmt = "SELECT freq_id, freq_name, freq_desc, " & " freq_sched_flag, freq_times_flag, freq_acronym" & " FROM frequency " & " ORDER BY freq_name "
-		
-		
-		load_array_query(aFrequency, sStmt, 1, 5, 0, True)
-		'---------------------------END
-		
-		'Combo Rate Status
-		sStmt = "SELECT rate_desc FROM RateStatus  ORDER BY rate_desc "
-		load_cb_query2(cbRateDesc, sStmt, 1, True)
-		
-		sStmt = "SELECT rate_status, rate_desc FROM RateStatus  ORDER BY rate_desc "
-		load_cb_query2(cbRateStatus, sStmt, 1, True)
-		
-		'Default Frequency
-		ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Unchecked
-		'If a default service was found
+
+
+        'Combo Equipment
+        sStmt = "SELECT eqpt_desc, eqpt_seq " & " FROM StoreEqpt " & " WHERE cust_id = '" & gContractRecord.sCustId & "' " & " AND store_id = " & Str(gContractRecord.nStoreId) & " "
+
+        load_cb_query(cbEqptDesc, sStmt, 2)
+
+        'Combo Service
+        sStmt = "SELECT serv_desc, serv_id " & " FROM service " & " WHERE serv_rate_contract = 'T' " & " ORDER BY serv_desc "
+
+        load_cb_query(cbServDesc, sStmt, 2)
+
+
+        'Combo Frequency Periods BEGIN
+        sStmt = "SELECT freq_name, freq_id " & " FROM frequency " & " ORDER BY freq_name "
+
+        load_cb_query2(cbFreqPeriod, sStmt, 2, True)
+
+        'Mapping
+        '   freq_id = int_field1
+        '   freq_name = str_field2
+        '   freq_sched_flag = str_field3
+        '   freq_times_flag =str_field4
+        '   freq_acronym = str_field5
+        sStmt = "SELECT freq_id, freq_name, freq_desc, " & " freq_sched_flag, freq_times_flag, freq_acronym" & " FROM frequency " & " ORDER BY freq_name "
+
+
+        load_array_query(aFrequency, sStmt, 1, 5, 0, True)
+        '---------------------------END
+
+        'Combo Rate Status
+        sStmt = "SELECT rate_desc FROM RateStatus  ORDER BY rate_desc "
+        load_cb_query2(cbRateDesc, sStmt, 1, True)
+
+        sStmt = "SELECT rate_status, rate_desc FROM RateStatus  ORDER BY rate_desc "
+        load_cb_query2(cbRateStatus, sStmt, 1, True)
+
+        'Default Frequency
+        ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Unchecked
+        'If a default service was found
         gDump = set_ckb_service(gContractRecord.bFlag, gContractRecord.nServId)
-		If gDump.str1 = "T" Then
-			'If such service is current contract record
-			If gDump.str2 = "T" Then
-				ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Checked
-				ckbDefaultService.Enabled = True
-			Else
-				ckbDefaultService.Enabled = False
-			End If
-			
-		End If
-		
-		'Defaults para Insert y Update
-		txtCustId.Text = gContractRecord.sCustId
-		txtStoreNumber.Text = gContractRecord.sStoreNumber
-		txtStoreNumber.Tag = gContractRecord.nStoreId
-		
-		Select Case bFlag
-			Case General.modo.NewRecord
-				If cbServDesc.Items.Count > 0 Then
-					cbServDesc.SelectedIndex = 0
-				End If
-				If cbEqptDesc.Items.Count > 0 Then
-					cbEqptDesc.SelectedIndex = 0
-				End If
-				If cbRateDesc.Items.Count > 0 Then
-					cbRateDesc.SelectedIndex = 0
-				End If
-				
-				If cbVendName.Items.Count > 0 Then
-					cbVendName.SelectedIndex = 0
-				End If
+        If gDump.str1 = "T" Then
+            'If such service is current contract record
+            If gDump.str2 = "T" Then
+                ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Checked
+                ckbDefaultService.Enabled = True
+            Else
+                ckbDefaultService.Enabled = False
+            End If
+
+        End If
+
+        'Defaults para Insert y Update
+        txtCustId.Text = gContractRecord.sCustId
+        txtStoreNumber.Text = gContractRecord.sStoreNumber
+        txtStoreNumber.Tag = gContractRecord.nStoreId
+
+        Select Case bFlag
+            Case General.modo.NewRecord
+                If cbServDesc.Items.Count > 0 Then
+                    cbServDesc.SelectedIndex = 0
+                End If
+                If cbEqptDesc.Items.Count > 0 Then
+                    cbEqptDesc.SelectedIndex = 0
+                End If
+                If cbRateDesc.Items.Count > 0 Then
+                    cbRateDesc.SelectedIndex = 0
+                End If
+
+                If cbVendName.Items.Count > 0 Then
+                    cbVendName.SelectedIndex = 0
+                End If
                 cbEqptDesc.Enabled = True
                 cbServDesc.Enabled = True
                 cbVendName.Enabled = True
-				
-				
-				set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)
-				
-				'load_cb_service_local True     '--jp
-				cbFreqPeriod.SelectedIndex = 0
-				
-				'dtOpening, dtExpiration
+
+
+                set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)
+
+                'load_cb_service_local True     '--jp
+                cbFreqPeriod.SelectedIndex = 0
+
+                'dtOpening, dtExpiration
                 dtOpening.Value = Today
                 dtExpiration.Value = Today
-				
-				txtOldRate.Text = CStr(0)
-				txtCurrRate.Text = CStr(0)
-				txtGlmRate.Text = CStr(0)
-				txtVendName.Tag = 0
+
+                txtOldRate.Text = CStr(0)
+                txtCurrRate.Text = CStr(0)
+                txtGlmRate.Text = CStr(0)
+                txtVendName.Tag = 0
                 txtFreqTimes.Text = CStr(0)
                 txtContractComments.Text = ""
                 txtFreqComments.Text = ""
-				
-			Case General.modo.UpdateRecord
-				txtVendName.Text = gContractRecord.sVendor
-				txtVendName.Tag = gContractRecord.nVendSeq
-				txtVendName.Enabled = False
-				
-				cmdVendorSearch.Enabled = False
-				cbVendName.Enabled = False
-				cbEqptDesc.Enabled = False
-				cbServDesc.Enabled = False
-				
-				set_cb_ItemData(cbVendName, gContractRecord.nVendSeq)
-				
-				set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)
-				
-				set_cb_ItemData(cbServDesc, gContractRecord.nServId)
-				
-				set_cb_ItemData(cbFreqPeriod, gContractRecord.nFreqId)
-				
-				set_cb(cbRateStatus, gContractRecord.sRateStatus)
-				cbRateDesc.SelectedIndex = cbRateStatus.SelectedIndex
-				'ancla
-				'If Trim(gContractRecord.sFreqTimes) = "O/C" Then
-				'Si servicio es Service per Haul solo
-				'cargo un elemento en cbFreqPeriod
-				'    sStmt = "SELECT serv_period FROM service " + _
-				''        " WHERE serv_id = " + Str(gContractRecord.nServId)
-				
-				'    Set rsLocal = exec_sql(sStmt)
-				'    If rsLocal.State = adStateOpen Then
+
+            Case General.modo.UpdateRecord
+                txtVendName.Text = gContractRecord.sVendor
+                txtVendName.Tag = gContractRecord.nVendSeq
+                txtVendName.Enabled = False
+
+                cmdVendorSearch.Enabled = False
+                cbVendName.Enabled = False
+                cbEqptDesc.Enabled = False
+                cbServDesc.Enabled = False
+
+                set_cb_ItemData(cbVendName, gContractRecord.nVendSeq)
+
+                set_cb_ItemData(cbEqptDesc, gContractRecord.nEqptSeq)
+
+                set_cb_ItemData(cbServDesc, gContractRecord.nServId)
+
+                set_cb_ItemData(cbFreqPeriod, gContractRecord.nFreqId)
+
+                set_cb(cbRateStatus, gContractRecord.sRateStatus)
+                cbRateDesc.SelectedIndex = cbRateStatus.SelectedIndex
+                'ancla
+                'If Trim(gContractRecord.sFreqTimes) = "O/C" Then
+                'Si servicio es Service per Haul solo
+                'cargo un elemento en cbFreqPeriod
+                '    sStmt = "SELECT serv_period FROM service " + _
+                ''        " WHERE serv_id = " + Str(gContractRecord.nServId)
+
+                '    Set rsLocal = exec_sql(sStmt)
+                '    If rsLocal.State = adStateOpen Then
                 '        If IsNull(rsLocal.item("serv_period")) Then
-				'            load_cb_service_local True
-				'            enable_service True, False
-				
-				'        End If
+                '            load_cb_service_local True
+                '            enable_service True, False
+
+                '        End If
                 '        If Trim(rsLocal.item("serv_period")) = "O/C" Then
-				'            load_cb_service_local False
-				'            enable_service False, False
-				'        End If
-				'    End If
-				'    cbFreqPeriod.ListIndex = 0
-				'Else
-				'    load_cb_service_local True
-				'    Select Case Trim(gContractRecord.sFreqPeriod)
-				'    Case "WK"
-				'        cbFreqPeriod.ListIndex = 1
-				'    Case "MO"
-				'        cbFreqPeriod.ListIndex = 2
-				'    End Select
-				'End If
-				
-				set_service(gContractRecord.sFreqDay1)
-				set_service(gContractRecord.sFreqDay2)
-				set_service(gContractRecord.sFreqDay3)
-				set_service(gContractRecord.sFreqDay4)
-				set_service(gContractRecord.sFreqDay5)
-				set_service(gContractRecord.sFreqDay6)
-				set_service(gContractRecord.sFreqDay7)
-				
-				'Opening , Expiration Dates
+                '            load_cb_service_local False
+                '            enable_service False, False
+                '        End If
+                '    End If
+                '    cbFreqPeriod.ListIndex = 0
+                'Else
+                '    load_cb_service_local True
+                '    Select Case Trim(gContractRecord.sFreqPeriod)
+                '    Case "WK"
+                '        cbFreqPeriod.ListIndex = 1
+                '    Case "MO"
+                '        cbFreqPeriod.ListIndex = 2
+                '    End Select
+                'End If
+
+                set_service(gContractRecord.sFreqDay1)
+                set_service(gContractRecord.sFreqDay2)
+                set_service(gContractRecord.sFreqDay3)
+                set_service(gContractRecord.sFreqDay4)
+                set_service(gContractRecord.sFreqDay5)
+                set_service(gContractRecord.sFreqDay6)
+                set_service(gContractRecord.sFreqDay7)
+
+                'Opening , Expiration Dates
                 dtOpening.Value = gContractRecord.sOpeningDate
-				
-				If Len(gContractRecord.sExpirationDate) = 0 Then
+
+                If Len(gContractRecord.sExpirationDate) = 0 Then
                     dtExpiration.Value = Today
-				Else
+                Else
                     dtExpiration.Value = gContractRecord.sExpirationDate
-				End If
-				
-				txtOldRate.Text = CStr(gContractRecord.nOldRate)
-				txtCurrRate.Text = CStr(gContractRecord.nCurrRate)
-				txtGlmRate.Text = CStr(gContractRecord.nGlmRate)
-				
+                End If
+
+                txtOldRate.Text = CStr(gContractRecord.nOldRate)
+                txtCurrRate.Text = CStr(gContractRecord.nCurrRate)
+                txtGlmRate.Text = CStr(gContractRecord.nGlmRate)
+
                 If dtExpiration.Value < Today Then
                     lbExpiration.Font = VB6.FontChangeBold(lbExpiration.Font, True)
                     lbExpiration.ForeColor = System.Drawing.Color.Red
                 End If
-				
-				txtFreqTimes.Text = gContractRecord.sFreqTimes
-				txtContractComments.Text = gContractRecord.sContractComments
-				txtFreqComments.Text = gContractRecord.sFreqComments
-				
-				If gContractRecord.sDefaultService = "T" Then
-					ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Checked
-				End If
-				
-				If gContractRecord.sOverrideExpFlag = "YES" Then
-					ckbOverrideExpFlag.CheckState = System.Windows.Forms.CheckState.Checked
-				End If
-				
-		End Select
-		Exit Sub
-		
-		
-ErrorHandler: 
-		save_error(Me.Name, "init_vars")
-		MsgBox("An unexpected error has occurred, check log file for details.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "Glm Error")
-	End Sub
+
+                txtFreqTimes.Text = gContractRecord.sFreqTimes
+                txtContractComments.Text = gContractRecord.sContractComments
+                txtFreqComments.Text = gContractRecord.sFreqComments
+
+                If gContractRecord.sDefaultService = "T" Then
+                    ckbDefaultService.CheckState = System.Windows.Forms.CheckState.Checked
+                End If
+
+                If gContractRecord.sOverrideExpFlag = "YES" Then
+                    ckbOverrideExpFlag.CheckState = System.Windows.Forms.CheckState.Checked
+                End If
+
+        End Select
+        Exit Sub
+
+
+ErrorHandler:
+        save_error(Me.Name, "init_vars")
+        MsgBox("An unexpected error has occurred, check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "Glm Error")
+    End Sub
 	'Searches for a default service
 	'Return values
 	'str1  TRUE    If a record was found as default service
