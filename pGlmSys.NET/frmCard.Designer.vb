@@ -120,6 +120,7 @@
         '
         'dgCard
         '
+        Me.dgCard.AllowUserToAddRows = False
         Me.dgCard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgCard.Location = New System.Drawing.Point(12, 109)
         Me.dgCard.Name = "dgCard"

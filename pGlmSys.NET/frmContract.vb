@@ -10,6 +10,7 @@ Friend Class frmContract
     Private rsEquipment As DataTable
     Private rsContract As DataTable
     Private cmLocal As SqlCommand
+    Private ignore_dgStore_RowEnter As Boolean = False
 
 	
     Private Sub cbCustId_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustId.SelectedIndexChanged
@@ -269,10 +270,10 @@ ErrorHandler:
 
 
         'Formato
-        dgContract.Columns("cust_id").Visible = True
-        dgContract.Columns("store_id").Visible = True
-        dgContract.Columns("vend_seq").Visible = True
-        dgContract.Columns("eqpt_seq").Visible = True
+        dgContract.Columns("cust_id").Visible = False
+        dgContract.Columns("store_id").Visible = False
+        dgContract.Columns("vend_seq").Visible = False
+        dgContract.Columns("eqpt_seq").Visible = False
         dgContract.Columns("serv_id").Visible = False
         dgContract.Columns("freq_times").Visible = False
         dgContract.Columns("freq_period").Visible = False
@@ -493,9 +494,9 @@ ErrorHandler:
 
 
         'Formato
-        dgEquipment.Columns("cust_id").Visible = True
-        dgEquipment.Columns("store_id").Visible = True
-        dgEquipment.Columns("eqpt_seq").Visible = True
+        dgEquipment.Columns("cust_id").Visible = False
+        dgEquipment.Columns("store_id").Visible = False
+        dgEquipment.Columns("eqpt_seq").Visible = False
 
         'Columnas
         dgEquipment.Columns("eqpt").Width = VB6.TwipsToPixelsX(1100)
@@ -740,12 +741,46 @@ ErrorHandler:
         data_entry((General.modo.UpdateRecord))
     End Sub
 
+    Private Sub dgEquipment_CellEndEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.CellEndEdit
+
+    End Sub
+
     Private Sub dgEquipment_CellMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.CellMouseClick
         'dgEquipment_CellContentClick(sender, Nothing)
     End Sub
 
+    Private Sub dgStore_RowEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.RowEnter
+        If Not ignore_dgStore_RowEnter Then
+            If dgStore.SelectedRows.Count > 1 Then
+                ignore_dgStore_RowEnter = True
+                Dim store_id As String = dgStore.SelectedRows(0).Cells("Store").Value
+                store_id = dgStore.SelectedRows(1).Cells("Store").Value
+                dgStore.SelectedRows(0).Selected = False
+                ignore_dgStore_RowEnter = False
+                'dgStore.CurrentCell = Nothing
+            End If
+            If dgStore.SelectedRows.Count > 0 Then
+                'Busco los equipos para esta tienda
+                'no se como implementar el bookmark.
+                'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+                get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+                If dgEquipment.SelectedRows.Count > 0 Then
+                    If dgEquipment.SelectedRows(0).Index >= 0 Then
+                        'rsEquipment.Bookmark()
+                        'dgEquipment.SelBookmarks.Add()
+                        set_dgContractData()
+                    Else
+                        get_dgContractData(True)
+                    End If
+                Else
+                    get_dgContractData(True)
+                End If
+            End If
+        End If
+    End Sub
+
     Private Sub dgStore_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgStore.RowHeaderMouseClick
-        'dgStore_CellContentClick(sender, Nothing)
+        ''dgStore_CellContentClick(sender, Nothing)
         If dgStore.SelectedRows.Count > 0 Then
             'Busco los equipos para esta tienda
             'no se como implementar el bookmark.
@@ -766,25 +801,93 @@ ErrorHandler:
     End Sub
 
     Private Sub dgStore_SelectionChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles dgStore.SelectionChanged
-        If dgStore.SelectedRows.Count > 1 Then
-            Dim store_id As String = dgStore.SelectedRows(0).Cells("Store").Value
-            store_id = dgStore.SelectedRows(1).Cells("Store").Value
-            dgStore.SelectedRows(0).Selected = False
-        End If
-        dgStore_RowHeaderMouseClick(sender, Nothing)
+        'Dim ignoreThisEvent As Boolean = False
+        'If dgStore.SelectedRows.Count > 1 Then
+        '    ignoreThisEvent = True
+        '    Dim store_id As String = dgStore.SelectedRows(0).Cells("Store").Value
+        '    store_id = dgStore.SelectedRows(1).Cells("Store").Value
+        '    dgStore.CurrentCell = dgStore.SelectedRows(1).Cells(0)
+        '    dgStore.SelectedRows(0).Selected = False
+        'End If
+        'If dgStore.SelectedRows.Count > 0 And Not ignoreThisEvent Then
+        '    'Busco los equipos para esta tienda
+        '    'no se como implementar el bookmark.
+        '    'get_dgEquipmentData(False, rsStore.Rows(dgSTore.Rows).Item("store_id").Value)
+        '    get_dgEquipmentData(False, dgStore.SelectedRows(0).Cells("store_id").Value)
+        '    If dgEquipment.SelectedRows.Count > 0 Then
+        '        If dgEquipment.SelectedRows(0).Index >= 0 Then
+        '            'rsEquipment.Bookmark()
+        '            'dgEquipment.SelBookmarks.Add()
+        '            set_dgContractData()
+        '        Else
+        '            get_dgContractData(True)
+        '        End If
+        '    Else
+        '        get_dgContractData(True)
+        '    End If
+        'End If
+
+
+        'dgStore_RowHeaderMouseClick(sender, Nothing)
     End Sub
 
-    Private Sub dgEquipment_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.RowHeaderMouseClick
-        'jp BEG 01.29.03
-        If dgEquipment.SelectedRows.Count = 0 Then
-            For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
-                dgEquipment.Rows(aCell.RowIndex).Selected = True
-            Next aCell
+    Private Sub dgEquipment_RowEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgEquipment.RowEnter
+        If dgEquipment.SelectedRows.Count > 1 Then
+            Dim store_id As String = dgEquipment.SelectedRows(0).Cells(0).Value
+            store_id = dgEquipment.SelectedRows(1).Cells(0).Value
+            dgEquipment.SelectedRows(0).Selected = False
         End If
+
+        'If dgEquipment.SelectedRows.Count = 0 Then
+        '    For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
+        '        dgEquipment.Rows(aCell.RowIndex).Selected = True
+        '    Next aCell
+        'End If
         'If dgEquipment.Row >= 0 Then
         'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
         If dgEquipment.SelectedRows.Count > 0 Then
             set_dgContractData()
         End If
+    End Sub
+
+    Private Sub dgEquipment_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgEquipment.RowHeaderMouseClick
+        'jp BEG 01.29.03
+        'If dgEquipment.SelectedRows.Count = 0 Then
+        '    For Each aCell As DataGridViewCell In dgEquipment.SelectedCells
+        '        dgEquipment.Rows(aCell.RowIndex).Selected = True
+        '    Next aCell
+        'End If
+        'If dgEquipment.Row >= 0 Then
+        'dgEquipment.SelBookmarks.Add rsEquipment.Bookmark
+        If dgEquipment.SelectedRows.Count > 0 Then
+            set_dgContractData()
+        End If
+    End Sub
+
+
+    Private Sub dgStore_RowPrePaint(ByVal sender As Object, ByVal e As DataGridViewRowPrePaintEventArgs) _
+Handles dgStore.RowPrePaint
+        e.PaintCells(e.ClipBounds, DataGridViewPaintParts.All)
+
+        e.PaintHeader(DataGridViewPaintParts.Background Or _
+        DataGridViewPaintParts.Border Or _
+        DataGridViewPaintParts.Focus Or _
+        DataGridViewPaintParts.SelectionBackground)
+
+        e.Handled = True
+    End Sub
+    Private Sub dgEquipment_RowPrePaint(ByVal sender As Object, ByVal e As DataGridViewRowPrePaintEventArgs) _
+Handles dgEquipment.RowPrePaint
+        e.PaintCells(e.ClipBounds, DataGridViewPaintParts.All)
+
+        e.PaintHeader(DataGridViewPaintParts.Background Or _
+        DataGridViewPaintParts.Border Or _
+        DataGridViewPaintParts.Focus Or _
+        DataGridViewPaintParts.SelectionBackground)
+
+        e.Handled = True
+    End Sub
+    Private Sub moveToRow()
+        dgEquipment.CurrentCell = dgEquipment.Rows(dgEquipment.SelectedCells(0).RowIndex - 1).Cells(0)
     End Sub
 End Class

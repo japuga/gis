@@ -91,6 +91,7 @@
         Me.dgEquipment.AllowUserToAddRows = False
         Me.dgEquipment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgEquipment.Location = New System.Drawing.Point(16, 172)
+        Me.dgEquipment.MultiSelect = False
         Me.dgEquipment.Name = "dgEquipment"
         Me.dgEquipment.Size = New System.Drawing.Size(417, 105)
         Me.dgEquipment.TabIndex = 18
@@ -100,8 +101,9 @@
         Me.dgStore.AllowUserToAddRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(16, 32)
+        Me.dgStore.MultiSelect = False
         Me.dgStore.Name = "dgStore"
-        Me.dgStore.Size = New System.Drawing.Size(321, 101)
+        Me.dgStore.Size = New System.Drawing.Size(321, 105)
         Me.dgStore.TabIndex = 17
         '
         'Label6
@@ -338,6 +340,7 @@
         Me.dgContract.AllowUserToAddRows = False
         Me.dgContract.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgContract.Location = New System.Drawing.Point(16, 380)
+        Me.dgContract.MultiSelect = False
         Me.dgContract.Name = "dgContract"
         Me.dgContract.Size = New System.Drawing.Size(681, 177)
         Me.dgContract.TabIndex = 13

@@ -67,7 +67,7 @@ Friend Class frmCard
                 If dgCard.SelectedRows.Count > 0 Then
                     If MsgBox("Do you want to delete selected Credit Card?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
 
-                        If delete_card(CShort(dgCard.CurrentRow.Cells("card_seq").Value)) Then
+                        If delete_card(CShort(dgCard.SelectedRows(0).Cells("card_seq").Value)) Then
                             load_dgCard()
                         End If
                     End If
@@ -119,7 +119,7 @@ Friend Class frmCard
 
         If dgCard.SelectedRows.Count < 1 Then
             If dgCard.SelectedCells.Count > 0 Then
-                dgCard.Rows(dgCard.CurrentRow.Index).Selected = True
+                dgCard.Rows(dgCard.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
 
@@ -145,26 +145,26 @@ Friend Class frmCard
 		
 		
         If dgCard.SelectedRows.Count > 0 Then
-            If Not IsDBNull(dgCard.CurrentRow.Cells("Card").Value) Then
-                gCreditCard.sCardNumber = dgCard.CurrentRow.Cells("Card").Value
+            If Not IsDBNull(dgCard.SelectedRows(0).Cells("Card").Value) Then
+                gCreditCard.sCardNumber = dgCard.SelectedRows(0).Cells("Card").Value
             Else
                 Exit Function
             End If
 
-            If Not IsDBNull(dgCard.CurrentRow.Cells("card_seq").Value) Then
-                gCreditCard.nCardSeq = CShort(dgCard.CurrentRow.Cells("card_seq").Value)
+            If Not IsDBNull(dgCard.SelectedRows(0).Cells("card_seq").Value) Then
+                gCreditCard.nCardSeq = CShort(dgCard.SelectedRows(0).Cells("card_seq").Value)
             Else
                 Exit Function
             End If
 
-            If Not IsDBNull(dgCard.CurrentRow.Cells("Type").Value) Then
-                gCreditCard.sCardType = dgCard.CurrentRow.Cells("Type").Value
+            If Not IsDBNull(dgCard.SelectedRows(0).Cells("Type").Value) Then
+                gCreditCard.sCardType = dgCard.SelectedRows(0).Cells("Type").Value
             Else
                 Exit Function
             End If
 
-            If Not IsDBNull(dgCard.CurrentRow.Cells("Balance").Value) Then
-                gCreditCard.nCardBalance = CDbl(dgCard.CurrentRow.Cells("Balance").Value)
+            If Not IsDBNull(dgCard.SelectedRows(0).Cells("Balance").Value) Then
+                gCreditCard.nCardBalance = CDbl(dgCard.SelectedRows(0).Cells("Balance").Value)
             Else
                 gCreditCard.nCardBalance = 0
             End If
@@ -193,7 +193,7 @@ Friend Class frmCard
         If dgCard.SelectedRows.Count > 0 Then
             If MsgBox("Do you want to delete selected Credit Card?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Message") = MsgBoxResult.Yes Then
 
-                If delete_card(CShort(dgCard.CurrentRow.Cells("card_seq").Value)) Then
+                If delete_card(CShort(dgCard.SelectedRows(0).Cells("card_seq").Value)) Then
                     load_dgCard()
                 End If
             End If

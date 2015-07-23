@@ -197,7 +197,19 @@ ErrorHandler:
 			Case General.modo.NewRecord
 				If cbBankStatus.Items.Count > 0 Then
 					cbBankStatus.SelectedIndex = 0
-				End If
+                End If
+
+                txtBankName.Enabled = True
+                txtBankName.ReadOnly = False
+
+                txtBankName.Text = ""
+
+                txtBankAba.Text = ""
+                txtCheckInfo1.Text = ""
+                txtCheckInfo2.Text = ""
+                txtCheckInfo3.Text = ""
+                txtCheckInfo4.Text = ""
+
 			Case General.modo.UpdateRecord
 				txtBankName.Enabled = False
 				txtBankName.ReadOnly = True
