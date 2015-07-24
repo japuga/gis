@@ -390,7 +390,7 @@ ErrorHandler:
         'Dim X As Object
 		
 		
-        nRecSelected = dgSelected.SelectedRows.Count 'rsSelected.Rows.Count
+        nRecSelected = dgPending.SelectedRows.Count 'rsSelected.Rows.Count
 
         If nRecSelected = 0 Then
             If dgPending.SelectedCells.Count > 0 Then
@@ -401,7 +401,7 @@ ErrorHandler:
 
 
         For rowCount = 0 To dgPending.SelectedRows.Count - 1
-            vRow = dgPending.SelectedRows(rowCount).Index
+            vRow = dgPending.SelectedRows(0).Index
             If nRecSelected > MAX_CHECK_INVOICE Then
                 Exit For
             Else
@@ -413,13 +413,13 @@ ErrorHandler:
                 End If
                 Dim drow As DataRow = rsSelected.NewRow
 
-                drow.Item("store_id") = rsPending.Rows(vRow).Item("store_id")
-                drow.Item("Store") = rsPending.Rows(vRow).Item("Store")
-                drow.Item("Account") = rsPending.Rows(vRow).Item("Account")
-                drow.Item("Invoice") = rsPending.Rows(vRow).Item("Invoice")
-                drow.Item("Total") = rsPending.Rows(vRow).Item("Total")
-                drow.Item("account_mask") = rsPending.Rows(vRow).Item("account_mask")
-                drow.Item("vend_seq") = rsPending.Rows(vRow).Item("vend_seq")
+                drow.Item("store_id") = dgPending.Rows(vRow).Cells("store_id").Value
+                drow.Item("Store") = dgPending.Rows(vRow).Cells("Store").Value
+                drow.Item("Account") = dgPending.Rows(vRow).Cells("Account").Value
+                drow.Item("Invoice") = dgPending.Rows(vRow).Cells("Invoice").Value
+                drow.Item("Total") = dgPending.Rows(vRow).Cells("Total").Value
+                drow.Item("account_mask") = dgPending.Rows(vRow).Cells("account_mask").Value
+                drow.Item("vend_seq") = dgPending.Rows(vRow).Cells("vend_seq").Value
 
                 'rsSelected.item("store_id").Value = rsPending.item("store_id").Value
                 'rsSelected.item("Store").Value = rsPending.item("Store").Value
@@ -430,10 +430,10 @@ ErrorHandler:
                 'rsSelected.item("account_mask").Value = rsPending.item("account_mask").Value
                 'rsSelected.item("vend_seq").Value = rsPending.item("vend_seq").Value
 
-                If rsPending.Rows(vRow).Item("Total").ToString() = "" Then
+                If dgPending.Rows(vRow).Cells("Total").Value.ToString = "" Then
                     drow.Item("Total") = 0
                 Else
-                    drow.Item("Total") = rsPending.Rows(vRow).Item("Total").ToString()
+                    drow.Item("Total") = dgPending.Rows(vRow).Cells("Total").Value
                 End If
                 'If (dgPending.Columns("Total").Text = "") Then
                 '    rsSelected("Total") = 0
@@ -447,10 +447,16 @@ ErrorHandler:
                 'UPGRADE_WARNING: Couldn't resolve default property of object rsSelected.Bookmark. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 'dgSelected.Bookmark = rsSelected.Bookmark
                 calc_amount()
-                rsPending.Rows.Remove(rsPending.Rows(vRow))
+                Dim remRows As DataRow() = rsPending.Select("store_id = " + drow.Item("store_id").ToString)
+                If remRows.Length > 0 Then
+                    rsPending.Rows.Remove(remRows(0))
+                End If
 
-            End If
+                End If
         Next rowCount
+
+        dgPending.Sort(dgPending.Columns("Store"), System.ComponentModel.ListSortDirection.Ascending)
+        dgSelected.Sort(dgSelected.Columns("Store"), System.ComponentModel.ListSortDirection.Ascending)
 		
 	End Sub
 	'Antes de agregar una factura al dgSelected se verifica
@@ -460,7 +466,7 @@ ErrorHandler:
 		
 		'UPGRADE_NOTE: Object rsClone may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
 		rsClone = Nothing
-		rsClone = rsSelected.Clone
+        rsClone = rsSelected.Copy
 		
 		On Error GoTo ErrorHandler
 		
@@ -546,14 +552,14 @@ ErrorHandler:
             'UPGRADE_WARNING: Couldn't resolve default property of object vRow. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             'rsSelected.Bookmark = vRow 'Muevo el recordset a la fila seleccionada
             Dim drow As DataRow = rsPending.NewRow
-
-            drow.Item("store_id") = rsSelected.Rows(vRow).Item("store_id")
-            drow.Item("Store") = rsSelected.Rows(vRow).Item("Store")
-            drow.Item("Account") = rsSelected.Rows(vRow).Item("Account")
-            drow.Item("Invoice") = rsSelected.Rows(vRow).Item("Invoice")
-            drow.Item("Total") = rsSelected.Rows(vRow).Item("Total")
-            drow.Item("account_mask") = rsSelected.Rows(vRow).Item("account_mask")
-            drow.Item("vend_seq") = rsSelected.Rows(vRow).Item("vend_seq")
+            Dim rowIndex As Integer = dgSelected.SelectedRows(0).Index
+            drow.Item("store_id") = dgSelected.Rows(rowIndex).Cells("store_id").Value
+            drow.Item("Store") = dgSelected.Rows(rowIndex).Cells("Store").Value
+            drow.Item("Account") = dgSelected.Rows(rowIndex).Cells("Account").Value
+            drow.Item("Invoice") = dgSelected.Rows(rowIndex).Cells("Invoice").Value
+            drow.Item("Total") = dgSelected.Rows(rowIndex).Cells("Total").Value
+            drow.Item("account_mask") = dgSelected.Rows(rowIndex).Cells("account_mask").Value
+            drow.Item("vend_seq") = dgSelected.Rows(rowIndex).Cells("vend_seq").Value
 
 
             'rsPending.item("store_id").Value = rsSelected.item("store_id").Value
@@ -565,10 +571,14 @@ ErrorHandler:
             'rsPending.item("vend_seq").Value = rsSelected.item("vend_seq").Value
             rsPending.Rows.Add(drow)
             rsPending.Select("", "store, account, invoice")
-
+            dgPending.Sort(dgPending.Columns("Store"), System.ComponentModel.ListSortDirection.Ascending)
 
             'rsSelected.Bookmark = vRow
-            rsSelected.Rows.Remove(rsSelected.Rows(vRow)) '(ADODB.AffectEnum.adAffectCurrent)
+            Dim remDataRow As DataRow() = rsSelected.Select("store_id = " + drow.Item("store_id").ToString)
+            If remDataRow.Length > 0 Then
+                rsSelected.Rows.Remove(remDataRow(0)) '(ADODB.AffectEnum.adAffectCurrent)
+            End If
+            dgSelected.Sort(dgSelected.Columns("Store"), System.ComponentModel.ListSortDirection.Ascending)
 
 
         Next vRow
@@ -752,7 +762,7 @@ ErrorHandler:
 		gCheck.Amount = CDbl(txtAmount.Text)
 		gCheck.Date_Renamed = Today
 		gCheck.CustName = cbCustomerName.Text
-		gCheck.rsStore = rsSelected.Clone
+        gCheck.rsStore = rsSelected.Copy()
 		
 		valid_check_data = True
 		Exit Function

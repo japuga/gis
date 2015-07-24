@@ -210,7 +210,7 @@ ErrorHandler:
         gCheck.CustName = dgChecks.Columns("cust_name").Text
         
 
-        gCheck.rsStore = rsCheckDet.Clone
+        gCheck.rsStore = rsCheckDet.Copy
 
         'Solicita numero de cheque a imprimir
         clear_gCheckVoid()

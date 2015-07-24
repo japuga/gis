@@ -86,7 +86,7 @@ ErrorHandler:
 
         If dgBank.SelectedRows.Count < 1 Then
             If dgBank.SelectedCells.Count > 0 Then
-                dgBank.Rows(dgBank.CurrentRow.Index).Selected = True
+                dgBank.Rows(dgBank.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
         If dgBank.SelectedRows.Count < 1 Then
@@ -94,9 +94,9 @@ ErrorHandler:
         End If
 
         gBank.bFlag = General.modo.UpdateRecord
-        gBank.nBankId = CShort(dgBank.CurrentRow.Cells("bank_id").Value)
-        gBank.sBankName = dgBank.CurrentRow.Cells("Bank").Value
-        gBank.sBankAba = dgBank.CurrentRow.Cells("Routing").Value.ToString()
+        gBank.nBankId = CShort(dgBank.SelectedRows(0).Cells("bank_id").Value)
+        gBank.sBankName = dgBank.SelectedRows(0).Cells("Bank").Value
+        gBank.sBankAba = dgBank.SelectedRows(0).Cells("Routing").Value.ToString()
 
 
         gBank.sBankStatus = ""
@@ -106,28 +106,28 @@ ErrorHandler:
         gBank.sCheckInfo4 = ""
 
 
-        If Not IsDBNull(dgBank.CurrentRow.Cells("Status").Value) Then
-            gBank.sBankStatus = dgBank.CurrentRow.Cells("Status").Value
+        If Not IsDBNull(dgBank.SelectedRows(0).Cells("Status").Value) Then
+            gBank.sBankStatus = dgBank.SelectedRows(0).Cells("Status").Value
         End If
 
 
-        If Not IsDBNull(dgBank.CurrentRow.Cells("check_info1").Value) Then
-            gBank.sCheckInfo1 = dgBank.CurrentRow.Cells("check_info1").Value
+        If Not IsDBNull(dgBank.SelectedRows(0).Cells("check_info1").Value) Then
+            gBank.sCheckInfo1 = dgBank.SelectedRows(0).Cells("check_info1").Value
         End If
 
 
-        If Not IsDBNull(dgBank.CurrentRow.Cells("check_info2").Value) Then
-            gBank.sCheckInfo2 = dgBank.CurrentRow.Cells("check_info2").Value
+        If Not IsDBNull(dgBank.SelectedRows(0).Cells("check_info2").Value) Then
+            gBank.sCheckInfo2 = dgBank.SelectedRows(0).Cells("check_info2").Value
         End If
 
 
-        If Not IsDBNull(dgBank.CurrentRow.Cells("check_info3").Value) Then
-            gBank.sCheckInfo3 = dgBank.CurrentRow.Cells("check_info3").Value
+        If Not IsDBNull(dgBank.SelectedRows(0).Cells("check_info3").Value) Then
+            gBank.sCheckInfo3 = dgBank.SelectedRows(0).Cells("check_info3").Value
         End If
 
 
-        If Not IsDBNull(dgBank.CurrentRow.Cells("check_info4").Value) Then
-            gBank.sCheckInfo4 = dgBank.CurrentRow.Cells("check_info4").Value
+        If Not IsDBNull(dgBank.SelectedRows(0).Cells("check_info4").Value) Then
+            gBank.sCheckInfo4 = dgBank.SelectedRows(0).Cells("check_info4").Value
         End If
 
 
@@ -148,7 +148,7 @@ ErrorHandler:
             Else
                 'Verify that no Account or Check exist
                 'for this Bank before deleting it
-                sStmt = "SELECT COUNT(*) FROM BankAccount " & "WHERE bank_id =" & Str(CDbl(dgBank.CurrentRow.Cells("bank_id").Value))
+                sStmt = "SELECT COUNT(*) FROM BankAccount " & "WHERE bank_id =" & Str(CDbl(dgBank.SelectedRows(0).Cells("bank_id").Value))
                 cmd.CommandText = sStmt
                 rs = getDataTable(sStmt) 'cmd.ExecuteReader()
 
@@ -158,7 +158,7 @@ ErrorHandler:
                 End If
 
                 'Delete
-                sStmt = "DELETE FROM Bank" & " WHERE bank_id =" & Str(CDbl(dgBank.CurrentRow.Cells("bank_id").Value))
+                sStmt = "DELETE FROM Bank" & " WHERE bank_id =" & Str(CDbl(dgBank.SelectedRows(0).Cells("bank_id").Value))
 
                 cmd.CommandText = sStmt
                 nRecords = cmd.ExecuteNonQuery()

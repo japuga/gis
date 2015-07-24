@@ -621,7 +621,7 @@ ErrorHandler:
 		dTotal = 0
 		dGlmTotal = 0
 		
-        rsClone = rsDetail.Clone 'rsDetail.Clone(ADODB.LockTypeEnum.adLockReadOnly)
+        rsClone = rsDetail.Copy 'rsDetail.copy(ADODB.LockTypeEnum.adLockReadOnly)
         'While rsClone.Read()
         For row As Integer = 0 To rsClone.Rows.Count - 1
             If Not IsDBNull(rsClone.Rows(row).Item("Subtotal")) Then
@@ -681,7 +681,7 @@ ErrorHandler:
 		dTotal = 0
 		dGlmTotal = 0
 
-        rsClone = rsDetail.Clone '.Clone(ADODB.LockTypeEnum.adLockReadOnly)
+        rsClone = rsDetail.Copy '.copy(ADODB.LockTypeEnum.adLockReadOnly)
 
         'Do While Not rsClone.EOF
         For row As Integer = 0 To rsDetail.Rows.Count - 1
@@ -1885,7 +1885,7 @@ ErrorHandler:
         bDetail = False
         If nResult = MsgBoxResult.Yes Then
 
-            rsDetailClone = rsDetail.Clone
+            'rsDetailClone = rsDetail.copy
 
             If check_header Then
                 'Verifica que hayan detalles
@@ -2147,7 +2147,7 @@ ErrorHandler:
         Dim nTran As SqlTransaction
         If nResult = MsgBoxResult.Yes Then
 
-            rsDetailClone = rsDetail.Clone
+            'rsDetailClone = rsDetail.copy
 
             If check_header Then
                 'Verifica que hayan detalles

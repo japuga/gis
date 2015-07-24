@@ -142,10 +142,17 @@ Friend Class frmCheckRep
             add_store(gCheck.rsStore.Rows(row).Item("Store"))
             'Cargo detalle de forma
             lStore(nIndex).Text = gCheck.rsStore.Rows(row).Item("Store")
+            lStore(nIndex).Visible = True
+
             'lAccount(nIndex) = gCheck.rsStore("Account")
             lAccount(nIndex).Text = gCheck.rsStore.Rows(row).Item("account_mask")
+            lAccount(nIndex).Visible = True
+
             lInvoice(nIndex).Text = gCheck.rsStore.Rows(row).Item("Invoice")
+            lInvoice(nIndex).Visible = True
+
             lTotal(nIndex).Text = gCheck.rsStore.Rows(row).Item("Total")
+            lTotal(nIndex).Visible = True
 
             nIndex = nIndex + 1
         Next
@@ -1484,13 +1491,13 @@ ErrorHandler:
 	'Guarda la lista de facturas pagadas en este cheque,
 	'actualiza el estado de las facturas a PRT = PRINT impresas.
 	Private Function save_check() As Boolean
-		Dim nCounter As Short
-		Dim nRecords As Short
+        Dim nCounter As Integer
+        Dim nRecords As Integer
         Dim cmCheck As SqlCommand = cn.CreateCommand
         Dim nTran As SqlTransaction
 		Dim qb As gDumpUDT
 		Dim sDetailMemo As String
-		Dim nLastCheckNo As Short
+        Dim nLastCheckNo As Integer
 		
 		Dim sMsg As String
 		
@@ -1543,21 +1550,48 @@ ErrorHandler:
 
         For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
             nCounter = nCounter + 1
-            gCheck.Memo = get_check_memo()
-            sDetailMemo = get_detail_memo(gCheck.rsStore.Rows(row).Item("Store"), gCheck.rsStore.Rows(row).Item("Account"), gCheck.rsStore.Rows(row).Item("Invoice"))
+            gCheck.Memo = get_check_memo(nTran)
+            sDetailMemo = get_detail_memo(gCheck.rsStore.Rows(row).Item("Store"), gCheck.rsStore.Rows(row).Item("Account"), gCheck.rsStore.Rows(row).Item("Invoice"), nTran)
 
             'UPGRADE_WARNING: Couldn't resolve default property of object qb. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            qb = get_qb_name(sCustId)
+            qb = get_qb_name(sCustId, nTran)
             If qb.str1 = "ERROR" Then
                 nTran.Rollback() 'Error en informacion para QuickBooksPro
                 save_check = False
                 Exit Function
             End If
+            If IsNothing(gCheck.Memo) Then
+                gCheck.Memo = ""
+            End If
+            If IsNothing(sDetailMemo) Then
+                sDetailMemo = ""
+            End If
 
-
-            sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim) " & " VALUES " & "(" & Str(gCheck.CheckNo) & "," & gCheck.BankCustSeq & ", " & Str(nCounter) & ", " & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & ", '" & gCheck.custId & "', " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & ", '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "', '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "', " & "'" & Str(dtCheckDate.Value) & "', " & Str(gCheck.Amount) & ", " & "'" & gCheck.Memo & "', " & Str(gCheck.rsStore.Rows(row).Item("Total")) & ", " & "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate())"
+            Dim sCheckDate As String = dtCheckDate.Value.Month.ToString + "/" + dtCheckDate.Value.Day.ToString + "/" + dtCheckDate.Value.Year.ToString
+            sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & _
+                " check_detail_no, vend_seq, " & _
+                " cust_id, store_id, " & _
+                " invoice_no, account_no, " & _
+                " check_date, check_amount, " & _
+                " check_memo, invoice_total, " & _
+                " detail_memo, qb_detail_name, voided_flag, " & _
+                " create_user, create_dtim) " & _
+                " VALUES " & _
+                    "(" & Str(gCheck.CheckNo) & "," & _
+            gCheck.BankCustSeq & ", " & _
+            Str(nCounter) & ", " & _
+            Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & ", '" & _
+            gCheck.custId & "', " & _
+            Str(gCheck.rsStore.Rows(row).Item("store_id")) & ", '" & _
+            Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "', '" & _
+            Trim(gCheck.rsStore.Rows(row).Item("Account")) & "', " & "'" & _
+            sCheckDate & "', " & _
+            Str(gCheck.Amount) & ", " & "'" & _
+            gCheck.Memo & "', " & Str(gCheck.rsStore.Rows(row).Item("Total")) & ", " & _
+            "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate())"
             'MsgBox sStmt
             cmCheck.CommandText = sStmt
+            cmCheck.Transaction = nTran
             nRecords = cmCheck.ExecuteNonQuery()
             If nRecords > 0 Then
                 'ok
@@ -1578,6 +1612,7 @@ ErrorHandler:
             sStmt = "UPDATE VInvoice " & "SET vinvoice_status = 'PRT', " & " change_user ='" & gsUser & "', " & " change_time = GETDATE() " & "WHERE vend_seq=" & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & " " & "AND cust_id = '" & gCheck.custId & "' " & "AND store_id = " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & " " & "AND invoice_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "' " & "AND account_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "' "
             'MsgBox sStmt
             cmCheck.CommandText = sStmt
+            cmCheck.Transaction = nTran
             nRecords = cmCheck.ExecuteNonQuery()
 
             If nRecords > 0 Then
@@ -1657,7 +1692,7 @@ ErrorHandler:
                 MsgBox("Failed to update Bank Account information. Check:" & Str(gCheck.CheckNo), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 Exit Function
             End If
-
+            nTran.Commit()
         Else
             '01.09.04 Actualizo Cuenta de Banco
             sStmt = "UPDATE BankAccount " & " SET last_check_no=" & Str(gCheck.CheckNo) & " ," & " bank_account_balance = bank_account_balance -" & Str(gCheck.Amount) & " " & " WHERE bank_cust_seq =" & Str(CDbl(gCheck.BankCustSeq))
@@ -1690,15 +1725,15 @@ ErrorHandler:
         MsgBox("An error ocurred while updating check info. Review log file for details", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
     End Function
 	'Crea el listado de tiendas cuyas facturas estan pagadas en este cheque
-	Private Function get_check_memo() As String
-		Dim i As Short
-		Dim sTmp As String
+    Private Function get_check_memo(Optional ByRef nTran As SqlTransaction = Nothing) As String
+        Dim i As Short
+        Dim sTmp As String
         Dim cmd As SqlCommand = cn.CreateCommand
-		On Error GoTo ErrorHandler
-		
-		'Inicializo la variable con el nombre del cliente
-		sTmp = ""
-		
+        On Error GoTo ErrorHandler
+
+        'Inicializo la variable con el nombre del cliente
+        sTmp = ""
+
         sStmt = "SELECT cust_name FROM customer WHERE cust_id ='" & Trim(gCheck.custId) & "'"
         cmd.CommandText = sStmt
         rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
@@ -1725,24 +1760,26 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "get_check_memo")
         MsgBox("An error occurred while formatting Check Info. Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-	End Function
+    End Function
 	'Obtains the QuickBooks account name
 	'Each customer is an account in Quickbooks, but the customer
 	'just belongs to a single group: i.e. CS(Container Store), TR (Tony Roma), Nordstrom, etc
 	'In case of error str1="ERROR" to be detected
-	Private Function get_qb_name(ByRef sCustId As String) As gDumpUDT
-		Dim qb As gDumpUDT
-		Dim sGroupId As String
-		Dim sCustName As String
-		qb.str1 = "" 'qb_name
-		qb.str2 = ""
+    Private Function get_qb_name(ByRef sCustId As String, Optional ByRef nTran As SqlTransaction = Nothing) As gDumpUDT
+        Dim qb As gDumpUDT
+        Dim sGroupId As String
+        Dim sCustName As String
+        qb.str1 = "" 'qb_name
+        qb.str2 = ""
         Dim cmd As SqlCommand = cn.CreateCommand()
 
-		
-		
+        If Not IsNothing(nTran) Then
+            cmd.Transaction = nTran
+        End If
+
         sStmt = "SELECT qb_group_id, qb_account_name, cust_name " & " FROM customer " & " WHERE cust_id = '" & Trim(sCustId) & "'"
         cmd.CommandText = sStmt
-        rsLocal = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsLocal = getDataTable(sStmt, nTran) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
             sCustName = rsLocal.Rows(0).Item("cust_name")
             'QB-Group
@@ -1777,11 +1814,11 @@ ErrorHandler:
                     'OK. Verificar que la cuenta exista en qb_account
                     sStmt = "SELECT COUNT(*) FROM qb_account " & " WHERE name ='" & Trim(qb.str1) & "' " & " AND qb_group_id ='" & Trim(sGroupId) & "'"
                     cmd.CommandText = sStmt
-                    rsLocal2 = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+                    rsLocal2 = getDataTable(sStmt, nTran) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
                     Try
                         If rsLocal2.Rows.Count > 0 Then
                             If rsLocal2.Rows(0).Item(0) > 0 Then
-                                If rsLocal2.Rows(0).Item(0) > 1 Then
+                                If rsLocal2.Rows(0).Item(0) > 0 Then
                                     MsgBox("QBooks setup error found." & vbCrLf & "Customer account was found more than once " & "on Qbooks Account table.")
                                     qb.str1 = "ERROR"
                                     'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -1814,21 +1851,21 @@ ErrorHandler:
                 End If
             End If
         End If
-		
+
         get_qb_name = qb
-		Exit Function
-		
-ErrorHandler: 
-		get_qb_name.str1 = "ERROR"
-		save_error(Me.Name, "get_qb_name")
-	End Function
+        Exit Function
+
+ErrorHandler:
+        get_qb_name.str1 = "ERROR"
+        save_error(Me.Name, "get_qb_name")
+    End Function
 	'Linea de detalle en cheque
-	Private Function get_detail_memo(ByRef sStore As String, ByRef sAccount As String, ByRef sInvoice As String) As String
-		Dim sTmp As String
+    Private Function get_detail_memo(ByRef sStore As String, ByRef sAccount As String, ByRef sInvoice As String, Optional ByRef nTran As SqlTransaction = Nothing) As String
+        Dim sTmp As String
         Dim cmd As SqlCommand = cn.CreateCommand()
-		On Error GoTo ErrorHandler
-		'Busco nombre del cliente
-		If Len(sCustName) = 0 Then
+        On Error GoTo ErrorHandler
+        'Busco nombre del cliente
+        If Len(sCustName) = 0 Then
             sStmt = "SELECT cust_name FROM customer WHERE cust_id ='" & Trim(gCheck.custId) & "'"
             cmd.CommandText = sStmt
             rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
@@ -1836,15 +1873,15 @@ ErrorHandler:
                 sCustName = rsLocal.Rows(0).Item("cust_name")
             End If
         End If
-		
-		sTmp = Trim(sCustName) & " #" & Trim(sStore) & "-Acct#" & Trim(sAccount) & "-Inv#" & Trim(sInvoice)
-		get_detail_memo = sTmp
-		Exit Function
-		
-ErrorHandler: 
-		save_error(Me.Name, "get_detail_memo")
-		MsgBox("An error occurred while formatting Check Info. Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OKOnly, "GLM Error")
-	End Function
+
+        sTmp = Trim(sCustName) & " #" & Trim(sStore) & "-Acct#" & Trim(sAccount) & "-Inv#" & Trim(sInvoice)
+        get_detail_memo = sTmp
+        Exit Function
+
+ErrorHandler:
+        save_error(Me.Name, "get_detail_memo")
+        MsgBox("An error occurred while formatting Check Info. Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+    End Function
 	'Agrega las tiendas en dos o tres lineas (nLines) de longitud maxima nLen
 	'En caso de que existan mas tiendas que las que se puedan mostrar en nLines,
 	'las tiendas sobrantes se agregan a la ultima linea
