@@ -5,19 +5,21 @@ Friend Class frmCheckBrowseDet
 	Inherits System.Windows.Forms.Form
     Private rsLocal As DataTable
     Private rsCheckDet As DataTable
+    Private bIgnoreDgEvent As Boolean = False
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		
-		If dgChecks.SelBookmarks.Count > 0 Then
-			If (MsgBox("Do you want to Delete Check:" & dgChecks.Columns("check_no").Text & " ?", MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.Yes) Then
-				cancel_check()
-				'Refresh Checks Grid
+        If dgChecks.SelectedRows.Count > 0 Then
+            If (MsgBox("Do you want to Delete Check:" & dgChecks.SelectedRows(0).Cells("check_no").Value & _
+                        " ?", MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.Yes) Then
+                cancel_check()
+                'Refresh Checks Grid
                 'grsCheck.Requery()
-				load_dgChecks()
-			End If
-		Else
-			MsgBox("Please choose a check to Cancel.", MsgBoxStyle.OKOnly, "GLM Message")
-		End If
+                load_dgChecks()
+            End If
+        Else
+            MsgBox("Please choose a check to Cancel.", MsgBoxStyle.OkOnly, "GLM Message")
+        End If
 		
 	End Sub
 	'Deletes a Check from DB
@@ -31,11 +33,12 @@ Friend Class frmCheckBrowseDet
         'On Error GoTo ErrorHandler
 		
 		bOk = False
-		nCheckNo = CInt(dgChecks.Columns("check_no").Text)
-		nBankCustSeq = CShort(dgChecks.Columns("bank_cust_seq").Text)
+        nCheckNo = CInt(dgChecks.SelectedRows(0).Cells("check_no").Value)
+        nBankCustSeq = CShort(dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value)
 		
 		'Verify if check has been extracted
-		sStmt = "SELECT DISTINCT invoice_no, cust_id, " & " store_id, account_no, vend_seq, qb_exported_flag FROM BCheck " & " WHERE check_no =" & Str(nCheckNo) & " AND bank_cust_seq =" & Str(nBankCustSeq)
+        sStmt = "SELECT DISTINCT invoice_no, cust_id, " & " store_id, account_no, vend_seq, qb_exported_flag FROM BCheck " & _
+                " WHERE check_no =" & Str(nCheckNo) & " AND bank_cust_seq =" & Str(nBankCustSeq)
         Try
             rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
             If rsLocal.Rows.Count > 0 Then
@@ -101,7 +104,7 @@ ErrorHandler:
     End Sub
 
     Private Sub cmdPrint_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdPrint.Click
-        If dgChecks.SelBookmarks.Count > 0 Then
+        If dgChecks.SelectedRows.Count > 0 Then
             set_check()
         Else
             MsgBox("Please choose a check to Reprint.", MsgBoxStyle.OkOnly, "GLM Message")
@@ -109,7 +112,7 @@ ErrorHandler:
     End Sub
 
     Private Sub cmdRenumber_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdRenumber.Click
-        If dgChecks.SelBookmarks.Count > 0 Then
+        If dgChecks.SelectedRows.Count > 0 Then
             renumber_check()
         Else
             MsgBox("Please choose a Check to Renumber.", MsgBoxStyle.OkOnly, "GLM Message")
@@ -122,8 +125,8 @@ ErrorHandler:
         clear_gCheckRenumber()
 
         gCheckRenumber.bOk = False
-        gCheckRenumber.nBankCustSeq = CShort(dgChecks.Columns("bank_cust_seq").Text)
-        gCheckRenumber.nVoidCheckNo = CInt(dgChecks.Columns("check_no").Text)
+        gCheckRenumber.nBankCustSeq = CShort(dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value)
+        gCheckRenumber.nVoidCheckNo = CInt(dgChecks.SelectedRows(0).Cells("check_no").Value)
 
         VB6.ShowForm(frmCheckRenumber, VB6.FormShowConstants.Modal, Me)
 
@@ -133,10 +136,12 @@ ErrorHandler:
         End If
 
     End Sub
-    Private Sub dgChecks_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgChecks.ClickEvent
-        If dgChecks.Row >= 0 Then
-            load_check_detail(CInt(dgChecks.Columns("check_no").Text), CShort(dgChecks.Columns("bank_cust_seq").Text))
-        End If
+    Private Sub dgChecks_ClickEvent(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        'If dgChecks.SelectedCells.Count > 0 Then
+        '    If dgChecks.Row >= 0 Then
+        '        load_check_detail(CInt(dgChecks.Columns("check_no").Text), CShort(dgChecks.Columns("bank_cust_seq").Text))
+        '    End If
+        'End If
     End Sub
     Private Sub load_check_detail(ByRef nCheckNo As Integer, ByRef nBankCustSeq As Short)
 
@@ -160,7 +165,7 @@ ErrorHandler:
         '" AND VAccount.vend_seq = VInvoice.vend_seq " + _
         '" AND Bcheck.check_no =" + Str(nCheckNo) + _
         '" AND Bcheck.bank_cust_seq = " + Str(nBankCustSeq)
-
+        bIgnoreDgEvent = True
         sStmt = get_check_query(nCheckNo, nBankCustSeq)
         'Limpiar datagrid
         'If bClear Then
@@ -172,8 +177,8 @@ ErrorHandler:
             dgCheckDetail.DataSource = rsCheckDet
         Else
             MsgBox("Failed to load check details.")
-            'UPGRADE_NOTE: Object dgCheckDetail.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
             dgCheckDetail.DataSource = Nothing
+            bIgnoreDgEvent = False
             Exit Sub
         End If
 
@@ -187,36 +192,36 @@ ErrorHandler:
         dgCheckDetail.Columns("Account").Width = VB6.TwipsToPixelsX(1300)
         dgCheckDetail.Columns("Date").Width = VB6.TwipsToPixelsX(1000)
         dgCheckDetail.Columns("Total").Width = VB6.TwipsToPixelsX(800)
+        bIgnoreDgEvent = False
 
     End Sub
 
-    Private Sub dgChecks_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgChecks.DblClick
+    Private Sub dgChecks_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
         'set_check
     End Sub
     'Guarda los datos del cheque a reimprimir
     Private Sub set_check()
         'Guardo los datos para el preview
         gCheck.reprint = True 'Se imprime por primera vez
-        gCheck.VoidCheckNo = CInt(dgChecks.Columns("check_no").Text)
-        gCheck.BankCustSeq = dgChecks.Columns("bank_cust_seq").Text
+        gCheck.VoidCheckNo = CInt(dgChecks.SelectedRows(0).Cells("check_no").Value)
+        gCheck.BankCustSeq = dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value
         'gCheck.VendorSeq = dgChecks.Columns("vend_seq")
 
-        gCheck.VendorSeq = CShort(dgCheckDetail.Columns("vend_seq").Text)
+        gCheck.VendorSeq = CShort(dgCheckDetail.SelectedRows(0).Cells("vend_seq").Value)
 
-        gCheck.VendorName = dgChecks.Columns("vend_name").Text
-        gCheck.custId = dgChecks.Columns("cust_id").Text
-        gCheck.Amount = CDbl(dgChecks.Columns("amount").Text)
+        gCheck.VendorName = dgChecks.SelectedRows(0).Cells("vend_name").Value
+        gCheck.custId = dgChecks.SelectedRows(0).Cells("cust_id").Value
+        gCheck.Amount = CDbl(dgChecks.SelectedRows(0).Cells("amount").Value)
         gCheck.Date_Renamed = Today
-        gCheck.CustName = dgChecks.Columns("cust_name").Text
-        
+        gCheck.CustName = dgChecks.SelectedRows(0).Cells("cust_name").Value
 
         gCheck.rsStore = rsCheckDet.Copy
 
         'Solicita numero de cheque a imprimir
         clear_gCheckVoid()
         gCheckVoid.bOk = False
-        gCheckVoid.nBankCustSeq = CShort(dgChecks.Columns("bank_cust_seq").Text)
-        gCheckVoid.nVoidCheckNo = CInt(dgChecks.Columns("check_no").Text)
+        gCheckVoid.nBankCustSeq = CShort(dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value)
+        gCheckVoid.nVoidCheckNo = CInt(dgChecks.SelectedRows(0).Cells("check_no").Value)
 
         VB6.ShowForm(frmCheckVoid, VB6.FormShowConstants.Modal, Me)
         If gCheckVoid.bOk = True Then
@@ -255,8 +260,9 @@ ErrorHandler:
         If grsCheck.Rows.Count > 0 Then
             '    grsCheck.MoveFirst
             '   dgChecks.SelBookmarks.Add grsCheck.Bookmark
-            dgChecks.Row = 0
-            load_check_detail(grsCheck.Rows(0).Item("check_no").Value, grsCheck.Rows(0).Item("bank_cust_seq").Value)
+            dgChecks.ClearSelection()
+            dgChecks.Rows(0).Selected = True
+            load_check_detail(grsCheck.Rows(0).Item("check_no"), grsCheck.Rows(0).Item("bank_cust_seq"))
         End If
 
         'Formato de Datagrid
@@ -265,6 +271,7 @@ ErrorHandler:
 
 ErrorHandler:
         save_error(Me.Name, "load_dgChecks")
+        MsgBox("An error occurred while loading Check information.", MsgBoxStyle.OkOnly, "GLM Message")
     End Sub
 
     Private Sub format_dgChecks()
@@ -281,5 +288,37 @@ ErrorHandler:
         dgChecks.Columns("cust_name").Visible = False
         dgChecks.Columns("vend_name").Visible = False
 
+    End Sub
+
+    Private Sub dgChecks_RowEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgChecks.RowEnter
+        If bIgnoreDgEvent Then
+            Exit Sub
+        End If
+
+        If dgChecks.SelectedRows.Count < 1 Then
+            If dgChecks.SelectedCells.Count > 0 Then
+                dgChecks.Rows(dgChecks.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        If dgChecks.SelectedRows.Count > 0 Then
+            'dgChecks.ClearSelection()
+            load_check_detail(CInt(dgChecks.SelectedRows(0).Cells("check_no").Value), CShort(dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value))
+        End If
+    End Sub
+
+    Private Sub dgChecks_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgChecks.RowHeaderMouseClick
+        If bIgnoreDgEvent Then
+            Exit Sub
+        End If
+
+        If dgChecks.SelectedRows.Count < 1 Then
+            If dgChecks.SelectedCells.Count > 0 Then
+                dgChecks.Rows(dgChecks.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        If dgChecks.SelectedRows.Count > 0 Then
+            'dgChecks.ClearSelection()
+            load_check_detail(CInt(dgChecks.SelectedRows(0).Cells("check_no").Value), CShort(dgChecks.SelectedRows(0).Cells("bank_cust_seq").Value))
+        End If
     End Sub
 End Class

@@ -27,33 +27,31 @@ Friend Class frmCheckBatchBrowse
 		
 		'Customer
 		If cbCustName.SelectedIndex < 0 Then
-			MsgBox("Please select a Custome.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Message")
+            MsgBox("Please select a Customer.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Message")
 			cbCustName.Focus()
 			
 			Exit Function
 		End If
 		
 		'BatchId, puede ser nulo
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If Not IsDbNull(txtBatchId.Text) Then
-			
-			If Not IsNumeric(txtBatchId.Text) And Len(Trim(txtBatchId.Text)) > 0 Then
-				MsgBox("Batch Id must be a number.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Error")
-				txtBatchId.Focus()
-				Exit Function
-			End If
-		End If
+        If Not IsDBNull(txtBatchId.Text) Then
+            If Not IsNumeric(txtBatchId.Text) And Len(Trim(txtBatchId.Text)) > 0 Then
+                MsgBox("Batch Id must be a number.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+                txtBatchId.Focus()
+                Exit Function
+            End If
+        End If
 		
 		'Dates
 		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-		If Not IsDbNull(dtBatchFrom._Value) And Not IsDbNull(dtBatchTo._Value) Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtBatchTo._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtBatchFrom._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtBatchFrom._Value > dtBatchTo._Value Then
-				MsgBox("Batch Date From must be lower than To date.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Message")
-				dtBatchFrom.Focus()
-			End If
-		End If
+        If Not IsDBNull(dtBatchFrom.Value) And Not IsDBNull(dtBatchTo.Value) Then
+            If dtBatchFrom.Value > dtBatchTo.Value Then
+                MsgBox("Batch Date From must be lower than To date.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Message")
+                dtBatchFrom.Focus()
+                val_fields = False
+                Exit Function
+            End If
+        End If
 		val_fields = True
 		Exit Function
 		
@@ -73,8 +71,8 @@ ErrorHandler:
 		End If
 		
 		gCheckBatchSearch.sCustId = cbCustId.Text
-		gCheckBatchSearch.sDateFrom = build_datetime(dtBatchFrom._Value, False)
-		gCheckBatchSearch.sDateTo = build_datetime(dtBatchTo._Value, True)
+        gCheckBatchSearch.sDateFrom = build_datetime(dtBatchFrom.Value, False)
+        gCheckBatchSearch.sDateTo = build_datetime(dtBatchTo.Value, True)
 		
 	End Sub
 	Private Sub frmCheckBatchBrowse_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load

@@ -54,8 +54,11 @@ Friend Class frmStoreAddressEntry
 				Me.txtCity.Text = gStoreAddress.sCity
 				Me.txtZip.Text = gStoreAddress.sZip
 				set_cb((Me.cbState), gStoreAddress.sState)
-				
-		End Select
+            Case modo.NewRecord
+                Me.txtAddress.Text = ""
+                Me.txtCity.Text = ""
+                Me.txtZip.Text = ""
+        End Select
 		
 	End Sub
     Private Sub Toolbar1_ButtonClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)

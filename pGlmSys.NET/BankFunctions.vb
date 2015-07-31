@@ -2,6 +2,8 @@ Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
 Module BankFunctions
+    Private nTran As SqlTransaction = Nothing
+
     Public Function getDataTable(ByVal query As String, Optional ByRef aTrans As SqlTransaction = Nothing) As DataTable
         Dim ds As DataSet = New DataSet("tmpDS")
         Dim da As SqlDataAdapter = New SqlDataAdapter()
@@ -174,9 +176,11 @@ ErrorHandler:
 
         Dim cmd As SqlCommand = cn.CreateCommand()
         On Error GoTo ErrorHandler
-        Dim da As SqlDataAdapter = New SqlDataAdapter()
-        Dim ds As DataSet = New DataSet("tmp")
-        sStmt = "SELECT vend_seq FROM VBranch " & " WHERE vend_id = " & Str(nVendId) & " AND vend_pay_address ='" & Trim(sVendPayAddress) & "' " & " AND vend_pay_city ='" & Trim(sVendPayCity) & "' " & " AND vend_pay_zip ='" & Trim(sVendPayZip) & "' "
+        'Dim da As SqlDataAdapter = New SqlDataAdapter()
+        'Dim ds As DataSet = New DataSet("tmp")
+        sStmt = "SELECT vend_seq FROM VBranch " & _
+            " WHERE vend_id = " & Str(nVendId) & " AND vend_pay_address ='" & Trim(sVendPayAddress) & "' " & _
+            " AND vend_pay_city ='" & Trim(sVendPayCity) & "' " & " AND vend_pay_zip ='" & Trim(sVendPayZip) & "' "
         cmd.CommandText = sStmt
         'If cn.State = ConnectionState.Open Then
         'cn.Close()
@@ -211,9 +215,12 @@ ErrorHandler:
         On Error GoTo ErrorHandler
 
         sPeriodSeq = ""
-        'UPGRADE_WARNING: Couldn't resolve default property of object nPeriodSeqEnd. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        'UPGRADE_WARNING: Couldn't resolve default property of object nPeriodSeqStart. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        sStmt = "SELECT period_seq FROM period a " & " WHERE cust_id='" & Trim(sCustId) & "' " & " AND period_start_date >=(SELECT period_start_date FROM period b " & " WHERE b.cust_id = a.cust_id " & " AND b.period_seq=" & Str(nPeriodSeqStart) & ")" & " AND period_end_date <=(SELECT period_end_date FROM period c " & " WHERE c.cust_id = a.cust_id " & " AND c.period_seq=" & Str(nPeriodSeqEnd) & ")"
+        sStmt = "SELECT period_seq FROM period a " & _
+                " WHERE cust_id='" & Trim(sCustId) & "' " & _
+                    " AND period_start_date >=(SELECT period_start_date FROM period b " & _
+                                    " WHERE b.cust_id = a.cust_id " & " AND b.period_seq=" & Str(nPeriodSeqStart) & ")" & _
+                                    " AND period_end_date <=(SELECT period_end_date FROM period c " & _
+                                    " WHERE c.cust_id = a.cust_id " & " AND c.period_seq=" & Str(nPeriodSeqEnd) & ")"
         cmd.CommandText = sStmt
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
 
@@ -224,6 +231,8 @@ ErrorHandler:
             Next row
 
             sPeriodSeq = Left(sPeriodSeq, Len(sPeriodSeq) - 1)
+        Else
+            sPeriodSeq = "-1"
         End If
 
         get_period_seq = sPeriodSeq
@@ -244,11 +253,12 @@ ErrorHandler:
         Dim nCounter As Short
         Dim nRecords As Short
         Dim cmCheck As SqlCommand
-        Dim nTran As SqlTransaction
+        'Dim nTran As SqlTransaction
         Dim qb As gDumpUDT
         Dim sDetailMemo As String
         Dim nLastCheckNo As Short
-        nTran = cn.BeginTransaction()
+        Dim nTotalInvoiceUpdated As Integer = 0
+        nTran = Nothing
         Try
 
 
@@ -264,6 +274,7 @@ ErrorHandler:
 
                     'MsgBox sStmt
                     cmCheck.CommandText = sStmt
+                    cmCheck.Transaction = nTran
                     cmCheck.ExecuteNonQuery()
                     nTran.Commit()
                 End If
@@ -301,16 +312,19 @@ ErrorHandler:
             For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
                 nCounter = nCounter + 1
 
-                sDetailMemo = get_detail_memo2(sCustId, gCheck.rsStore.Rows(row).Item("Store").Value, gCheck.rsStore.Rows(0).Item("Account").Value, gCheck.rsStore.Rows(0).Item("Invoice").Value)
+                sDetailMemo = get_detail_memo2(sCustId, gCheck.rsStore.Rows(row).Item("Store"), gCheck.rsStore.Rows(row).Item("Account"), gCheck.rsStore.Rows(row).Item("Invoice"))
 
-                sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim, batch_id, " & " foot_note1, foot_note2) " & " VALUES " & _
-                "(" & Str(gCheck.CheckNo) & "," & gCheck.BankCustSeq & ", " & Str(nCounter) & ", " & Str(gCheck.rsStore.Rows(0).Item("vend_seq").Value) & _
-                ", '" & gCheck.custId & "', " & Str(gCheck.rsStore.Rows(0).Item("store_id").Value) & ", '" & Trim(gCheck.rsStore.Rows(0).Item("Invoice").Value) & "', '" & _
-                Trim(gCheck.rsStore.Rows(0).Item("Account").Value) & "', " & "'" & sCheckDate & "', " & Str(gCheck.Amount) & ", " & "'" & gCheck.Memo & "', " & Str(gCheck.rsStore.Rows(0).Item("Total").Value) & ", " & "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate()," & Str(nBatchId) & "," & "'" & Trim(sFootNote1) & "','" & Trim(sFootNote2) & "')"
+                sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim, batch_id, " & " foot_note1, foot_note2) " & _
+                " VALUES " & _
+                "(" & Str(gCheck.CheckNo) & "," & gCheck.BankCustSeq & ", " & Str(nCounter) & ", " & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & _
+                ", '" & gCheck.custId & "', " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & ", '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "', '" & _
+                Trim(gCheck.rsStore.Rows(row).Item("Account")) & "', " & "'" & sCheckDate & "', " & Str(gCheck.Amount) & ", " & "'" & gCheck.Memo & "', " & _
+                Str(gCheck.rsStore.Rows(row).Item("Total")) & ", " & "'" & Trim(sDetailMemo) & "', '" & Trim(qb.str1) & "', 'N', " & "'" & Trim(gsUser) & "', getdate()," & Str(nBatchId) & "," & "'" & Trim(sFootNote1) & "','" & Trim(sFootNote2) & "')"
 
                 'MsgBox sStmt
                 Try
                     cmCheck.CommandText = sStmt
+                    cmCheck.Transaction = nTran
                     cmCheck.ExecuteNonQuery()
                 Catch ex As Exception
                     save_check2 = False
@@ -331,7 +345,11 @@ ErrorHandler:
                 'cmCheck.CommandText = sStmt
                 'cmCheck.Execute nRecords
                 Try
-                    nRecords = update_invoice(gCheck.rsStore.Rows(0).Item("vend_seq").Value, gCheck.custId, gCheck.rsStore.Rows(0).Item("store_id").Value, gCheck.rsStore.Rows(0).Item("Invoice").Value, gCheck.rsStore.Rows(0).Item("Account").Value, "PRT")
+                    nRecords = update_invoice(gCheck.rsStore.Rows(row).Item("vend_seq"), gCheck.custId, gCheck.rsStore.Rows(row).Item("store_id"), gCheck.rsStore.Rows(row).Item("Invoice"), gCheck.rsStore.Rows(row).Item("Account"), "PRT")
+                    If nRecords > 0 Then
+                        nTotalInvoiceUpdated += nRecords
+                        Dim stahp As String = ""
+                    End If
                 Catch ex As Exception
                     save_check2 = False
                     nTran.Rollback()
@@ -343,10 +361,13 @@ ErrorHandler:
             'Termino la transaccion
             If gCheck.reprint Then
                 'Void Check
-                sStmt = "UPDATE Bcheck " & " SET " & "   check_amount=0 , " & "   invoice_total = 0, " & "   voided_flag ='Y' " & " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
+                sStmt = "UPDATE Bcheck " & " SET " & _
+                    "   check_amount=0 , " & "   invoice_total = 0, " & "   voided_flag ='Y' " & _
+                    " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
 
                 'MsgBox sStmt
                 cmCheck.CommandText = sStmt
+                cmCheck.Transaction = nTran
                 nRecords = cmCheck.ExecuteNonQuery()
                 If nRecords > 0 Then
                     'ok
@@ -362,16 +383,16 @@ ErrorHandler:
                 sStmt = "SELECT last_check_no FROM BankAccount " & " WHERE bank_cust_seq = " & Str(CDbl(gCheck.BankCustSeq))
 
                 cmCheck.CommandText = sStmt
-                rs = getDataTable(sStmt) ' cmCheck.ExecuteReader()
+                rs = getDataTable(sStmt, nTran) ' cmCheck.ExecuteReader()
 
                 If rs.Rows.Count > 0 Then
                     'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                    If IsDBNull(rs.Rows(0).Item(0).Value) Then
+                    If IsDBNull(rs.Rows(0).Item(0)) Then
                         nLastCheckNo = gCheck.CheckNo
                     Else
                         'Compare current LastCheck
-                        If rs.Rows(0).Item(0).Value > gCheck.CheckNo Then
-                            nLastCheckNo = rs.Rows(0).Item(0).Value
+                        If rs.Rows(0).Item(0) > gCheck.CheckNo Then
+                            nLastCheckNo = rs.Rows(0).Item(0)
                         Else
                             nLastCheckNo = gCheck.CheckNo
                         End If
@@ -389,6 +410,7 @@ ErrorHandler:
 
                 Try
                     cmCheck.CommandText = sStmt
+                    cmCheck.Transaction = nTran
                     cmCheck.ExecuteNonQuery()
                 Catch e As Exception
                     save_check2 = False
@@ -399,9 +421,13 @@ ErrorHandler:
                 nTran.Commit()
             Else
                 '01.09.04 Actualizo balance en Cuenta de Banco
-                sStmt = "UPDATE BankAccount " & " SET last_check_no=" & Str(gCheck.CheckNo) & " ," & " bank_account_balance = bank_account_balance -" & Str(gCheck.Amount) & " " & " WHERE bank_cust_seq =" & Str(CDbl(gCheck.BankCustSeq))
+                sStmt = "UPDATE BankAccount " & _
+                    " SET last_check_no=" & Str(gCheck.CheckNo) & " ," & _
+                        " bank_account_balance = bank_account_balance -" & Str(gCheck.Amount) & " " & _
+                    " WHERE bank_cust_seq =" & Str(CDbl(gCheck.BankCustSeq))
 
                 cmCheck.CommandText = sStmt
+                cmCheck.Transaction = nTran
                 nRecords = cmCheck.ExecuteNonQuery()
 
                 If nRecords > 0 Then
@@ -420,7 +446,12 @@ ErrorHandler:
 
         Catch ex As Exception
             'Cierro cualquier transaccion abierta
-            nTran.Rollback()
+            If Not IsNothing(nTran) Then
+                Try
+                    nTran.Rollback()
+                Catch tranExc As Exception
+                End Try
+            End If
 
             save_check2 = False
 
@@ -443,12 +474,20 @@ ErrorHandler:
             sStmt = sStmt & " , batch_id =" & Str(nBatchId)
         End If
 
-        sStmt = sStmt & " WHERE vend_seq=" & Str(nVendSeq) & " " & " AND cust_id = '" & sCustId & "' " & " AND store_id = " & Str(nStoreId) & " " & " AND invoice_no = '" & Trim(sInvoiceNo) & "' " & " AND account_no = '" & Trim(sAccountNo) & "' "
+        sStmt = sStmt & " WHERE vend_seq=" & Str(nVendSeq) & " " & _
+            " AND cust_id = '" & sCustId & "' " & _
+            " AND store_id = " & Str(nStoreId) & " " & _
+            " AND invoice_no = '" & Trim(sInvoiceNo) & "' " & _
+            " AND account_no = '" & Trim(sAccountNo) & "' "
 
         'MsgBox sStmt
         With cm
             .CommandText = sStmt
         End With
+
+        If Not IsNothing(nTran) Then
+            cm.Transaction = nTran
+        End If
 
         nRecords = cm.ExecuteNonQuery()
         update_invoice = nRecords
@@ -461,6 +500,7 @@ ErrorHandler:
     'sCustId : Cliente
     'sStore : arreglo con lista de tiendas
     'nStoreMax: Longitud maxima de arreglo sStore
+    'Public Function get_check_memo2(ByRef sCustId As String, ByRef sStore As Object, ByRef nStoreMax As Short, Optional ByRef nTran As SqlTransaction = Nothing) As String
     Public Function get_check_memo2(ByRef sCustId As String, ByRef sStore As Object, ByRef nStoreMax As Short) As String
         Dim i As Short = -1
         Dim sTmp As String = ""
@@ -473,9 +513,12 @@ ErrorHandler:
 
         sStmt = "SELECT cust_name FROM customer WHERE cust_id ='" & Trim(sCustId) & "'"
         cmd.CommandText = sStmt
-        rs = getDataTable(sStmt) ' cmd.ExecuteReader()
+        If Not IsNothing(nTran) Then
+            cmd.Transaction = nTran
+        End If
+        rs = getDataTable(sStmt, nTran) ' cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
-            sCustName = rs.Rows(0).Item("cust_name").Value
+            sCustName = rs.Rows(0).Item("cust_name")
         End If
 
         sTmp = sCustName
@@ -484,7 +527,7 @@ ErrorHandler:
             sTmp = Trim(sTmp) & " - Stores:"
         End If
 
-        For i = 1 To nStoreMax
+        For i = 0 To nStoreMax - 1
             'UPGRADE_WARNING: Couldn't resolve default property of object sStore(i). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             If sStore(i) <> "" Then
                 'UPGRADE_WARNING: Couldn't resolve default property of object sStore(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -510,8 +553,8 @@ ErrorHandler:
         Dim qb As gDumpUDT
         Dim sGroupId As String
         Dim sCustName As String
-        Dim rsLocal As SqlDataReader
-        Dim rsLocal2 As SqlDataReader
+        Dim rsLocal As DataTable
+        Dim rsLocal2 As DataTable
         Dim cmd As SqlCommand = cn.CreateCommand()
 
         qb.str1 = "" 'qb_name
@@ -522,35 +565,32 @@ ErrorHandler:
 
             sStmt = "SELECT qb_group_id, qb_account_name, cust_name " & " FROM customer " & " WHERE cust_id = '" & Trim(sCustId) & "'"
             cmd.CommandText = sStmt
-            rsLocal = cmd.ExecuteReader()
-            If rsLocal.HasRows Then
-                sCustName = rsLocal.Item("cust_name").Value
+            cmd.Transaction = nTran
+            rsLocal = getDataTable(sStmt, nTran) 'cmd.ExecuteReader()
+            If rsLocal.Rows.Count > 0 Then
+                sCustName = rsLocal.Rows(0).Item("cust_name")
                 'QB-Group
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsLocal.Item("qb_group_id").Value) Then
+                If IsDBNull(rsLocal.Rows(0).Item("qb_group_id")) Then
                     MsgBox("Quick Books Group has not been defined " & "for this customer " & sCustId & "." & vbCrLf & "Please check customer info and try again.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                     qb.str1 = "ERROR"
-                    'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     get_qb_name2 = qb
                     Exit Function
                 Else
-                    sGroupId = rsLocal.Item("qb_group_id").Value
+                    sGroupId = rsLocal.Rows(0).Item("qb_group_id")
                 End If
 
                 'QB-Customer Account
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsLocal.Item("qb_account_name").Value) Then
+
+                If IsDBNull(rsLocal.Rows(0).Item("qb_account_name")) Then
                     MsgBox("Customer " & Trim(sCustName) & " does not have a Quick Books Account defined." & vbCrLf & "Please check customer info and try again later.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                     qb.str1 = "ERROR"
-                    'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     get_qb_name2 = qb
                     Exit Function
                 Else
-                    qb.str1 = quotation_mask(rsLocal.Item("qb_account_name").Value)
-                    If Len(qb.str1) = 0 Then
+                    qb.str1 = quotation_mask(rsLocal.Rows(0).Item("qb_account_name"))
+                    If Len(Trim(qb.str1)) = 0 Then
                         MsgBox("Incorrect QuickBooks account for customer." & Trim(sCustName) & vbCrLf & "Please check customer info and try again later.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                         qb.str1 = "ERROR"
-                        'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         get_qb_name2 = qb
                         Exit Function
                     Else
@@ -558,14 +598,13 @@ ErrorHandler:
                         sStmt = "SELECT COUNT(*) FROM qb_account " & " WHERE name ='" & Trim(qb.str1) & "' " & " AND qb_group_id ='" & Trim(sGroupId) & "'"
                         cmd.CommandText = sStmt
                         Try
-                            rsLocal2 = cmd.ExecuteReader()
+                            rsLocal2 = getDataTable(sStmt, nTran) 'cmd.ExecuteReader()
 
-                            If rsLocal2.HasRows() Then
-                                If rsLocal2.Item(0).Value > 0 Then
-                                    If rsLocal2.Item(0).Value > 1 Then
+                            If rsLocal2.Rows.Count > 0 Then
+                                If rsLocal2.Rows(0).Item(0) > 0 Then
+                                    If rsLocal2.Rows(0).Item(0) > 1 Then
                                         MsgBox("QBooks setup error found." & vbCrLf & "Customer account was found more than once " & "on Qbooks Account table.")
                                         qb.str1 = "ERROR"
-                                        'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                                         get_qb_name2 = qb
                                         Exit Function
                                     Else
@@ -574,21 +613,20 @@ ErrorHandler:
                                 Else
                                     MsgBox("Quick Books setup error found." & vbCrLf & "Either customer " & Trim(sCustName) & " does not belong to QBooks file " & sGroupId & vbCrLf & " or QBooks Account data needs to be updated", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
                                     qb.str1 = "ERROR"
-                                    'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                                     get_qb_name2 = qb
                                     Exit Function
                                 End If
                             Else
                                 MsgBox("Quick Books setup error found." & vbCrLf & "Either customer does not belong to QBooks file " & sGroupId & vbCrLf & " or QBooks Account data needs to be updated", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Warning")
                                 qb.str1 = "ERROR"
-                                'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                                 get_qb_name2 = qb
                                 Exit Function
                             End If
                         Catch e As Exception
+
                             MsgBox("An unexpected error has occurred." & "Please check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+
                             qb.str1 = "ERROR"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             get_qb_name2 = qb
                             Exit Function
 
@@ -596,11 +634,11 @@ ErrorHandler:
                     End If
                 End If
 
-                rsLocal.Close()
-                rsLocal2.Close()
+                'rsLocal.Close()
+                'rsLocal2.Close()
             End If
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name2. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
             get_qb_name2 = qb
             Exit Function
 
@@ -608,6 +646,7 @@ ErrorHandler:
             get_qb_name2 = New gDumpUDT()
             get_qb_name2.str1 = "ERROR"
             save_error("BankFunctions", "get_qb_name2")
+
         End Try
     End Function
 
@@ -624,9 +663,13 @@ ErrorHandler:
 
         sStmt = "SELECT cust_name FROM customer " & " WHERE cust_id ='" & Trim(sCustId) & "'"
         cmd.CommandText = sStmt
-        rs = getDataTable(sStmt) ' cmd.ExecuteReader()
+        If IsNothing(nTran) Then
+            rs = getDataTable(sStmt) ' cmd.ExecuteReader()
+        Else
+            rs = getDataTable(sStmt, nTran) ' cmd.ExecuteReader()
+        End If
 
-        sCustName = rs.Rows(0).Item("cust_name").Value
+        sCustName = rs.Rows(0).Item("cust_name")
 
         sTmp = Trim(sCustName) & " #" & Trim(sStore) & "-Acct#" & Trim(sAccount) & "-Inv#" & Trim(sInvoice)
         get_detail_memo2 = sTmp
@@ -645,8 +688,9 @@ ErrorHandler:
         get_check_no = 0
 
         'Obtengo el QB grupo al que pertenece el cliente
-        'UPGRADE_WARNING: Couldn't resolve default property of object nBankCustSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        sStmt = "SELECT qb_group_id FROM customer " & " WHERE cust_id = " & " (SELECT cust_id FROM BankAccount " & "  WHERE bank_cust_seq = " & Str(nBankCustSeq) & ")"
+
+        sStmt = "SELECT qb_group_id FROM customer " & " WHERE cust_id = " & " (SELECT cust_id FROM BankAccount " & _
+                "  WHERE bank_cust_seq = " & Str(nBankCustSeq) & ")"
         cmd.CommandText = sStmt
 
         rs = getDataTable(sStmt) ' = cmd.ExecuteReader()
@@ -660,18 +704,23 @@ ErrorHandler:
         'Lista de BankCustSeq del QB group
 
         'Check Info
-        sStmt = "SELECT MAX(check_no) FROM BCheck " & "WHERE bank_cust_seq IN  " & " (SELECT bank_cust_seq FROM qb_BankAccount " & "  WHERE qb_group_id ='" & sQBGroupId & "')"
+        sStmt = "SELECT MAX(check_no) FROM BCheck " & "WHERE bank_cust_seq IN  " & _
+                    " (SELECT bank_cust_seq FROM qb_BankAccount " & _
+                        "  WHERE qb_group_id ='" & sQBGroupId & "')"
         cmd.CommandText = sStmt
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         'Error al ejecutar query
 
         'Query no retorno datos
-        'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If Not rs.Rows.Count > 0 Or IsDBNull(rs.Rows(0).Item(0)) Then
+        If Not rs.Rows.Count > 0 Then
             get_check_no = 1
         Else
-            get_check_no = rs.Rows(0).Item(0) + 1
+            If IsDBNull(rs.Rows(0).Item(0)) Then
+                get_check_no = 1
+            Else
+                get_check_no = rs.Rows(0).Item(0) + 1
+            End If
         End If
 
         Exit Function
@@ -691,19 +740,16 @@ ErrorHandler:
         On Error GoTo ErrorHandler
 
 
-        For i = 1 To gGlobSettings.nMaxBatchCheckDetails
+        For i = 0 To gGlobSettings.nMaxBatchCheckDetails - 1
             'Encontre espacio para ubicar tienda
-            'UPGRADE_WARNING: Couldn't resolve default property of object sStore(i). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             If sStore(i) = "" Then
-                'UPGRADE_WARNING: Couldn't resolve default property of object sStore(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                sStore(i) = sData
+                sStore(i) = Trim(sData)
                 add_store2 = i
                 Exit Function
             End If
 
             'Verifica que el store no haya sido ingresada previamente
-            'UPGRADE_WARNING: Couldn't resolve default property of object sStore(i). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            If sStore(i) = sData Then
+            If Trim(sStore(i)) = Trim(sData) Then
                 add_store2 = i
                 Exit Function
             End If
@@ -768,19 +814,17 @@ ErrorHandler:
         Dim j As Short
         'Dim sLinea(1 To 3) As String
 
-        j = 1
+        j = 0
 
         'UPGRADE_WARNING: Couldn't resolve default property of object sLinea(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         sLinea(j) = Trim(sCustName) & " - "
-        For i = 1 To 16
+        For i = 0 To 15
             'UPGRADE_WARNING: Couldn't resolve default property of object sStore(i). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             If sStore(i) <> "" Then
                 'Verifica que linea no exceda nLen
                 If Len(sLinea(j)) >= nLen And j < nLines + 1 Then
                     j = j + 1
                 End If
-                'UPGRADE_WARNING: Couldn't resolve default property of object sStore(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object sLinea(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 sLinea(j) = Trim(sLinea(j)) & "-" & Trim(sStore(i))
             Else
                 Exit Sub
@@ -795,7 +839,15 @@ ErrorHandler:
     Public Function get_check_query(ByRef nCheckNo As Integer, ByRef nBankCustSeq As Short) As String
 
 
-        sStmt = "SELECT bcheck.invoice_no AS Invoice," & " store.store_number AS Store, " & " vinvoice.account_no AS Account, " & " vinvoice.vinvoice_date AS Date, " & " bcheck.store_id, bcheck.invoice_total as Total, " & " VAccount.account_mask, VInvoice.vend_seq  " & " FROM Bcheck, Vinvoice, Store, VAccount " & " WHERE Vinvoice.store_id = Store.store_id " & " AND Vinvoice.cust_id = Store.cust_id " & " AND Bcheck.invoice_no = Vinvoice.invoice_no " & " AND Bcheck.cust_id = Vinvoice.cust_id " & " AND Bcheck.store_id = Vinvoice.store_id " & " AND Bcheck.account_no = Vinvoice.account_no " & " AND Bcheck.vend_seq = Vinvoice.vend_seq " & " AND VAccount.cust_id = VInvoice.cust_id " & " AND VAccount.account_no = VInvoice.account_no " & " AND VAccount.store_id = VInvoice.store_id " & " AND VAccount.vend_seq = VInvoice.vend_seq " & " AND Bcheck.check_no =" & Str(nCheckNo) & " AND Bcheck.bank_cust_seq = " & Str(nBankCustSeq)
+        sStmt = "SELECT bcheck.invoice_no AS Invoice," & " store.store_number AS Store, " & _
+                " vinvoice.account_no AS Account, " & " vinvoice.vinvoice_date AS Date, " & " bcheck.store_id, bcheck.invoice_total as Total, " & _
+                " VAccount.account_mask, VInvoice.vend_seq  " & " FROM Bcheck, Vinvoice, Store, VAccount " & _
+                " WHERE Vinvoice.store_id = Store.store_id " & " AND Vinvoice.cust_id = Store.cust_id " & " AND Bcheck.invoice_no = Vinvoice.invoice_no " & _
+                " AND Bcheck.cust_id = Vinvoice.cust_id " & " AND Bcheck.store_id = Vinvoice.store_id " & " AND Bcheck.account_no = Vinvoice.account_no " & _
+                " AND Bcheck.vend_seq = Vinvoice.vend_seq " & " AND VAccount.cust_id = VInvoice.cust_id " & _
+                " AND VAccount.account_no = VInvoice.account_no " & " AND VAccount.store_id = VInvoice.store_id " & _
+                " AND VAccount.vend_seq = VInvoice.vend_seq " & " AND Bcheck.check_no =" & Str(nCheckNo) & _
+                " AND Bcheck.bank_cust_seq = " & Str(nBankCustSeq)
 
         get_check_query = sStmt
     End Function
@@ -815,7 +867,7 @@ ErrorHandler:
             Exit Function
         End If
 
-        For i = 1 To 6 - nLen
+        For i = 0 To 5 - nLen
             sCheckNo = "0" & Trim(sCheckNo)
         Next i
         format_check_number = sCheckNo
@@ -905,7 +957,9 @@ ErrorHandler:
             Case "TOTAL_CHECKS"
                 sStmt = "UPDATE BBatch " & " SET total_checks=" & Str(nTotalChecks) & " WHERE batch_id =" & Str(nBatchId)
             Case "ALL"
-                sStmt = "UPDATE BBatch " & " SET num_checks=" & Str(nNumChecks) & "," & "   num_invoices=" & Str(nNumInvoices) & "," & "   num_zero_invoices = " & Str(nNumZeroInvoices) & "," & "   total_checks=" & Str(nTotalChecks) & " WHERE batch_id =" & Str(nBatchId)
+                sStmt = "UPDATE BBatch " & " SET num_checks=" & Str(nNumChecks) & "," & "   num_invoices=" & Str(nNumInvoices) & "," & _
+                        "   num_zero_invoices = " & Str(nNumZeroInvoices) & "," & _
+                        "   total_checks=" & Str(nTotalChecks) & " WHERE batch_id =" & Str(nBatchId)
 
         End Select
         cmd.CommandText = sStmt
@@ -950,7 +1004,7 @@ ErrorHandler:
     Public Sub print_batch2(ByRef nBatchId As Short, ByRef uPaperSource As General.CheckPaper)
 
 
-        Dim rsCheckHeader As SqlDataReader
+        Dim rsCheckHeader As DataTable
 
         Dim sCustName As String
         Dim nCheckNo As Integer
@@ -988,17 +1042,17 @@ ErrorHandler:
         cmd.CommandText = sStmt
 
 
-        rsCheckHeader = cmd.ExecuteReader()
+        rsCheckHeader = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-        If Not rsCheckHeader.HasRows() Then
+        If Not rsCheckHeader.Rows.Count > 0 Then
             MsgBox("No Checks were found for this Batch Id:" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
             Exit Sub
         Else
-            While rsCheckHeader.Read()
-
+            'While rsCheckHeader.Read()
+            For arow As Integer = 0 To rsCheckHeader.Rows.Count - 1
                 If sPrevBankAccount <> sBankAccount Then
                     sPrevBankAccount = sBankAccount
-                    sBankAccount = get_bank_account(rsCheckHeader.Item("bank_cust_seq"))
+                    sBankAccount = get_bank_account(rsCheckHeader.Rows(arow).Item("bank_cust_seq"))
                     If sBankAccount = "" Then
                         MsgBox("Failed to retrieve Bank Account number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
@@ -1007,24 +1061,22 @@ ErrorHandler:
 
                 If sPrevBankAba <> sBankAba Then
                     sPrevBankAba = sBankAba
-                    sBankAba = get_bank_aba(rsCheckHeader.Item("bank_cust_seq"))
+                    sBankAba = get_bank_aba(rsCheckHeader.Rows(arow).Item("bank_cust_seq"))
                     If sBankAba = "" Then
                         MsgBox("Failed to retrieve Bank ABA number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
                     End If
                 End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Item("check_no")) Then
-                    nCheckNo = rsCheckHeader.Item("check_no")
+                If Not IsDBNull(rsCheckHeader.Rows(arow).Item("check_no")) Then
+                    nCheckNo = rsCheckHeader.Rows(arow).Item("check_no")
                 Else
                     MsgBox("Failed to retrieve Check Number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
                 End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Item("check_date")) Then
-                    sCheckDate = rsCheckHeader.Item("check_date")
+                If Not IsDBNull(rsCheckHeader.Rows(arow).Item("check_date")) Then
+                    sCheckDate = rsCheckHeader.Rows(arow).Item("check_date")
                 Else
                     MsgBox("Failed to retrieve Check Date, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
@@ -1032,34 +1084,34 @@ ErrorHandler:
 
                 'sbBatch.SimpleText = "Printing Check# " + Str(nCheckNo)
 
-                sCustName = rsCheckHeader.Item("cust_name")
-                nCheckAmount = rsCheckHeader.Item("check_amount")
-                nBankCustSeq = rsCheckHeader.Item("bank_cust_seq")
-                sVendName = rsCheckHeader.Item("vend_name")
-                sVendPayAddress = rsCheckHeader.Item("vend_pay_address")
-                sVendPayCity = rsCheckHeader.Item("vend_pay_city")
-                sVendPayState = rsCheckHeader.Item("vend_pay_state")
-                sVendPayZip = rsCheckHeader.Item("vend_pay_zip")
+                sCustName = rsCheckHeader.Rows(arow).Item("cust_name")
+                nCheckAmount = rsCheckHeader.Rows(arow).Item("check_amount")
+                nBankCustSeq = rsCheckHeader.Rows(arow).Item("bank_cust_seq")
+                sVendName = rsCheckHeader.Rows(arow).Item("vend_name")
+                sVendPayAddress = rsCheckHeader.Rows(arow).Item("vend_pay_address")
+                sVendPayCity = rsCheckHeader.Rows(arow).Item("vend_pay_city")
+                sVendPayState = rsCheckHeader.Rows(arow).Item("vend_pay_state")
+                sVendPayZip = rsCheckHeader.Rows(arow).Item("vend_pay_zip")
                 sAmountString = num2str(nCheckAmount)
 
-                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info1")
-                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info2")
-                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info3")
-                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Item("bank_cust_seq"), "check_info4")
+                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Rows(arow).Item("bank_cust_seq"), "check_info1")
+                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Rows(arow).Item("bank_cust_seq"), "check_info2")
+                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Rows(arow).Item("bank_cust_seq"), "check_info3")
+                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Rows(arow).Item("bank_cust_seq"), "check_info4")
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsCheckHeader.Item("foot_note1")) Then
+                If IsDBNull(rsCheckHeader.Rows(arow).Item("foot_note1")) Then
                     sFootNote1 = ""
                 Else
-                    sFootNote1 = rsCheckHeader.Item("foot_note1")
+                    sFootNote1 = rsCheckHeader.Rows(arow).Item("foot_note1")
                 End If
 
 
                 'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If IsDBNull(rsCheckHeader.Item("foot_note2")) Then
+                If IsDBNull(rsCheckHeader.Rows(arow).Item("foot_note2")) Then
                     sFootNote2 = ""
                 Else
-                    sFootNote2 = rsCheckHeader.Item("foot_note2")
+                    sFootNote2 = rsCheckHeader.Rows(arow).Item("foot_note2")
                 End If
 
                 'Carga gCheck.rsStore
@@ -1076,7 +1128,8 @@ ErrorHandler:
                     Case General.CheckPaper.Imprinted
                         print_check5(sCustName, nCheckNo, sCheckDate, sVendName, nCheckAmount, sAmountString, sVendPayAddress, sVendPayCity, sVendPayState, sVendPayZip, sFootNote1, sFootNote2, sBankAba, sBankAccount, sStoreArray)
                 End Select
-            End While
+            Next
+            'End While
         End If
 
 
@@ -1123,9 +1176,8 @@ ErrorHandler:
         i = 0
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            i = i + 1
-            'UPGRADE_WARNING: Couldn't resolve default property of object sStoreArray(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             sStoreArray(i) = rs.Rows(row).Item("store_number")
+            i = i + 1
         Next row
 
     End Sub
@@ -1133,7 +1185,7 @@ ErrorHandler:
     Public Sub init_store_array2(ByRef sArray As Object)
         Dim i As Short
 
-        For i = 1 To gGlobSettings.nMaxBatchCheckDetails
+        For i = 0 To gGlobSettings.nMaxBatchCheckDetails - 1
             'UPGRADE_WARNING: Couldn't resolve default property of object sArray(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             sArray(i) = ""
         Next i
@@ -1332,7 +1384,7 @@ ErrorHandler:
 
         'DATOS
         nRate = 0.13 '0.15
-        i = 1
+        i = 0
         'namount = 1012.23
 
         nCounter = 0
@@ -1366,8 +1418,8 @@ ErrorHandler:
         Next row
 
         'Nombre de vendedor multilinea
-        i = 1
-        For nCounter = 1 To nLines
+        i = 0
+        For nCounter = 0 To nLines - 1
             'UPGRADE_ISSUE: Printer property Printer.CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentY = (3.72 + (nRate * i)) * 1440 '3.92
             'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
@@ -1488,7 +1540,7 @@ ErrorHandler:
         'Printer.FontUnderline = False
 
 
-        i = 1
+        i = 0
 
 
         For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
@@ -1521,8 +1573,8 @@ ErrorHandler:
         Next row
 
         'Nombre de vendedor multilinea
-        i = 1
-        For nCounter = 1 To nLines
+        i = 0
+        For nCounter = 0 To nLines - 1
             'UPGRADE_ISSUE: Printer property 'Printer.CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer.CurrentY = (7.2 + (nRate * i)) * 1440 '7.4
             'UPGRADE_ISSUE: Printer property 'Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
@@ -1603,7 +1655,6 @@ ErrorHandler:
         Dim nCounter As Short
         Dim sCheckNo As String 'Formatted Check
         Dim sMicrocode As String
-        'UPGRADE_WARNING: Lower bound of array sLinea was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
         Dim sLinea(3) As String
         Dim logofile As Scripting.FileSystemObject
         logofile = New Scripting.FileSystemObject
@@ -2054,7 +2105,7 @@ ErrorHandler:
 
         'DATA
         nRate = 0.13 '0.15
-        i = 1
+        i = 0
         'namount = 1012.23
 
         nCounter = 0
@@ -2089,8 +2140,8 @@ ErrorHandler:
 
 
         'Multiline Vendor name
-        i = 1
-        For nCounter = 1 To nLines
+        i = 0
+        For nCounter = 0 To nLines - 1
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentY = (3.72 + (nRate * i)) * 1440 '3.92
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
@@ -2245,7 +2296,7 @@ ErrorHandler:
         'Printer..FontUnderline = False
 
 
-        i = 1
+        i = 0
         'While gCheck.rsStore.Read()
         For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
@@ -2278,8 +2329,8 @@ ErrorHandler:
         Next row
 
         'Multiline vendor name
-        i = 1
-        For nCounter = 1 To nLines
+        i = 0
+        For nCounter = 0 To nLines - 1
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentY = (7.2 + (nRate * i)) * 1440 '7.4
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
@@ -2792,7 +2843,7 @@ ErrorHandler:
 
         'DATA
         nRate = 0.13 '0.15
-        i = 1
+        i = 0
         'namount = 1012.23
 
         nCounter = 0
@@ -2828,7 +2879,7 @@ ErrorHandler:
 
 
         'Multiline Vendor name
-        i = 1
+        i = 0
         For nCounter = 1 To nLines
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentY = (3.72 + (nRate * i)) * 1440 '3.92
@@ -2964,7 +3015,7 @@ ErrorHandler:
         'Printer..FontUnderline = False
 
 
-        i = 1
+        i = 0
 
 
         For row As Integer = 0 To gCheck.rsStore.Rows.Count - 1
@@ -2998,7 +3049,7 @@ ErrorHandler:
         Next row
 
         'Multiline vendor name
-        i = 1
+        i = 0
         For nCounter = 1 To nLines
             'UPGRADE_ISSUE: 'Printer. property 'Printer..CurrentY was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
             'Printer..CurrentY = (7.2 + (nRate * i)) * 1440 '7.4

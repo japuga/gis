@@ -93,6 +93,7 @@
         '
         'dgVBranch
         '
+        Me.dgVBranch.AllowUserToAddRows = False
         Me.dgVBranch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgVBranch.Location = New System.Drawing.Point(12, 84)
         Me.dgVBranch.Name = "dgVBranch"

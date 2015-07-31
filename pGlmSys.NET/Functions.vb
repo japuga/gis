@@ -222,9 +222,9 @@ Module Functions
 		
 		nCounter = 0
 		'Limpiar variable global
-		For i = 1 To 10
-			gParse(i) = ""
-		Next i
+        For i = 0 To 9
+            gParse(i) = ""
+        Next i
 		
 		sTmp = Trim(sSource)
 		'No requiere parcelamiento
@@ -234,10 +234,10 @@ Module Functions
 		End If
 		
 		
-		nStart = 1
+        nStart = 0
 		'Do While Len(sTmp) > nMaxLine
 		Do While True
-			nCounter = nCounter + 1
+
 			nIdx = InStr(1, sTmp, " ", CompareMethod.Text)
 			If nIdx = 0 Or Len(sTmp) <= nMaxLine Then
 				gParse(nCounter) = sTmp
@@ -262,7 +262,8 @@ Module Functions
 				'Else
 				'   gParse(nCounter) = sTmp
 				'  Exit Do
-			End If
+            End If
+            nCounter = nCounter + 1
 		Loop 
 		parse_string = nCounter
 		
@@ -326,13 +327,13 @@ Module Functions
 		Dim sMonth As String
 		Dim sDay As String
 		
-		sStmt = Str(Year(dtDate)) & "-"
-		sMonth = Str(Month(dtDate))
+        sStmt = Trim(Str(Year(dtDate))) & "-"
+        sMonth = Trim(Str(Month(dtDate)))
 		If Len(Trim(sMonth)) = 1 Then
 			sMonth = "0" & Trim(sMonth)
 		End If
 		
-		sDay = Str(VB.Day(dtDate))
+        sDay = Trim(Str(VB.Day(dtDate)))
 		If Len(Trim(sDay)) = 1 Then
 			sDay = "0" & Trim(sDay)
 		End If
