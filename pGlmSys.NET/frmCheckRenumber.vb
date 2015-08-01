@@ -3,7 +3,7 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmCheckRenumber
 	Inherits System.Windows.Forms.Form
-    Private rsLocal As SqlDataReader
+    Private rsLocal As DataTable
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
 		Me.Close()
@@ -71,33 +71,43 @@ ErrorHandler:
 	Private Function save_new_number() As Boolean
 		Dim nRecords As Short
 		Dim nCheckDetails As Short
-        Dim nTran As SqlTransaction
+        Dim nTran As SqlTransaction = Nothing
         Dim cmd As SqlCommand = cn.CreateCommand
-        Dim ds As DataSet = Nothing
-        Dim da As SqlDataAdapter = New SqlDataAdapter()
-		
+
 		save_new_number = False
 		'Guardar datos de cheque original
-		sStmt = "SELECT * FROM Bcheck " & " WHERE check_no =" & Str(gCheckRenumber.nVoidCheckNo) & " " & " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
+        sStmt = "SELECT * FROM Bcheck " & _
+                " WHERE check_no =" & Str(gCheckRenumber.nVoidCheckNo) & " " & _
+                " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
         cmd.CommandText = sStmt
 
         Try
-            da.SelectCommand = cmd
-            da.Fill(ds)
-            rsLocal = cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
-            If ds.Tables(0).Rows.Count > 0 Then
-                nCheckDetails = ds.Tables(0).Rows.Count
+            If rsLocal.Rows.Count > 0 Then
+                nCheckDetails = rsLocal.Rows.Count
                 'Insert Check detail record into Bcheck with new Number
                 nTran = cn.BeginTransaction()
 
-                sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & " create_user, create_dtim) " & " SELECT " & txtNewCheck.Text & ", bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & " detail_memo, qb_detail_name, voided_flag, " & "'" & Trim(gsUser) & "', getdate()" & " FROM Bcheck " & " WHERE check_no=" & Str(gCheckRenumber.nVoidCheckNo) & " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
+                sStmt = "INSERT INTO BCheck (check_no, bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & " invoice_no, account_no, " & _
+                                            " check_date, check_amount, " & " check_memo, invoice_total, " & _
+                                            " detail_memo, qb_detail_name, voided_flag, " & _
+                                            " create_user, create_dtim) " & _
+                        " SELECT " & txtNewCheck.Text & ", bank_cust_seq,  " & " check_detail_no, vend_seq, " & " cust_id, store_id, " & _
+                                    " invoice_no, account_no, " & " check_date, check_amount, " & " check_memo, invoice_total, " & _
+                                    " detail_memo, qb_detail_name, voided_flag, " & "'" & Trim(gsUser) & "', getdate()" & _
+                        " FROM Bcheck " & _
+                        " WHERE check_no=" & Str(gCheckRenumber.nVoidCheckNo) & " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
                 cmd.CommandText = sStmt
+                cmd.Transaction = nTran
                 nRecords = cmd.ExecuteNonQuery()
                 If nRecords = nCheckDetails Then
                     'ok, continue
                     'Delete previous Check
-                    sStmt = "DELETE FROM Bcheck " & " WHERE check_no =" & Str(gCheckRenumber.nVoidCheckNo) & " " & " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
+                    sStmt = "DELETE FROM Bcheck " & _
+                            " WHERE check_no =" & Str(gCheckRenumber.nVoidCheckNo) & " " & _
+                            " AND bank_cust_seq=" & Str(gCheckRenumber.nBankCustSeq)
                     cmd.CommandText = sStmt
                     nRecords = cmd.ExecuteNonQuery()
                     If nRecords = nCheckDetails Then
@@ -119,6 +129,12 @@ ErrorHandler:
                 MsgBox("Such Check was not found in Database.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Message")
             End If
         Catch e As Exception
+            save_new_number = False
+
+            nTran.Rollback()
+
+            save_error(Me.Name, "Save_new_number")
+            MsgBox("Unexpected error occurred while updating Check number." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
             'DB error
             MsgBox("There was an error accessing Check table in Database.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
         End Try
@@ -126,12 +142,7 @@ ErrorHandler:
         Exit Function
 
 ErrorHandler:
-        save_new_number = False
-
-        nTran.Rollback()
-
-        save_error(Me.Name, "Save_new_number")
-        MsgBox("Unexpected error occurred while updating Check number." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        
     End Function
 	Private Sub frmCheckRenumber_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -142,14 +153,13 @@ ErrorHandler:
 		
 		txtCurrentCheck.Enabled = False
 		txtCurrentCheck.ReadOnly = True
-		txtCurrentCheck.Text = CStr(gCheckRenumber.nVoidCheckNo)
+        txtCurrentCheck.Text = CStr(gCheckRenumber.nVoidCheckNo)
+        txtNewCheck.Text = ""
 	End Sub
 	
 	Private Sub set_limits()
-		'UPGRADE_WARNING: TextBox property txtCurrentCheck.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtCurrentCheck.Maxlength = 8
-		'UPGRADE_WARNING: TextBox property txtNewCheck.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtNewCheck.Maxlength = 8
+        txtCurrentCheck.MaxLength = 8
+        txtNewCheck.MaxLength = 8
 		
 	End Sub
 	Private Sub txtNewCheck_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles txtNewCheck.KeyPress

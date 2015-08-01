@@ -15,7 +15,23 @@ Friend Class frmCheckBrowseDet
                 cancel_check()
                 'Refresh Checks Grid
                 'grsCheck.Requery()
-                load_dgChecks()
+                rsCheckDet = getDataTable(gCheckReQuery)
+
+                dgChecks.DataSource = Nothing
+                dgChecks.DataSource = rsCheckDet
+                dgChecks.Refresh()
+
+                If grsCheck.Rows.Count > 0 Then
+                    '    grsCheck.MoveFirst
+                    '   dgChecks.SelBookmarks.Add grsCheck.Bookmark
+                    dgChecks.ClearSelection()
+                    load_check_detail(dgChecks.Rows(0).Cells("check_no").Value, dgChecks.Rows(0).Cells("bank_cust_seq").Value)
+                    dgChecks.Rows(0).Selected = True
+                End If
+
+                'Formato de Datagrid
+                format_dgChecks()
+                'load_dgChecks()
             End If
         Else
             MsgBox("Please choose a check to Cancel.", MsgBoxStyle.OkOnly, "GLM Message")
@@ -43,10 +59,13 @@ Friend Class frmCheckBrowseDet
             rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
             If rsLocal.Rows.Count > 0 Then
                 nRecords = rsLocal.Rows.Count
-
-                If rsLocal.Rows(0).Item("qb_exported_flag").Value = "Y" Then
-                    MsgBox("This Check can not be Cancelled. " & vbCrLf & "It was yet exported to Quick Books.", MsgBoxStyle.Critical + MsgBoxStyle.Exclamation, "GLM Message")
-                    Exit Sub
+                If Not IsDBNull(rsLocal.Rows(0).Item("qb_exported_flag")) Then
+                    If rsLocal.Rows(0).Item("qb_exported_flag") = "Y" Then
+                        MsgBox("This Check can not be Cancelled. " & vbCrLf & "It was yet exported to Quick Books.", MsgBoxStyle.Critical + MsgBoxStyle.Exclamation, "GLM Message")
+                        Exit Sub
+                    Else
+                        bOk = True ' OK to Update Check
+                    End If
                 Else
                     bOk = True ' OK to Update Check
                 End If
@@ -63,10 +82,15 @@ Friend Class frmCheckBrowseDet
         If bOk Then
             nTran = cn.BeginTransaction()
             'Update invoices status  back to CRE included in this Check
-            sStmt = "UPDATE Vinvoice SET vinvoice_status='CRE' " & "WHERE EXISTS (SELECT * FROM Bcheck " & " WHERE BCheck.check_no = " & Str(nCheckNo) & " AND BCheck.bank_cust_seq = " & Str(nBankCustSeq) & " AND BCheck.invoice_no = Vinvoice.invoice_no " & " AND BCheck.cust_id = Vinvoice.cust_id " & " AND BCheck.store_id = Vinvoice.store_id " & " AND BCheck.account_no = Vinvoice.account_no " & " AND BCheck.vend_seq = Vinvoice.vend_seq)"
+            sStmt = "UPDATE Vinvoice SET vinvoice_status='CRE' " & "WHERE EXISTS (SELECT * FROM Bcheck " & _
+                " WHERE BCheck.check_no = " & Str(nCheckNo) & " AND BCheck.bank_cust_seq = " & Str(nBankCustSeq) & _
+                    " AND BCheck.invoice_no = Vinvoice.invoice_no " & " AND BCheck.cust_id = Vinvoice.cust_id " & _
+                    " AND BCheck.store_id = Vinvoice.store_id " & " AND BCheck.account_no = Vinvoice.account_no " & _
+                    " AND BCheck.vend_seq = Vinvoice.vend_seq)"
 
             cm = cn.CreateCommand '.let_ActiveConnection(cn)
             cm.CommandText = sStmt
+            cm.Transaction = nTran
             nRecords = cm.ExecuteNonQuery()
 
             If nRecords = rsLocal.Rows.Count Then
@@ -92,8 +116,9 @@ Friend Class frmCheckBrowseDet
         Exit Sub
 
 ErrorHandler:
-
-        nTran.Rollback()
+        If Not IsNothing(nTran) Then
+            nTran.Rollback()
+        End If
 
         save_error(Me.Name, "Cancel_check")
         MsgBox("Unexpected error ocurred while removing Check. Review log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
@@ -105,6 +130,14 @@ ErrorHandler:
 
     Private Sub cmdPrint_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdPrint.Click
         If dgChecks.SelectedRows.Count > 0 Then
+            If dgCheckDetail.SelectedRows.Count < 1 Then
+                If dgCheckDetail.Rows.Count > 0 Then
+                    dgCheckDetail.Rows(0).Selected = True
+                Else
+                    MsgBox("This check has no details.", MsgBoxStyle.OkOnly, "GLM Message")
+                    Exit Sub
+                End If
+            End If
             set_check()
         Else
             MsgBox("Please choose a check to Reprint.", MsgBoxStyle.OkOnly, "GLM Message")
@@ -132,7 +165,23 @@ ErrorHandler:
 
         If gCheckRenumber.bOk = True Then
             'grsCheck.Requery()
-            load_dgChecks()
+            rsCheckDet = getDataTable(gCheckReQuery)
+
+            dgChecks.DataSource = Nothing
+            dgChecks.DataSource = rsCheckDet
+            dgChecks.Refresh()
+
+            If grsCheck.Rows.Count > 0 Then
+                '    grsCheck.MoveFirst
+                '   dgChecks.SelBookmarks.Add grsCheck.Bookmark
+                dgChecks.ClearSelection()
+                load_check_detail(dgChecks.Rows(0).Cells("check_no").Value, dgChecks.Rows(0).Cells("bank_cust_seq").Value)
+                dgChecks.Rows(0).Selected = True
+            End If
+
+            'Formato de Datagrid
+            format_dgChecks()
+            'load_dgChecks()
         End If
 
     End Sub
@@ -231,6 +280,19 @@ ErrorHandler:
             VB6.ShowForm(frmCheckRep, VB6.FormShowConstants.Modal, Me)
 
             'grsCheck.Requery()
+            rsCheckDet = getDataTable(gCheckReQuery)
+
+            dgChecks.DataSource = Nothing
+            dgChecks.DataSource = rsCheckDet
+            dgChecks.Refresh()
+
+            If grsCheck.Rows.Count > 0 Then
+                '    grsCheck.MoveFirst
+                '   dgChecks.SelBookmarks.Add grsCheck.Bookmark
+                dgChecks.ClearSelection()
+                load_check_detail(dgChecks.Rows(0).Cells("check_no").Value, dgChecks.Rows(0).Cells("bank_cust_seq").Value)
+                dgChecks.Rows(0).Selected = True
+            End If
             format_dgChecks()
         End If
 
@@ -252,17 +314,23 @@ ErrorHandler:
             nTmp = (VB6.PixelsToTwipsX(dgCheckDetail.Width) / 2) + VB6.PixelsToTwipsX(dgCheckDetail.Left)
             cmdCLose.SetBounds(VB6.TwipsToPixelsX(nTmp - (VB6.PixelsToTwipsX(cmdCLose.Width) / 2)), 0, 0, 0, Windows.Forms.BoundsSpecified.X)
         End If
+
+        dgCheckDetail.DataSource = Nothing
+        dgCheckDetail.Refresh()
     End Sub
     Private Sub load_dgChecks()
         On Error GoTo ErrorHandler
 
+        dgChecks.DataSource = Nothing
         dgChecks.DataSource = grsCheck
+        dgChecks.Refresh()
+        
         If grsCheck.Rows.Count > 0 Then
             '    grsCheck.MoveFirst
             '   dgChecks.SelBookmarks.Add grsCheck.Bookmark
             dgChecks.ClearSelection()
-            dgChecks.Rows(0).Selected = True
             load_check_detail(grsCheck.Rows(0).Item("check_no"), grsCheck.Rows(0).Item("bank_cust_seq"))
+            dgChecks.Rows(0).Selected = True
         End If
 
         'Formato de Datagrid

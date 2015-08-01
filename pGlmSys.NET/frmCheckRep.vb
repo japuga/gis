@@ -1609,7 +1609,11 @@ ErrorHandler:
 
 
             'Actualizo estado de la factura
-            sStmt = "UPDATE VInvoice " & "SET vinvoice_status = 'PRT', " & " change_user ='" & gsUser & "', " & " change_time = GETDATE() " & "WHERE vend_seq=" & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & " " & "AND cust_id = '" & gCheck.custId & "' " & "AND store_id = " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & " " & "AND invoice_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "' " & "AND account_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "' "
+            sStmt = "UPDATE VInvoice " & "SET vinvoice_status = 'PRT', " & " change_user ='" & gsUser & "', " & " change_time = GETDATE() " & _
+                    "WHERE vend_seq=" & Str(gCheck.rsStore.Rows(row).Item("vend_seq")) & " " & "AND cust_id = '" & gCheck.custId & "' " & _
+                        "AND store_id = " & Str(gCheck.rsStore.Rows(row).Item("store_id")) & " " & _
+                        "AND invoice_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Invoice")) & "' " & _
+                        "AND account_no = '" & Trim(gCheck.rsStore.Rows(row).Item("Account")) & "' "
             'MsgBox sStmt
             cmCheck.CommandText = sStmt
             cmCheck.Transaction = nTran
@@ -1637,7 +1641,8 @@ ErrorHandler:
         'cn.CommitTrans 'Termino la transaccion
         If gCheck.reprint Then
             'Void Check
-            sStmt = "UPDATE Bcheck " & " SET " & "   check_amount=0 , " & "   invoice_total = 0, " & "   voided_flag ='Y' " & " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
+            sStmt = "UPDATE Bcheck " & " SET " & "   check_amount=0 , " & "   invoice_total = 0, " & "   voided_flag ='Y' " & _
+                    " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
 
             'MsgBox sStmt
             cmCheck.CommandText = sStmt
@@ -1659,7 +1664,6 @@ ErrorHandler:
             rs = getDataTable(sStmt) ' cmCheck.ExecuteReader() ' .Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
             If rs.Rows.Count > 0 Then
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
                 If IsDBNull(rs.Rows(0).Item(0)) Then
                     nLastCheckNo = gCheck.CheckNo
                 Else
@@ -1692,7 +1696,9 @@ ErrorHandler:
                 MsgBox("Failed to update Bank Account information. Check:" & Str(gCheck.CheckNo), MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 Exit Function
             End If
-            nTran.Commit()
+            If Not IsNothing(nTran.Connection) Then
+                nTran.Commit()
+            End If
         Else
             '01.09.04 Actualizo Cuenta de Banco
             sStmt = "UPDATE BankAccount " & " SET last_check_no=" & Str(gCheck.CheckNo) & " ," & " bank_account_balance = bank_account_balance -" & Str(gCheck.Amount) & " " & " WHERE bank_cust_seq =" & Str(CDbl(gCheck.BankCustSeq))
@@ -1711,13 +1717,17 @@ ErrorHandler:
             End If
 
             'Termino la transaccion
-            nTran.Commit()
+            If Not IsNothing(nTran) Then
+                nTran.Commit()
+            End If
         End If
         Exit Function
 
 ErrorHandler:
         'Cierro cualquier transaccion abierta
-        nTran.Rollback()
+        If Not IsNothing(nTran) Then
+            nTran.Rollback()
+        End If
 
         save_check = False
 
@@ -1736,8 +1746,11 @@ ErrorHandler:
 
         sStmt = "SELECT cust_name FROM customer WHERE cust_id ='" & Trim(gCheck.custId) & "'"
         cmd.CommandText = sStmt
-        rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-
+        If IsNothing(nTran) Then
+            rsLocal = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        Else
+            rsLocal = getDataTable(sStmt, nTran)
+        End If
         sCustName = rsLocal.Rows(0).Item("cust_name")
 
         sTmp = sCustName
@@ -1783,11 +1796,9 @@ ErrorHandler:
         If rsLocal.Rows.Count > 0 Then
             sCustName = rsLocal.Rows(0).Item("cust_name")
             'QB-Group
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
             If IsDBNull(rsLocal.Rows(0).Item("qb_group_id")) Then
                 MsgBox("Quick Books Group has not been defined " & "for this customer " & sCustId & "." & vbCrLf & "Please check customer info and try again.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                 qb.str1 = "ERROR"
-                'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 get_qb_name = qb
                 Exit Function
             Else
@@ -1795,11 +1806,10 @@ ErrorHandler:
             End If
 
             'QB-Customer Account
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
             If IsDBNull(rsLocal.Rows(0).Item("qb_account_name")) Then
                 MsgBox("Customer " & Trim(sCustName) & " does not have a Quick Books Account defined." & vbCrLf & "Please check customer info and try again later.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                 qb.str1 = "ERROR"
-                'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
                 get_qb_name = qb
                 Exit Function
             Else
@@ -1807,7 +1817,6 @@ ErrorHandler:
                 If Len(qb.str1) = 0 Then
                     MsgBox("Incorrect QuickBooks account for customer." & Trim(sCustName) & vbCrLf & "Please check customer info and try again later.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "GLM Error")
                     qb.str1 = "ERROR"
-                    'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     get_qb_name = qb
                     Exit Function
                 Else
@@ -1818,10 +1827,9 @@ ErrorHandler:
                     Try
                         If rsLocal2.Rows.Count > 0 Then
                             If rsLocal2.Rows(0).Item(0) > 0 Then
-                                If rsLocal2.Rows(0).Item(0) > 0 Then
+                                If rsLocal2.Rows(0).Item(0) > 1 Then
                                     MsgBox("QBooks setup error found." & vbCrLf & "Customer account was found more than once " & "on Qbooks Account table.")
                                     qb.str1 = "ERROR"
-                                    'UPGRADE_WARNING: Couldn't resolve default property of object get_qb_name. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                                     get_qb_name = qb
                                     Exit Function
                                 Else
