@@ -98,6 +98,7 @@
         Me.dgBank.AllowUserToAddRows = False
         Me.dgBank.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgBank.Location = New System.Drawing.Point(12, 42)
+        Me.dgBank.MultiSelect = False
         Me.dgBank.Name = "dgBank"
         Me.dgBank.Size = New System.Drawing.Size(416, 252)
         Me.dgBank.TabIndex = 2

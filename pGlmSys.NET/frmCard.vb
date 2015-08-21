@@ -24,8 +24,9 @@ Friend Class frmCard
             dgCard.Columns("Type").Width = VB6.TwipsToPixelsX(2000)
             dgCard.Columns("Card").Width = VB6.TwipsToPixelsX(2000)
             dgCard.Columns("Balance").Width = VB6.TwipsToPixelsX(1500)
+
         End If
-		
+        gCreditCard.nBankId = VB6.GetItemData(cbBankName, cbBankName.SelectedIndex)
 		
 		
 		

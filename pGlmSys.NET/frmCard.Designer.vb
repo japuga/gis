@@ -123,6 +123,7 @@
         Me.dgCard.AllowUserToAddRows = False
         Me.dgCard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgCard.Location = New System.Drawing.Point(12, 109)
+        Me.dgCard.MultiSelect = False
         Me.dgCard.Name = "dgCard"
         Me.dgCard.Size = New System.Drawing.Size(434, 186)
         Me.dgCard.TabIndex = 4

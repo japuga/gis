@@ -349,9 +349,11 @@ ErrorHandler:
 
                 Next i
                 If nExcelRows > 0 Then
-                    nPercent = nRow * 100 / nExcelRows
-                    If nPercent <= prbLoad.Maximum Then
-                        prbLoad.Value = nPercent
+                    If bOk Then
+                        nPercent = nRow * 100 / nExcelRows
+                        If nPercent <= prbLoad.Maximum Then
+                            prbLoad.Value = nPercent
+                        End If
                     End If
                 End If
             Loop

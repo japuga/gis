@@ -125,13 +125,11 @@ ErrorHandler:
 		
 		'Rangos de Fechas
 		If chDates.CheckState = System.Windows.Forms.CheckState.Checked Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEnd._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStart._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStart._Value > dtEnd._Value Then
-				MsgBox("To-Date must be greater than From-Date.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				val_criteria = False
-				Exit Function
-			End If
+            If dtStart.Value > dtEnd.Value Then
+                MsgBox("To-Date must be greater than From-Date.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                val_criteria = False
+                Exit Function
+            End If
 		End If
 		
 		val_criteria = True
@@ -187,7 +185,8 @@ ErrorHandler:
 		'" FROM vbranch " + _
 		'" WHERE vend_seq IN (SELECT DISTINCT vend_seq FROM vinvoice )" + _
 		'" ORDER BY vend_name"
-		sStmt = "SELECT DISTINCT vend_name, vend_id  FROM VBranch " & " ORDER BY vend_name"
+        sStmt = "SELECT DISTINCT vend_name, vend_id  FROM VBranch " & " ORDER BY vend_name"
+        cbVendor.Items.Clear()
 		cbVendor.Items.Insert(0, "<All>")
 		VB6.SetItemData(cbVendor, 0, 0)
 		load_cb_query2(cbVendor, sStmt, 2, False)
@@ -195,7 +194,10 @@ ErrorHandler:
 		'Combo Bancos
 		sStmt = "SELECT DISTINCT RTRIM(bank.bank_name), " & " bank.bank_id " & " FROM  bank " & " WHERE Bank.bank_status ='ACTIVE'"
 		
-		load_cb_query2(cbBank, sStmt, 2, False)
+        load_cb_query2(cbBank, sStmt, 2, True)
+
+        txtFromCheck.Text = ""
+        txtToCheck.Text = ""
 		Exit Sub
 		
 ErrorHandler: 
@@ -258,7 +260,7 @@ ErrorHandler:
 		
 		'Rango de fechas
 		If chDates.CheckState = System.Windows.Forms.CheckState.Checked Then
-			sWhere = Trim(sWhere) & " AND Bcheck.check_date BETWEEN '" & CStr(dtStart._Value) & "' " & " AND '" & CStr(dtEnd._Value) & "'"
+            sWhere = Trim(sWhere) & " AND Bcheck.check_date BETWEEN '" & CStr(dtStart.Value) & "' " & " AND '" & CStr(dtEnd.Value) & "'"
 			
 		End If
 		get_criteria = sWhere
@@ -269,7 +271,13 @@ ErrorHandler:
         Dim cmd As SqlCommand = cn.CreateCommand()
 		On Error GoTo ErrorHandler
 		
-		sStmt = "SELECT DISTINCT RTRIM(vbranch.vend_name) AS Vendor, " & " Bcheck.check_no AS 'Check No',  Bcheck.check_date AS 'Check Date', " & " Bcheck.check_amount AS Amount ,  " & " Bcheck.bank_cust_seq,Bcheck.check_no, " & " Bcheck.cust_id, Customer.cust_name, VBranch.vend_name " & " FROM Bcheck, Vbranch, Customer " & " WHERE Bcheck.vend_seq = VBranch.vend_seq " & " AND Customer.cust_id = Bcheck.cust_id " & " AND Bcheck.voided_flag = 'N' " & Trim(sWhere)
+        sStmt = "SELECT DISTINCT RTRIM(vbranch.vend_name) AS Vendor, " & " Bcheck.check_no AS 'Check No',  Bcheck.check_date AS 'Check Date', " & _
+                    " Bcheck.check_amount AS Amount ,  " & " Bcheck.bank_cust_seq,Bcheck.check_no, " & _
+                    " Bcheck.cust_id, Customer.cust_name, VBranch.vend_name " & _
+                " FROM Bcheck, Vbranch, Customer " & _
+                " WHERE Bcheck.vend_seq = VBranch.vend_seq " & _
+                " AND Customer.cust_id = Bcheck.cust_id " & _
+                " AND Bcheck.voided_flag = 'N' " & Trim(sWhere)
         cmd.CommandText = sStmt
 		'MsgBox sStmt
 		'Set dgChecks.DataSource = Nothing
@@ -282,6 +290,7 @@ ErrorHandler:
         Else
             'Set dgChecks.DataSource = rsLocal
             grsCheck = rsLocal
+            gCheckReQuery = sStmt
         End If
 		
 

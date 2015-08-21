@@ -169,6 +169,7 @@
         Me.dgGroups.AllowUserToAddRows = False
         Me.dgGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgGroups.Location = New System.Drawing.Point(12, 151)
+        Me.dgGroups.MultiSelect = False
         Me.dgGroups.Name = "dgGroups"
         Me.dgGroups.Size = New System.Drawing.Size(337, 150)
         Me.dgGroups.TabIndex = 7

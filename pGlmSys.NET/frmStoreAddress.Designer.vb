@@ -171,8 +171,10 @@
         '
         'dgAddress
         '
+        Me.dgAddress.AllowUserToAddRows = False
         Me.dgAddress.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgAddress.Location = New System.Drawing.Point(27, 142)
+        Me.dgAddress.MultiSelect = False
         Me.dgAddress.Name = "dgAddress"
         Me.dgAddress.Size = New System.Drawing.Size(596, 252)
         Me.dgAddress.TabIndex = 8

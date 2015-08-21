@@ -43,12 +43,38 @@ Friend Class frmGroupStore
             gGroupsRecord.bFlag = General.modo.UpdateRecord
             gGroupsRecord.sCustId = cbCustId.Text
             gGroupsRecord.sCustName = cbCustName.Text
-            gGroupsRecord.sGroupName = dgGroups.SelectedRows(0).Cells("name").Value
-            gGroupsRecord.nGroupSeq = CShort(dgGroups.SelectedRows(0).Cells("group_seq").Value)
+            If IsDBNull(dgGroups.SelectedRows(0).Cells("name").Value) Then
+                gGroupsRecord.sGroupName = ""
+            Else
+                gGroupsRecord.sGroupName = dgGroups.SelectedRows(0).Cells("name").Value
+            End If
+
+            If IsDBNull(dgGroups.SelectedRows(0).Cells("group_seq").Value) Then
+                gGroupsRecord.nGroupSeq = -1
+            Else
+                gGroupsRecord.nGroupSeq = CShort(dgGroups.SelectedRows(0).Cells("group_seq").Value)
+            End If
+
             gGroupsRecord.sTypeId = RTrim(cbTypeId.Text)
-            gGroupsRecord.sAttention = dgGroups.SelectedRows(0).Cells("cinvoice_attention").Value
-            gGroupsRecord.sContractNo = dgGroups.SelectedRows(0).Cells("cinvoice_contract_no").Value
-            gGroupsRecord.sText = dgGroups.SelectedRows(0).Cells("cinvoice_text").Value
+
+            If IsDBNull(dgGroups.SelectedRows(0).Cells("cinvoice_attention").Value) Then
+                gGroupsRecord.sAttention = ""
+            Else
+                gGroupsRecord.sAttention = dgGroups.SelectedRows(0).Cells("cinvoice_attention").Value
+            End If
+
+            If IsDBNull(dgGroups.SelectedRows(0).Cells("cinvoice_contract_no").Value) Then
+                gGroupsRecord.sContractNo = ""
+            Else
+                gGroupsRecord.sContractNo = dgGroups.SelectedRows(0).Cells("cinvoice_contract_no").Value
+            End If
+
+            If IsDBNull(dgGroups.SelectedRows(0).Cells("cinvoice_text").Value) Then
+                gGroupsRecord.sText = ""
+            Else
+                gGroupsRecord.sText = dgGroups.SelectedRows(0).Cells("cinvoice_text").Value
+            End If
+
             VB6.ShowForm(frmGroupStoreEntry, VB6.FormShowConstants.Modal, Me)
             If gGroupsRecord.bFlag = General.modo.SavedRecord Then
                 load_dgGroups((cbCustId.Text), (cbTypeId.Text))

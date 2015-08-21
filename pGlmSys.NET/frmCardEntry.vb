@@ -171,21 +171,25 @@ ErrorHandler:
                 txtCardNumber.ReadOnly = False
                 txtCardNumber.Text = ""
                 If cbBankName.Items.Count > 0 Then
-                    cbBankName.SelectedIndex = 0
+                    If gCreditCard.nBankId > -1 Then
+                        set_cb_ItemData(cbBankName, gCreditCard.nBankId)
+                    Else
+                        cbBankName.SelectedIndex = 0
+                    End If
                 End If
-                If cbCardtype.Items.Count > 0 Then
-                    cbCardtype.SelectedIndex = 0
-                End If
-                txtCardBalance.Text = CStr(0)
-                txtCardNumber.Text = ""
+                    If cbCardtype.Items.Count > 0 Then
+                        cbCardtype.SelectedIndex = 0
+                    End If
+                    txtCardBalance.Text = CStr(0)
+                    txtCardNumber.Text = ""
 			Case General.modo.UpdateRecord
-				set_cb_ItemData(cbBankName, gCreditCard.nBankId)
-				set_cb(cbCardtype, gCreditCard.sCardType)
-				txtCardBalance.Text = CStr(gCreditCard.nCardBalance)
-				txtCardNumber.Text = gCreditCard.sCardNumber
-				txtCardNumber.Enabled = False
-				txtCardNumber.ReadOnly = True
-				cbBankName.Enabled = False
+                    set_cb_ItemData(cbBankName, gCreditCard.nBankId)
+                    set_cb(cbCardtype, gCreditCard.sCardType)
+                    txtCardBalance.Text = CStr(gCreditCard.nCardBalance)
+                    txtCardNumber.Text = gCreditCard.sCardNumber
+                    txtCardNumber.Enabled = False
+                    txtCardNumber.ReadOnly = True
+                    cbBankName.Enabled = False
 		End Select
 		
 	End Sub

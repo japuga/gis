@@ -204,27 +204,32 @@ Friend Class frmStoreAddress
 		
 	End Sub
 	Private Sub edit_address()
-		
+
 		If cbCustId.SelectedIndex < 0 Or cbCustName.SelectedIndex < 0 Or cbStoreNo.SelectedIndex < 0 Then
 			MsgBox("Please select a Customer and Store before attempting this command", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Warning")
 			Exit Sub
 		End If
-		
+
+        If dgAddress.SelectedRows.Count < 1 Then
+            If dgAddress.SelectedCells.Count > 0 Then
+                dgAddress.Rows(dgAddress.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
         If dgAddress.SelectedRows.Count <= 0 Then
             MsgBox("Select a record before attempting this command", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Warning")
             Exit Sub
         End If
-		
-		
-		
-		set_address_record((General.modo.UpdateRecord))
-		VB6.ShowForm(frmStoreAddressEntry, VB6.FormShowConstants.Modal, Me)
-		'If gStoreAddressRecord.bFlag = modo.SavedRecord Then
-		If gStoreAddress.bFlag = General.modo.SavedRecord Then
-			load_dgAddress((cbCustId.Text), VB6.GetItemData(cbStoreNo, cbStoreNo.SelectedIndex))
-		End If
-		
-	End Sub
+
+
+
+        set_address_record((General.modo.UpdateRecord))
+        VB6.ShowForm(frmStoreAddressEntry, VB6.FormShowConstants.Modal, Me)
+        'If gStoreAddressRecord.bFlag = modo.SavedRecord Then
+        If gStoreAddress.bFlag = General.modo.SavedRecord Then
+            load_dgAddress((cbCustId.Text), VB6.GetItemData(cbStoreNo, cbStoreNo.SelectedIndex))
+        End If
+
+    End Sub
 	Private Sub set_address_record(ByRef nOption As General.modo)
 		
 		Select Case nOption
@@ -281,5 +286,9 @@ Friend Class frmStoreAddress
 
     Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
         Me.Close()
+    End Sub
+
+    Private Sub dgAddress_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgAddress.CellDoubleClick
+        edit_address()
     End Sub
 End Class

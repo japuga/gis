@@ -17,7 +17,9 @@ Friend Class frmCheckSearch
 	'UPGRADE_WARNING: Event cbCustId.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
 	Private Sub cbCustId_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustId.SelectedIndexChanged
 		cbCustName.SelectedIndex = cbCustId.SelectedIndex
-		
+        cbAccount.Items.Clear()
+        cbInvoiceNo.Items.Clear()
+
 		If cbCustId.SelectedIndex >= 0 And cbVendor.SelectedIndex >= 0 Then
 			load_account(cbCustId.Text, VB6.GetItemData(cbVendor, cbVendor.SelectedIndex))
 		End If
@@ -47,7 +49,8 @@ Friend Class frmCheckSearch
 		load_cb_query2(cbAccountNo, sStmt, 1, False)
 		
 		If cbAccount.Items.Count > 1 Then
-			cbAccount.SelectedIndex = 0
+            cbAccount.SelectedIndex = 0
+            load_invoice(sCustId, nVendId)
 		Else
 			'Esto elimina <All> cuando no se retornaron registros
 			cbAccount.Items.Clear()
@@ -107,13 +110,11 @@ ErrorHandler:
 		
 		'Rangos de Fechas
 		If chDates.CheckState = System.Windows.Forms.CheckState.Checked Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEnd._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStart._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStart._Value > dtEnd._Value Then
-				MsgBox("To-Date must be greater than From-Date.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-				val_criteria = False
-				Exit Function
-			End If
+            If dtStart.Value > dtEnd.Value Then
+                MsgBox("To-Date must be greater than From-Date.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+                val_criteria = False
+                Exit Function
+            End If
 		End If
 		
 		val_criteria = True
@@ -235,7 +236,7 @@ ErrorHandler:
 		
 		'Rango de fechas
 		If chDates.CheckState = System.Windows.Forms.CheckState.Checked Then
-			sWhere = Trim(sWhere) & " AND Bcheck.check_date BETWEEN '" & CStr(dtStart._Value) & "' " & " AND '" & CStr(dtEnd._Value) & "'"
+            sWhere = Trim(sWhere) & " AND Bcheck.check_date BETWEEN '" & CStr(dtStart.Value) & "' " & " AND '" & CStr(dtEnd.Value) & "'"
 			
 		End If
 		get_criteria = sWhere
@@ -246,7 +247,13 @@ ErrorHandler:
 		
         'On Error GoTo ErrorHandler
 		
-		sStmt = "SELECT DISTINCT RTRIM(vbranch.vend_name) AS Vendor, " & " Bcheck.check_no AS 'Check No',  Bcheck.check_date AS 'Check Date', " & " Bcheck.check_amount AS Amount ,  " & " Bcheck.bank_cust_seq,Bcheck.check_no, " & " Bcheck.cust_id, Customer.cust_name, VBranch.vend_name " & " FROM Bcheck, Vbranch, Customer " & " WHERE Bcheck.vend_seq = VBranch.vend_seq " & " AND Customer.cust_id = Bcheck.cust_id " & " AND Bcheck.voided_flag = 'N' " & Trim(sWhere)
+        sStmt = "SELECT DISTINCT RTRIM(vbranch.vend_name) AS Vendor, " & " Bcheck.check_no AS 'Check No',  Bcheck.check_date AS 'Check Date', " & _
+                        " Bcheck.check_amount AS Amount ,  " & " Bcheck.bank_cust_seq,Bcheck.check_no, " & _
+                        " Bcheck.cust_id, Customer.cust_name, VBranch.vend_name " & _
+                " FROM Bcheck, Vbranch, Customer " & _
+                " WHERE Bcheck.vend_seq = VBranch.vend_seq " & _
+                    " AND Customer.cust_id = Bcheck.cust_id " & _
+                    " AND Bcheck.voided_flag = 'N' " & Trim(sWhere)
 		
 		'MsgBox sStmt
 		'Set dgChecks.DataSource = Nothing

@@ -621,7 +621,7 @@ ErrorHandler:
 		dTotal = 0
 		dGlmTotal = 0
 		
-        rsClone = rsDetail.Clone 'rsDetail.Clone(ADODB.LockTypeEnum.adLockReadOnly)
+        rsClone = rsDetail.Copy 'rsDetail.copy(ADODB.LockTypeEnum.adLockReadOnly)
         'While rsClone.Read()
         For row As Integer = 0 To rsClone.Rows.Count - 1
             If Not IsDBNull(rsClone.Rows(row).Item("Subtotal")) Then
@@ -681,7 +681,7 @@ ErrorHandler:
 		dTotal = 0
 		dGlmTotal = 0
 
-        rsClone = rsDetail.Clone '.Clone(ADODB.LockTypeEnum.adLockReadOnly)
+        rsClone = rsDetail.Copy '.copy(ADODB.LockTypeEnum.adLockReadOnly)
 
         'Do While Not rsClone.EOF
         For row As Integer = 0 To rsDetail.Rows.Count - 1
@@ -731,21 +731,25 @@ ErrorHandler:
 	Private Sub cmdDrop_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdDrop.Click
         Dim vRow As DataGridViewRow
 		Dim i As Short
-		
-		
+
+        If dgDetail.SelectedRows.Count < 1 Then
+            MsgBox("Select a Record to delete.", MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
+
         If dgDetail.SelectedRows.Count > 0 Then
             If MsgBox("Do you want to delete this record?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "GLM Message") = MsgBoxResult.No Then
                 Exit Sub
             End If
         End If
-		
-		
-		On Error GoTo ErrorHandler
-		
-		bRequiresUpdate = True
+
+
+        On Error GoTo ErrorHandler
+
+        bRequiresUpdate = True
 
         'vRow = 0
-		i = 0
+        i = 0
         For Each vRow In dgDetail.SelectedRows
             del_dg_rows(i) = vRow 'Guardo el bookmark del datagrid del registro eliminado
             Dim drow As DataRow = rsDetail.NewRow()
@@ -764,32 +768,36 @@ ErrorHandler:
             End If
             i = i + 1
         Next vRow
-		
-		'Remueve los bookmarks de los registros eliminados (los que usuario sombreo)
+
+        'Remueve los bookmarks de los registros eliminados (los que usuario sombreo)
         For Each aRow As DataGridViewRow In dgDetail.SelectedRows
             dgDetail.Rows(aRow.Index).Selected = False
         Next aRow
         daDetail.Update(rsDetail)
-		calc_total2()
-		'cbService.Move -10000
-		'cbEquipment.Move -10000
-		
-ErrorHandler: 
-		save_error(Me.Name, "cmdDrop.click")
-		
-		Resume Next
+        calc_total2()
+        'cbService.Move -10000
+        'cbEquipment.Move -10000
+
+ErrorHandler:
+        save_error(Me.Name, "cmdDrop.click")
+
+        Resume Next
 		
 	End Sub
 	'Edita detalles de un servicio en la factura
-	Private Sub cmdEdit_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEdit.Click
-        If dgDetail.CurrentRow.Index < 0 Then
+    Private Sub cmdEdit_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdEdit.Click
+        If dgDetail.SelectedRows.Count < 1 Then
             MsgBox("Please select a record to edit.", MsgBoxStyle.Information, "GLM Message")
             Exit Sub
         End If
-		
-		'edit_detail
-		detail((General.detmode.UpdateRecord))
-	End Sub
+        If dgDetail.SelectedRows(0).Index < 0 Then
+            MsgBox("Please select a record to edit.", MsgBoxStyle.Information, "GLM Message")
+            Exit Sub
+        End If
+
+        'edit_detail
+        detail((General.detmode.UpdateRecord))
+    End Sub
 	'Carga la form frmInvoiceDet con los datos del servicio a actualizar
 	Private Sub edit_detail()
 		
@@ -801,36 +809,36 @@ ErrorHandler:
 		
 		'Guardo los detalles en el arreglo global
 		'gInvDetRecord.bMode = detmode.UpdateRecord
-        gInvDetRecord.dServDate = CDate(dgDetail.CurrentRow.Cells("Date").Value)
-        gInvDetRecord.sEquipment = dgDetail.CurrentRow.Cells("Equip").Value
-        gInvDetRecord.nEquipment = CShort(dgDetail.CurrentRow.Cells("Equipment").Value)
-        gInvDetRecord.sService = dgDetail.CurrentRow.Cells("Serv").Value
-        gInvDetRecord.nService = CShort(dgDetail.CurrentRow.Cells("Service").Value)
+        gInvDetRecord.dServDate = CDate(dgDetail.SelectedRows(0).Cells("Date").Value)
+        gInvDetRecord.sEquipment = dgDetail.SelectedRows(0).Cells("Equip").Value
+        gInvDetRecord.nEquipment = CShort(dgDetail.SelectedRows(0).Cells("Equipment").Value)
+        gInvDetRecord.sService = dgDetail.SelectedRows(0).Cells("Serv").Value
+        gInvDetRecord.nService = CShort(dgDetail.SelectedRows(0).Cells("Service").Value)
 		
-        If IsDBNull(dgDetail.CurrentRow.Cells("Usage").Value) Then
+        If IsDBNull(dgDetail.SelectedRows(0).Cells("Usage").Value) Then
             gInvDetRecord.nUsage = 0
         Else
-            gInvDetRecord.nUsage = CDbl(dgDetail.CurrentRow.Cells("Usage").Value)
+            gInvDetRecord.nUsage = CDbl(dgDetail.SelectedRows(0).Cells("Usage").Value)
         End If
 		
-        If IsDBNull(dgDetail.CurrentRow.Cells("Units").Value) Then
+        If IsDBNull(dgDetail.SelectedRows(0).Cells("Units").Value) Then
             gInvDetRecord.nUnits = 0
         Else
-            gInvDetRecord.nUnits = CDbl(dgDetail.CurrentRow.Cells("Units").Value)
+            gInvDetRecord.nUnits = CDbl(dgDetail.SelectedRows(0).Cells("Units").Value)
         End If
 		
 		
-        gInvDetRecord.sType = dgDetail.CurrentRow.Cells("Type").Value
-        gInvDetRecord.nOldRate = CDbl(dgDetail.CurrentRow.Cells("Old Rate").Value)
-        gInvDetRecord.nRate = CDbl(dgDetail.CurrentRow.Cells("Rate").Value)
-        gInvDetRecord.nGlmRate = CDbl(dgDetail.CurrentRow.Cells("GLM Rate").Value)
-        gInvDetRecord.sComments = dgDetail.CurrentRow.Cells("Comments").Value
-        gInvDetRecord.sBillSavingFlag = dgDetail.CurrentRow.Cells("Billable").Value
+        gInvDetRecord.sType = dgDetail.SelectedRows(0).Cells("Type").Value
+        gInvDetRecord.nOldRate = CDbl(dgDetail.SelectedRows(0).Cells("Old Rate").Value)
+        gInvDetRecord.nRate = CDbl(dgDetail.SelectedRows(0).Cells("Rate").Value)
+        gInvDetRecord.nGlmRate = CDbl(dgDetail.SelectedRows(0).Cells("GLM Rate").Value)
+        gInvDetRecord.sComments = dgDetail.SelectedRows(0).Cells("Comments").Value
+        gInvDetRecord.sBillSavingFlag = dgDetail.SelectedRows(0).Cells("Billable").Value
 		
-        If IsDBNull(dgDetail.CurrentRow.Cells("invoice_det_no").Value) Or Len(Trim(dgDetail.CurrentRow.Cells("invoice_det_no").Value)) = 0 Then
+        If IsDBNull(dgDetail.SelectedRows(0).Cells("invoice_det_no").Value) Or Len(Trim(dgDetail.SelectedRows(0).Cells("invoice_det_no").Value)) = 0 Then
             gInvDetRecord.nInvoiceDetNo = 0
         Else
-            gInvDetRecord.nInvoiceDetNo = CShort(dgDetail.CurrentRow.Cells("invoice_det_no").Value)
+            gInvDetRecord.nInvoiceDetNo = CShort(dgDetail.SelectedRows(0).Cells("invoice_det_no").Value)
         End If
 		
 		
@@ -1885,7 +1893,7 @@ ErrorHandler:
         bDetail = False
         If nResult = MsgBoxResult.Yes Then
 
-            rsDetailClone = rsDetail.Clone
+            'rsDetailClone = rsDetail.copy
 
             If check_header Then
                 'Verifica que hayan detalles
@@ -2147,7 +2155,7 @@ ErrorHandler:
         Dim nTran As SqlTransaction
         If nResult = MsgBoxResult.Yes Then
 
-            rsDetailClone = rsDetail.Clone
+            'rsDetailClone = rsDetail.copy
 
             If check_header Then
                 'Verifica que hayan detalles

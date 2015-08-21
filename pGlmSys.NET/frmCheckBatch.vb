@@ -2,6 +2,8 @@ Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports System.Data.SqlClient
+'Imports CrystalDecisions.CrystalReports.Engine
+
 Friend Class frmCheckBatch
 	Inherits System.Windows.Forms.Form
     Private rsLocal As DataTable
@@ -66,10 +68,11 @@ Friend Class frmCheckBatch
 		
 		
 		
-		
+        cbVendor.Items.Clear()
 		sStmt = "SELECT DISTINCT VBranch.vend_name," & " VBranch.vend_id " & " FROM VAccount, VBranch " & " WHERE VAccount.vend_seq = VBranch.vend_seq " & " AND VAccount.cust_id ='" & Trim(sCustId) & "' " & " ORDER BY VBranch.vend_name "
 		
-		load_cb_query2(cbVendor, sStmt, 2, True)
+        load_cb_query2(cbVendor, sStmt, 2, True)
+
 		cbVendor.Items.Insert(0, "<All>")
 		cbVendor.SelectedIndex = 0
 		
@@ -103,7 +106,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbPeriodEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbPeriodEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
 
@@ -126,7 +129,7 @@ ErrorHandler:
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbPeriodStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
+            lbPeriodStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
         End If
 
 
@@ -157,11 +160,11 @@ ErrorHandler:
 	
 	Private Sub cmdAbort_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdAbort.Click
 		enable_batch_options(False)
-		sbBatch.Text = "Rolling back Batch changes..."
+        sbBatch.Items(0).Text = "Rolling back Batch changes..."
 		If rollback_batch(nBatchId) Then
 			MsgBox("Batch Checks were removed and invoices were restored to original status.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
 		End If
-		sbBatch.Text = ""
+        sbBatch.Items(0).Text = ""
 		
 	End Sub
 	
@@ -189,7 +192,7 @@ ErrorHandler:
 			sMsg = "Starting Batch Job..." & Str(nBatchId) & " at:" & Str(Today.ToOADate)
 			write_error(sMsg, sLogfile, False)
 			
-			sbBatch.Text = sMsg
+            sbBatch.Items(0).Text = sMsg
 			
 			If ckZeroedInvoice.CheckState = System.Windows.Forms.CheckState.Checked Then
 				bUpdateZeroInvoice = True
@@ -197,18 +200,15 @@ ErrorHandler:
 				bUpdateZeroInvoice = False
 			End If
 			
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
 			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 			'Ejecuto Batch
-			'UPGRADE_WARNING: Couldn't resolve default property of object uBatchDetail. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
 			uBatchDetail = run_batch(cbCustId.Text, VB6.GetItemData(cbPeriodStart, cbPeriodStart.SelectedIndex), VB6.GetItemData(cbPeriodEnd, cbPeriodEnd.SelectedIndex), VB6.GetItemData(cbBankAccount, cbBankAccount.SelectedIndex), nBatchId, nFirstCheckNo, bUpdateZeroInvoice)
-			
-			'UPGRADE_ISSUE: Unable to determine which constant to upgrade vbNormal to. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B3B44E51-B5F1-4FD7-AA29-CAD31B71F487"'
-			'UPGRADE_ISSUE: Screen property Screen.MousePointer does not support custom mousepointers. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="45116EAB-7060-405E-8ABE-9DBB40DC2E86"'
-			'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
             System.Windows.Forms.Cursor.Current = Cursors.Default
 			
-			sbBatch.Text = "Process Complete"
+            sbBatch.Items(0).Text = "Process Complete"
 			'Muestro resumen de Batch
 			If uBatchDetail.success Then
 				If uBatchDetail.count_check > 0 Then
@@ -281,7 +281,8 @@ ErrorHandler:
 		
 		sWhere = ""
 		
-		sSelect = "SELECT DISTINCT VBranch.vend_name," & " VBranch.vend_id " & " FROM VAccount, VBranch " & " WHERE VAccount.vend_seq = VBranch.vend_seq " & " AND VAccount.cust_id ='" & Trim(sCustId) & "' "
+        sSelect = "SELECT DISTINCT VBranch.vend_name," & " VBranch.vend_id " & " FROM VAccount, VBranch " & _
+                    " WHERE VAccount.vend_seq = VBranch.vend_seq " & " AND VAccount.cust_id ='" & Trim(sCustId) & "' "
 		
 		'Usuario selecciono un vendor
 		If cbVendor.SelectedIndex > 0 Then
@@ -304,15 +305,17 @@ ErrorHandler:
         Else
             'LOOP
             For row As Integer = 0 To rsVendor.Rows.Count - 1
-                sbBatch.Text = "Searching invoices for Vendor:" + rsVendor.Rows(row).Item("vend_name").Value
+                sbBatch.Items(0).Text = "Searching invoices for Vendor:" + rsVendor.Rows(row).Item("vend_name")
 
                 'Vendor Payment
-                'UPGRADE_WARNING: Couldn't resolve default property of object uBatchDetail. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                uBatchDetail = get_vendor_pay_address(sCustId, rsVendor.Rows(row).Item("vend_id").Value, rsVendor.Rows(row).Item("vend_name").Value, nPeriodSeqStart, nPeriodSeqEnd, nBankCustSeq, nBatchId, nFirstCheckNo, bUpdateZeroInvoice)
+                uBatchDetail = get_vendor_pay_address(sCustId, rsVendor.Rows(row).Item("vend_id"), rsVendor.Rows(row).Item("vend_name"), nPeriodSeqStart, nPeriodSeqEnd, nBankCustSeq, nBatchId, nFirstCheckNo, bUpdateZeroInvoice)
 
                 If uBatchDetail.success Then
                     nCountCheck = nCountCheck + uBatchDetail.count_check
                     nCountInvoice = nCountInvoice + uBatchDetail.count_invoice
+                    If uBatchDetail.count_invoice > 0 Then
+                        Dim invoiceVal As Double = uBatchDetail.count_invoice
+                    End If
                     nCountZeroInvoice = nCountZeroInvoice + uBatchDetail.count_zero_invoice
                 Else
                     sStmt = "Call to get_vendor_pay_address failed"
@@ -328,7 +331,9 @@ ErrorHandler:
             
         End If
 
-
+        If uBatchDetail.count_invoice > 0 Then
+            Dim invoiceVal As Double = nCountCheck
+        End If
         update_batch(nBatchId, "ALL", nCountInvoice, nCountCheck, nCountZeroInvoice, 0)
 
         run_batch.count_check = nCountCheck
@@ -368,7 +373,8 @@ ErrorHandler:
 		nInvoices = 0
 		sWhere = ""
 		
-		sSelect = "SELECT DISTINCT RTRIM(vend_pay_address) +' '+" & " RTRIM(vend_pay_city) + ' '+ RTRIM(vend_pay_zip) AS FullAddress," & " vend_pay_address, vend_pay_city, vend_pay_zip " & " FROM VBranch" & " WHERE vend_id = " & Str(nVendId)
+        sSelect = "SELECT DISTINCT RTRIM(vend_pay_address) +' '+" & " RTRIM(vend_pay_city) + ' '+ RTRIM(vend_pay_zip) AS FullAddress," & _
+                    " vend_pay_address, vend_pay_city, vend_pay_zip " & " FROM VBranch" & " WHERE vend_id = " & Str(nVendId)
 		
 		If cbVendor.SelectedIndex > 0 Then
 			If obSelectedBranches.Checked = True Then
@@ -399,12 +405,14 @@ ErrorHandler:
 
             sPeriodSeq = get_period_seq(sCustId, nPeriodSeqStart, nPeriodSeqEnd)
             For row As Integer = 0 To rsVendorPayment.Rows.Count - 1
-                sVendSeq = get_vend_seq(nVendId, rsVendorPayment.Rows(row).Item("vend_pay_address").Value, rsVendorPayment.Rows(row).Item("vend_pay_city").Value, rsVendorPayment.Rows(row).Item("vend_pay_zip").Value)
+                sVendSeq = get_vend_seq(nVendId, rsVendorPayment.Rows(row).Item("vend_pay_address"), rsVendorPayment.Rows(row).Item("vend_pay_city"), rsVendorPayment.Rows(row).Item("vend_pay_zip"))
 
 
                 'Process Invoices
                 uBatchDetail = process_invoices(sCustId, sVendName, sVendSeq, sPeriodSeq, nBankCustSeq, nBatchId, nFirstCheckNo, bUpdateZeroInvoice)
-
+                If Not (uBatchDetail.count_invoice = 0) Or Not (uBatchDetail.count_check = 0) Then
+                    Dim s As String = ""
+                End If
                 If uBatchDetail.success = False Then
                     get_vendor_pay_address.success = False
 
@@ -419,7 +427,7 @@ ErrorHandler:
 
                     If gbDebug Then
                         If uBatchDetail.count_invoice > 0 Then
-                            sStmt = "Address:" + rsVendorPayment.Rows(row).Item("vend_pay_address").Value + "City:" + rsVendorPayment.Rows(row).Item("vend_pay_city").Value + "Num invoices:" + Str(uBatchDetail.count_invoice)
+                            sStmt = "Address:" + rsVendorPayment.Rows(row).Item("vend_pay_address") + "City:" + rsVendorPayment.Rows(row).Item("vend_pay_city") + "Num invoices:" + Str(uBatchDetail.count_invoice)
                             write_error(sStmt, sLogfile, False)
                         End If
                     End If
@@ -433,7 +441,7 @@ ErrorHandler:
                     nCountCheck = nCountCheck + uBatchDetail.count_check
                 End If
             Next row
-            
+
 
         End If
 
@@ -490,7 +498,21 @@ ErrorHandler:
 		End If
 		
 		
-		sStmt = "SELECT Store.store_id, Store.store_number AS 'Store'," & " VInvoice.account_no AS 'Account', " & " VInvoice.invoice_no AS 'Invoice', " & " VInvoice.total AS Total, VAccount.account_mask, " & " VInvoice.vend_seq " & " FROM VInvoice, Store, VAccount " & " WHERE VInvoice.store_id = Store.store_id " & " AND VInvoice.cust_id =Store.cust_id " & " AND VAccount.account_no = VInvoice.account_no " & " AND VAccount.cust_id = VInvoice.cust_id " & " AND VAccount.store_id = VInvoice.store_id " & " AND VAccount.vend_seq = VInvoice.vend_seq " & " AND VInvoice.vinvoice_status = 'CRE' " & " AND VInvoice.cust_id ='" & Trim(sCustId) & "' " & " AND VInvoice.vend_seq IN (" & sVendSeq & ") " & " AND VInvoice.period_seq IN ( " & sPeriodSeq & ") "
+        sStmt = "SELECT Store.store_id, Store.store_number AS 'Store'," & _
+        " VInvoice.account_no AS 'Account', " & _
+        " VInvoice.invoice_no AS 'Invoice', " & _
+        " VInvoice.total AS Total, VAccount.account_mask, " & " VInvoice.vend_seq " & _
+        " FROM VInvoice, Store, VAccount " & _
+        " WHERE VInvoice.store_id = Store.store_id " & _
+            " AND VInvoice.cust_id =Store.cust_id " & _
+            " AND VAccount.account_no = VInvoice.account_no " & _
+            " AND VAccount.cust_id = VInvoice.cust_id " & _
+            " AND VAccount.store_id = VInvoice.store_id " & _
+            " AND VAccount.vend_seq = VInvoice.vend_seq " & _
+            " AND VInvoice.vinvoice_status = 'CRE' " & _
+            " AND VInvoice.cust_id ='" & Trim(sCustId) & "' " & _
+            " AND VInvoice.vend_seq IN (" & sVendSeq & ") " & _
+            " AND VInvoice.period_seq IN ( " & sPeriodSeq & ") "
 		
 		sStmt = sStmt & " ORDER BY Store.store_number, VInvoice.account_no, " & " VInvoice.invoice_no"
 		
@@ -517,15 +539,15 @@ ErrorHandler:
             init_store_array()
             For row As Integer = 0 To rsInvoice.Rows.Count - 1
                 'Factura con balance zero
-                If rsInvoice.Rows(row).Item("total").Value = 0 Then
+                If rsInvoice.Rows(row).Item("total") = 0 Then
 
                     nCountZeroInvoice = nCountZeroInvoice + 1
 
                     If bUpdateZeroInvoice Then
-                        nUpdateZeroInvoice = update_invoice(rsInvoice.Rows(row).Item("vend_seq").Value, sCustId, rsInvoice.Rows(row).Item("store_id").Value, rsInvoice.Rows(row).Item("invoice").Value, rsInvoice.Rows(row).Item("account").Value, "PRT", nBatchId)
+                        nUpdateZeroInvoice = update_invoice(rsInvoice.Rows(row).Item("vend_seq"), sCustId, rsInvoice.Rows(row).Item("store_id"), rsInvoice.Rows(row).Item("invoice"), rsInvoice.Rows(row).Item("account"), "PRT", nBatchId)
                         If nUpdateZeroInvoice < 1 Then
                             process_invoices.success = False
-                            MsgBox("Aborting process in process_invoices." & vbCrLf & "Failed to update invoice " + rsInvoice.Rows(row).Item("invoice").Value + "with zero balance.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                            MsgBox("Aborting process in process_invoices." & vbCrLf & "Failed to update invoice " + rsInvoice.Rows(row).Item("invoice") + "with zero balance.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                             Exit Function
                         End If
                     End If
@@ -538,9 +560,9 @@ ErrorHandler:
                 nCheckDetail = nCheckDetail + 1
                 nCountInvoice = nCountInvoice + 1
 
-                add_check_detail(rsInvoice.Rows(row).Item("store_id").Value, rsInvoice.Rows(row).Item("store").Value, rsInvoice.Rows(row).Item("account").Value, rsInvoice.Rows(row).Item("invoice").Value, rsInvoice.Rows(row).Item("vend_seq").Value, rsInvoice.Rows(row).Item("total").Value)
+                add_check_detail(rsInvoice.Rows(row).Item("store_id"), rsInvoice.Rows(row).Item("store"), rsInvoice.Rows(row).Item("account"), rsInvoice.Rows(row).Item("invoice"), rsInvoice.Rows(row).Item("vend_seq"), rsInvoice.Rows(row).Item("total"))
                 'Agrega tienda (sin dups) en arrelgo sStore
-                add_store2(sStore, rsInvoice.Rows(row).Item("Store").Value)
+                add_store2(sStore, rsInvoice.Rows(row).Item("Store"))
 
 
                 'Numero de facturas no debe exceder limite en cheque
@@ -575,7 +597,7 @@ ErrorHandler:
 
                 'Debug
                 If gbDebug Then
-                    write_error("DEBUG: frmCheckBatch: Invoice:" + rsInvoice.Rows(row).Item("invoice").Value, sLogfile, False)
+                    write_error("DEBUG: frmCheckBatch: Invoice:" + rsInvoice.Rows(row).Item("invoice"), sLogfile, False)
                 End If
 
 Continue_Renamed:
@@ -639,7 +661,16 @@ ErrorHandler:
 		'Monto del cheque
 		gCheck.Amount = 0
 		
-		sStmt = "SELECT Store.store_id, Store.store_number AS 'Store'," & " VInvoice.account_no AS 'Account', " & " VInvoice.invoice_no AS 'Invoice', " & " VInvoice.total AS Total, VAccount.account_mask, " & " VInvoice.vend_seq " & " FROM Store, vAccount, vInvoice " & " WHERE VInvoice.store_id = Store.store_id " & " AND VInvoice.cust_id =Store.cust_id " & " AND VAccount.account_no = VInvoice.account_no " & " AND VAccount.cust_id = VInvoice.cust_id " & " AND VAccount.store_id = VInvoice.store_id " & " AND VAccount.vend_seq = VInvoice.vend_seq " & " AND vInvoice.cust_id = '--'"
+        sStmt = "SELECT Store.store_id, Store.store_number AS 'Store'," & _
+            " VInvoice.account_no AS 'Account', " & _
+            " VInvoice.invoice_no AS 'Invoice', " & _
+            " VInvoice.total AS Total, VAccount.account_mask, " & _
+            " VInvoice.vend_seq " & _
+            " FROM Store, vAccount, vInvoice " & _
+            " WHERE VInvoice.store_id = Store.store_id " & _
+            " AND VInvoice.cust_id =Store.cust_id " & " AND VAccount.account_no = VInvoice.account_no " & _
+            " AND VAccount.cust_id = VInvoice.cust_id " & " AND VAccount.store_id = VInvoice.store_id " & _
+            " AND VAccount.vend_seq = VInvoice.vend_seq " & " AND vInvoice.cust_id = '--'"
 		
         gCheck.rsStore = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenDynamic, ADODB.LockTypeEnum.adLockBatchOptimistic)
 		
@@ -651,12 +682,12 @@ ErrorHandler:
         Dim drow As DataRow = gCheck.rsStore.NewRow()
 
 
-        drow.Item("store_id").Value = nStoreId
-        drow.Item("Store").Value = sStoreNumber
-        drow.Item("Account").Value = sAccountNo
-        drow.Item("Invoice").Value = sInvoiceNo
-        drow.Item("vend_seq").Value = nVendSeq
-        drow.Item("total").Value = nTotal
+        drow.Item("store_id") = nStoreId
+        drow.Item("Store") = sStoreNumber
+        drow.Item("Account") = sAccountNo
+        drow.Item("Invoice") = sInvoiceNo
+        drow.Item("vend_seq") = nVendSeq
+        drow.Item("total") = nTotal
 
         gCheck.rsStore.Rows.Add(drow)
 
@@ -686,7 +717,7 @@ ErrorHandler:
 	
 	Private Sub cmdSavePrint_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdSavePrint.Click
 		
-		sbBatch.Text = "Printing Checks for Batch:" & Str(nBatchId)
+        sbBatch.Items(0).Text = "Printing Checks for Batch:" & Str(nBatchId)
 		If find_printer(True) Then
 			VB6.ShowForm(frmCheckPaper, VB6.FormShowConstants.Modal, Me)
 			print_batch(nBatchId, General.gCheckPaperSource)
@@ -694,7 +725,7 @@ ErrorHandler:
 		
 		enable_batch_options(False)
 		
-		sbBatch.Text = ""
+        sbBatch.Items(0).Text = ""
 		
 		MsgBox("Batch changes were saved and print jobs submitted.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
 		
@@ -742,10 +773,8 @@ ErrorHandler:
 		cmdShowVBranch.Enabled = False
 		enable_batch_options(False)
 		
-		'UPGRADE_WARNING: TextBox property txtDetail1.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtDetail1.Maxlength = 100
-		'UPGRADE_WARNING: TextBox property txtDetail2.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtDetail2.Maxlength = 100
+        txtDetail1.MaxLength = 100
+        txtDetail2.MaxLength = 100
 		
 		txtDetail1.Text = "PLEASE CREDIT ALL ACCOUNTS"
 		
@@ -796,7 +825,14 @@ ErrorHandler:
 		sPrevBankAccount = "0"
 		
 		
-		sStmt = "SELECT DISTINCT BCheck.check_no, BCheck.check_date, " & " BCheck.check_amount, BCheck.bank_cust_seq , " & " Vendor.vend_name, " & " VBranch.vend_pay_address, VBranch.vend_pay_city, " & " VBranch.vend_pay_state, VBranch.vend_pay_zip," & " Customer.cust_name " & " FROM BCheck, Vendor, VBranch, Customer " & " WHERE BCheck.cust_id = Customer.cust_id " & " AND BCheck.vend_seq = VBranch.vend_seq " & " AND Vendor.vend_id = VBranch.vend_id " & " AND BCheck.batch_id=" & Str(nBatchId)
+        sStmt = "SELECT DISTINCT BCheck.check_no, BCheck.check_date, " & " BCheck.check_amount, BCheck.bank_cust_seq , " & _
+                                " Vendor.vend_name, " & " VBranch.vend_pay_address, VBranch.vend_pay_city, " & _
+                                " VBranch.vend_pay_state, VBranch.vend_pay_zip," & " Customer.cust_name " & _
+                      " FROM BCheck, Vendor, VBranch, Customer " & _
+                      " WHERE BCheck.cust_id = Customer.cust_id " & _
+                          " AND BCheck.vend_seq = VBranch.vend_seq " & _
+                          " AND Vendor.vend_id = VBranch.vend_id " & _
+                          " AND BCheck.batch_id=" & Str(nBatchId)
 		
         rsCheckHeader = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -808,7 +844,7 @@ ErrorHandler:
             For row As Integer = 0 To rsCheckHeader.Rows.Count - 1
                 If sPrevBankAccount <> sBankAccount Then
                     sPrevBankAccount = sBankAccount
-                    sBankAccount = get_bank_account(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value)
+                    sBankAccount = get_bank_account(rsCheckHeader.Rows(row).Item("bank_cust_seq"))
                     If sBankAccount = "" Then
                         MsgBox("Failed to retrieve Bank Account number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
@@ -817,46 +853,44 @@ ErrorHandler:
 
                 If sPrevBankAba <> sBankAba Then
                     sPrevBankAba = sBankAba
-                    sBankAba = get_bank_aba(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value)
+                    sBankAba = get_bank_aba(rsCheckHeader.Rows(row).Item("bank_cust_seq"))
                     If sBankAba = "" Then
                         MsgBox("Failed to retrieve Bank ABA number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                         Exit Sub
                     End If
                 End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Rows(row).Item("check_no").Value) Then
-                    nCheckNo = rsCheckHeader.Rows(row).Item("check_no").Value
+                If Not IsDBNull(rsCheckHeader.Rows(row).Item("check_no")) Then
+                    nCheckNo = rsCheckHeader.Rows(row).Item("check_no")
                 Else
                     MsgBox("Failed to retrieve Check Number, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
                 End If
 
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                If Not IsDBNull(rsCheckHeader.Rows(row).Item("check_date").Value) Then
-                    sCheckDate = rsCheckHeader.Rows(row).Item("check_date").Value
+                If Not IsDBNull(rsCheckHeader.Rows(row).Item("check_date")) Then
+                    sCheckDate = rsCheckHeader.Rows(row).Item("check_date")
                 Else
                     MsgBox("Failed to retrieve Check Date, batch id=" & Str(nBatchId), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
                     Exit Sub
                 End If
 
-                sbBatch.Text = "Printing Check# " & Str(nCheckNo)
+                sbBatch.Items(0).Text = "Printing Check# " & Str(nCheckNo)
 
                 'sLinea = list_store2(rsCheckHeader("cust_name"), sStore, 3, 30)
-                sCustName = rsCheckHeader.Rows(row).Item("cust_name").Value
-                nCheckAmount = rsCheckHeader.Rows(row).Item("check_amount").Value
-                nBankCustSeq = rsCheckHeader.Rows(row).Item("bank_cust_seq").Value
-                sVendName = rsCheckHeader.Rows(row).Item("vend_name").Value
-                sVendPayAddress = rsCheckHeader.Rows(row).Item("vend_pay_address").Value
-                sVendPayCity = rsCheckHeader.Rows(row).Item("vend_pay_city").Value
-                sVendPayState = rsCheckHeader.Rows(row).Item("vend_pay_state").Value
-                sVendPayZip = rsCheckHeader.Rows(row).Item("vend_pay_zip").Value
+                sCustName = rsCheckHeader.Rows(row).Item("cust_name")
+                nCheckAmount = rsCheckHeader.Rows(row).Item("check_amount")
+                nBankCustSeq = rsCheckHeader.Rows(row).Item("bank_cust_seq")
+                sVendName = rsCheckHeader.Rows(row).Item("vend_name")
+                sVendPayAddress = rsCheckHeader.Rows(row).Item("vend_pay_address")
+                sVendPayCity = rsCheckHeader.Rows(row).Item("vend_pay_city")
+                sVendPayState = rsCheckHeader.Rows(row).Item("vend_pay_state")
+                sVendPayZip = rsCheckHeader.Rows(row).Item("vend_pay_zip")
                 sAmountString = num2str(nCheckAmount)
 
-                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value, "check_info1")
-                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value, "check_info2")
-                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value, "check_info3")
-                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq").Value, "check_info4")
+                sBankCheckInfo1 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq"), "check_info1")
+                sBankCheckInfo2 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq"), "check_info2")
+                sBankCheckInfo3 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq"), "check_info3")
+                sBankCheckInfo4 = get_bank_info(rsCheckHeader.Rows(row).Item("bank_cust_seq"), "check_info4")
 
 
                 'Carga gCheck.rsStore
@@ -1310,24 +1344,24 @@ ErrorHandler:
         '	Printer.CurrentX = 2 * 1440 '3
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Store").Value)
+        '	Printer.Print(gCheck.rsStore.item("Store"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 3 * 1440 '4
         '	'05.15.03 Mascara de cuenta
         '	'Printer.Print gCheck.rsStore("Account");
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("account_mask").Value)
+        '	Printer.Print(gCheck.rsStore.item("account_mask"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 4.5 * 1440 '5
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Invoice").Value)
+        '	Printer.Print(gCheck.rsStore.item("Invoice"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 5.7 * 1440 '6
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
         '	gCheck.rsStore.MoveNext()
         '	i = i + 1
         'Loop 
@@ -1477,25 +1511,25 @@ ErrorHandler:
         '	Printer.CurrentX = 2 * 1440 '3
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Store").Value)
+        '	Printer.Print(gCheck.rsStore.item("Store"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 3 * 1440 '4
         '	'05.15.03 Mascara de Cuenta
         '	'Printer.Print gCheck.rsStore("Account");
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("account_mask").Value)
+        '	Printer.Print(gCheck.rsStore.item("account_mask"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 4.5 * 1440 '5
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Invoice").Value)
+        '	Printer.Print(gCheck.rsStore.item("Invoice"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 5.7 * 1440 '6
         '	'Printer.Print FormatCurrency(gCheck.rsStore("Total"), 2, vbTrue)
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
         '	gCheck.rsStore.MoveNext()
         '	i = i + 1
         'Loop 
@@ -1606,8 +1640,9 @@ ErrorHandler:
         If rs.Rows.Count > 0 Then
             i = 0
             For row As Integer = 0 To rs.Rows.Count - 1
+                sStore(i) = rs.Rows(row).Item("store_number")
                 i = i + 1
-                sStore(i) = rs.Rows(row).Item("store_number").Value
+
             Next row
             
         End If
@@ -1616,9 +1651,9 @@ ErrorHandler:
 	Public Sub init_store_array()
 		Dim i As Short
 		
-		For i = 1 To gGlobSettings.nMaxBatchCheckDetails
-			sStore(i) = ""
-		Next i
+        For i = 0 To gGlobSettings.nMaxBatchCheckDetails - 1
+            sStore(i) = ""
+        Next i
 	End Sub
 	
     Private Function ReportHandler2() As Boolean
@@ -1679,9 +1714,10 @@ ErrorHandler:
 		
 		cmReport.CommandText = "usp_rep_check_batch_summary"
 		
-
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
-		cmReport.Parameters("@nBatchId").Value = nBatchId
+        cmReport.Parameters("@nBatchId").Value = nBatchId
+        cmReport.Parameters("@nError").Direction = ParameterDirection.Output
 		
 		'Ejecuto el procedure y verifico por errores
         cmReport.ExecuteNonQuery()
@@ -1697,29 +1733,28 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Encontro registros
             Else
                 MsgBox("No data was generated for :" & sLocalReport & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
                 Exit Sub
             End If
         Else
             MsgBox("There was an error while verifying report data for:" & sLocalReport, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
             Exit Sub
         End If
 		
 		
-		sStmt = "SELECT report_id, batch_id, batch_date, cust_id, " & " LTRIM(RTRIM(cust_name))AS cust_name, " & "vend_name, count_check, count_vendor, total_check_amount, " & "check_no, check_amount, num_invoices, num_zero_invoices, num_process_invoices " & " FROM rptBatchCheckSummary " & " WHERE report_id = " & Str(nReport)
+        sStmt = "SELECT report_id, batch_id, batch_date, cust_id, " & " LTRIM(RTRIM(cust_name))AS cust_name, " & _
+                "vend_name, count_check, count_vendor, total_check_amount, " & _
+                "check_no, check_amount, num_invoices, num_zero_invoices, num_process_invoices " & _
+                " FROM rptBatchCheckSummary " & " WHERE report_id = " & Str(nReport)
 		
         rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
-		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 		'Cargo la plantilla de Crystal Reports con los datos
 		load_report()
 		Exit Sub
@@ -1746,37 +1781,42 @@ ErrorHandler:
 
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptGlmInvoice.rpt"
 		sFile = get_template(sLocalReport, sLocalVersion)
-		If fileTmp.FileExists(sFile) Then
+        If fileTmp.FileExists(sFile) Then
+            Try
+                Dim rptDoc As CrystalDecisions.CrystalReports.Engine.ReportDocument = New CrystalDecisions.CrystalReports.Engine.ReportDocument()
+                rptDoc.Load(sFile)
+                rptDoc.SetDataSource(rsReport)
+
+                frmCheckBatchRepViewer.CrystalReportViewer1.ReportSource = rptDoc
+                frmCheckBatchRepViewer.CrystalReportViewer1.Visible = True
+                frmCheckBatchRepViewer.CrystalReportViewer1.Show()
+                frmCheckBatchRepViewer.Show()
+            Catch ex As Exception
+            End Try
         Else
-            sFile = get_local_template(sLocalReport)
-            If fileTmp.FileExists(sFile) Then
-            Else
-                MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
-                Exit Function
-            End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Function
+        End If
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+
         'crysRep.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
 
-		'reportTable.SetPrivateData 3, AdoRs
+        'reportTable.SetPrivateData 3, AdoRs
         'reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		
+
+        'cd.CancelError = True
+        'cd.ShowPrinter
+
         'crysRep.ProgressDialogEnabled = True
         'crysRep.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
 	End Function
 	
 	
@@ -1815,14 +1855,20 @@ ErrorHandler:
 		
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rs.Rows.Count > 0 Then
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If Not IsDBNull(rs.Rows(0).Item(0).Value) Then
-                nNumInvoices = rs.Rows(0).Item(0).Value
+            If Not IsDBNull(rs.Rows(0).Item(0)) Then
+                nNumInvoices = rs.Rows(0).Item(0)
             End If
         End If
 		
 		'1. Actualizar Facturas
-		sStmt = "UPDATE vInvoice  " & " SET vInvoice.vinvoice_status='CRE' " & " WHERE EXISTS " & "   (SELECT * FROM BCheck " & "    WHERE BCheck.invoice_no = vInvoice.invoice_no " & "    AND BCheck.cust_id = vInvoice.cust_id " & "    AND BCheck.store_id = vInvoice.store_id " & "    AND BCheck.vend_seq = vInvoice.vend_seq " & "    AND BCheck.account_no = vInvoice.account_no " & "    AND BCheck.batch_id = " & Str(nBatchId) & ")"
+        sStmt = "UPDATE vInvoice  " & " SET vInvoice.vinvoice_status='CRE' " & " WHERE EXISTS " & _
+            "   (SELECT * FROM BCheck " & _
+                "    WHERE BCheck.invoice_no = vInvoice.invoice_no " & _
+                "    AND BCheck.cust_id = vInvoice.cust_id " & _
+                "    AND BCheck.store_id = vInvoice.store_id " & _
+                "    AND BCheck.vend_seq = vInvoice.vend_seq " & _
+                "    AND BCheck.account_no = vInvoice.account_no " & _
+                "    AND BCheck.batch_id = " & Str(nBatchId) & ")"
 		
 		
 		
@@ -1830,7 +1876,8 @@ ErrorHandler:
         nTran = cn.BeginTransaction()
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
-		cm.CommandText = sStmt
+        cm.CommandText = sStmt
+        cm.Transaction = nTran
         nRecords = cm.ExecuteNonQuery()
 		If nRecords > 0 Then
 			'ok
@@ -1870,12 +1917,12 @@ ErrorHandler:
         rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-        If IsDBNull(rs.Rows(0).Item(0).Value) Then
+        If IsDBNull(rs.Rows(0).Item(0)) Then
             'Nada que actualizar
             rollback_batch = True
             Exit Function
         Else
-            nNumZeroInvoices = rs.Rows(0).Item(0).Value
+            nNumZeroInvoices = rs.Rows(0).Item(0)
 
         End If
 
@@ -2117,24 +2164,24 @@ ErrorHandler:
         '	Printer.CurrentX = 2 * 1440 '3
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Store").Value)
+        '	Printer.Print(gCheck.rsStore.item("Store"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 3 * 1440 '4
         '	'05.15.03 Mascara de cuenta
         '	'Printer.Print gCheck.rsStore("Account");
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("account_mask").Value)
+        '	Printer.Print(gCheck.rsStore.item("account_mask"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 4.5 * 1440 '5
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Invoice").Value)
+        '	Printer.Print(gCheck.rsStore.item("Invoice"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 5.7 * 1440 '6
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
         '	gCheck.rsStore.MoveNext()
         '	i = i + 1
         'Loop 
@@ -2269,25 +2316,25 @@ ErrorHandler:
         '	Printer.CurrentX = 2 * 1440 '3
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Store").Value)
+        '	Printer.Print(gCheck.rsStore.item("Store"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 3 * 1440 '4
         '	'05.15.03 Mascara de Cuenta
         '	'Printer.Print gCheck.rsStore("Account");
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("account_mask").Value)
+        '	Printer.Print(gCheck.rsStore.item("account_mask"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 4.5 * 1440 '5
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(gCheck.rsStore.item("Invoice").Value)
+        '	Printer.Print(gCheck.rsStore.item("Invoice"))
         '	'UPGRADE_ISSUE: Printer property Printer.CurrentX was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         '	Printer.CurrentX = 5.7 * 1440 '6
         '	'Printer.Print FormatCurrency(gCheck.rsStore("Total"), 2, vbTrue)
         '	'UPGRADE_ISSUE: Printer object was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
         '	'UPGRADE_ISSUE: Printer method Printer.Print was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total").Value, 2, TriState.True)))
+        '	Printer.Print(format_qty(FormatCurrency(gCheck.rsStore.item("Total"), 2, TriState.True)))
         '	gCheck.rsStore.MoveNext()
         '	i = i + 1
         'Loop 

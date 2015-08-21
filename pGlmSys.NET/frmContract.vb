@@ -547,11 +547,14 @@ ErrorHandler:
             MsgBox("Please choose a Store.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")
             Exit Sub
         End If
+
+
+
         If dgStore.SelectedRows(0).Index >= 0 Then
             'Se escogio una tienda. OK
             If dgEquipment.SelectedRows.Count > 0 Then
                 'OK Equipment
-                If dgContract.CurrentRow.Index >= 0 Then
+                If dgContract.SelectedRows.Count > 0 Then
                     'OK. Escogio contrato
                 Else
                     MsgBox("Please select a Contract to Delete.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Message")

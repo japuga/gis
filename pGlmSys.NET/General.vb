@@ -622,6 +622,7 @@ Module General
     Public gCheck As gCheckUDT
     Public gCheckVoid As gCheckVoidUDT
     Public gCheckRenumber As gCheckVoidUDT
+    Public gCheckReQuery As String
     Public gVendor As gVendorUDT
     Public gReport As gReportUDT
     Public gBank As gBankUDT
