@@ -1,6 +1,8 @@
 Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
+Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepRecycleTon
 	Inherits System.Windows.Forms.Form
 	Private sLocalVersion As String
@@ -90,7 +92,9 @@ ErrorHandler:
 		lbStartDate.Text = ""
 		lbEndDate.Text = ""
 		
-		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
+        sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & _
+                " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & _
+                    " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -442,97 +446,92 @@ ErrorHandler:
 	'5.-Muestra el reporte
 	Private Sub show_report2()
 		
-        'On Error GoTo ErrorHandler
-		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-		
-		cmReport.CommandTimeout = gnTimeout
-        cmReport = cn.CreateCommand()
-        cmReport.CommandType = CommandType.StoredProcedure
-        '		cmReport.Parameters.Refresh()
-		
-		'get_seed se cambio a build_query
-		
-		
-		'Se cargan los parametros dependiendo del tipo de reporte
-		cmReport.CommandText = "usp_rep_recycle_ton25"
-		
-		cmReport.Parameters("@nReportId").Value = nReport
-		cmReport.Parameters("@sCustId").Value = rptRecycleTonParam.sCustId
-		cmReport.Parameters("@sStateId").Value = rptRecycleTonParam.sStateId
-		cmReport.Parameters("@nGroupSeq").Value = rptRecycleTonParam.nGroupSeq
-		cmReport.Parameters("@nPeriodSeq").Value = rptRecycleTonParam.nPeriodSeq
-		cmReport.Parameters("@sPeriodSeq").Value = rptRecycleTonParam.sPeriodSeq
-		cmReport.Parameters("@sStartDate").Value = rptRecycleTonParam.sStartDate
-		cmReport.Parameters("@sEndDate").Value = rptRecycleTonParam.sEndDate
-		cmReport.Parameters("@sReportCaption").Value = rptRecycleTonParam.sReportCaption
-		cmReport.Parameters("@nPeriodSeqFrom").Value = rptRecycleTonParam.nPeriodSeqFrom
-		cmReport.Parameters("@nPeriodSeqTo").Value = rptRecycleTonParam.nPeriodSeqTo
-        cmReport.Parameters("@nError").Direction = ParameterDirection.Output
-
-		log_report_parameters(sLocalReport, cmReport)
-		
-		'Ejecuto el procedure y verifico por errores
-        cmReport.ExecuteNonQuery()
-		
-		rptRecycleTonParam.nError = cmReport.Parameters("@nError").Value
-		If rptRecycleTonParam.nError <> 0 Then
-			MsgBox("An error ocurred while generating report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Error")
-			Exit Sub
-		End If
-		
-		'Verifico que se hayan cargado datos en RptRecyleTon para este reporte
-		sStmt = "SELECT count(*) FROM rptRecycleTon WHERE report_no = " & Str(nReport)
-
         Try
-            rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 
-            If rsLocal.Rows(0).Item(0) > 0 Then
-                'Encontro registros
-            Else
-                MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+            cmReport.CommandTimeout = gnTimeout
+            cmReport = cn.CreateCommand()
+            cmReport.CommandType = CommandType.StoredProcedure
+            '		cmReport.Parameters.Refresh()
+
+            'get_seed se cambio a build_query
+
+
+            'Se cargan los parametros dependiendo del tipo de reporte
+            cmReport.CommandText = "usp_rep_recycle_ton25"
+            SqlCommandBuilder.DeriveParameters(cmReport)
+            cmReport.Parameters("@nReportId").Value = nReport
+            cmReport.Parameters("@sCustId").Value = rptRecycleTonParam.sCustId
+            cmReport.Parameters("@sStateId").Value = rptRecycleTonParam.sStateId
+            cmReport.Parameters("@nGroupSeq").Value = rptRecycleTonParam.nGroupSeq
+            cmReport.Parameters("@nPeriodSeq").Value = rptRecycleTonParam.nPeriodSeq
+            cmReport.Parameters("@sPeriodSeq").Value = rptRecycleTonParam.sPeriodSeq
+            cmReport.Parameters("@sStartDate").Value = rptRecycleTonParam.sStartDate
+            cmReport.Parameters("@sEndDate").Value = rptRecycleTonParam.sEndDate
+            cmReport.Parameters("@sReportCaption").Value = rptRecycleTonParam.sReportCaption
+            cmReport.Parameters("@nPeriodSeqFrom").Value = rptRecycleTonParam.nPeriodSeqFrom
+            cmReport.Parameters("@nPeriodSeqTo").Value = rptRecycleTonParam.nPeriodSeqTo
+            cmReport.Parameters("@nError").Direction = ParameterDirection.Output
+
+            log_report_parameters(sLocalReport, cmReport)
+
+            'Ejecuto el procedure y verifico por errores
+            cmReport.ExecuteNonQuery()
+
+            rptRecycleTonParam.nError = cmReport.Parameters("@nError").Value
+            If rptRecycleTonParam.nError <> 0 Then
+                MsgBox("An error ocurred while generating report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
                 Exit Sub
             End If
-        Catch ex As Exception
-            MsgBox("There was an error while verifying report data for:" & gReport.name, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+
+            'Verifico que se hayan cargado datos en RptRecyleTon para este reporte
+            sStmt = "SELECT count(*) FROM rptRecycleTon WHERE report_no = " & Str(nReport)
+
+            Try
+                rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+                If rsLocal.Rows(0).Item(0) > 0 Then
+                    'Encontro registros
+                Else
+                    MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+                    System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+                    Exit Sub
+                End If
+            Catch ex As Exception
+                MsgBox("There was an error while verifying report data for:" & gReport.name, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+                Exit Sub
+            End Try
+
+            If obDetail.Checked Then
+                sStmt = " SELECT report_no, cust_id, LTRIM(RTRIM(cust_name))," & "report_start, report_end," & "date_range," & "store_no," & "store_address," & "vendor_name," & "eqpt_desc," & "eqpt_freq," & "calc_serv_usage, calc_yard, calc_weight_yard, calc_weight_ton, " & "tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton " & " FROM rptRecycleTon " & " WHERE report_no = " & Str(nReport)
+            Else
+                'SUMMARY
+                sStmt = "SELECT report_no, state_id, state_name, " & " cust_id, LTRIM(RTRIM(cust_name))AS cust_name, date_range, " & " SUM(calc_serv_usage)AS calc_serv_usage, SUM(calc_yard) AS calc_yard," & " SUM(calc_weight_yard) AS calc_weight_yard, SUM(calc_weight_ton) AS calc_weight_ton, " & " tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton " & " FROM rptRecycleTon " & " WHERE report_no = " & Str(nReport) & " GROUP BY report_no, state_id, state_name, " & " cust_id, cust_name, date_range, " & " tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton "
+
+
+            End If
+
+            'If rsReport.State = ADODB.ObjectStateEnum.adStateOpen Then
+            '    rsReport.Close()
+            'End If
+            rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+            If gbDebug Then
+                'DataGrid1.Visible = True
+                DataGrid1.DataSource = rsReport
+            End If
+
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+            'Cargo la plantilla de Crystal Reports con los datos
+            load_report()
+
             Exit Sub
+
+        Catch ex As Exception
+            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+            save_error(Me.Name, "show_report2")
         End Try
-
-        If obDetail.Checked Then
-            sStmt = " SELECT report_no, cust_id, LTRIM(RTRIM(cust_name))," & "report_start, report_end," & "date_range," & "store_no," & "store_address," & "vendor_name," & "eqpt_desc," & "eqpt_freq," & "calc_serv_usage, calc_yard, calc_weight_yard, calc_weight_ton, " & "tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton " & " FROM rptRecycleTon " & " WHERE report_no = " & Str(nReport)
-        Else
-            'SUMMARY
-            sStmt = "SELECT report_no, state_id, state_name, " & " cust_id, LTRIM(RTRIM(cust_name))AS cust_name, date_range, " & " SUM(calc_serv_usage)AS calc_serv_usage, SUM(calc_yard) AS calc_yard," & " SUM(calc_weight_yard) AS calc_weight_yard, SUM(calc_weight_ton) AS calc_weight_ton, " & " tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton " & " FROM rptRecycleTon " & " WHERE report_no = " & Str(nReport) & " GROUP BY report_no, state_id, state_name, " & " cust_id, cust_name, date_range, " & " tot_serv_usage , tot_yard, tot_weight_yard, tot_weight_ton "
-
-
-        End If
-
-        'If rsReport.State = ADODB.ObjectStateEnum.adStateOpen Then
-        '    rsReport.Close()
-        'End If
-        rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
-
-        If gbDebug Then
-            'DataGrid1.Visible = True
-            DataGrid1.DataSource = rsReport
-        End If
-
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-        'Cargo la plantilla de Crystal Reports con los datos
-        load_report()
-
-        Exit Sub
-
-ErrorHandler:
-        'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-        save_error(Me.Name, "show_report2")
         'For Each e In cn.Errors
         '    MsgBox(e.Description)
         'Next e
@@ -552,19 +551,21 @@ ErrorHandler:
 		
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptRecycleTon.rpt"
 		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
-            'crysRepRecycleTon = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-                'crysRepRecycleTon = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
+
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        If fileTmp.FileExists(sFile) Then
+            rptDoc.Load(sFile)
+        Else
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Function
+        End If
+
+        rptDoc.SetDataSource(rsReport)
+
+        frmRepRecycleTonViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepRecycleTonViewer.CrystalReportViewer1.Visible = True
+        frmRepRecycleTonViewer.CrystalReportViewer1.Show()
+        frmRepRecycleTonViewer.Show()
 		
 		'Asignar impresora seleccionada por usuario.
 		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"

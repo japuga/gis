@@ -36,18 +36,19 @@ Friend Class frmCustInvBatchEntry
 	Public scbCustId As Short
 	Public scbStoreGroup As Short
 	Public sdtInvoiceDate As Date
-	Public scbCustName As Short
+    Public scbCustName As Short
+
+    Private nDbTran As SqlTransaction = Nothing
 	
 	
-	'UPGRADE_WARNING: Event cbPeriod.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbPeriod_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriod.SelectedIndexChanged
-		txtInvoiceNo.Text = "NV-" & Trim(cbCustId.Text)
-		txBillingPeriod.Text = ""
-		If cbPeriod.Items.Count > 0 Then
-			txtInvoiceNo.Text = txtInvoiceNo.Text & "-" & VB6.Format(period_start_date(cbPeriod.SelectedIndex + 1), "MM") & VB6.Format(period_start_date(cbPeriod.SelectedIndex + 1), "yy")
-			txBillingPeriod.Text = VB6.Format(period_start_date(cbPeriod.SelectedIndex + 1), "MMMM yyyy")
-		End If
-	End Sub
+    Private Sub cbPeriod_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriod.SelectedIndexChanged
+        txtInvoiceNo.Text = "NV-" & Trim(cbCustId.Text)
+        txBillingPeriod.Text = ""
+        If cbPeriod.Items.Count > 0 Then
+            txtInvoiceNo.Text = txtInvoiceNo.Text & "-" & VB6.Format(period_start_date(cbPeriod.SelectedIndex), "MM") & VB6.Format(period_start_date(cbPeriod.SelectedIndex), "yy")
+            txBillingPeriod.Text = VB6.Format(period_start_date(cbPeriod.SelectedIndex), "MMMM yyyy")
+        End If
+    End Sub
 	
 	'Private Sub create_param_rs(nombreParametro As String, tipo As DataTypeEnum, destino As ParameterDirectionEnum, valor As Variant, raCmd As ADODB.Command, Optional tamanio As Long)
 	'    Dim raPrm As ADODB.Parameter
@@ -58,7 +59,7 @@ Friend Class frmCustInvBatchEntry
 	'
 	'    Set raPrm = raCmd.CreateParameter(nombreParametro, tipo, destino, tamanio)
 	'    raCmd.Parameters.Append raPrm
-	'    raPrm.Value = valor
+    '    raPrm = valor
 	'End Sub
 	
 	
@@ -72,7 +73,7 @@ Friend Class frmCustInvBatchEntry
         Dim rs As New DataTable
 		sStmt = "SELECT max(cust_invoice_seq) as iSeq " & " FROM CustomerInvoice "
 		
-		rs = exec_sql(sStmt)
+        rs = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt)
 		
         'If rs.State <> ADODB.ObjectStateEnum.adStateOpen Then
         '	MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
@@ -87,7 +88,7 @@ Friend Class frmCustInvBatchEntry
         'End If
 
 
-        iCust_invoice_seq = IIf(IsDBNull(rs.Rows(0).Item("iSeq").value), 0, rs.Rows(0).Item("iSeq").value) + 1
+        iCust_invoice_seq = IIf(IsDBNull(rs.Rows(0).Item("iSeq")), 0, rs.Rows(0).Item("iSeq")) + 1
 		
 	End Function
 	
@@ -106,8 +107,7 @@ Friend Class frmCustInvBatchEntry
             If rs.Rows.Count <= 0 Then
                 iCust_invoice_seq_batch = 1
             Else
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                iCust_invoice_seq_batch = IIf(IsDBNull(rs.Rows(0).Item("iSeq").value), 0, rs.Rows(0).Item("iSeq").value) + 1
+                iCust_invoice_seq_batch = IIf(IsDBNull(rs.Rows(0).Item("iSeq")), 0, rs.Rows(0).Item("iSeq")) + 1
             End If
         Catch ex As Exception
             MsgBox("Your Account does not have access to such Information." & vbCrLf & "Contact your System Administrator to get proper access.", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
@@ -126,7 +126,7 @@ Friend Class frmCustInvBatchEntry
 		Dim Cust_invoice_seq_batch As Object
 		Dim Cust_invoice_seq As Short
 		Dim countBatch As Short
-        Dim nDbTran As sqltransaction
+        'Dim nDbTran As sqltransaction
 		Dim iStoreId As String
 		Dim nReportId As Integer
 		Dim nGroupSeq As Short
@@ -143,7 +143,10 @@ Friend Class frmCustInvBatchEntry
 		'Verify that locations are available for the given Store Group
 		'***********************************************************************
 		
-		sStmt = "SELECT * " & "FROM groupStore " & "WHERE group_seq = " & VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex) & " AND cust_id = '" & Trim(Me.cbCustId.Text) & "'"
+        sStmt = "SELECT * " & _
+                "FROM groupStore " & _
+                 "WHERE group_seq = " & VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex) & _
+                            " AND cust_id = '" & Trim(Me.cbCustId.Text) & "'"
 		
         Try
             rsLocal = exec_sql(sStmt)
@@ -156,10 +159,7 @@ Friend Class frmCustInvBatchEntry
             Exit Sub
         End Try
 
-
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object Cust_invoice_seq_batch. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		Cust_invoice_seq_batch = iCust_invoice_seq_batch
+        Cust_invoice_seq_batch = iCust_invoice_seq_batch()
 		
 		'Insert BATCH header
 		'**********************************************************
@@ -167,24 +167,27 @@ Friend Class frmCustInvBatchEntry
         nDbTran = cn.BeginTransaction()
 		
 		
-		sStmt = "INSERT INTO customerInvoiceBatch (cust_inv_batch_seq, cust_id , period_seq, invoice_date, " & " group_seq, batch_desc, batch_date) " & " VALUES (?,?,?,?,?,?,?)"
+        sStmt = "INSERT INTO customerInvoiceBatch (cust_inv_batch_seq, cust_id , period_seq, invoice_date, " & _
+                " group_seq, batch_desc, batch_date) " & _
+                " VALUES (@cust_inv_batch_seq, @cust_id, @period_seq, @invoice_date, @group_seq, @batch_desc, @batch_date)"
 		
 		'
         cm = cn.CreateCommand
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object Cust_invoice_seq_batch. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        create_param_rs("cust_inv_batch_seq", DbType.Int32, ParameterDirection.Input, Trim(Cust_invoice_seq_batch), cm, 10)
-        create_param_rs("cust_id", DbType.String, ParameterDirection.Input, Trim(cbCustId.Text), cm, 10)
-        create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), cm, 10)
-        create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
-        create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex), cm, 10)
-        create_param_rs("batch_desc", DbType.String, ParameterDirection.Input, (txBatchDesc.Text), cm, 100)
-        create_param_rs("batch_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, Trim(VB6.Format(Today, "yyyy-MM-dd")), cm, 20)
+        create_param_rs("@cust_inv_batch_seq", SqlDbType.Int, ParameterDirection.Input, Trim(Cust_invoice_seq_batch), cm, 10)
+        create_param_rs("@cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(cbCustId.Text), cm, 10)
+        create_param_rs("@period_seq", SqlDbType.Int, ParameterDirection.Input, VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), cm, 10)
+        create_param_rs("@invoice_date", SqlDbType.Date, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
+        create_param_rs("@group_seq", SqlDbType.Int, ParameterDirection.Input, VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex), cm, 10)
+        create_param_rs("@batch_desc", SqlDbType.VarChar, ParameterDirection.Input, (txBatchDesc.Text), cm, 100)
+        create_param_rs("@batch_date", SqlDbType.Date, ParameterDirection.Input, Trim(VB6.Format(Today, "yyyy-MM-dd")), cm, 20)
         '& " " & Trim(Format(Time, "HH:mm:ss"))
 
-        cm = cn.CreateCommand '.let_ActiveConnection(cn)
+        'cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
         cm.CommandText = sStmt
+        cm.Transaction = nDbTran
 
         'On Error Resume Next
         nRecords = cm.ExecuteNonQuery()
@@ -226,13 +229,24 @@ Friend Class frmCustInvBatchEntry
         '& " AND tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "'" _
         '& " AND tb2.cust_id = '" & Trim(Me.cbCustId.Text) & "'"
 
-        sStmt = "SELECT tb1.*, tb4.address, tb4.city, tb4.state_id, tb4.zip, tb5.store_billing_contact, tb5.store_number, tb5.store_billing_account " & " FROM  groupStore tb1 INNER JOIN  store tb5 " & " ON tb1.cust_id = tb5.cust_id " & " AND tb1.store_id = tb5.store_id " & " LEFT OUTER JOIN (SELECT tb2.cust_id, tb2.store_id, tb2.store_address_seq," & "                          tb3.Address , tb3.city, tb3.state_id, tb3.zip " & "                  FROM store_address tb2 " & "                  INNER JOIN address_catalog tb3 " & "                  ON tb2.address_seq = tb3.address_seq " & " ) tb4 " & " ON tb1.store_id = tb4.store_id " & " AND tb1.cust_id = tb4.cust_id " & " AND tb5.store_address_seq = tb4.store_address_seq " & " WHERE tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "' " & " AND tb1.group_seq =" & Str(VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex))
+        sStmt = "SELECT tb1.*, tb4.address, tb4.city, tb4.state_id, tb4.zip, tb5.store_billing_contact, tb5.store_number, tb5.store_billing_account " & _
+                " FROM  groupStore tb1 INNER JOIN  store tb5 " & _
+                    " ON tb1.cust_id = tb5.cust_id " & _
+                    " AND tb1.store_id = tb5.store_id " & _
+                " LEFT OUTER JOIN (SELECT tb2.cust_id, tb2.store_id, tb2.store_address_seq," & _
+                "                          tb3.Address , tb3.city, tb3.state_id, tb3.zip " & _
+                "                  FROM store_address tb2 " & _
+                "                  INNER JOIN address_catalog tb3 " & _
+                "                  ON tb2.address_seq = tb3.address_seq " & " ) tb4 " & _
+                    " ON tb1.store_id = tb4.store_id " & _
+                    " AND tb1.cust_id = tb4.cust_id " & _
+                    " AND tb5.store_address_seq = tb4.store_address_seq " & _
+                " WHERE tb1.cust_id = '" & Trim(Me.cbCustId.Text) & "' " & _
+                " AND tb1.group_seq =" & Str(VB6.GetItemData(cbStoreGroup, cbStoreGroup.SelectedIndex))
 
-        rsLocal = exec_sql(sStmt)
+        rsLocal = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt, nDbTran)
 
         For row As Integer = 0 To rsLocal.Rows.Count - 1
-
-            countBatch = countBatch + 1
             Cust_invoice_seq = iCust_invoice_seq()
 
             'cbCustId.AddItem rsLocal.item("cust_id"), nCounter
@@ -241,10 +255,9 @@ Friend Class frmCustInvBatchEntry
 
             'Check that locations have a GIR report
             '***********************************************************************
-            iStoreId = rsLocal.Rows(row).Item("store_id").value
-            sStoreNumber = rsLocal.Rows(row).Item("store_number").value
+            iStoreId = rsLocal.Rows(row).Item("store_id")
+            sStoreNumber = rsLocal.Rows(row).Item("store_number")
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object gDump. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             gDump = existGIRForStore((cbCustId.Text), VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), iStoreId)
 
             nGroupSeq = CShort(gDump.str1)
@@ -258,8 +271,7 @@ Friend Class frmCustInvBatchEntry
                 Exit Sub
             End If
 
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            If IsDBNull(rsLocal.Rows(row).Item("address").value) Then
+            If IsDBNull(rsLocal.Rows(row).Item("address")) Then
                 nDbTran.Rollback()
 
                 MsgBox("Operation was cancelled. A Billing Address was not found for Store: " & vbCrLf & "  Customer: " & Me.cbCustName.Text & vbCrLf & "  Period: " & cbPeriod.Text & vbCrLf & "  Store Group: " & Me.cbStoreGroup.Text & vbCrLf & "  Store No: " & sStoreNumber, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
@@ -275,11 +287,11 @@ Friend Class frmCustInvBatchEntry
 
             End If
 
-
-            'UPGRADE_WARNING: Couldn't resolve default property of object Cust_invoice_seq_batch. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             sStmt = "INSERT INTO CustomerInvoiceBatchDet (cust_inv_batch_seq, cust_invoice_seq) " & " VALUES (" & Cust_invoice_seq_batch & "," & Cust_invoice_seq & " )"
-
-            exec_sql(sStmt)
+            cm.CommandText = sStmt
+            cm.Transaction = nDbTran
+            nRecords = cm.ExecuteNonQuery()
+            'exec_sql(sStmt)
 
             '***************************
             'Computing Amounts
@@ -287,7 +299,16 @@ Friend Class frmCustInvBatchEntry
             calculateDisplayAmounts(nReportId, (cbCustId.Text), VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex), 0)
 
 
-            sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & " Address, period_seq, billing_period, account_no, " & "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq, template_id) " & " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            sStmt = "INSERT INTO CustomerInvoice (cust_invoice_seq, cust_id , invoice_date, invoice_date_desc, " & _
+                    "address, period_seq, billing_period, account_no, " & _
+                    "invoice_no, body_desc, invoice_total, savings, savings_percent, store_flag_fee," & _
+                    "invoice_fee , tax, grand_total, greeting_desc, fileName, group_seq, template_id) " & _
+                    " VALUES (" & _
+                        "@cust_invoice_seq, @cust_id , @invoice_date, @invoice_date_desc" & _
+                        "@address, @period_seq, @billing_period, @account_no, " & _
+                        "@invoice_no, @body_desc, @invoice_total, @savings, @savings_percent, @store_flag_fee," & _
+                        "@invoice_fee , @tax, @grand_total, @greeting_desc, @fileName, @group_seq, @template_id) "
+            '?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
             cm = cn.CreateCommand()
 
@@ -297,84 +318,77 @@ Friend Class frmCustInvBatchEntry
 
             sContact = "Attn:"
 
-            If IsDBNull(rsLocal.Rows(row).Item("store_billing_contact").Value) Then
+            If IsDBNull(rsLocal.Rows(row).Item("store_billing_contact")) Then
                 If IsDBNull(gDump.str2) Then
                     sContact = sContact & ""
                 Else
                     sContact = sContact & gDump.str2
                 End If
             Else
-                sContact = sContact + rsLocal.Rows(row).Item("store_billing_contact").Value
+                sContact = sContact + rsLocal.Rows(row).Item("store_billing_contact")
             End If
 
             'Account info
             If obCustomer.Checked Then
                 'No action required, since yet loaded from Customer
             ElseIf obStore.Checked Then
-                'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-                sAccountNo = IIf(IsDBNull(rsLocal.Rows(row).Item("store_billing_account").Value), "", rsLocal.Rows(row).Item("store_billing_account").Value)
-
+                sAccountNo = IIf(IsDBNull(rsLocal.Rows(row).Item("store_billing_account")), "", rsLocal.Rows(row).Item("store_billing_account"))
             End If
 
 
-            sAddress = CStr(Nothing)
-            'sAddress = sAddress & IIf(IsNull(rsLocal.item("cust_name")), "", Trim(rsLocal.item("cust_name")) & vbCrLf)
+            sAddress = ""
+
             sAddress = sAddress & gDump.str1 & vbCrLf
             sAddress = sAddress & sContact & vbCrLf
 
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("address").Value), "", Trim(rsLocal.Rows(row).Item("address").Value) & vbCrLf)
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("city").Value), "", Trim(rsLocal.Rows(row).Item("city").Value) & " ")
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("state_id").Value), "", Trim(rsLocal.Rows(row).Item("state_id").Value) & " ")
-            'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("zip").Value), "", Trim(rsLocal.Rows(row).Item("zip").Value) & " ") & vbCrLf
+
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("address")), "", Trim(rsLocal.Rows(row).Item("address")) & vbCrLf)
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("city")), "", Trim(rsLocal.Rows(row).Item("city")) & " ")
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("state_id")), "", Trim(rsLocal.Rows(row).Item("state_id")) & " ")
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(row).Item("zip")), "", Trim(rsLocal.Rows(row).Item("zip")) & " ") & vbCrLf
             'sAddress = sAddress & IIf(IsNull(rsLocal.item("cust_contact")), "", "Attn: " & Trim(rsLocal.item("cust_contact")) & vbCrLf)
 
-            create_param_rs("cust_invoice_seq", DbType.Int32, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
-            create_param_rs("cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(Me.cbCustId.Text), cm, 2)
-            create_param_rs("invoice_date", ADODB.DataTypeEnum.adDate, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
-            create_param_rs("invoice_date_desc", DbType.String, ParameterDirection.Input, VB.Left(Me.txtInvoiceDate.Text, 50), cm, 50)
-            create_param_rs("address", DbType.String, ParameterDirection.Input, VB.Left(sAddress, 200), cm, 200)
-            create_param_rs("period_seq", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(Me.cbPeriod, Me.cbPeriod.SelectedIndex), cm, 10)
-            create_param_rs("billing_period", DbType.String, ParameterDirection.Input, VB.Left(Me.txBillingPeriod.Text, 50), cm, 50)
-            create_param_rs("account_no", DbType.String, ParameterDirection.Input, VB.Left(sAccountNo, 50), cm, 50)
-            create_param_rs("invoice_no", DbType.String, ParameterDirection.Input, VB.Left(Me.txtInvoiceNo.Text, 50), cm, 50)
-            create_param_rs("body_desc", DbType.String, ParameterDirection.Input, VB.Left(Me.txtDescription.Text, 500), cm, 500)
+            create_param_rs("@cust_invoice_seq", SqlDbType.Int, ParameterDirection.Input, Trim(CStr(Cust_invoice_seq)), cm, 6)
+            create_param_rs("@cust_id", SqlDbType.VarChar, ParameterDirection.Input, Trim(Me.cbCustId.Text), cm, 2)
+            create_param_rs("@invoice_date", SqlDbType.Date, ParameterDirection.Input, VB.Left(Me.dtInvoiceDate.Value, 10), cm, 10)
+            create_param_rs("@invoice_date_desc", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(Me.txtInvoiceDate.Text, 50), cm, 50)
+            create_param_rs("@address", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(sAddress, 200), cm, 200)
+            create_param_rs("@period_seq", SqlDbType.Int, ParameterDirection.Input, VB6.GetItemData(Me.cbPeriod, Me.cbPeriod.SelectedIndex), cm, 10)
+            create_param_rs("@billing_period", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(Me.txBillingPeriod.Text, 50), cm, 50)
+            create_param_rs("@account_no", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(sAccountNo, 50), cm, 50)
+            create_param_rs("@invoice_no", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(Me.txtInvoiceNo.Text, 50), cm, 50)
+            create_param_rs("@body_desc", SqlDbType.VarChar, ParameterDirection.Input, VB.Left(Me.txtDescription.Text, 500), cm, 500)
 
-            create_param_rs("invoice_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mInvoiceTotal, cm, 16)
-            create_param_rs("savings", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mSavings, cm, 16)
-            create_param_rs("savings_percent", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mSavingsPercent, cm, 16)
-            create_param_rs("store_flag_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mStoreFlatFee, cm, 16)
-            create_param_rs("invoice_fee", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mInvoiceFee, cm, 16)
-            create_param_rs("tax", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mTax, cm, 16)
-            create_param_rs("grand_total", ADODB.DataTypeEnum.adDouble, ParameterDirection.Input, mGrandTotal, cm, 16)
+            create_param_rs("@invoice_total", SqlDbType.Float, ParameterDirection.Input, mInvoiceTotal, cm, 16)
+            create_param_rs("@savings", SqlDbType.Float, ParameterDirection.Input, mSavings, cm, 16)
+            create_param_rs("@savings_percent", SqlDbType.Float, ParameterDirection.Input, mSavingsPercent, cm, 16)
+            create_param_rs("@store_flag_fee", SqlDbType.Float, ParameterDirection.Input, mStoreFlatFee, cm, 16)
+            create_param_rs("@invoice_fee", SqlDbType.Float, ParameterDirection.Input, mInvoiceFee, cm, 16)
+            create_param_rs("@tax", SqlDbType.Float, ParameterDirection.Input, mTax, cm, 16)
+            create_param_rs("@grand_total", SqlDbType.Float, ParameterDirection.Input, mGrandTotal, cm, 16)
 
-            create_param_rs("greeting_desc", DbType.String, ParameterDirection.Input, (Me.txtGreeting.Text), cm, 500)
-            create_param_rs("fileName", DbType.String, ParameterDirection.Input, "", cm, 200)
-            create_param_rs("group_seq", DbType.Int32, ParameterDirection.Input, nGroupSeq, cm, 6)
-            create_param_rs("template_id", DbType.Int32, ParameterDirection.Input, VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex), cm, 6)
+            create_param_rs("@greeting_desc", SqlDbType.VarChar, ParameterDirection.Input, (Me.txtGreeting.Text), cm, 500)
+            create_param_rs("@fileName", SqlDbType.VarChar, ParameterDirection.Input, "", cm, 200)
+            create_param_rs("@group_seq", SqlDbType.Int, ParameterDirection.Input, nGroupSeq, cm, 6)
+            create_param_rs("@template_id", SqlDbType.Int, ParameterDirection.Input, VB6.GetItemData(cbTemplate, cbTemplate.SelectedIndex), cm, 6)
 
-            cm = cn.CreateCommand '.let_ActiveConnection(cn)
+            'cm = cn.CreateCommand '.let_ActiveConnection(cn)
             cm.CommandType = CommandType.Text
             cm.CommandText = sStmt
+            cm.Transaction = nDbTran
 
             nRecords = cm.ExecuteNonQuery()
-            'UPGRADE_WARNING: Couldn't resolve default property of object nRecords. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             If nRecords > 0 Then
                 'ok
-
                 create_document_word(Cust_invoice_seq, sAddress, sAccountNo)
-
             Else
                 nDbTran.Rollback()
                 MsgBox("Failed to insert in Transaction table. " & vbCrLf & "Review logfile for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                 Me.Close()
             End If
 
-            'UPGRADE_WARNING: Couldn't resolve default property of object nCounter. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             nCounter = nCounter + 1
+            countBatch = countBatch + 1
         Next row
 		
 		
@@ -393,8 +407,8 @@ Friend Class frmCustInvBatchEntry
 		scbCustId = cbCustId.SelectedIndex
 		scbCustName = cbCustName.SelectedIndex
 		scbStoreGroup = Me.cbStoreGroup.SelectedIndex
-		'UPGRADE_WARNING: Couldn't resolve default property of object dtInvoiceDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		sdtInvoiceDate = dtInvoiceDate._Value
+
+        sdtInvoiceDate = dtInvoiceDate.Value
 		
 		
 		Me.Close()
@@ -517,7 +531,7 @@ Friend Class frmCustInvBatchEntry
 		oWord.Selection.ParagraphFormat.Alignment = wdAlignParagraphJustify
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        oWord.Selection.TypeText(sAddress) 'IIf(IsNull(oRS.item("address").value), "", oRS.item("address").value) ' frmCustInvGen.txtAddress.Text
+        oWord.Selection.TypeText(sAddress) 'IIf(IsNull(oRS.item("address")), "", oRS.item("address")) ' frmCustInvGen.txtAddress.Text
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 		oWord.Selection.TypeParagraph()
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -528,7 +542,7 @@ Friend Class frmCustInvBatchEntry
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 		oWord.Selection.TypeParagraph()
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        oWord.Selection.TypeText("ACCOUNT NO:" & sAccountNo) 'IIf(IsNull(oRS.item("account_no").value), "", oRS.item("account_no").value) ' Trim(frmCustInvGen.txtAccountNo.Text)
+        oWord.Selection.TypeText("ACCOUNT NO:" & sAccountNo) 'IIf(IsNull(oRS.item("account_no")), "", oRS.item("account_no")) ' Trim(frmCustInvGen.txtAccountNo.Text)
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 		oWord.Selection.TypeParagraph()
 		'UPGRADE_WARNING: Couldn't resolve default property of object oWord.Selection. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -665,7 +679,7 @@ Friend Class frmCustInvBatchEntry
         rs2 = getDataTable(stmt) '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenKeyset, ADODB.LockTypeEnum.adLockOptimistic)
 		'UPGRADE_WARNING: Couldn't resolve default property of object rs2.Fields. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 		'UPGRADE_WARNING: Couldn't resolve default property of object stre.Read. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        rs2.Rows(0).Item("filecontent").value = stre.Read
+        rs2.Rows(0).Item("filecontent") = stre.Read
 		'UPGRADE_WARNING: Couldn't resolve default property of object rs2.Update. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         'rs2.Update()
 		'UPGRADE_WARNING: Couldn't resolve default property of object rs2.Close. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -696,8 +710,8 @@ Friend Class frmCustInvBatchEntry
 		nFile = pFreeFile
 		
 		'Template file name
-		sTemplateFile = get_msword_template((Me.cbTemplate.Text))
-		'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
+        sTemplateFile = get_msword_template((Me.cbTemplate.Text), nDbTran)
+
 		If IsDbNull(sTemplateFile) Or sTemplateFile = "" Then
 			sTemplateFile = gGlobSettings.sMswordTemplateFile
 		End If
@@ -734,7 +748,7 @@ Friend Class frmCustInvBatchEntry
 
         rs2 = getDataTable(stmt) '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenKeyset, ADODB.LockTypeEnum.adLockOptimistic)
 
-        rs2.Rows(0).Item("filecontent").value = stre.Read
+        rs2.Rows(0).Item("filecontent") = stre.Read
 
         'rs2.Update()
 
@@ -757,7 +771,7 @@ Friend Class frmCustInvBatchEntry
 			sStmt = "SELECT report_id " & " FROM rptCriteriaGlmInvoice " & " WHERE rptCriteriaGlmInvoice.cust_id = '" & Trim(sCustId) & "'" & " AND rep_no = (SELECT rep_no FROM repDef WHERE rep_caption = 'GLM Invoice Report')" & " AND use_for_customer_billing = 'TRUE' " & " AND is_period_seq = 'TRUE' " & " AND period_seq = " & nPeriodSeq & " AND group_seq = " & nGroupSeq
 			
             Try
-                rsAmount = exec_sql(sStmt)
+                rsAmount = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt)
                 If rsAmount.Rows.Count <= 0 Then
                     MsgBox("No GIR report was found for selected combination: " & vbCrLf & "Customer:" & sCustId & vbCrLf & "Period:" & Str(nPeriodSeq), MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
                     Exit Sub
@@ -767,7 +781,7 @@ Friend Class frmCustInvBatchEntry
                 Exit Sub
             End Try
 			
-            sReport_Id = rsAmount.Rows(0).Item("report_id").value
+            sReport_Id = rsAmount.Rows(0).Item("report_id")
 		Else
 			sReport_Id = Str(nReportId)
 		End If
@@ -777,7 +791,7 @@ Friend Class frmCustInvBatchEntry
 		'***************************************************
 		sStmt = "SELECT SUM (invoice_total) bill_payment," & " SUM(savings) savings," & " SUM(savings_percent) savings_percent," & " SUM(savings_flat_fee) store_flat_fee," & " SUM(savings_invoice_fee) invoice_fee" & " FROM rptGlmInvoice " & " WHERE cust_id = '" & Trim(cbCustId.Text) & "'" & " AND report_id = " & sReport_Id
 		
-		rsAmount = exec_sql(sStmt)
+        rsAmount = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt)
 		
 
         If rsAmount.Rows.Count <= 0 Then
@@ -787,11 +801,11 @@ Friend Class frmCustInvBatchEntry
 
 
 
-        mInvoiceTotal = IIf(IsDBNull(rsAmount.Rows(0).Item("bill_payment").value), "0.00", rsAmount.Rows(0).Item("bill_payment").value)
-        mSavings = IIf(IsDBNull(rsAmount.Rows(0).Item("savings").value), "0.00", rsAmount.Rows(0).Item("savings").value)
-        mSavingsPercent = IIf(IsDBNull(rsAmount.Rows(0).Item("savings_percent").value), "0.00", rsAmount.Rows(0).Item("savings_percent").value)
-        mStoreFlatFee = IIf(IsDBNull(rsAmount.Rows(0).Item("store_flat_fee").value), "0.00", rsAmount.Rows(0).Item("store_flat_fee").value)
-        mInvoiceFee = IIf(IsDBNull(rsAmount.Rows(0).Item("invoice_fee").value), "0.00", rsAmount.Rows(0).Item("invoice_fee").value)
+        mInvoiceTotal = IIf(IsDBNull(rsAmount.Rows(0).Item("bill_payment")), "0.00", rsAmount.Rows(0).Item("bill_payment"))
+        mSavings = IIf(IsDBNull(rsAmount.Rows(0).Item("savings")), "0.00", rsAmount.Rows(0).Item("savings"))
+        mSavingsPercent = IIf(IsDBNull(rsAmount.Rows(0).Item("savings_percent")), "0.00", rsAmount.Rows(0).Item("savings_percent"))
+        mStoreFlatFee = IIf(IsDBNull(rsAmount.Rows(0).Item("store_flat_fee")), "0.00", rsAmount.Rows(0).Item("store_flat_fee"))
+        mInvoiceFee = IIf(IsDBNull(rsAmount.Rows(0).Item("invoice_fee")), "0.00", rsAmount.Rows(0).Item("invoice_fee"))
         mTax = CDbl("0.00")
         mGrandTotal = CDbl("0.00")
 
@@ -804,7 +818,6 @@ Friend Class frmCustInvBatchEntry
 
         mGrandTotal = mInvoiceTotal + mSavingsPercent + IIf(mStoreFlatFee > 0, mStoreFlatFee, 0) + IIf(mInvoiceFee > 0, mInvoiceFee, 0) + mTax
 
-        'UPGRADE_NOTE: Object rsAmount may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
         rsAmount = Nothing
 		
 	End Sub
@@ -832,13 +845,13 @@ Friend Class frmCustInvBatchEntry
         If rsLocal.Rows.Count > 0 Then
             'sAddress = sAddress & IIf(IsNull(rsLocal.item("cust_name")), "", Trim(rsLocal.item("cust_name")) & vbCrLf)
 
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_address").Value), "", Trim(rsLocal.Rows(0).Item("cust_address").Value) & vbCrLf)
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_city").Value), "", Trim(rsLocal.Rows(0).Item("cust_city").Value) & " ")
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("state_id").Value), "", Trim(rsLocal.Rows(0).Item("state_id").Value) & " ")
-            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_zip").Value), "", Trim(rsLocal.Rows(0).Item("cust_zip").Value) & " ") & vbCrLf
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_address")), "", Trim(rsLocal.Rows(0).Item("cust_address")) & vbCrLf)
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_city")), "", Trim(rsLocal.Rows(0).Item("cust_city")) & " ")
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("state_id")), "", Trim(rsLocal.Rows(0).Item("state_id")) & " ")
+            sAddress = sAddress & IIf(IsDBNull(rsLocal.Rows(0).Item("cust_zip")), "", Trim(rsLocal.Rows(0).Item("cust_zip")) & " ") & vbCrLf
             'sAddress = sAddress & IIf(IsNull(rsLocal.item("cust_contact")), "", "Attn: " & Trim(rsLocal.item("cust_contact")) & vbCrLf)
 
-            sAccountNo = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no").Value), "", Trim(rsLocal.Rows(0).Item("billing_account_no").Value) & vbCrLf)
+            sAccountNo = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no")), "", Trim(rsLocal.Rows(0).Item("billing_account_no")) & vbCrLf)
         End If
 		
 	End Sub
@@ -847,9 +860,9 @@ Friend Class frmCustInvBatchEntry
 		Me.Close()
 	End Sub
 	
-	Private Sub dtInvoiceDate_Change(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dtInvoiceDate.Change
-		txtInvoiceDate.Text = VB6.Format(dtInvoiceDate.value, "MMMM dd, yyyy")
-	End Sub
+    Private Sub dtInvoiceDate_Change(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        txtInvoiceDate.Text = VB6.Format(dtInvoiceDate.Value, "MMMM dd, yyyy")
+    End Sub
 	
 	Private Sub frmCustInvBatchEntry_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -937,7 +950,7 @@ Friend Class frmCustInvBatchEntry
 		'Do While Not rsLocal.EOF
         '    cbCustId.AddItem rsLocal.item("cust_id"), nCounter
         '    cbCustName.AddItem rsLocal.item("cust_name"), nCounter
-		'    nCounter = nCounter + 1
+        '    nCounter = nCounter
 		'    rsLocal.MoveNext
 		'Loop
 		
@@ -946,27 +959,25 @@ Friend Class frmCustInvBatchEntry
 	End Sub
 	
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		cbCustId.SelectedIndex = cbCustName.SelectedIndex
-		
-		'UPGRADE_WARNING: Couldn't resolve default property of object load_billing_account(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		sAccountNo = load_billing_account((cbCustId.Text))
-		
-		'Load period
-		loadPeriodAndArray(cbPeriod, period_start_date, (cbCustId.Text), False)
-		If cbPeriod.Items.Count > 0 Then
-			cbPeriod.SelectedIndex = 0
-		End If
-		
-		'Load Store Group
-		'load_cb_groups cbStoreGroup, cbCustId.Text, False
-		load_cb_groups(cbStoreGroup, (cbCustId.Text), False, True)
-		If cbStoreGroup.Items.Count > 0 Then
-			cbStoreGroup.SelectedIndex = 0
-		End If
-		
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        cbCustId.SelectedIndex = cbCustName.SelectedIndex
+
+        sAccountNo = load_billing_account((cbCustId.Text))
+
+        'Load period
+        loadPeriodAndArray(cbPeriod, period_start_date, (cbCustId.Text), False)
+        If cbPeriod.Items.Count > 0 Then
+            cbPeriod.SelectedIndex = 0
+        End If
+
+        'Load Store Group
+        'load_cb_groups cbStoreGroup, cbCustId.Text, False
+        load_cb_groups(cbStoreGroup, (cbCustId.Text), False, True)
+        If cbStoreGroup.Items.Count > 0 Then
+            cbStoreGroup.SelectedIndex = 0
+        End If
+
+    End Sub
 	
 	'Returns the ReportId that contains the GIR report data, zero otherwise
 	Private Function existGIRForStore(ByRef sCustId As String, ByRef nPeriodSeq As Short, ByRef nStoreId As String) As gDumpUDT
@@ -981,9 +992,15 @@ Friend Class frmCustInvBatchEntry
 		
 		
 		'Find storeGroup (hopefully one) that includes this only store
-		sStmt = "SELECT a.group_name, b.group_seq, COUNT(*)" & " FROM groups a, groupstore b " & " WHERE b.cust_id = '" & sCustId & "' " & " AND a.group_seq = b.group_seq " & " AND b.group_seq IN (SELECT c.group_seq FROM groupstore c " & "       WHERE c.cust_id = b.cust_id " & "       AND c.store_id=  " & nStoreId & ")" & " GROUP BY  a.group_name, b.group_seq " & " HAVING COUNT(*) = 1"
+        sStmt = "SELECT a.group_name, b.group_seq, COUNT(*)" & " FROM groups a, groupstore b " & _
+                " WHERE b.cust_id = '" & sCustId & "' " & _
+                    " AND a.group_seq = b.group_seq " & _
+                    " AND b.group_seq IN (SELECT c.group_seq FROM groupstore c " & _
+                    "       WHERE c.cust_id = b.cust_id " & _
+                    "       AND c.store_id=  " & nStoreId & ")" & _
+                    " GROUP BY  a.group_name, b.group_seq " & " HAVING COUNT(*) = 1"
 		
-		rsGroups = exec_sql(sStmt)
+        rsGroups = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt, nDbTran)
 		
 
         If rsGroups.Rows.Count = 0 Then
@@ -995,14 +1012,20 @@ Friend Class frmCustInvBatchEntry
 
         'On each groupStore check which ones were found in GIR report
         For row As Integer = 0 To rsGroups.Rows.Count - 1
-            sGroupSeq = CShort(Str(rsGroups.Rows(row).Item("group_seq").Value))
+            sGroupSeq = CShort(Str(rsGroups.Rows(row).Item("group_seq")))
 
-            sStmt = "SELECT report_id " & " From rptCriteriaGlmInvoice " & " WHERE rptCriteriaGlmInvoice.cust_id = '" & sCustId & "'" & " AND rep_no = (SELECT rep_no FROM repDef WHERE rep_caption = 'GLM Invoice Report') " & " AND use_for_customer_billing = 'TRUE' " & " AND is_period_seq = 'TRUE' " & " AND period_seq = " & Str(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & " AND group_seq = " & Str(sGroupSeq)
-            rsStores = exec_sql(sStmt)
+            sStmt = "SELECT report_id " & " From rptCriteriaGlmInvoice " & _
+                    " WHERE rptCriteriaGlmInvoice.cust_id = '" & sCustId & "'" & _
+                        " AND rep_no = (SELECT rep_no FROM repDef WHERE rep_caption = 'GLM Invoice Report') " & _
+                        " AND use_for_customer_billing = 'TRUE' " & _
+                        " AND is_period_seq = 'TRUE' " & _
+                        " AND period_seq = " & Str(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & _
+                        " AND group_seq = " & Str(sGroupSeq)
+            rsStores = getDataTable(sStmt, nDbTran) 'exec_sql(sStmt)
 
             If rsStores.Rows.Count > 0 Then
                 existGIRForStore.str1 = CStr(sGroupSeq)
-                existGIRForStore.str2 = rsStores.Rows(row).Item("report_id").Value
+                existGIRForStore.str2 = rsStores.Rows(row).Item("report_id")
                 Exit Function
             End If
 
@@ -1012,11 +1035,13 @@ Friend Class frmCustInvBatchEntry
 		
 	End Function
 	
-    Public Function load_billing_account(ByRef sCustId As String) As Boolean
+    Public Function load_billing_account(ByRef sCustId As String) As String
         load_billing_account = False
         Dim sAccountNoLocal As String
 
-        sStmt = "SELECT cust_name, cust_address, " & " cust_city, state_id, cust_city, " & " state_id, cust_zip, cust_contact, billing_account_no " & " FROM customer " & " WHERE customer.cust_id =  '" & Trim(sCustId) & "'"
+        sStmt = "SELECT cust_name, cust_address, " & " cust_city, state_id, cust_city, " & " state_id, cust_zip, cust_contact, billing_account_no " & _
+            " FROM customer " & _
+            " WHERE customer.cust_id =  '" & Trim(sCustId) & "'"
 
         rsLocal = exec_sql(sStmt)
 
@@ -1025,11 +1050,11 @@ Friend Class frmCustInvBatchEntry
             Exit Function
         End If
 
-        sAccountNoLocal = CStr(Nothing)
+        sAccountNoLocal = ""
 
         If rsLocal.Rows.Count > 0 Then
             'sAccountNoLocal = IIf(IsNull(rsLocal.item("billing_account_no")), "", Trim(rsLocal.item("billing_account_no")) & vbCrLf)
-            sAccountNoLocal = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no").Value), "", Trim(rsLocal.Rows(0).Item("billing_account_no").Value))
+            sAccountNoLocal = IIf(IsDBNull(rsLocal.Rows(0).Item("billing_account_no")), "", Trim(rsLocal.Rows(0).Item("billing_account_no")))
 
         End If
 
@@ -1043,12 +1068,12 @@ Friend Class frmCustInvBatchEntry
 		Dim stmt As String
 		
 		stmt = "SELECT cust_name, cust_contact " & " FROM customer WHERE cust_id = '" & sCustId & "'"
-        rsCust = getDataTable(stmt) '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rsCust = getDataTable(stmt, nDbTran) '.Open(stmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
         If rsCust.Rows.Count > 0 Then
-            gDump.str1 = rsCust.Rows(0).Item("cust_name").value
+            gDump.str1 = rsCust.Rows(0).Item("cust_name")
             'UPGRADE_WARNING: Use of Null/IsNull() detected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="2EED02CB-5C0E-4DC1-AE94-4FAA3A30F51A"'
-            gDump.str2 = IIf(IsDBNull(rsCust.Rows(0).Item("cust_contact").value), "", rsCust.Rows(0).Item("cust_contact").value)
+            gDump.str2 = IIf(IsDBNull(rsCust.Rows(0).Item("cust_contact")), "", rsCust.Rows(0).Item("cust_contact"))
         End If
 		
 		'UPGRADE_WARNING: Couldn't resolve default property of object getCustNameContact. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'

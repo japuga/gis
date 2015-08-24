@@ -4,21 +4,19 @@ Imports System.Data.SqlClient
 Friend Class frmWebReport
 	Inherits System.Windows.Forms.Form
     Dim rsLocal As DataTable
-    Private ImageList2 As New ImageList()
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		
-		If cbCustName.SelectedIndex >= 0 Then
-			cbCustId.SelectedIndex = cbCustName.SelectedIndex
-		End If
-		
-		load_dbWebReport((cbCustId.Text))
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+
+        If cbCustName.SelectedIndex >= 0 Then
+            cbCustId.SelectedIndex = cbCustName.SelectedIndex
+        End If
+
+        load_dbWebReport((cbCustId.Text))
+    End Sub
 	
-	Private Sub dgWebReport_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgWebReport.DblClick
-		update_webReport()
-	End Sub
+    Private Sub dgWebReport_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        update_webReport()
+    End Sub
 	
 	Private Sub frmWebReport_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -45,16 +43,13 @@ Friend Class frmWebReport
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn)
 		
-        If rsLocal.Rows.Count > 0 Then
-            'If rsLocal.RecordCount > 0 Then
-            dgWebReport.DataSource = rsLocal
-            dgWebReport.Columns("web_report_id").Visible = False
-            'End If
-        End If
-		
-		
-		
-		'UPGRADE_NOTE: Refresh was upgraded to CtlRefresh. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+
+        'If rsLocal.RecordCount > 0 Then
+        dgWebReport.DataSource = rsLocal
+        dgWebReport.Columns("web_report_id").Visible = False
+        'End If
+
+
         dgWebReport.Refresh()
 		
 	End Sub
@@ -70,23 +65,42 @@ Friend Class frmWebReport
         End Select
     End Sub
 	Private Sub update_webReport()
-		If dgWebReport.SelBookmarks.Count > 0 Then
-			gWebReport.bFlag = General.modo.UpdateRecord
-			setWebReportData()
-			VB6.ShowForm(frmWebReportEntry, VB6.FormShowConstants.Modal, Me)
-			If gWebReport.bFlag = General.modo.SavedRecord Then
-				load_dbWebReport((cbCustId.Text))
-			End If
-		Else
-			MsgBox("Please select a record before attempting this action.", MsgBoxStyle.Information + MsgBoxStyle.OKOnly, "GLM Message")
-		End If
+        If dgWebReport.SelectedRows.Count > 0 Then
+            gWebReport.bFlag = General.modo.UpdateRecord
+            setWebReportData()
+            VB6.ShowForm(frmWebReportEntry, VB6.FormShowConstants.Modal, Me)
+            If gWebReport.bFlag = General.modo.SavedRecord Then
+                load_dbWebReport((cbCustId.Text))
+            End If
+        Else
+            MsgBox("Please select a record before attempting this action.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
+        End If
 		
 	End Sub
 	Private Sub setWebReportData()
-        gWebReport.tableName = rsLocal.Rows(0).Item("Report Type").value
-        gWebReport.reportDesc = rsLocal.Rows(0).Item("Report Name").value
-        gWebReport.enabledFlag = rsLocal.Rows(0).Item("Publish").value
-        gWebReport.webReportId = rsLocal.Rows(0).Item("web_report_id").value
+        gWebReport.tableName = rsLocal.Rows(0).Item("Report Type")
+        gWebReport.reportDesc = rsLocal.Rows(0).Item("Report Name")
+        gWebReport.enabledFlag = rsLocal.Rows(0).Item("Publish")
+        gWebReport.webReportId = rsLocal.Rows(0).Item("web_report_id")
 		
 	End Sub
+
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        update_webReport()
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
+
+    Private Sub dgWebReport_CellDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgWebReport.CellDoubleClick
+        If dgWebReport.SelectedRows.Count < 1 Then
+            If dgWebReport.SelectedCells.Count > 0 Then
+                dgWebReport.Rows(dgWebReport.SelectedCells(0).RowIndex).Selected = True
+            End If
+
+        End If
+        update_webReport()
+    End Sub
 End Class

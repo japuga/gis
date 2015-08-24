@@ -1,5 +1,7 @@
 Option Strict Off
 Option Explicit On
+Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepEnv
 	Inherits System.Windows.Forms.Form
 	Private sLocalVersion As String
@@ -81,14 +83,15 @@ ErrorHandler:
 		lbStartDate.Text = ""
 		lbEndDate.Text = ""
 		
-		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
+        sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & _
+                " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
 		
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -277,7 +280,7 @@ ErrorHandler:
 		
 		
 		cmReport.CommandText = "usp_rep_env_main"
-		
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptEnvParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptEnvParam.sStateId
@@ -320,11 +323,11 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Encontro registros
             Else
-                MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
+                MsgBox("No data was generated for: " & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
                 Exit Sub
             End If

@@ -6,7 +6,6 @@ Friend Class frmCustInvBatch
     Private rsLocal As DataTable
 	Private period_start_date() As Date
     Public sReport_Id As String
-    Private ImageList2 As New ImageList()
 	
 	
 	Private Sub cbFill_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbFill.Click
@@ -19,7 +18,14 @@ Friend Class frmCustInvBatch
 		
 		'Set dgBatch.DataSource = Nothing
 		
-		sStmt = "SELECT " & "    customerInvoiceBatch.batch_date,  " & "    customerInvoiceBatch.batch_desc, " & "    customerInvoiceBatch.invoice_date, " & "    period.period_name, " & "    groups.group_name, " & "    customerInvoiceBatch.cust_inv_batch_seq " & " FROM groups, period, customerInvoiceBatch " & " WHERE groups.cust_id = customerInvoiceBatch.cust_id " & "    AND period.cust_id = groups.cust_id" & "    AND customerInvoiceBatch.period_seq = period.period_seq " & "    AND customerInvoiceBatch.group_seq = groups.group_seq  " & IIf(ckInvoiceDates.CheckState = 0, "", " AND customerInvoiceBatch.invoice_date between '" & VB6.Format(Me.dtFrom.value, DATEFORMAT) & "' AND '" & VB6.Format(Me.dtTo.value, DATEFORMAT) & "'")
+        sStmt = "SELECT " & "    customerInvoiceBatch.batch_date,  " & "    customerInvoiceBatch.batch_desc, " & "    customerInvoiceBatch.invoice_date, " & _
+                        "    period.period_name, " & "    groups.group_name, " & "    customerInvoiceBatch.cust_inv_batch_seq " & _
+               " FROM groups, period, customerInvoiceBatch " & _
+               " WHERE groups.cust_id = customerInvoiceBatch.cust_id " & _
+               "    AND period.cust_id = groups.cust_id" & _
+               "    AND customerInvoiceBatch.period_seq = period.period_seq " & _
+               "    AND customerInvoiceBatch.group_seq = groups.group_seq  " & IIf(ckInvoiceDates.CheckState = 0, "", _
+                  " AND customerInvoiceBatch.invoice_date between '" & VB6.Format(Me.dtFrom.Value, DATEFORMAT) & "' AND '" & VB6.Format(Me.dtTo.Value, DATEFORMAT) & "'")
 		
 		If cbCustId.SelectedIndex > 0 Then
 			sStmt = sStmt & "    AND customerInvoiceBatch.cust_id = '" & Trim(cbCustId.Text) & "'"
@@ -36,8 +42,7 @@ Friend Class frmCustInvBatch
         If rsLocal.Rows.Count > 0 Then
             dgBatch.DataSource = rsLocal
         Else
-            'UPGRADE_NOTE: Object dgBatch.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-            dgBatch.DataSource = Nothing
+            dgBatch.DataSource = rsLocal
             Exit Sub
         End If
 		
@@ -67,9 +72,9 @@ Friend Class frmCustInvBatch
 		frInvoiceDates.Enabled = IIf(ckInvoiceDates.CheckState = 1, True, False)
 	End Sub
 	
-	Private Sub dgBatch_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles dgBatch.DblClick
-		detail_record()
-	End Sub
+    Private Sub dgBatch_DblClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
+        detail_record()
+    End Sub
 	
 	Private Sub frmCustInvBatch_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
@@ -97,17 +102,23 @@ Friend Class frmCustInvBatch
 	
 	Private Sub struct_dgBatch()
 		Dim iIndice As Short
-		'UPGRADE_NOTE: Object dgBatch.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+
 		dgBatch.DataSource = Nothing
-		For iIndice = dgBatch.Columns.Count - 1 To 2 Step -1
-			dgBatch.Columns.Remove(iIndice)
-		Next 
-		dgBatch.Columns(0).Caption = "Group Name"
-		dgBatch.Columns(1).Caption = "Period"
-		dgBatch.Columns.Add(2).Caption = "Invoice Date"
-		dgBatch.Columns.Add(3).Caption = "Description"
-		dgBatch.Columns.Add(4).Caption = "Batch Date"
-		dgBatch.Columns.Add(5).Caption = "Batch Seq"
+        For iIndice = 0 To dgBatch.Columns.Count - 1 'To 0 'Step -1
+            dgBatch.Columns.Remove(dgBatch.Columns(0))
+        Next
+        dgBatch.Columns.Add(0, "Group Name")
+        dgBatch.Columns(0).Name = "Group Name"
+        dgBatch.Columns.Add(1, "Period")
+        dgBatch.Columns(1).Name = "Period"
+        dgBatch.Columns.Add(2, "Invoice Date")
+        dgBatch.Columns(2).Name = "Invoice Date"
+        dgBatch.Columns.Add(3, "Description")
+        dgBatch.Columns(3).Name = "Description"
+        dgBatch.Columns.Add(4, "Batch Date")
+        dgBatch.Columns(4).Name = "Batch Date"
+        dgBatch.Columns.Add(5, "Batch Seq")
+        dgBatch.Columns(5).Name = "Batch Seq"
 		
 		width_column_dgBatch()
 		
@@ -115,12 +126,12 @@ Friend Class frmCustInvBatch
 	
 	Private Sub width_column_dgBatch()
 		
-		dgBatch.Columns(0).Caption = "Batch Date"
-		dgBatch.Columns(1).Caption = "Description"
-		dgBatch.Columns(2).Caption = "Invoice Date"
-		dgBatch.Columns(3).Caption = "Period"
-		dgBatch.Columns(4).Caption = "Group Name"
-		dgBatch.Columns(5).Caption = "Batch Seq"
+        dgBatch.Columns(0).HeaderText = "Batch Date"
+        dgBatch.Columns(1).HeaderText = "Description"
+        dgBatch.Columns(2).HeaderText = "Invoice Date"
+        dgBatch.Columns(3).HeaderText = "Period"
+        dgBatch.Columns(4).HeaderText = "Group Name"
+        dgBatch.Columns(5).HeaderText = "Batch Seq"
 		
 		dgBatch.Columns("Group Name").Width = VB6.TwipsToPixelsX(1000)
 		dgBatch.Columns("Period").Width = VB6.TwipsToPixelsX(800)
@@ -207,12 +218,11 @@ Friend Class frmCustInvBatch
 	
 	Private Sub detail_record()
 		
-		If dgBatch.Row < 0 Then
-			MsgBox("Please select one or more record before attempting this action." & vbCrLf, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-			Exit Sub
-		End If
+        If dgBatch.SelectedRows.Count < 1 Then
+            MsgBox("Please select one or more record before attempting this action." & vbCrLf, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
+            Exit Sub
+        End If
 		
-		'UPGRADE_ISSUE: Load statement is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
         frmCustInvGenSearch.Show()
 		frmCustInvGenSearch.Label1.Visible = False
 		frmCustInvGenSearch.Label4.Visible = False
@@ -228,7 +238,7 @@ Friend Class frmCustInvBatch
 		frmCustInvGenSearch.Toolbar1.Items.Item("new").Visible = False
 		frmCustInvGenSearch.Toolbar1.Items.Item("save").Visible = False
 		frmCustInvGenSearch.Toolbar1.Items.Item("print").Visible = True
-		frmCustInvGenSearch.idBatch = Trim(dgBatch.Columns("Batch Seq").Text)
+        frmCustInvGenSearch.idBatch = Trim(dgBatch.SelectedRows(0).Cells("Batch Seq").Value)
 		frmCustInvGenSearch.ckInvoiceDates.Visible = False
 		frmCustInvGenSearch.showBatch()
 		frmCustInvGenSearch.ShowDialog()
@@ -237,10 +247,10 @@ Friend Class frmCustInvBatch
 	Private Sub delete_record()
 		
 		
-		If dgBatch.Row < 0 Then
-			MsgBox("Please select one or more record before attempting this action." & vbCrLf, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Warning")
-			Exit Sub
-		End If
+        If dgBatch.SelectedRows.Count < 1 Then
+            MsgBox("Please select one or more record before attempting this action." & vbCrLf, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Warning")
+            Exit Sub
+        End If
 		
 		sStmt = "SELECT suser_name " & "FROM suser " & "WHERE suser_name='" & Trim(gsUser) & "' and type_id = 'A'"
 		
@@ -255,17 +265,19 @@ Friend Class frmCustInvBatch
         End If
 
         Dim cmd As SqlCommand = cn.CreateCommand
-        sStmt = "DELETE FROM customerInvoiceBatch  " & "WHERE cust_inv_batch_seq = " & Trim(dgBatch.Columns("Batch Seq").Text)
+        sStmt = "DELETE FROM customerInvoiceBatch  " & "WHERE cust_inv_batch_seq = " & Trim(dgBatch.SelectedRows(0).Cells("Batch Seq").Value)
         cmd.CommandText = sStmt
         cmd.ExecuteNonQuery()
 
 
-        sStmt = "DELETE FROM customerInvoice  " & "WHERE cust_invoice_seq IN (SELECT cust_invoice_seq FROM customerInvoiceBatchDet WHERE  cust_inv_batch_seq = " & Trim(dgBatch.Columns("Batch Seq").Text) & ")"
+        sStmt = "DELETE FROM customerInvoice  " & _
+                "WHERE cust_invoice_seq IN (SELECT cust_invoice_seq FROM customerInvoiceBatchDet WHERE  cust_inv_batch_seq = " & _
+                                                                        Trim(dgBatch.SelectedRows(0).Cells("Batch Seq").Value) & ")"
         cmd.CommandText = sStmt
         cmd.ExecuteNonQuery()
 
 
-        sStmt = "DELETE FROM customerInvoiceBatchDet  " & "WHERE cust_inv_batch_seq = " & Trim(dgBatch.Columns("Batch Seq").Text)
+        sStmt = "DELETE FROM customerInvoiceBatchDet  " & "WHERE cust_inv_batch_seq = " & Trim(dgBatch.SelectedRows(0).Cells("Batch Seq").Value)
         cmd.CommandText = sStmt
         cmd.ExecuteNonQuery()
 
@@ -274,5 +286,35 @@ Friend Class frmCustInvBatch
         MsgBox("Batch was removed successfully.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
 
 
+    End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+        'frmBatch = New frmCustInvBatchEntry
+        VB6.ShowForm(frmCustInvBatchEntry, VB6.FormShowConstants.Modal, Me)
+
+        'Me.cbCustId.ListIndex = frmBatch.scbCustId
+        Me.cbCustName.SelectedIndex = frmCustInvBatchEntry.scbCustName + 1 'All at pos zero
+        cbPeriod.SelectedIndex = frmCustInvBatchEntry.scbPeriod + 1 'All at pos zero
+        cbStoreGroup.SelectedIndex = frmCustInvBatchEntry.scbStoreGroup + 1 'All at pos zero
+        dtTo.Value = frmCustInvBatchEntry.sdtInvoiceDate
+        dtFrom.Value = frmCustInvBatchEntry.sdtInvoiceDate
+
+        ckInvoiceDates.CheckState = System.Windows.Forms.CheckState.Checked
+
+        cbFill_Click(cbFill, New System.EventArgs())
+
+
+    End Sub
+
+    Private Sub btEdit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btEdit.Click
+        detail_record()
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+        delete_record()
+    End Sub
+
+    Private Sub ToolStripButton4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
     End Sub
 End Class

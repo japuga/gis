@@ -158,8 +158,10 @@
         '
         'dgReport
         '
+        Me.dgReport.AllowUserToAddRows = False
         Me.dgReport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgReport.Location = New System.Drawing.Point(16, 172)
+        Me.dgReport.MultiSelect = False
         Me.dgReport.Name = "dgReport"
         Me.dgReport.Size = New System.Drawing.Size(641, 313)
         Me.dgReport.TabIndex = 7

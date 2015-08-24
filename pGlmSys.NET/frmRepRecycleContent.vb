@@ -1,6 +1,7 @@
 Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
+Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmRepRecycleContent
 	Inherits System.Windows.Forms.Form
 	Private sLocalVersion As String
@@ -21,15 +22,14 @@ Friend Class frmRepRecycleContent
 	'--------Crystal Reports-----------------
     Private rsReport As DataTable
 	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		If cbCustName.SelectedIndex >= 0 Then
-			cbCustId.SelectedIndex = cbCustName.SelectedIndex
-			load_groups(cbCustId.Text)
-			load_period(cbCustId.Text)
-		End If
-		
-	End Sub
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        If cbCustName.SelectedIndex >= 0 Then
+            cbCustId.SelectedIndex = cbCustName.SelectedIndex
+            load_groups(cbCustId.Text)
+            load_period(cbCustId.Text)
+        End If
+
+    End Sub
 	'Loads cbGroupName combo box with data
 	Private Sub load_groups(ByRef sCustId As String)
 		
@@ -75,20 +75,19 @@ ErrorHandler:
 		
 	End Sub
 	
-	'UPGRADE_WARNING: Event cbPeriodName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbPeriodName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriodName.SelectedIndexChanged
-		
-		On Error GoTo ErrorHandler
-		lbStartDate.Text = ""
-		lbEndDate.Text = ""
-		
-		sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
-		
+    Private Sub cbPeriodName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbPeriodName.SelectedIndexChanged
+
+        On Error GoTo ErrorHandler
+        lbStartDate.Text = ""
+        lbEndDate.Text = ""
+
+        sStmt = "SELECT period_start_date, period_end_date " & " FROM period " & " WHERE cust_id ='" & Trim(cbCustId.Text) & "'" & " AND period_seq =" & Str(VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex))
+
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsLocal.Rows.Count > 0 Then
-            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date").Value
-            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date").Value
+            lbStartDate.Text = rsLocal.Rows(0).Item("period_start_date")
+            lbEndDate.Text = rsLocal.Rows(0).Item("period_end_date")
         End If
 
         Exit Sub
@@ -96,8 +95,8 @@ ErrorHandler:
 ErrorHandler:
         save_error(Me.Name, "cbPeriodName.click")
         MsgBox("An error occurred while loading  Period Info. Check log file for details.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
-		
-	End Sub
+
+    End Sub
 	
 	
 	Private Sub cmdCancel_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdCancel.Click
@@ -116,10 +115,8 @@ ErrorHandler:
 			.nPeriodSeq = VB6.GetItemData(cbPeriodName, cbPeriodName.SelectedIndex) '16
 			.nGroupSeq = VB6.GetItemData(cbGroupName, cbGroupName.SelectedIndex) '3
 			.bPeriodSeq = obPeriod.Checked 'True
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sStartDate = dtStartDate._Value '"01/01/2003"
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			.sEndDate = dtEndDate._Value ' "01/31/2003"
+            .sStartDate = dtStartDate.Value '"01/01/2003"
+            .sEndDate = dtEndDate.Value ' "01/31/2003"
 		End With
 		If cbStateId.Text = "<All>" Then
 			rptRepRecycleContentParam.sStateId = "All"
@@ -198,13 +195,13 @@ ErrorHandler:
 		
 		'obRange
 		If obRange.Checked = True Then
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate._Value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If dtStartDate._Value > dtEndDate._Value Then
-				MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "GLM Warning")
-				val_fields = False
-				Exit Function
-			End If
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtEndDate.value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            'UPGRADE_WARNING: Couldn't resolve default property of object dtStartDate.value. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+            If dtStartDate.Value > dtEndDate.Value Then
+                MsgBox("Start Date must be less than End Date.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "GLM Warning")
+                val_fields = False
+                Exit Function
+            End If
 		End If
 		
 		
@@ -280,8 +277,7 @@ ErrorHandler:
 		
 		'On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
 		
 		cmReport.CommandTimeout = gnTimeout
         cmReport = cn.CreateCommand '.let_ActiveConnection(cn)
@@ -299,7 +295,7 @@ ErrorHandler:
 		
 		'Se cargan los parametros dependiendo del tipo de reporte
 		cmReport.CommandText = "usp_rep_rcy_content_main"
-
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptRepRecycleContentParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptRepRecycleContentParam.sStateId
@@ -338,30 +334,32 @@ ErrorHandler:
 		
         rsLocal = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsLocal.Rows.Count > 0 Then
-            If rsLocal.Rows(0).Item(0).Value > 0 Then
+            If rsLocal.Rows(0).Item(0) > 0 Then
                 'Found records
             Else
                 MsgBox("No data was generated for :" & gReport.name & " report.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-                'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
                 Exit Sub
             End If
         Else
             MsgBox("There was an error while verifying report data for:" & gReport.name, MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
-            'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
             Exit Sub
         End If
 		
 		
-		sStmt = "SELECT report_id, cust_id, store_id, " & "content_id, store_number, cust_name, date_caption, " & " location, content_desc, wgt_content_ton, wgt_content_pound, " & " wgt_store_ton, wgt_store_pound , wgt_store_recycle_ton," & "wgt_store_recycle_pound, pct_content, " & "pct_store, total_wgt_store_ton, total_wgt_store_pound," & " total_wgt_store_recycle_ton, total_wgt_store_recycle_pound, total_pct_recycle, " & " wgt_store_landfill_ton, wgt_store_landfill_pound, " & " wgt_store_no_landfill_ton,  wgt_store_no_landfill_pound," & " wgt_store_landfill_percent, wgt_store_no_landfill_percent " & " FROM rptRcyContent " & " WHERE report_id = " & Str(nReport) & " " & " ORDER BY cust_id, store_number"
+        sStmt = "SELECT report_id, cust_id, store_id, " & "content_id, store_number, cust_name, date_caption, " & _
+                    " location, content_desc, wgt_content_ton, wgt_content_pound, " & " wgt_store_ton, wgt_store_pound , wgt_store_recycle_ton," & _
+                    "wgt_store_recycle_pound, pct_content, " & "pct_store, total_wgt_store_ton, total_wgt_store_pound," & _
+                    " total_wgt_store_recycle_ton, total_wgt_store_recycle_pound, total_pct_recycle, " & _
+                    " wgt_store_landfill_ton, wgt_store_landfill_pound, " & " wgt_store_no_landfill_ton,  wgt_store_no_landfill_pound," & _
+                    " wgt_store_landfill_percent, wgt_store_no_landfill_percent " & " FROM rptRcyContent " & " WHERE report_id = " & Str(nReport) & " " & _
+                " ORDER BY cust_id, store_number"
 		
 		
         rsReport = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
-		
-		'UPGRADE_WARNING: Screen property Screen.MousePointer has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 		'Cargo la plantilla de Crystal Reports con los datos
 		load_report()
 		
@@ -388,41 +386,43 @@ ErrorHandler:
 		
 		'sFile = "c:\glm\Visual Basic\Glm-System\Reports\rptRcyContent.rpt"
 		sFile = get_template(sLocalReport, cbReportTemplate.Text)
-		
-		If fileTmp.FileExists(sFile) Then
+        Dim rptDoc As ReportDocument = New ReportDocument()
+        If fileTmp.FileExists(sFile) Then
+            rptDoc.Load(sFile)
             'crysRepRcyContent = crysApp.OpenReport(sFile)
-		Else
-			sFile = get_local_template(sLocalReport)
-			If fileTmp.FileExists(sFile) Then
-                'crysRepRcyContent = crysApp.OpenReport(sFile)
-			Else
-				MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OKOnly + MsgBoxStyle.Critical, "GLM Error")
-				Exit Function
-			End If
-			
-		End If
-		
-		'Asignar impresora seleccionada por usuario.
-		'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
-		'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-		'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        Else
+            MsgBox("Report template not found." & vbCrLf & "Please install: " & sFile, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Exit Function
+        End If
+
+        rptDoc.SetDataSource(rsReport)
+
+        frmRepRecycleTonViewer.CrystalReportViewer1.ReportSource = rptDoc
+        frmRepRecycleTonViewer.CrystalReportViewer1.Visible = True
+        frmRepRecycleTonViewer.CrystalReportViewer1.Show()
+        frmRepRecycleTonViewer.Show()
+
+        'Asignar impresora seleccionada por usuario.
+        'report.SelectPrinter "HP DeskJet 550C","remota", "LPT1"
+        'UPGRADE_ISSUE: Printer property Printer.Port was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DeviceName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: Printer property Printer.DriverName was not upgraded. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'crysRepRcyContent.SelectPrinter(Printer.DriverName, Printer.DeviceName, Printer.Port)
-		
-		
-		'reportTable.SetPrivateData 3, AdoRs
+
+
+        'reportTable.SetPrivateData 3, AdoRs
         'reportTable.SetPrivateData(3, rsReport)
-		
-		'cd.CancelError = True
-		'cd.ShowPrinter
-		
+
+        'cd.CancelError = True
+        'cd.ShowPrinter
+
         'crysRepRcyContent.ProgressDialogEnabled = True
         'crysRepRcyContent.Preview()
-		
-		'ErrorHandler:
-		'If Err.Number = cdlCancel Then
-		'    MsgBox "usuario aborto"
-		'End If
+
+        'ErrorHandler:
+        'If Err.Number = cdlCancel Then
+        '    MsgBox "usuario aborto"
+        'End If
 	End Function
 	
 	
@@ -435,15 +435,14 @@ ErrorHandler:
 		
 		lbStartDate.Text = ""
 		lbEndDate.Text = ""
-		'UPGRADE_WARNING: TextBox property txtReportCaption.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtReportCaption.Maxlength = 30 'customer.cust_report_name CHAR(30)
+        txtReportCaption.MaxLength = 30 'customer.cust_report_name CHAR(30)
 		
 		obPeriod.Checked = False
 		obRange.Checked = False
 		period_enable(False)
 		range_enable(False)
 		
-		dtStartDate._Value = Today
+        dtStartDate.Value = Today
 		dtEndDate.value = Today
 		
 		'Combo Customer
@@ -457,7 +456,8 @@ ErrorHandler:
 			cbCustName.SelectedIndex = 0
 		End If
 		
-		'Combo State
+        'Combo State
+        cbStateId.Items.Clear()
 		cbStateId.Items.Insert(0, "<All>")
 		
 		sStmt = "SELECT state_id FROM state"
