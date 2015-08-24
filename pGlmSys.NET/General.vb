@@ -2392,13 +2392,13 @@ ErrorHandler:
 
 
     End Function
-    Public Function get_msword_template(ByRef sTemplateName As String) As String
+    Public Function get_msword_template(ByRef sTemplateName As String, Optional ByRef ntran As SqlTransaction = Nothing) As String
 
         sStmt = "SELECT filename FROM CustomerInvoiceTemplate " & " WHERE template_name = '" & sTemplateName & "' "
 
         get_msword_template = ""
 
-        rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        rs = getDataTable(sStmt, ntran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rs.Rows.Count > 0 Then
             get_msword_template = rs.Rows(0).Item("filename")

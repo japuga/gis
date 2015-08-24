@@ -2,8 +2,7 @@ Option Strict Off
 Option Explicit On
 Friend Class frmWebUser
 	Inherits System.Windows.Forms.Form
-    Private ImageList2 As New ImageList()
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
+
 	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
 		If cbCustName.SelectedIndex >= 0 Then
 			cbCustId.SelectedIndex = cbCustName.SelectedIndex
@@ -28,4 +27,20 @@ Friend Class frmWebUser
 		End If
 		
 	End Sub
+
+    Private Sub btNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btNew.Click
+
+    End Sub
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+
+    End Sub
+
+    Private Sub btDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btDelete.Click
+
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+
+    End Sub
 End Class

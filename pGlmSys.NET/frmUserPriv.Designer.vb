@@ -198,6 +198,7 @@
         '
         'dgAssgState
         '
+        Me.dgAssgState.AllowUserToAddRows = False
         Me.dgAssgState.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgAssgState.Location = New System.Drawing.Point(27, 184)
         Me.dgAssgState.Name = "dgAssgState"
@@ -206,6 +207,7 @@
         '
         'dgState
         '
+        Me.dgState.AllowUserToAddRows = False
         Me.dgState.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgState.Location = New System.Drawing.Point(359, 184)
         Me.dgState.Name = "dgState"

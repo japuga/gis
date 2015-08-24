@@ -252,11 +252,14 @@ ErrorHandler:
         End If
 
 
-        sStmt = "SELECT period_seq, period_name, period_start_date " & " FROM period " & " WHERE cust_id =  '" & Trim(sCustId) & "' AND period_status_id='O' " & " ORDER BY period.period_start_date DESC "
+        sStmt = "SELECT period_seq, period_name, period_start_date " & " FROM period " & _
+            " WHERE cust_id =  '" & Trim(sCustId) & _
+            "' AND period_status_id='O' " & _
+            " ORDER BY period.period_start_date DESC "
 
 
-        'UPGRADE_WARNING: Lower bound of array period_start_date was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
-        'UPGRADE_ISSUE: As Date was removed from ReDim period_start_date(1 To 1) statement. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="19AFCB41-AA8E-4E6B-A441-A3E802E5FD64"'
+
+
         ReDim period_start_date(0)
 
         rsLocal = exec_sql(sStmt)
@@ -265,33 +268,21 @@ ErrorHandler:
             write_msg("loadPeriodAndArray", "Could not find Period for customer:" & sCustId)
             Exit Sub
         Else
-            If rsLocal.Rows.Count <= 0 Then
-                write_msg("loadPeriodAndArray", "Could not find Period for customer:" & sCustId)
-                Exit Sub
-            End If
+            'ok
         End If
 
         'In data was found
-
         'nCounter = 1
-
         For row As Integer = 0 To rsLocal.Rows.Count - 1
 
             If bShowAll Then
-
-
                 ReDim Preserve period_start_date(nCounter)
                 cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name")), rsLocal.Rows(row).Item("period_seq")))
-                'period_start_date(nCounter + 1) = rsLocal.Fields("period_start_date")
-                'UPGRADE_WARNING: Couldn't resolve default property of object period_start_date(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 period_start_date(nCounter) = rsLocal.Rows(row).Item("period_start_date")
             Else
-                'UPGRADE_WARNING: Lower bound of array period_start_date was changed from 1 to 0. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="0F1C9BE1-AF9D-476E-83B1-17D43BECFF20"'
-                'UPGRADE_ISSUE: As Date was removed from ReDim period_start_date(1 To nCounter + 1) statement. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="19AFCB41-AA8E-4E6B-A441-A3E802E5FD64"'
-                ReDim Preserve period_start_date(nCounter + 1)
+                ReDim Preserve period_start_date(nCounter)
                 cbPeriod.Items.Insert(nCounter, New VB6.ListBoxItem(Trim(rsLocal.Rows(row).Item("period_name")), rsLocal.Rows(row).Item("period_seq")))
-                'UPGRADE_WARNING: Couldn't resolve default property of object period_start_date(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                period_start_date(nCounter + 1) = rsLocal.Rows(row).Item("period_start_date")
+                period_start_date(nCounter) = rsLocal.Rows(row).Item("period_start_date")
 
             End If
 

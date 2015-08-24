@@ -58,7 +58,7 @@ Friend Class frmWebReportEntry
 		sStmt = "UPDATE web_report SET enabled_flag = " & sEnabled & " WHERE web_report_id = " & Str(gWebReport.webReportId)
 		
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
-		cm.CommandType = ADODB.CommandTypeEnum.adCmdText
+        cm.CommandType = CommandType.Text
 		cm.CommandText = sStmt
         nResult = cm.ExecuteNonQuery()
 		If nResult > 0 Then
@@ -69,4 +69,14 @@ Friend Class frmWebReportEntry
 			MsgBox("Unable to update record. Check log file for details", MsgBoxStyle.OKOnly + MsgBoxStyle.Exclamation, "GLM Error")
 		End If
 	End Function
+
+    Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
+        If saveWebReport() Then
+            Me.Close()
+        End If
+    End Sub
+
+    Private Sub btExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btExit.Click
+        Me.Close()
+    End Sub
 End Class

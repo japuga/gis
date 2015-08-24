@@ -3,7 +3,7 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmInvoiceAutomated
 	Inherits System.Windows.Forms.Form
-    Private rsContract As SqlDataReader
+    Private rsContract As DataTable
 	Private Structure values
 		Dim nHeaders As Short
 		Dim nDetails As Short
@@ -59,7 +59,7 @@ Friend Class frmInvoiceAutomated
                 rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
                 If rs.Rows.Count > 0 Then
-                    If rs.Rows(0).Item(0).Value > 0 Then
+                    If rs.Rows(0).Item(0) > 0 Then
                         MsgBox("Found another Invoice with Number you specified." & vbCrLf & "This could potencially create duplicate invoices." & vbCrLf & "Enter another invoice number.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Warning")
 
                         txtInvoiceNo.Focus()
@@ -88,8 +88,7 @@ ErrorHandler:
 		
 		On Error GoTo ErrorHandler
 		
-		'UPGRADE_WARNING: Couldn't resolve default property of object nHeaders. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-		nHeaders = 0
+        nHeaders = 0
 		nDetails = 0
 		
 		'Obtener lista de tiendas
@@ -100,21 +99,17 @@ ErrorHandler:
         If rs.Rows.Count > 0 Then
 
             For row As Integer = 0 To rs.Rows.Count - 1
-                nStoreId = rs.Rows(0).Item("store_id").Value
+                nStoreId = rs.Rows(0).Item("store_id")
 
-                'UPGRADE_WARNING: Couldn't resolve default property of object valores. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 valores = get_contracts(sCustId, nStoreId, nPeriodSeq)
-                'UPGRADE_WARNING: Couldn't resolve default property of object nHeaders. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+
                 nHeaders = nHeaders + valores.nHeaders
                 nDetails = nDetails + valores.nDetails
 
             Next row
         End If
 
-
-        'UPGRADE_WARNING: Couldn't resolve default property of object nHeaders. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         If nHeaders > 0 Then
-            'UPGRADE_WARNING: Couldn't resolve default property of object nHeaders. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
             MsgBox("Process complete." & vbCrLf & "Invoices generated:" & Str(nHeaders) & " Total invoice details:" & Str(nDetails), MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
         End If
         Exit Function
@@ -127,189 +122,216 @@ ErrorHandler:
 	'Obtiene contratos para una tienda
 	Private Function get_contracts(ByRef sCustId As String, ByRef nStoreId As Short, ByRef nPeriodSeq As Short) As values
 		
-        Dim nTranLevel As SqlTransaction
+        Dim nTranLevel As SqlTransaction = Nothing
 		Dim sInvoiceStatus As String
 		Dim nHeaders As Short
 		Dim nDetails As Short
 		Dim nInvoiceDetNo As Short
-		Dim nOldRate, nCurrRate As Object
+        Dim nOldRate, nCurrRate As Integer
 		Dim nSubtotal As Double
-		Dim nServId As Object
+        Dim nServId As Integer
 		Dim nEqptSeq As Short
-		Dim sServDesc, sEqptDesc As Object
+        Dim sServDesc, sEqptDesc As String
 		Dim sUnitType As String
 		Dim sBillSavingFlag As String
-        Dim nRecords As Short
+        Dim nRecords As Integer
         Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim arow As Integer
 		
-		Dim nPrevVendSeq As Object
+        Dim nPrevVendSeq As Integer
 		Dim nVendSeq As Short
-		Dim sPrevAccountNo As Object
+        Dim sPrevAccountNo As String
         Dim sAccountNo As String = ""
 		
 		get_contracts.nHeaders = 0
 		get_contracts.nDetails = 0
 		
-		On Error GoTo ErrorHandler
-		
-		sStmt = "SELECT c.cust_id, c.vend_seq, c.store_id, c.eqpt_seq, " & "c.serv_id, c.curr_rate, " & "c.old_rate, a.account_no, e.eqpt_desc, " & "s.serv_desc, s.serv_measure_unit " & " FROM VContract c, VAccountEqpt a, StoreEqpt e, " & " Service s " & " WHERE c.cust_id='" & sCustId & "' " & " AND c.store_id =" & Str(nStoreId) & " " & " AND c.expiration_date > getdate ()" & " AND c.cust_id = e.cust_id " & " AND c.store_id = e.store_id " & " AND c.eqpt_seq = e.eqpt_seq " & " AND e.eqpt_status='A' " & " AND c.cust_id= a.cust_id " & " AND c.store_id = a.store_id " & " AND c.eqpt_seq = a.eqpt_seq " & " AND c.vend_seq = a.vend_seq " & " AND a.account_status ='A' " & " AND c.serv_id = s.serv_id "
-        cmd.CommandText = sStmt
-		
-		
-        rsContract = cmd.ExecuteReader()
+        Try
 
-        If rsContract.HasRows() Then
-            'ok
-        Else
-            'No hay contratos para estas tiendas
-            Exit Function
-        End If
-
-
-        'Por cada contrato insertar en Vinvoice y Vinvoicedet
-
-        nHeaders = 0
-        nDetails = 0
-        nInvoiceDetNo = 0
-        nSubtotal = 0
-        sInvoiceStatus = "CRE"
+            sStmt = "SELECT c.cust_id, c.vend_seq, c.store_id, c.eqpt_seq, " & "c.serv_id, c.curr_rate, " & "c.old_rate, a.account_no, e.eqpt_desc, " & _
+                                "s.serv_desc, s.serv_measure_unit " & _
+                    " FROM VContract c, VAccountEqpt a, StoreEqpt e, " & " Service s " & _
+                    " WHERE c.cust_id='" & sCustId & "' " & _
+                        " AND c.store_id =" & Str(nStoreId) & " " & _
+                        " AND c.expiration_date > getdate ()" & _
+                        " AND c.cust_id = e.cust_id " & _
+                        " AND c.store_id = e.store_id " & _
+                        " AND c.eqpt_seq = e.eqpt_seq " & _
+                        " AND e.eqpt_status='A' " & _
+                        " AND c.cust_id= a.cust_id " & _
+                        " AND c.store_id = a.store_id " & _
+                        " AND c.eqpt_seq = a.eqpt_seq " & _
+                        " AND c.vend_seq = a.vend_seq " & _
+                        " AND a.account_status ='A' " & _
+                        " AND c.serv_id = s.serv_id "
+            cmd.CommandText = sStmt
 
 
+            rsContract = getDataTable(sStmt) 'cmd.ExecuteReader()
+
+            If rsContract.Rows.Count > 0 Then
+                'ok
+            Else
+                'No hay contratos para estas tiendas
+                Exit Function
+            End If
 
 
+            'Por cada contrato insertar en Vinvoice y Vinvoicedet
 
-        'UPGRADE_WARNING: Couldn't resolve default property of object nPrevVendSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        nPrevVendSeq = 0
-        'UPGRADE_WARNING: Couldn't resolve default property of object sPrevAccountNo. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        sPrevAccountNo = ""
+            nHeaders = 0
+            nDetails = 0
+            nInvoiceDetNo = 0
+            nSubtotal = 0
+            sInvoiceStatus = "CRE"
 
-        nTranLevel = cn.BeginTransaction()
+            nPrevVendSeq = 0
+            sPrevAccountNo = ""
+            nTranLevel = cn.BeginTransaction()
 
-        While rsContract.Read()
+            For arow = 0 To rsContract.Rows.Count - 1
 
-            nVendSeq = rsContract.Item("vend_seq").Value
-            sAccountNo = rsContract.Item("account_no").Value
+                nVendSeq = rsContract.Rows(arow).Item("vend_seq")
+                sAccountNo = rsContract.Rows(arow).Item("account_no")
 
-            'Verificar si aparece otro equipo ,vendor o Account            
-            If nPrevVendSeq <> nVendSeq Or sPrevAccountNo <> sAccountNo Then
+                'Verificar si aparece otro equipo ,vendor o Account            
+                If nPrevVendSeq <> nVendSeq Or sPrevAccountNo <> sAccountNo Then
 
-                'Actualizar total del factura anterior
-                If nSubtotal > 0 Then
-                    sStmt = "UPDATE VInvoice SET total =" & Str(nSubtotal) & " WHERE invoice_no='" & quotation_mask(Trim(txtInvoiceNo.Text)) & "' " & " AND cust_id = '" & sCustId & "' " & " AND store_id =" & Str(nStoreId) & " AND vend_seq =" & Str(nPrevVendSeq) & " AND account_no ='" & Trim(sPrevAccountNo) & "'"
-                    nRecords = 0
+                    'Actualizar total del factura anterior
+                    If nSubtotal > 0 Then
+                        sStmt = "UPDATE VInvoice SET total =" & Str(nSubtotal) & _
+                                " WHERE invoice_no='" & quotation_mask(Trim(txtInvoiceNo.Text)) & "' " & _
+                                " AND cust_id = '" & sCustId & "' " & _
+                                " AND store_id =" & Str(nStoreId) & _
+                                " AND vend_seq =" & Str(nPrevVendSeq) & _
+                                " AND account_no ='" & Trim(sPrevAccountNo) & "'"
+                        nRecords = 0
 
+                        cmd.CommandText = sStmt
+                        nRecords = cmd.ExecuteNonQuery()
+
+                        If nRecords <= 0 Then
+                            nTranLevel.Rollback()
+                            MsgBox("Failed to update Invoice Header. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                            Exit Function
+                        End If
+                    End If
+
+                    nPrevVendSeq = nVendSeq
+                    sPrevAccountNo = sAccountNo
+
+                    nSubtotal = 0
+
+                    'CABECERA
+                    sStmt = "INSERT INTO VInvoice(invoice_no, cust_id, " & "store_id, account_no, vend_seq, total, " & _
+                                " vinvoice_status, vinvoice_date, create_user, " & " change_user, change_time, period_seq) " & _
+                            " VALUES ('" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & _
+                                     "'" & cbCustId.Text & "'," & Str(nStoreId) & "," & _
+                                     "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & _
+                                     Str(nSubtotal) & "," & "'" & sInvoiceStatus & "','" & dtInvoiceDate.Value & "','" & gsUser & "'," & _
+                                     "'" & gsUser & "','" & dtInvoiceDate.Value & "'," & Str(nPeriodSeq) & ")"
+
+                    'MsgBox sStmt
                     cmd.CommandText = sStmt
+                    cmd.Transaction = nTranLevel
                     nRecords = cmd.ExecuteNonQuery()
 
                     If nRecords <= 0 Then
                         nTranLevel.Rollback()
-                        MsgBox("Failed to update Invoice Header. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                        MsgBox("Failed to insert Invoice. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                         Exit Function
+                    Else
+                        'Contar registros insertados
+                        nHeaders = nHeaders + 1
                     End If
-                End If
+                End If 'Invoice Header
 
-                'UPGRADE_WARNING: Couldn't resolve default property of object nPrevVendSeq. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                nPrevVendSeq = nVendSeq
-                'UPGRADE_WARNING: Couldn't resolve default property of object sPrevAccountNo. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                sPrevAccountNo = sAccountNo
+                'DETALLE
+                nInvoiceDetNo = nInvoiceDetNo + 1
+                nServId = rsContract.Rows(arow).Item("serv_id")
+                nEqptSeq = rsContract.Rows(arow).Item("eqpt_seq")
+                nOldRate = rsContract.Rows(arow).Item("old_rate")
+                nCurrRate = rsContract.Rows(arow).Item("curr_rate")
+                nSubtotal = nSubtotal + nCurrRate
+                sServDesc = rsContract.Rows(arow).Item("serv_desc")
+                sEqptDesc = rsContract.Rows(arow).Item("eqpt_desc")
+                sUnitType = rsContract.Rows(arow).Item("serv_measure_unit")
+                sBillSavingFlag = "YES"
 
 
-                nSubtotal = 0
-
-                'CABECERA
-                sStmt = "INSERT INTO VInvoice(invoice_no, cust_id, " & "store_id, account_no, vend_seq, total, " & " vinvoice_status, vinvoice_date, create_user, " & " change_user, change_time, period_seq) " & " VALUES ('" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & "'" & cbCustId.Text & "'," & Str(nStoreId) & "," & "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & Str(nSubtotal) & "," & "'" & sInvoiceStatus & "','" & Str(dtInvoiceDate.Value) & "','" & gsUser & "'," & "'" & gsUser & "','" & Str(dtInvoiceDate.Value) & "'," & Str(nPeriodSeq) & ")"
-
-                'MsgBox sStmt
+                sStmt = " INSERT INTO VInvoiceDet (invoice_det_no, " & " invoice_no, cust_id, store_id, account_no, vend_seq, " & _
+                            " serv_date, serv_id, eqpt_seq, old_rate, rate," & " subtotal,create_user, change_user, change_time, " & _
+                            " serv_desc, eqpt_desc, serv_usage, units, " & " unit_type, bill_saving_flag) " & _
+                        " VALUES (" & Str(nInvoiceDetNo) & ",'" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & "'" & cbCustId.Text & "'," & _
+                                    Str(nStoreId) & "," & "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & "getdate()," & Str(nServId) & "," & _
+                                    Str(nEqptSeq) & "," & Str(nOldRate) & "," & Str(nCurrRate) & "," & Str(nCurrRate) & ",'" & gsUser & "','" & gsUser & "'," & _
+                                    "getdate(),'" & Trim(sServDesc) & "','" & Trim(sEqptDesc) & "', " & "1, 1,'" & sUnitType & "', " & "'" & sBillSavingFlag & "')"
                 cmd.CommandText = sStmt
+                cmd.Transaction = nTranLevel
                 nRecords = cmd.ExecuteNonQuery()
 
                 If nRecords <= 0 Then
                     nTranLevel.Rollback()
-                    MsgBox("Failed to insert Invoice. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                    MsgBox("Failed to insert Invoice Detail. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
                     Exit Function
                 Else
                     'Contar registros insertados
-                    nHeaders = nHeaders + 1
+                    nDetails = nDetails + 1
                 End If
-            End If 'Invoice Header
-
-            'DETALLE
-            nInvoiceDetNo = nInvoiceDetNo + 1
-            'UPGRADE_WARNING: Couldn't resolve default property of object nServId. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            nServId = rsContract.Item("serv_id").Value
-            nEqptSeq = rsContract.Item("eqpt_seq").Value
-            'UPGRADE_WARNING: Couldn't resolve default property of object nOldRate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            nOldRate = rsContract.Item("old_rate").Value
-            'UPGRADE_WARNING: Couldn't resolve default property of object nCurrRate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            nCurrRate = rsContract.Item("curr_rate").Value
-            'UPGRADE_WARNING: Couldn't resolve default property of object nCurrRate. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            nSubtotal = nSubtotal + nCurrRate
-            'UPGRADE_WARNING: Couldn't resolve default property of object sServDesc. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            sServDesc = rsContract.Item("serv_desc").Value
-            'UPGRADE_WARNING: Couldn't resolve default property of object sEqptDesc. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-            sEqptDesc = rsContract.Item("eqpt_desc").Value
-            sUnitType = rsContract.Item("serv_measure_unit").Value
-            sBillSavingFlag = "YES"
-
-            
-            sStmt = " INSERT INTO VInvoiceDet (invoice_det_no, " & " invoice_no, cust_id, store_id, account_no, vend_seq, " & " serv_date, serv_id, eqpt_seq, old_rate, rate," & " subtotal,create_user, change_user, change_time, " & " serv_desc, eqpt_desc, serv_usage, units, " & " unit_type, bill_saving_flag) " & " VALUES (" & Str(nInvoiceDetNo) & ",'" & quotation_mask(Trim(txtInvoiceNo.Text)) & "'," & "'" & cbCustId.Text & "'," & Str(nStoreId) & "," & "'" & Trim(sAccountNo) & "'," & Str(nVendSeq) & "," & "getdate()," & Str(nServId) & "," & Str(nEqptSeq) & "," & Str(nOldRate) & "," & Str(nCurrRate) & "," & Str(nCurrRate) & ",'" & gsUser & "','" & gsUser & "'," & "getdate(),'" & Trim(sServDesc) & "','" & Trim(sEqptDesc) & "', " & "1, 1,'" & sUnitType & "', " & "'" & sBillSavingFlag & "')"
-            cmd.CommandText = sStmt
-            nRecords = cmd.ExecuteNonQuery()
-
-            If nRecords <= 0 Then
-                nTranLevel.Rollback()
-                MsgBox("Failed to insert Invoice Detail. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-                Exit Function
-            Else
-                'Contar registros insertados
-                nDetails = nDetails + 1
-            End If
-        End While
+            Next arow
 
 
-        'Actualizar total de ultima factura
-        If nSubtotal > 0 Then
-            sStmt = "UPDATE VInvoice SET total =" & Str(nSubtotal) & " WHERE invoice_no='" & quotation_mask(Trim(txtInvoiceNo.Text)) & "' " & " AND cust_id = '" & sCustId & "' " & " AND store_id =" & Str(nStoreId) & " AND vend_seq =" & Str(nVendSeq) & " AND account_no ='" & Trim(sAccountNo) & "'"
-            cmd.CommandText = sStmt
-            nRecords = cmd.ExecuteNonQuery()
+            'Actualizar total de ultima factura
+            If nSubtotal > 0 Then
+                sStmt = "UPDATE VInvoice SET total =" & Str(nSubtotal) & _
+                " WHERE invoice_no='" & quotation_mask(Trim(txtInvoiceNo.Text)) & "' " & _
+                    " AND cust_id = '" & sCustId & "' " & " AND store_id =" & Str(nStoreId) & _
+                    " AND vend_seq =" & Str(nVendSeq) & " AND account_no ='" & Trim(sAccountNo) & "'"
+                cmd.CommandText = sStmt
+                cmd.Transaction = nTranLevel
+                nRecords = cmd.ExecuteNonQuery()
 
-            If nRecords <= 0 Then
-                nTranLevel.Rollback()
-                MsgBox("Failed to update Invoice Header. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-                Exit Function
+                If nRecords <= 0 Then
+                    nTranLevel.Rollback()
+                    MsgBox("Failed to update Invoice Header. " & "Aborting process.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+                    Exit Function
+                End If
+
             End If
 
-        End If
 
+            nTranLevel.Commit()
 
-        nTranLevel.Commit()
+            get_contracts.nHeaders = nHeaders
+            get_contracts.nDetails = nDetails
 
-        get_contracts.nHeaders = nHeaders
-        get_contracts.nDetails = nDetails
+            Exit Function
 
-        Exit Function
+        Catch ex As Exception
+            If Not IsNothing(nTranLevel) Then
+                If Not IsNothing(nTranLevel.Connection) Then
+                    nTranLevel.Rollback()
+                End If
+            End If
 
-ErrorHandler:
-
-        nTranLevel.Rollback()
-
-        save_error(Me.Name, "get_contracts")
-        MsgBox("Unexpected error when inserting Automated Invoices." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
-		
-	End Function
+            save_error(Me.Name, "get_contracts")
+            MsgBox("Unexpected error when inserting Automated Invoices." & vbCrLf & "Check log file for details.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "GLM Error")
+        End Try
+    End Function
 	Private Sub frmInvoiceAutomated_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
 		init_vars()
 	End Sub
 	Private Sub init_vars()
-		'UPGRADE_WARNING: TextBox property txtInvoiceNo.MaxLength has a new behavior. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6BA9B8D2-2A32-4B6E-8D36-44949974A5B4"'
-		txtInvoiceNo.Maxlength = 30
+        txtInvoiceNo.MaxLength = 30
 		
 		'CustName
-		sStmt = "SELECT DISTINCT c.cust_name, u.cust_id " & " FROM suser_data u, customer c " & " WHERE u.cust_id = c.cust_id " & " AND u.suser_name = '" & gsUser & "' " & " ORDER BY c.cust_name"
+        sStmt = "SELECT DISTINCT c.cust_name, u.cust_id " & " FROM suser_data u, customer c " & _
+        " WHERE u.cust_id = c.cust_id " & " AND u.suser_name = '" & gsUser & "' " & " ORDER BY c.cust_name"
 		load_cb_query2(cbCustName, sStmt, 1, True)
 		
 		'CustId
-		sStmt = "SELECT DISTINCT u.cust_id, c.cust_name " & " FROM suser_data u, customer c " & " WHERE u.cust_id = c.cust_id " & " AND u.suser_name = '" & gsUser & "'" & " ORDER BY c.cust_name"
+        sStmt = "SELECT DISTINCT u.cust_id, c.cust_name " & " FROM suser_data u, customer c " & _
+        " WHERE u.cust_id = c.cust_id " & " AND u.suser_name = '" & gsUser & "'" & " ORDER BY c.cust_name"
 		load_cb_query2(cbCustId, sStmt, 1, True)
 		
 		If cbCustName.Items.Count > 0 Then

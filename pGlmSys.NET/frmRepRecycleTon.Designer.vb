@@ -464,10 +464,10 @@
         Me.Label4.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label4.Location = New System.Drawing.Point(64, 232)
+        Me.Label4.Location = New System.Drawing.Point(51, 232)
         Me.Label4.Name = "Label4"
         Me.Label4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label4.Size = New System.Drawing.Size(49, 21)
+        Me.Label4.Size = New System.Drawing.Size(62, 21)
         Me.Label4.TabIndex = 10
         Me.Label4.Text = "Start Date"
         '
@@ -477,10 +477,10 @@
         Me.Label5.Cursor = System.Windows.Forms.Cursors.Default
         Me.Label5.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label5.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label5.Location = New System.Drawing.Point(64, 256)
+        Me.Label5.Location = New System.Drawing.Point(51, 256)
         Me.Label5.Name = "Label5"
         Me.Label5.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label5.Size = New System.Drawing.Size(49, 21)
+        Me.Label5.Size = New System.Drawing.Size(62, 21)
         Me.Label5.TabIndex = 9
         Me.Label5.Text = "End Date"
         '
