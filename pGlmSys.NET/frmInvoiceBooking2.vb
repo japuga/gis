@@ -910,12 +910,15 @@ ErrorHandler:
             gInvoiceHelp.sOrderBy = sStmt
 
             frmHelpCustomer.nMode = frmHelpCustomer.options.adStoreHelp
-            VB6.ShowForm(frmHelpCustomer, VB6.FormShowConstants.Modal, Me)
+            'VB6.ShowForm(frmHelpCustomer, VB6.FormShowConstants.Modal, Me)
+            frmHelpCustomer.ShowDialog()
+            frmHelpCustomer.Dispose()
             txtStore.Focus()
+            cbVendor.Focus()
 
             Exit Sub
 
-        Catch
+        Catch e As Exception
             save_error("frmInvoiceBooking", "cmdHelpCustomer_Click")
             MsgBox("An unexpected error has ocurred, check log file for details", MsgBoxStyle.Critical, "GLM Error")
         End Try
@@ -1745,8 +1748,10 @@ ErrorHandler:
                 txtStore.ReadOnly = False
 				txtStore.Tag = ""
 				txtStoreId.Text = ""
-				cbVendor.Items.Clear()
-				cbAccount.Items.Clear()
+                cbVendor.Items.Clear()
+                cbVendor.Enabled = True
+                cbAccount.Items.Clear()
+                cbAccount.Enabled = True
 				txtInvoice.Text = ""
 				dtDate.value = Today
                 'dtDate.Value.Day = 1 ' Defaulting Day to first day of current month

@@ -137,16 +137,22 @@
         '
         'dgStore
         '
+        Me.dgStore.AllowUserToAddRows = False
+        Me.dgStore.AllowUserToDeleteRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(16, 84)
+        Me.dgStore.MultiSelect = False
         Me.dgStore.Name = "dgStore"
         Me.dgStore.Size = New System.Drawing.Size(505, 169)
         Me.dgStore.TabIndex = 6
         '
         'dgStoreEqpt
         '
+        Me.dgStoreEqpt.AllowUserToAddRows = False
+        Me.dgStoreEqpt.AllowUserToDeleteRows = False
         Me.dgStoreEqpt.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStoreEqpt.Location = New System.Drawing.Point(16, 316)
+        Me.dgStoreEqpt.MultiSelect = False
         Me.dgStoreEqpt.Name = "dgStoreEqpt"
         Me.dgStoreEqpt.Size = New System.Drawing.Size(505, 193)
         Me.dgStoreEqpt.TabIndex = 7

@@ -67,12 +67,12 @@ Friend Class frmStoreAddress
 		gStoreAddress.bAddressFlag = General.addressMode.RecordSelected
 		'gStoreAddress.bFlag = addressMode.RecordSelected
 		
-        gStoreAddress.nStoreAddressSeq = CShort(dgAddress.CurrentRow.Cells("store_address_seq").Value)
-        gStoreAddress.nAddressSeq = CShort(dgAddress.CurrentRow.Cells("address_seq").Value)
-        gStoreAddress.sAddress = dgAddress.CurrentRow.Cells("Address").Value
-        gStoreAddress.sCity = dgAddress.CurrentRow.Cells("City").Value
-        gStoreAddress.sState = dgAddress.CurrentRow.Cells("State").Value
-        gStoreAddress.sZip = dgAddress.CurrentRow.Cells("Zip").Value
+        gStoreAddress.nStoreAddressSeq = CShort(dgAddress.SelectedRows(0).Cells("store_address_seq").Value)
+        gStoreAddress.nAddressSeq = CShort(dgAddress.SelectedRows(0).Cells("address_seq").Value)
+        gStoreAddress.sAddress = dgAddress.SelectedRows(0).Cells("Address").Value
+        gStoreAddress.sCity = dgAddress.SelectedRows(0).Cells("City").Value
+        gStoreAddress.sState = dgAddress.SelectedRows(0).Cells("State").Value
+        gStoreAddress.sZip = dgAddress.SelectedRows(0).Cells("Zip").Value
 		
 		
 		'MsgBox rs("address")
@@ -121,7 +121,7 @@ Friend Class frmStoreAddress
 				cbStoreNo.Enabled = False
                 'cbStoreNo.Locked = True
 				
-                Toolbar1.Items.Item("btSave").Visible = False
+                Toolbar1.Items.Item("btSave").Visible = True
                 'Toolbar1.Items.Item("btSearch").Visible = False
 				
 				load_dgAddress(gStoreAddress.sCustId, gStoreAddress.nStoreId)
@@ -167,7 +167,7 @@ Friend Class frmStoreAddress
             dgAddress.Columns("address_seq").Visible = False
             dgAddress.Columns("store_address_seq").Visible = False
         Else
-            Toolbar1.Items.Item("btSave").Visible = False
+            Toolbar1.Items.Item("btSave").Visible = True
         End If
 
 		
@@ -213,6 +213,7 @@ Friend Class frmStoreAddress
         If dgAddress.SelectedRows.Count < 1 Then
             If dgAddress.SelectedCells.Count > 0 Then
                 dgAddress.Rows(dgAddress.SelectedCells(0).RowIndex).Selected = True
+
             End If
         End If
         If dgAddress.SelectedRows.Count <= 0 Then
@@ -265,11 +266,11 @@ Friend Class frmStoreAddress
 				
 				
 				'Details
-                gStoreAddress.nAddressSeq = CShort(dgAddress.CurrentRow.Cells("address_seq").Value)
-                gStoreAddress.sAddress = dgAddress.CurrentRow.Cells("Address").Value
-                gStoreAddress.sCity = dgAddress.CurrentRow.Cells("City").Value
-                gStoreAddress.sState = dgAddress.CurrentRow.Cells("State").Value
-                gStoreAddress.sZip = dgAddress.CurrentRow.Cells("Zip").Value
+                gStoreAddress.nAddressSeq = CShort(dgAddress.SelectedRows(0).Cells("address_seq").Value)
+                gStoreAddress.sAddress = dgAddress.SelectedRows(0).Cells("Address").Value
+                gStoreAddress.sCity = dgAddress.SelectedRows(0).Cells("City").Value
+                gStoreAddress.sState = dgAddress.SelectedRows(0).Cells("State").Value
+                gStoreAddress.sZip = dgAddress.SelectedRows(0).Cells("Zip").Value
 				
 		End Select
 		
