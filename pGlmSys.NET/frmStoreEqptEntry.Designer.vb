@@ -58,6 +58,7 @@
         Me.cmdCancel = New System.Windows.Forms.Button
         Me.cmdOk = New System.Windows.Forms.Button
         Me.Frame1 = New System.Windows.Forms.GroupBox
+        Me.dgAccountEqpt = New System.Windows.Forms.DataGridView
         Me.txtEqptActualQty = New System.Windows.Forms.TextBox
         Me.txtEqptSizeCapacity = New System.Windows.Forms.TextBox
         Me.txtEqptSize = New System.Windows.Forms.TextBox
@@ -87,7 +88,6 @@
         Me.label3 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
-        Me.dgAccountEqpt = New System.Windows.Forms.DataGridView
         Me.Frame1.SuspendLayout()
         CType(Me.dgAccountEqpt, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -162,6 +162,16 @@
         Me.Frame1.TabIndex = 0
         Me.Frame1.TabStop = False
         '
+        'dgAccountEqpt
+        '
+        Me.dgAccountEqpt.AllowUserToAddRows = False
+        Me.dgAccountEqpt.AllowUserToDeleteRows = False
+        Me.dgAccountEqpt.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgAccountEqpt.Location = New System.Drawing.Point(19, 311)
+        Me.dgAccountEqpt.Name = "dgAccountEqpt"
+        Me.dgAccountEqpt.Size = New System.Drawing.Size(385, 121)
+        Me.dgAccountEqpt.TabIndex = 33
+        '
         'txtEqptActualQty
         '
         Me.txtEqptActualQty.AcceptsReturn = True
@@ -173,7 +183,7 @@
         Me.txtEqptActualQty.MaxLength = 0
         Me.txtEqptActualQty.Name = "txtEqptActualQty"
         Me.txtEqptActualQty.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtEqptActualQty.Size = New System.Drawing.Size(105, 21)
+        Me.txtEqptActualQty.Size = New System.Drawing.Size(105, 20)
         Me.txtEqptActualQty.TabIndex = 32
         '
         'txtEqptSizeCapacity
@@ -187,7 +197,7 @@
         Me.txtEqptSizeCapacity.MaxLength = 0
         Me.txtEqptSizeCapacity.Name = "txtEqptSizeCapacity"
         Me.txtEqptSizeCapacity.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtEqptSizeCapacity.Size = New System.Drawing.Size(73, 21)
+        Me.txtEqptSizeCapacity.Size = New System.Drawing.Size(73, 20)
         Me.txtEqptSizeCapacity.TabIndex = 30
         '
         'txtEqptSize
@@ -203,7 +213,7 @@
         Me.txtEqptSize.Name = "txtEqptSize"
         Me.txtEqptSize.ReadOnly = True
         Me.txtEqptSize.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtEqptSize.Size = New System.Drawing.Size(73, 21)
+        Me.txtEqptSize.Size = New System.Drawing.Size(73, 20)
         Me.txtEqptSize.TabIndex = 29
         '
         'txtEqptDesc
@@ -217,7 +227,7 @@
         Me.txtEqptDesc.MaxLength = 0
         Me.txtEqptDesc.Name = "txtEqptDesc"
         Me.txtEqptDesc.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtEqptDesc.Size = New System.Drawing.Size(121, 21)
+        Me.txtEqptDesc.Size = New System.Drawing.Size(121, 20)
         Me.txtEqptDesc.TabIndex = 28
         '
         'cbEqptTempDesc
@@ -289,7 +299,7 @@
         Me.txtStoreNumber.Name = "txtStoreNumber"
         Me.txtStoreNumber.ReadOnly = True
         Me.txtStoreNumber.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtStoreNumber.Size = New System.Drawing.Size(105, 21)
+        Me.txtStoreNumber.Size = New System.Drawing.Size(105, 20)
         Me.txtStoreNumber.TabIndex = 21
         '
         'txtCustName
@@ -305,7 +315,7 @@
         Me.txtCustName.Name = "txtCustName"
         Me.txtCustName.ReadOnly = True
         Me.txtCustName.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtCustName.Size = New System.Drawing.Size(105, 21)
+        Me.txtCustName.Size = New System.Drawing.Size(105, 20)
         Me.txtCustName.TabIndex = 19
         '
         'cbStatus
@@ -399,7 +409,7 @@
         Me.txtEqptQty.MaxLength = 0
         Me.txtEqptQty.Name = "txtEqptQty"
         Me.txtEqptQty.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.txtEqptQty.Size = New System.Drawing.Size(105, 21)
+        Me.txtEqptQty.Size = New System.Drawing.Size(105, 20)
         Me.txtEqptQty.TabIndex = 4
         '
         'Label12
@@ -558,14 +568,6 @@
         Me.Label1.TabIndex = 12
         Me.Label1.Text = "Content"
         '
-        'dgAccountEqpt
-        '
-        Me.dgAccountEqpt.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgAccountEqpt.Location = New System.Drawing.Point(19, 311)
-        Me.dgAccountEqpt.Name = "dgAccountEqpt"
-        Me.dgAccountEqpt.Size = New System.Drawing.Size(385, 121)
-        Me.dgAccountEqpt.TabIndex = 33
-        '
         'frmStoreEqptEntry
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -586,6 +588,7 @@
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Equipment"
         Me.Frame1.ResumeLayout(False)
+        Me.Frame1.PerformLayout()
         CType(Me.dgAccountEqpt, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

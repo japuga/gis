@@ -29,7 +29,7 @@ Friend Class frmStoreEqpt
     End Sub
 	'Actualiza Equipo
 	Private Sub update_storeEqpt()
-        If dgStoreEqpt.CurrentRow.Index >= 0 Then
+        If dgStoreEqpt.SelectedRows(0).Index >= 0 Then
             Dim ds As DataSet = New DataSet()
 
             'no se como funciona bookmark
@@ -51,27 +51,27 @@ Friend Class frmStoreEqpt
 		
 		get_storeEqpt = True 'Ok por defecto
         'gStoreEqptRecord.sCustId = Trim(rsStore.Rows(0).Item("cust_id"))
-        gStoreEqptRecord.sCustId = Trim(dgStore.CurrentRow.Cells("cust_id").Value) 'rsStore.Rows(0).Item("cust_id"))
-        gStoreEqptRecord.nStoreId = dgStore.CurrentRow.Cells("store_id").Value
+        gStoreEqptRecord.sCustId = Trim(dgStore.SelectedRows(0).Cells("cust_id").Value) 'rsStore.Rows(0).Item("cust_id"))
+        gStoreEqptRecord.nStoreId = dgStore.SelectedRows(0).Cells("store_id").Value
 		gStoreEqptRecord.sCustName = gbStoreSearch.sCustName
-        gStoreEqptRecord.sStoreNumber = dgStore.CurrentRow.Cells("Store").Value
+        gStoreEqptRecord.sStoreNumber = dgStore.SelectedRows(0).Cells("Store").Value
 		
 		If bFlag = General.modo.UpdateRecord Then
-            gStoreEqptRecord.nEqptSeq = dgStoreEqpt.CurrentRow.Cells("eqpt_seq").Value
-            gStoreEqptRecord.nEqptId = dgStoreEqpt.CurrentRow.Cells("eqpt_id").Value
-            gStoreEqptRecord.sLoadId = dgStoreEqpt.CurrentRow.Cells("load_id").Value
+            gStoreEqptRecord.nEqptSeq = dgStoreEqpt.SelectedRows(0).Cells("eqpt_seq").Value
+            gStoreEqptRecord.nEqptId = dgStoreEqpt.SelectedRows(0).Cells("eqpt_id").Value
+            gStoreEqptRecord.sLoadId = dgStoreEqpt.SelectedRows(0).Cells("load_id").Value
 			
-            gStoreEqptRecord.sEqptStatus = dgStoreEqpt.CurrentRow.Cells("Status").Value
-            gStoreEqptRecord.sEqptDesc = dgStoreEqpt.CurrentRow.Cells("Equip").Value
-            gStoreEqptRecord.nContentId = dgStoreEqpt.CurrentRow.Cells("content_id").Value
-            gStoreEqptRecord.nEqptQty = dgStoreEqpt.CurrentRow.Cells("Qty").Value
-            gStoreEqptRecord.nEqptSizeCapacity = dgStoreEqpt.CurrentRow.Cells("eqpt_size_capacity").Value
-            gStoreEqptRecord.nEqptActualQty = dgStoreEqpt.CurrentRow.Cells("eqpt_actual_qty").Value
+            gStoreEqptRecord.sEqptStatus = dgStoreEqpt.SelectedRows(0).Cells("Status").Value
+            gStoreEqptRecord.sEqptDesc = dgStoreEqpt.SelectedRows(0).Cells("Equip").Value
+            gStoreEqptRecord.nContentId = dgStoreEqpt.SelectedRows(0).Cells("content_id").Value
+            gStoreEqptRecord.nEqptQty = dgStoreEqpt.SelectedRows(0).Cells("Qty").Value
+            gStoreEqptRecord.nEqptSizeCapacity = dgStoreEqpt.SelectedRows(0).Cells("eqpt_size_capacity").Value
+            gStoreEqptRecord.nEqptActualQty = dgStoreEqpt.SelectedRows(0).Cells("eqpt_actual_qty").Value
 			
-            If IsDBNull(dgStoreEqpt.CurrentRow.Cells("eqpt_temp").Value) Then
+            If IsDBNull(dgStoreEqpt.SelectedRows(0).Cells("eqpt_temp").Value) Then
                 gStoreEqptRecord.sEqptTemp = ""
             Else
-                gStoreEqptRecord.sEqptTemp = dgStoreEqpt.CurrentRow.Cells("eqpt_temp").Value
+                gStoreEqptRecord.sEqptTemp = dgStoreEqpt.SelectedRows(0).Cells("eqpt_temp").Value
             End If
 		End If
 		Exit Function
@@ -206,6 +206,7 @@ ErrorHandler:
                 set_dgStoreEqptData(True, CShort(dgStore.Rows(0).Cells("store_id").Value), _
                                                  dgStore.Rows(0).Cells("Store").Value)
                 'End If
+                dgStore.Rows(0).Selected = True
             End If
         Else
             set_dgStoreEqptData(False)
@@ -313,7 +314,11 @@ ErrorHandler:
     End Sub
 
     Private Sub btSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btSave.Click
-        If dgStoreEqpt.SelectedRows.Count > 0 Then
+        If dgStore.SelectedRows.Count < 1 Then
+            MsgBox("Please select a store before continuing.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+            Exit Sub
+        End If
+        If dgStoreEqpt.SelectedRows.Count > 0 And dgStore.Rows.Count > 0 Then
             update_storeEqpt()
             If General.gbStoreEqptMode = General.modo.SavedRecord Then
                 set_dgStoreData(True)
@@ -364,6 +369,19 @@ ErrorHandler:
         update_storeEqpt()
         If General.gbStoreEqptMode = General.modo.SavedRecord Then
             set_dgStoreData(True)
+        End If
+    End Sub
+
+    Private Sub dgStore_RowEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgStore.RowEnter
+        'Solo si hay datos en el datagrid dgStore buscamos para dgStoreEqpt
+        If dgStore.SelectedRows.Count = 0 Then
+            If dgStore.SelectedCells.Count > 0 Then
+                dgStore.Rows(dgStore.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        'If dgStore.Row >= 0 Then
+        If dgStore.SelectedRows.Count > 0 Then
+            set_dgStoreEqptData(True, CShort(dgStore.SelectedRows(0).Cells("store_id").Value), dgStore.SelectedRows(0).Cells("Store").Value)
         End If
     End Sub
 End Class
