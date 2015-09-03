@@ -58,10 +58,10 @@ Friend Class frmInvoiceNotes
 		sStmt = "SELECT notes FROM VInvoice " & "WHERE cust_id ='" & Trim(sCustId) & "' " & "AND store_id =" & Trim(sStoreId) & " " & "AND account_no ='" & Trim(sAccountNo) & "' " & "AND vend_seq =" & CStr(nVendSeq) & " " & "AND invoice_no ='" & Trim(sInvoiceNo) & "' "
 
 		rsLocal = exec_sql(sStmt)
-        If rsLocal.Rows.Count < 1 Then
+        If rsLocal.Rows.Count > 0 Then
             If rsLocal.Rows.Count > 0 Then
                 If frmInvoiceBooking.sNotes = "" Then
-                    txtNotes.Text = Trim(rsLocal.Rows(0).Item("notes").Value)
+                    txtNotes.Text = Trim(rsLocal.Rows(0).Item("notes"))
                 Else
                     txtNotes.Text = frmInvoiceBooking.sNotes
                 End If

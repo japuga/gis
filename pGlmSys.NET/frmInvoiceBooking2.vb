@@ -2288,7 +2288,27 @@ ErrorHandler:
                     End If
 
                     If nMode = mode.adInsert Then
-                        sStr = "INSERT INTO VInvoice " & "(cust_id, store_id, vend_seq, account_no, " & "invoice_no, vinvoice_date, " & "period_seq,  " & "total, vinvoice_status,notes, " & "create_user, group_seq, work_order, glm_total, sc, extc)  VALUES " & "('" & Trim(cbCustomer.Text) & "'," & txtStoreId.Text & ", " & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & "', " & "'" & CStr(dtDate.Value) & "', " & CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & ", " & txtTotal.Text & " ,'CRE'," & "'" & Trim(sNotes) & "', " & "'" & Trim(gsUser) & "'," & sGroupName & "," & "'" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & txtGlmTotal.Text & ", " & "'" & Trim(quotation_mask((txtSc.Text))) & "'," & "'" & Trim(quotation_mask((txtExtc.Text))) & "')"
+                        sStr = "INSERT INTO VInvoice " & _
+                                    "(cust_id, store_id, vend_seq, account_no, " & _
+                                    "invoice_no, vinvoice_date, " & _
+                                    "period_seq,  " & _
+                                    "total, vinvoice_status,notes, " & _
+                                    "create_user, group_seq, work_order, glm_total, sc, extc) " & _
+                                " VALUES " & _
+                                    "('" & Trim(cbCustomer.Text) & "'," & _
+                                        txtStoreId.Text & ", " & _
+                                        Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & ", " _
+                                        & "'" & Trim(cbAccount.Text) & "', '" & Trim(txtInvoice.Text) & _
+                                        "', " & "'" & CStr(dtDate.Value) & "', " & _
+                                        CStr(VB6.GetItemData(cbPeriod, cbPeriod.SelectedIndex)) & _
+                                        ", " & txtTotal.Text & " ,'CRE'," & _
+                                        "'" & Trim(sNotes) & "', " & _
+                                        "'" & Trim(gsUser) & "'," & _
+                                        sGroupName & "," & _
+                                        "'" & Trim(quotation_mask(txtWorkOrderNo.Text)) & "'," & _
+                                        txtGlmTotal.Text & ", " & _
+                                        "'" & Trim(quotation_mask((txtSc.Text))) & "'," & _
+                                        "'" & Trim(quotation_mask((txtExtc.Text))) & "')"
                     End If
 
                     If nMode = mode.adUpdate Then
