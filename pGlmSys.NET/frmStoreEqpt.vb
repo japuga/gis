@@ -168,9 +168,7 @@ ErrorHandler:
 
 
         End If
-
-        'UPGRADE_NOTE: Object dgStore.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-        dgStore.DataSource = Nothing
+        'dgStore.DataSource = Nothing
 
         rsStore = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -193,6 +191,9 @@ ErrorHandler:
                     If rsStore.Rows(row).Item("store_id") = gStoreEqptRecord.nStoreId Then
                         'bookmark como funciona
                         'dgStore.SelBookmarks.Add(rsStore.Rows.Bookmark)
+                        If dgStore.SelectedRows.Count > 0 Then
+                            dgStore.SelectedRows(0).Selected = False
+                        End If
                         dgStore.Rows(row).Selected = True
                         set_dgStoreEqptData(True, CShort(dgStore.Rows(row).Cells("store_id").Value), _
                                                   dgStore.Rows(row).Cells("Store").Value)
@@ -257,6 +258,7 @@ ErrorHandler:
                         'no se como hacer bookmark
                         'dgStoreEqpt.SelBookmarks.Add((rsStoreEqpt.Rows(row).Bookmark))
                         dgStoreEqpt.Rows(row).Selected = True
+                        dgStoreEqpt.CurrentCell = dgStoreEqpt.Rows(row).Cells("Equip")
                         bFound = True
                         Exit For
                     End If
