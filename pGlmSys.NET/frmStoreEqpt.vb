@@ -240,10 +240,9 @@ ErrorHandler:
         End If
 
         'UPGRADE_NOTE: Object dgStoreEqpt.DataSource may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-        dgStoreEqpt.DataSource = Nothing
+        'dgStoreEqpt.DataSource = Nothing
         dgStoreEqpt.Text = "Equipment"
 
-        
         rsStoreEqpt = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         dgStoreEqpt.DataSource = rsStoreEqpt
