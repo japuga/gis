@@ -40,6 +40,7 @@ Module Report
     Dim TOTWGTTRASH_IDX As Short
     Dim VIPWGTTRASH_IDX As Short
     Dim OTWGTTRASH_IDX As Short
+    Dim PKRWGTCONTAMINATED_IDX As Short
     Dim STORE_RECYCLE_IDX As Short
     Dim STORE_TRASH_IDX As Short
     Dim storesIdx As Short
@@ -1239,10 +1240,12 @@ ErrorHandler:
         Dim trashStores As New Collection
         Dim allStores As New Collection
 
+        Dim rsTonReport As New DataTable
         Dim store As Object
         Dim sContentDesc As String
         Dim sEqptDesc As String
-        'Dim sEqptTypeDesc As String
+        Dim sEqptTypeDesc As String
+
         Dim nPoundsPerBaler As Double
         Dim nPoundsPerYdInPKR As Double
         Dim nPoundsPerYdInDUM As Double
@@ -1254,6 +1257,8 @@ ErrorHandler:
         Dim nPoundsPerYdInPKRTrash As Double
         Dim nPoundsPerGalInTotTrash As Double
         Dim nPoundsPerYdInVIPTrash As Double
+        Dim nPoundsPerYdInOTTrash As Double
+        Dim nPoundsPerYdInTotTrash As Double
 
         Dim nBalerWgt As Double
         Dim nEqptSeq As Short
@@ -1270,7 +1275,10 @@ ErrorHandler:
         Dim nTotTrashWgt As Double
         Dim nVipTrashWgt As Double
         Dim nOtTrashWgt As Double
+        Dim nPkrWgtContaminated As Double
 
+
+        Dim recycleStore As Object
 
 
         'Stores collection indices
@@ -1290,8 +1298,9 @@ ErrorHandler:
         TOTWGTTRASH_IDX = 13
         VIPWGTTRASH_IDX = 14
         OTWGTTRASH_IDX = 15
-        STORE_RECYCLE_IDX = 16
-        STORE_TRASH_IDX = 17
+        PKRWGTCONTAMINATED_IDX = 16
+        STORE_RECYCLE_IDX = 17
+        STORE_TRASH_IDX = 18
 
 
         storesIdx = 0
@@ -1311,10 +1320,17 @@ ErrorHandler:
         nTotTrashWgt = 0
         nVipTrashWgt = 0
         nOtTrashWgt = 0
+        nPkrWgtContaminated = 0
 
         '1.Get list of Stores with invoices for given period(s) and saves them in stores array
-        sStmt = "SELECT DISTINCT a.cust_id, a.store_id, a.store_number, a.store_address " & _
-        " FROM Store a, VInvoice b " & " WHERE a.cust_id = '" & params.sCustId & "' " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.store_status = 'A' " & " AND b.period_seq IN ( " & params.sPeriodSeqList & ")" & _
+        sStmt = "" & _
+        "SELECT DISTINCT a.cust_id, a.store_id, a.store_number, a.store_address " & _
+        " FROM Store a, VInvoice b " & _
+        " WHERE a.cust_id = '" & params.sCustId & "' " & _
+        " AND a.cust_id = b.cust_id " & _
+        " AND a.store_id = b.store_id " & _
+        " AND a.store_status = 'A' " & _
+        " AND b.period_seq IN ( " & params.sPeriodSeqList & ")" & _
         " AND a.store_id IN ( SELECT store_id FROM groupStore gs " & _
         "                       WHERE gs.cust_id =  a.cust_id " & _
         "                       AND gs.group_seq = " & Str(params.nGroupSeq) & " ) "
@@ -1326,11 +1342,20 @@ ErrorHandler:
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
 
         For row As Integer = 0 To rs.Rows.Count - 1
-            stores.Add(New Object() {rs.Rows(row).Item("cust_id"), rs.Rows(row).Item("store_id"), _
-                                    rs.Rows(row).Item("store_number"), rs.Rows(row).Item("store_address"), _
-                                    nBalerWgt, nPkrWgt, nDumpWgt, nTotWgt, nDumCompWgt, nTotCompWgt, nOtCondemoWgt, _
-                                    nDumTrashWgt, nPkrTrashWgt, nTotTrashWgt, nVipTrashWgt, nOtTrashWgt, nStoreRecycle, _
-                                    nStoreTrash}, rs.Rows(row).Item("cust_id") + Str(rs.Rows(row).Item("store_id")))
+            stores.Add(New Object() {rs.Rows(row).Item("cust_id"), _
+                                    rs.Rows(row).Item("store_id"), _
+                                    rs.Rows(row).Item("store_number"), _
+                                    rs.Rows(row).Item("store_address"), _
+                                    nBalerWgt, _
+                                    nPkrWgt, _
+                                    nDumpWgt, nTotWgt, _
+                                    nDumCompWgt, nTotCompWgt, _
+                                    nOtCondemoWgt, nDumTrashWgt, _
+                                    nPkrTrashWgt, nTotTrashWgt, _
+                                    nVipTrashWgt, nOtTrashWgt, nPkrWgtContaminated, _
+                                    nStoreRecycle, nStoreTrash}, _
+                                    rs.Rows(row).Item("cust_id") + Str(rs.Rows(row).Item("store_id")))
+
             'stores.Add Array(rs.item("cust_id").value, _
             'rs.item("store_id").value, _
             'rs.item("store_number").value, _
@@ -1602,7 +1627,7 @@ ErrorHandler:
 
         Next store
 
-        Dim recycleStore As Object
+        'Dim recycleStore As Object
         Dim trashStore As Object
 
         'showStoresContents
@@ -1610,7 +1635,17 @@ ErrorHandler:
             recycleStore = recycleStores.Item(idx)
             trashStore = trashStores.Item(idx)
 
-            allStores.Add(New Object() {recycleStore(CUST_IDX), recycleStore(STORE_IDX), recycleStore(STORE_NUMBER_IDX), recycleStore(STORE_NAME_IDX), recycleStore(BALERWGT_IDX), recycleStore(PKRWGT_IDX), recycleStore(DUMWGT_IDX), recycleStore(TOTWGT_IDX), recycleStore(DUMWGTCOMPOST_IDX), recycleStore(TOTWGTCOMPOST_IDX), recycleStore(OTWGTDCONDEMO_IDX), trashStore(DUMWGTTRASH_IDX), trashStore(PKRWGTTRASH_IDX), trashStore(TOTWGTTRASH_IDX), trashStore(VIPWGTTRASH_IDX), trashStore(OTWGTTRASH_IDX), recycleStore(STORE_RECYCLE_IDX), trashStore(STORE_TRASH_IDX)}, recycleStore(CUST_IDX) + Str(recycleStore(STORE_IDX)))
+            allStores.Add(New Object() {recycleStore(CUST_IDX), recycleStore(STORE_IDX), _
+                    recycleStore(STORE_NUMBER_IDX), recycleStore(STORE_NAME_IDX), _
+                    recycleStore(BALERWGT_IDX), recycleStore(PKRWGT_IDX), _
+                    recycleStore(DUMWGT_IDX), recycleStore(TOTWGT_IDX), _
+                    recycleStore(DUMWGTCOMPOST_IDX), recycleStore(TOTWGTCOMPOST_IDX), _
+                    recycleStore(OTWGTDCONDEMO_IDX), trashStore(DUMWGTTRASH_IDX), _
+                    trashStore(PKRWGTTRASH_IDX), trashStore(TOTWGTTRASH_IDX), _
+                    trashStore(VIPWGTTRASH_IDX), trashStore(OTWGTTRASH_IDX), _
+                    recycleStore(PKRWGTCONTAMINATED_IDX), _
+                    recycleStore(STORE_RECYCLE_IDX), trashStore(STORE_TRASH_IDX)}, _
+                    recycleStore(CUST_IDX) + Str(recycleStore(STORE_IDX)))
 
         Next
 
