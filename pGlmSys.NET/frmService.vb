@@ -111,7 +111,8 @@ ErrorHandler:
 	
 	Private Sub add_service()
 		gServiceRecord.bFlag = General.modo.NewRecord
-		VB6.ShowForm(frmServiceEntry, VB6.FormShowConstants.Modal, Me)
+        VB6.ShowForm(frmServiceEntry, VB6.FormShowConstants.Modal, Me)
+        frmServiceEntry.Dispose()
 		If gServiceRecord.bFlag = General.modo.SavedRecord Then
 			load_dgService()
 		End If
@@ -120,13 +121,14 @@ ErrorHandler:
 	Private Sub update_service()
         If dgService.SelectedRows.Count < 1 Then
             If dgService.SelectedCells.Count > 0 Then
-                dgService.Rows(dgService.CurrentRow.Index).Selected = True
+                dgService.Rows(dgService.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
         If dgService.SelectedRows.Count > 0 Then
             gServiceRecord.bFlag = General.modo.UpdateRecord
             set_service()
             VB6.ShowForm(frmServiceEntry, VB6.FormShowConstants.Modal, Me)
+            frmServiceEntry.Dispose()
             If gServiceRecord.bFlag = General.modo.SavedRecord Then
                 load_dgService()
             End If
@@ -138,68 +140,68 @@ ErrorHandler:
 	
 	Private Sub set_service()
 		
-        gServiceRecord.serv_id = rsLocal.Rows(0).Item("serv_id")
+        gServiceRecord.serv_id = dgService.SelectedRows(0).Cells("serv_id").Value
 		'Desc
-        If IsDBNull(rsLocal.Rows(0).Item("Name")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("Name").Value) Then
             gServiceRecord.serv_desc = ""
         Else
-            gServiceRecord.serv_desc = Trim(rsLocal.Rows(0).Item("Name"))
+            gServiceRecord.serv_desc = Trim(dgService.SelectedRows(0).Cells("Name").Value)
         End If
 		'serv_eqpt
-        If IsDBNull(rsLocal.Rows(0).Item("Eqpt")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("Eqpt").Value) Then
             gServiceRecord.serv_eqpt = "F"
         Else
-            gServiceRecord.serv_eqpt = rsLocal.Rows(0).Item("Eqpt")
+            gServiceRecord.serv_eqpt = dgService.SelectedRows(0).Cells("Eqpt").Value
         End If
 		'Credit
-        If IsDBNull(rsLocal.Rows(0).Item("Cred")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("Cred")) Then
             gServiceRecord.serv_credit = "F"
         Else
-            gServiceRecord.serv_credit = rsLocal.Rows(0).Item("Cred")
+            gServiceRecord.serv_credit = dgService.SelectedRows(0).Cells("Cred").Value
         End If
 		'serv_rate_contract
-        If IsDBNull(rsLocal.Rows(0).Item("Contract")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("Contract")) Then
             gServiceRecord.serv_rate_contract = "F"
         Else
-            gServiceRecord.serv_rate_contract = rsLocal.Rows(0).Item("Contract")
+            gServiceRecord.serv_rate_contract = dgService.SelectedRows(0).Cells("Contract").Value
         End If
 		'serv_measure_unit
-        If IsDBNull(rsLocal.Rows(0).Item("serv_measure_unit")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("serv_measure_unit")) Then
             gServiceRecord.serv_measure_unit = ""
         Else
-            gServiceRecord.serv_measure_unit = Trim(rsLocal.Rows(0).Item("serv_measure_unit"))
+            gServiceRecord.serv_measure_unit = Trim(dgService.SelectedRows(0).Cells("serv_measure_unit").Value)
         End If
 		'unit_desc
-        If IsDBNull(rsLocal.Rows(0).Item("Unit")) Then
+        If IsDBNull(dgService.selectedrows(0).Cells("Unit")) Then
             gServiceRecord.unit_desc = ""
         Else
-            gServiceRecord.unit_desc = Trim(rsLocal.Rows(0).Item("Unit"))
+            gServiceRecord.unit_desc = Trim(dgService.SelectedRows(0).Cells("Unit").Value)
         End If
 		'Class
-        If IsDBNull(rsLocal.Rows(0).Item("Class")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("Class")) Then
             gServiceRecord.serv_class = ""
         Else
-            gServiceRecord.serv_class = rsLocal.Rows(0).Item("Class")
+            gServiceRecord.serv_class = dgService.SelectedRows(0).Cells("Class").Value
         End If
 		'Class Id
-        If IsDBNull(rsLocal.Rows(0).Item("serv_class_id")) Then
+        If IsDBNull(dgService.SelectedRows(0).Cells("serv_class_id")) Then
             gServiceRecord.serv_class_id = ""
         Else
-            gServiceRecord.serv_class_id = rsLocal.Rows(0).Item("serv_class_id")
+            gServiceRecord.serv_class_id = dgService.SelectedRows(0).Cells("serv_class_id").Value
         End If
 		
 		'Frequency
-        If IsDBNull(rsLocal.Rows(0).Item("Freq")) Then
+        If IsDBNull(dgService.selectedrows(0).Cells("Freq")) Then
             gServiceRecord.serv_frequency = ""
         Else
-            gServiceRecord.serv_frequency = rsLocal.Rows(0).Item("Freq")
+            gServiceRecord.serv_frequency = dgService.SelectedRows(0).Cells("Freq").Value
         End If
 		
 		'ServIdConversion
-        If IsDBNull(rsLocal.Rows(0).Item("serv_id_conversion")) Then
+        If IsDBNull(dgService.selectedrows(0).Cells("serv_id_conversion")) Then
             gServiceRecord.serv_id_conversion = 0
         Else
-            gServiceRecord.serv_id_conversion = rsLocal.Rows(0).Item("serv_id_conversion")
+            gServiceRecord.serv_id_conversion = dgService.SelectedRows(0).Cells("serv_id_conversion").Value
         End If
 	End Sub
 

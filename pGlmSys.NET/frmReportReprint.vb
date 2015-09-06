@@ -5,19 +5,18 @@ Imports CrystalDecisions.CrystalReports.Engine
 Friend Class frmReportReprint
 	Inherits System.Windows.Forms.Form
     Private rsLocal As DataTable
+    Private nTran As SqlTransaction = Nothing
 	'--------Crystal Reports-----------------
     Private rsReport As DataTable
-	
-	
-	'UPGRADE_WARNING: Event cbCustName.SelectedIndexChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-	Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
-		If cbCustName.SelectedIndex >= 0 Then
-			cbCustId.SelectedIndex = cbCustName.SelectedIndex
-		End If
-		
-		load_dgReport()
-		
-	End Sub
+
+    Private Sub cbCustName_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cbCustName.SelectedIndexChanged
+        If cbCustName.SelectedIndex >= 0 Then
+            cbCustId.SelectedIndex = cbCustName.SelectedIndex
+        End If
+
+        load_dgReport()
+
+    End Sub
 	
 	Private Sub load_dgReport()
         
@@ -416,10 +415,10 @@ ErrorHandler:
     Private Sub btFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btFlag.Click
         Dim bm As DataGridViewRow
         Dim nRecords As Short
-        Dim nTran As SqlTransaction
+
         Dim nId As Integer
 
-        If Me.dgReport.SelectedRows.Count = 0 Then
+        If Me.dgReport.SelectedRows.Count < 1 Then
             MsgBox("Please select a record before attempting this action", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Warning")
             Exit Sub
         Else
@@ -427,25 +426,23 @@ ErrorHandler:
             bm = dgReport.SelectedRows(0)
             'rsLocal.Bookmark = bm
             If Trim(cbRepCaption.Text) = COST_CONTAINMENT_REPORT Then
-                If Trim(rsLocal.Rows(0).Item("Final Version")) = "TRUE" Then
+                If Trim(bm.Cells("Final Version").Value) = "TRUE" Then
                     If MsgBox("Do you want to turn off Final Version flag?. The Web Report records will be removed as well", MsgBoxStyle.Information + MsgBoxStyle.YesNo, "Message") = MsgBoxResult.Yes Then
-
-
                         nTran = cn.BeginTransaction()
                         sStmt = "UPDATE rptCriteriaCostCont " & " SET is_final_version = 'FALSE' " & _
-                                " WHERE cust_id = '" & Trim(rsLocal.Rows(0).Item("Cust")) & "' " & _
+                                " WHERE cust_id = '" & Trim(bm.Cells("Cust").Value) & "' " & _
                                 " AND rep_no = " & Str(VB6.GetItemData(cbRepCaption, cbRepCaption.SelectedIndex)) & _
-                                " AND report_id = " & Str(rsLocal.Rows(0).Item("Report"))
+                                " AND report_id = " & Str(bm.Cells("Report").Value)
 
                         cm = cn.CreateCommand() '.let_ActiveConnection(cn)
                         cm.CommandType = CommandType.Text
                         cm.CommandText = sStmt
-
+                        cm.Transaction = nTran
 
                         nRecords = cm.ExecuteNonQuery()
                         If nRecords > 0 Then
                             'Delete from GlmCostCont
-                            sStmt = "DELETE FROM GlmCostCont " & " WHERE report_id =" & Str(rsLocal.Rows(0).Item("Report"))
+                            sStmt = "DELETE FROM GlmCostCont " & " WHERE report_id =" & Str(bm.Cells("Report").Value)
 
                             cm.CommandText = sStmt
                             nRecords = cm.ExecuteNonQuery()
@@ -453,9 +450,13 @@ ErrorHandler:
 
                         'Insert deleted record in glmCostContDeleted table for QlikView
 
-                        nId = get_next_seq("glmCostContDeleted", "id")
+                        nId = get_next_seq("glmCostContDeleted", "id", nTran)
 
-                        sStmt = "INSERT INTO glmCostContDeleted (id, cust_id, report_id) " & " VALUES (" & Str(nId) & ",'" & Trim(rsLocal.Rows(0).Item("Cust")) & "'," & Str(rsLocal.Rows(0).Item("Report")) & ")"
+                        sStmt = "INSERT INTO glmCostContDeleted (id, cust_id, report_id) " & _
+                                " VALUES (" & _
+                                    Str(nId) & ",'" & _
+                                    Trim(bm.Cells("Cust").Value) & "'," & _
+                                    Str(bm.Cells("Report").Value) & ")"
 
                         cm.CommandText = sStmt
                         nRecords = cm.ExecuteNonQuery()

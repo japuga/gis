@@ -89,7 +89,7 @@ Friend Class frmBank
 
         If dgBankAccount.SelectedRows.Count < 1 Then
             If dgBankAccount.SelectedCells.Count > 0 Then
-                dgBankAccount.Rows(dgBankAccount.CurrentRow.Index).Selected = True
+                dgBankAccount.Rows(dgBankAccount.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
 
@@ -125,9 +125,9 @@ Friend Class frmBank
 				
 			Case General.modo.UpdateRecord
 
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value) Then
-                    If CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value) > 0 Then
-                        gBankAccount.nBankCustSeq = CShort(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value)
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("bank_cust_seq").Value) Then
+                    If CDbl(dgBankAccount.SelectedRows(0).Cells("bank_cust_seq").Value) > 0 Then
+                        gBankAccount.nBankCustSeq = CShort(dgBankAccount.SelectedRows(0).Cells("bank_cust_seq").Value)
                     Else
                         MsgBox("Failed to load Bank Id", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                         set_data = False
@@ -140,8 +140,8 @@ Friend Class frmBank
                 End If
 				
 				'BankId
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("bank_id").Value) Then
-                    gBankAccount.nBankId = CShort(dgBankAccount.CurrentRow.Cells("bank_id").Value)
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("bank_id").Value) Then
+                    gBankAccount.nBankId = CShort(dgBankAccount.SelectedRows(0).Cells("bank_id").Value)
                 Else
                     MsgBox("Bank information was not properly loaded.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                     set_data = False
@@ -149,13 +149,13 @@ Friend Class frmBank
                 End If
 				
 				'CustId
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("cust_id").Value) Then
-                    gBankAccount.sCustId = dgBankAccount.CurrentRow.Cells("cust_id").Value
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("cust_id").Value) Then
+                    gBankAccount.sCustId = dgBankAccount.SelectedRows(0).Cells("cust_id").Value
                 End If
 				
 				'Bank Account
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("Account").Value) Then
-                    gBankAccount.sBankAccount = dgBankAccount.CurrentRow.Cells("Account").Value
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("Account").Value) Then
+                    gBankAccount.sBankAccount = dgBankAccount.SelectedRows(0).Cells("Account").Value
                 Else
                     MsgBox("Failed to load Bank Account", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                     set_data = False
@@ -163,15 +163,15 @@ Friend Class frmBank
                 End If
 				
 				'Balance
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("balance").Value) Then
-                    gBankAccount.nBankAccountBalance = CDbl(dgBankAccount.CurrentRow.Cells("balance").Value)
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("balance").Value) Then
+                    gBankAccount.nBankAccountBalance = CDbl(dgBankAccount.SelectedRows(0).Cells("balance").Value)
                 Else
                     gBankAccount.nBankAccountBalance = 0
                 End If
 				
 				'Last Check No
-                If Not IsDBNull(dgBankAccount.CurrentRow.Cells("LastCheck").Value) Then
-                    gBankAccount.nLastCheckNo = CInt(dgBankAccount.CurrentRow.Cells("LastCheck").Value)
+                If Not IsDBNull(dgBankAccount.SelectedRows(0).Cells("LastCheck").Value) Then
+                    gBankAccount.nLastCheckNo = CInt(dgBankAccount.SelectedRows(0).Cells("LastCheck").Value)
                 Else
                     MsgBox("Failed to get Last printed Check.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
                     set_data = False
@@ -189,7 +189,7 @@ Friend Class frmBank
         'If dgBankAccount.SelBookmarks.Count > 0 Then
         If dgBankAccount.SelectedRows.Count > 0 Then
             'Verify if there is no check associated to this Bank Account
-            sStmt = "SELECT COUNT(*) FROM BCheck " & " WHERE bank_cust_seq=" & Str(CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value))
+            sStmt = "SELECT COUNT(*) FROM BCheck " & " WHERE bank_cust_seq=" & Str(CDbl(dgBankAccount.SelectedRows(0).Cells("bank_cust_seq").Value))
             cmd.CommandText = sStmt
 
             rs = getDataTable(sStmt) ' cmd.ExecuteReader()
@@ -200,7 +200,7 @@ Friend Class frmBank
                 End If
             End If
 
-            sStmt = "DELETE FROM BankAccount " & "WHERE bank_cust_seq =" & Str(CDbl(dgBankAccount.CurrentRow.Cells("bank_cust_seq").Value))
+            sStmt = "DELETE FROM BankAccount " & "WHERE bank_cust_seq =" & Str(CDbl(dgBankAccount.SelectedRows(0).Cells("bank_cust_seq").Value))
             cmd.CommandText = sStmt
             nRecords = cmd.ExecuteNonQuery()
             If nRecords > 0 Then
