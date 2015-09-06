@@ -171,17 +171,21 @@ ErrorHandler:
 	End Function
 	
 	
-	Public Function get_next_seq(ByRef sTable As String, ByRef sField As String) As Short
-		Dim nSeq As Short
-		
-		nSeq = -1
-		
-		On Error GoTo ErrorHandler
-		
-		sStmt = "SELECT MAX(" & sField & ") " & " FROM " & sTable & ""
-		
-		
-        rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+    Public Function get_next_seq(ByRef sTable As String, ByRef sField As String, Optional ByRef nTran As SqlTransaction = Nothing) As Short
+        Dim nSeq As Short
+
+        nSeq = -1
+
+        On Error GoTo ErrorHandler
+
+        sStmt = "SELECT MAX(" & sField & ") " & " FROM " & sTable & ""
+
+        If IsNothing(nTran) Then
+            rs = getDataTable(sStmt) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        Else
+            rs = getDataTable(sStmt, nTran) '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        End If
+
 
         If rs.Rows.Count > 0 Then
             If IsDBNull(rs.Rows(0).Item(0)) Then
@@ -198,8 +202,8 @@ ErrorHandler:
 
 ErrorHandler:
         save_error("DBFunctions.bas", "get_next_seq")
-		
-	End Function
+
+    End Function
 	
     Public Sub create_param_rs(ByRef nombreParametro As String, ByRef tipo As SqlDbType, ByRef destino As ParameterDirection, ByRef valor As Object, ByRef raCmd As SqlCommand, Optional ByRef tamanio As Integer = 0)
         Dim raPrm As SqlParameter

@@ -3,7 +3,8 @@ Option Explicit On
 Imports System.Data.SqlClient
 Friend Class frmInvoiceBooking
 	Inherits System.Windows.Forms.Form
-	Public gsStoreNumber As String
+    Public gsStoreNumber As String
+    Public parentCaller As String
     Private rsDetailWgt As SqlDataReader
     Private rsDetail As DataTable
     Private rsDetailClone As DataTable
@@ -34,6 +35,7 @@ Friend Class frmInvoiceBooking
     Private bindingSource1 As New BindingSource()
     Private daDetail As SqlDataAdapter
     Private scbDetail As SqlCommandBuilder
+
 
 
 	Public Enum mode
@@ -534,7 +536,7 @@ ErrorHandler:
                 If bLastDeleted Then
                     'rsDetail.Bookmark = vMark
                     'rsDetail.Rows(0).RemoveAt(vMark.rowindex) '.Delete()
-                    dgDetail.Rows(0).Selected = True
+                    'dgDetail.Rows(0).Selected = True
                     'rsDetail.Bookmark = vMarkTmp
                     bLastDeleted = False
                 End If
@@ -777,7 +779,7 @@ ErrorHandler:
         calc_total2()
         'cbService.Move -10000
         'cbEquipment.Move -10000
-
+        Exit Sub
 ErrorHandler:
         save_error(Me.Name, "cmdDrop.click")
 
@@ -1088,7 +1090,15 @@ ErrorHandler:
             Dim sVendSeq As String = ""
             Dim sAccountNo As String = ""
             Dim sInvoiceNo As String = ""
-            Dim parentName As String = Me.Owner.Name.ToString
+            Dim parentName As String
+            parentName = ""
+            Try
+                parentName = Me.parentCaller
+                If Me.parentCaller = "" Then
+                    parentName = Me.Owner.Name.ToString
+                End If
+            Catch e As Exception
+            End Try
             If parentName = "frmInvoiceImport" Then
                 With frmInvoiceImport
                     sCustId = Trim(.dgPendingInvoices.SelectedRows(0).Cells("Cust").Value)
@@ -1108,7 +1118,7 @@ ErrorHandler:
             End If
 
             'populateHeader(.sCustId, .sStoreId, .sStoreNumber, .sStateId, CShort(.sVendSeq), .sAccountNo, .sInvoiceNo)
-           
+
         Catch e As Exception
         End Try
     End Sub

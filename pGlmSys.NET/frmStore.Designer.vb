@@ -29,13 +29,13 @@
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmStore))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
-        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
-        Me.lbState = New System.Windows.Forms.Label
-        Me.Label1 = New System.Windows.Forms.Label
         Me.btNew = New System.Windows.Forms.ToolStripButton
         Me.btSave = New System.Windows.Forms.ToolStripButton
         Me.btSearch = New System.Windows.Forms.ToolStripButton
+        Me._Toolbar1_Button4 = New System.Windows.Forms.ToolStripSeparator
         Me.btExit = New System.Windows.Forms.ToolStripButton
+        Me.lbState = New System.Windows.Forms.Label
+        Me.Label1 = New System.Windows.Forms.Label
         Me.dgStore = New System.Windows.Forms.DataGridView
         Me.Toolbar1.SuspendLayout()
         CType(Me.dgStore, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -49,38 +49,6 @@
         Me.Toolbar1.Name = "Toolbar1"
         Me.Toolbar1.Size = New System.Drawing.Size(652, 39)
         Me.Toolbar1.TabIndex = 0
-        '
-        '_Toolbar1_Button4
-        '
-        Me._Toolbar1_Button4.AutoSize = False
-        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
-        Me._Toolbar1_Button4.Size = New System.Drawing.Size(10, 39)
-        '
-        'lbState
-        '
-        Me.lbState.BackColor = System.Drawing.SystemColors.Control
-        Me.lbState.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lbState.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbState.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lbState.Location = New System.Drawing.Point(272, 64)
-        Me.lbState.Name = "lbState"
-        Me.lbState.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lbState.Size = New System.Drawing.Size(137, 17)
-        Me.lbState.TabIndex = 3
-        Me.lbState.Text = "State"
-        '
-        'Label1
-        '
-        Me.Label1.BackColor = System.Drawing.SystemColors.Control
-        Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label1.Location = New System.Drawing.Point(16, 64)
-        Me.Label1.Name = "Label1"
-        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(241, 17)
-        Me.Label1.TabIndex = 2
-        Me.Label1.Text = "Customer"
         '
         'btNew
         '
@@ -109,6 +77,12 @@
         Me.btSearch.Size = New System.Drawing.Size(36, 36)
         Me.btSearch.Text = "Search"
         '
+        '_Toolbar1_Button4
+        '
+        Me._Toolbar1_Button4.AutoSize = False
+        Me._Toolbar1_Button4.Name = "_Toolbar1_Button4"
+        Me._Toolbar1_Button4.Size = New System.Drawing.Size(10, 39)
+        '
         'btExit
         '
         Me.btExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
@@ -118,8 +92,35 @@
         Me.btExit.Size = New System.Drawing.Size(36, 36)
         Me.btExit.Text = "Exit"
         '
+        'lbState
+        '
+        Me.lbState.BackColor = System.Drawing.SystemColors.Control
+        Me.lbState.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lbState.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbState.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lbState.Location = New System.Drawing.Point(272, 64)
+        Me.lbState.Name = "lbState"
+        Me.lbState.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lbState.Size = New System.Drawing.Size(137, 17)
+        Me.lbState.TabIndex = 3
+        Me.lbState.Text = "State"
+        '
+        'Label1
+        '
+        Me.Label1.BackColor = System.Drawing.SystemColors.Control
+        Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label1.Location = New System.Drawing.Point(16, 64)
+        Me.Label1.Name = "Label1"
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label1.Size = New System.Drawing.Size(241, 17)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "Customer"
+        '
         'dgStore
         '
+        Me.dgStore.AllowUserToAddRows = False
         Me.dgStore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgStore.Location = New System.Drawing.Point(19, 84)
         Me.dgStore.Name = "dgStore"

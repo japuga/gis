@@ -222,8 +222,9 @@ Friend Class frmInvoiceImport
 		End If
 		
 		'Populate Invoice form with header info
-		'UPGRADE_ISSUE: Load statement is not supported. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="B530EFF2-3132-48F8-B8BC-D88AF543D321"'
-        frmInvoiceBooking.ShowDialog(Me)
+        frmInvoiceBooking.parentCaller = "frmInvoiceImport"
+        frmInvoiceBooking.ShowDialog()
+        frmInvoiceBooking.parentCaller = ""
         'VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
         'frmInvoiceBooking.Show()
 

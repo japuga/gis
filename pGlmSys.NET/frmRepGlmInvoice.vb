@@ -1108,7 +1108,8 @@ ErrorHandler:
         cmReport = cn.CreateCommand '.let_ActiveConnection(cn)
         cmReport.CommandType = CommandType.StoredProcedure
 		cmReport.CommandText = "usp_copy_repGlmInvoice"
-		
+
+        SqlCommandBuilder.DeriveParameters(cmReport)
 		cmReport.Parameters("@nReportId").Value = nReport
 		cmReport.Parameters("@sCustId").Value = rptGlmInvoiceParam.sCustId
 		cmReport.Parameters("@sStateId").Value = rptGlmInvoiceParam.sStateId
@@ -1140,19 +1141,24 @@ ErrorHandler:
 		End If
 		
 		cmReport.Parameters("@sReportTemplate").value = cbReportTemplate.Text
-		
-		cmReport.Parameters("@sGroupSeqList").Value = rptGlmInvoiceParam.sGroupSeqList
-		
-		cmReport.Parameters("@nReportIdCurr").Value = nReportFinal
+
+        If Not IsNothing(rptGlmInvoiceParam.sGroupSeqList) Then
+            cmReport.Parameters("@sGroupSeqList").Value = rptGlmInvoiceParam.sGroupSeqList
+        Else
+            cmReport.Parameters("@sGroupSeqList").Value = "NULL"
+        End If
+        'cmReport.Parameters("@sGroupSeqList").Value = rptGlmInvoiceParam.sGroupSeqList
+
+        cmReport.Parameters("@nReportIdCurr").Value = nReportFinal
         cmReport.Parameters("@nError").Direction = ParameterDirection.Output
-		'Ejecuto el procedure y verifico por errores
+        'Ejecuto el procedure y verifico por errores
         cmReport.ExecuteNonQuery()
-		
-		rptGlmInvoiceParam.nError = cmReport.Parameters("@nError").Value
-		If rptGlmInvoiceParam.nError <> 0 Then
-			MsgBox("An error ocurred while backing up report data.", MsgBoxStyle.Exclamation + MsgBoxStyle.OKOnly, "GLM Error")
-			Exit Sub
-		End If
-		
-	End Sub
+
+        rptGlmInvoiceParam.nError = cmReport.Parameters("@nError").Value
+        If rptGlmInvoiceParam.nError <> 0 Then
+            MsgBox("An error ocurred while backing up report data.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "GLM Error")
+            Exit Sub
+        End If
+
+    End Sub
 End Class
