@@ -162,14 +162,15 @@ ErrorHandler:
 		'Next
 	End Sub
     Private Function load_report(ByVal dstReport As DataTable) As Boolean
-        'Dim sFile As String 'Path de la plantilla del reporte
+        Dim sFile As String 'Path de la plantilla del reporte
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
 
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
-            rptDoc.Load(strReportsSysPath & "rptRecycleTonGen.rpt")
+            sFile = get_template(sLocalReport, cbReportTemplateDesc.SelectedValue)
+            rptDoc.Load(sFile)
         Catch ex As Exception
             MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try
