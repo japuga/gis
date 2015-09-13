@@ -827,10 +827,12 @@ ErrorHandler:
         ' sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
+        Dim sFile As String
         'MsgBox("About to load report: " & vbCrLf & strReportsSysPath & vbCrLf & "Report name: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Info")
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
-            rptDoc.Load(strReportsSysPath & "rptCostCont.rpt")
+            sFile = get_template(sLocalReport, cbReportTemplate.Text)
+            rptDoc.Load(sFile)
         Catch ex As Exception
             MsgBox("Err: " & ex.Message & vbCrLf & "Please install: " & "rptCostCont.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
         End Try

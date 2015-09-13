@@ -60,7 +60,7 @@ Module General
     Public gnLoginId As Integer
 
     'OSdriveLetter es de la forma "E:\", o "C:\"
-    Public strReportsSysPath As String = OSdriveLetter & "glm\vbnet\reports\"
+    'Public strReportsSysPath As String = OSdriveLetter & "glm\vbnet\reports\"
 
     Public Structure gReportUDT
         Dim name As String 'Report Name
