@@ -1250,6 +1250,7 @@ ErrorHandler:
         Dim nPoundsPerYdInPKR As Double
         Dim nPoundsPerYdInDUM As Double
         Dim nPoundsPerYdInTOT As Double
+        Dim nPoundsPerGalInTOT As Double
         Dim nPoundsPerYdInDUMCompost As Double
         Dim nPoundsPerYdInTOTCompost As Double
         Dim nPoundsPerYdInOTCondemo As Double
@@ -1373,24 +1374,41 @@ ErrorHandler:
         If stores.Count() > 0 Then
             nPoundsPerBaler = getPoundsPerBaler()
             nPoundsPerYdInPKR = getPoundsPerYdInPKR()
-            nPoundsPerYdInDUM = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, RPTRECYCLETONGEN_RECYCLE, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerYdInDUM = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, _
+                RPTRECYCLETONGEN_RECYCLE, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerYdInTOT = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, RPTRECYCLETONGEN_RECYCLE, RPTRECYCLETONGEN_UOM_GAL)
+            nPoundsPerYdInTOT = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, _
+                RPTRECYCLETONGEN_RECYCLE, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerYdInDUMCompost = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, RPTRECYCLETONGEN_COMPOST, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerGalInTOT = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, _
+                RPTRECYCLETONGEN_RECYCLE, RPTRECYCLETONGEN_UOM_GAL)
 
-            nPoundsPerYdInTOTCompost = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, RPTRECYCLETONGEN_COMPOST, RPTRECYCLETONGEN_UOM_GAL)
+            nPoundsPerYdInDUMCompost = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, _
+                RPTRECYCLETONGEN_COMPOST, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerYdInOTCondemo = getPoundsPer(RPTRECYCLETONGEN_EQPT_OT, RPTRECYCLETONGEN_CONDEMO, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerYdInTOTCompost = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, _
+                RPTRECYCLETONGEN_COMPOST, RPTRECYCLETONGEN_UOM_GAL)
 
-            nPoundsPerYdInDUMTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerYdInOTCondemo = getPoundsPer(RPTRECYCLETONGEN_EQPT_OT, _
+                RPTRECYCLETONGEN_CONDEMO, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerYdInPKRTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_PKR, RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerYdInDUMTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_DUMP, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerGalInTotTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_GAL)
+            nPoundsPerYdInPKRTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_PKR, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
 
-            nPoundsPerYdInVIPTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_VIP, RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
+            nPoundsPerGalInTotTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_GAL)
 
+            nPoundsPerYdInVIPTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_VIP, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
+
+            nPoundsPerYdInOTTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_OT, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
+
+            nPoundsPerYdInTotTrash = getPoundsPer(RPTRECYCLETONGEN_EQPT_TOTE, _
+                RPTRECYCLETONGEN_TRASH, RPTRECYCLETONGEN_UOM_YARDS)
 
         End If
 
@@ -1410,25 +1428,39 @@ ErrorHandler:
             sCustId = store(CUST_IDX)
             nStoreId = store(STORE_IDX)
 
-            sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & " WHERE a.cust_id = '" & sCustId & "'" & " AND a.store_id= " & Str(nStoreId) & " AND a.content_id = c.content_id " & " AND b.content_group_id = c.content_group_id " & " AND b.content_group_name ='RPTRECYCLETONGEN_RECYCLE' " & " AND c.content_id = d.content_id " & " AND a.eqpt_id = e.eqpt_id " & " ORDER BY a.store_id "
+            sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & _
+                    " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & _
+                    " WHERE a.cust_id = '" & sCustId & "'" & _
+                    " AND a.store_id= " & Str(nStoreId) & _
+                    " AND a.content_id = c.content_id " & _
+                    " AND b.content_group_id = c.content_group_id " & _
+                    " AND b.content_group_name ='RPTRECYCLETONGEN_RECYCLE' " & _
+                    " AND c.content_id = d.content_id " & _
+                    " AND a.eqpt_id = e.eqpt_id " & _
+                    " ORDER BY a.store_id "
+
             cmd.CommandText = sStmt
             Debug.Print("Storeid:" & Str(nStoreId))
 
-            rs = getDataTable(sStmt) 'cmd.ExecuteReader()
+            rsTonReport = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-            For row As Integer = 0 To rs.Rows.Count - 1
-                sContentDesc = Trim(rs.Rows(row).Item("content_desc"))
-                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc"))
-                nEqptSeq = rs.Rows(row).Item("eqpt_seq")
-                sEqptType = Trim(rs.Rows(row).Item("eqpt_type"))
+            For row As Integer = 0 To rsTonReport.Rows.Count - 1
+                sContentDesc = Trim(rsTonReport.Rows(row).Item("content_desc"))
+                sEqptDesc = Trim(rsTonReport.Rows(row).Item("eqpt_desc"))
+                nEqptSeq = rsTonReport.Rows(row).Item("eqpt_seq")
+                sEqptType = Trim(rsTonReport.Rows(row).Item("eqpt_type"))
 
 
                 Debug.Print("--EqptDesc:" & sEqptDesc & "   Content:" & sContentDesc)
                 'Debug.Print "Content:" + sContentDesc
 
                 'Recycle Balers
-                If sContentDesc = RPTRECYCLETONGEN_OCC_BALES And sEqptType = RPTRECYCLETONGEN_EQPT_BALER Then
-                    nBalerWgt = rrtg_process_bale(sCustId, nStoreId, nEqptSeq, params, nPoundsPerBaler)
+                If (sContentDesc = RPTRECYCLETONGEN_OCC_BALES Or _
+                    sContentDesc = RPTRECYCLETONGEN_OCC) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_BALER Then
+
+                    nBalerWgt = rrtg_process_bale(sCustId, nStoreId, nEqptSeq, _
+                        params, nPoundsPerBaler)
 
                     store(BALERWGT_IDX) = store(BALERWGT_IDX) + System.Math.Round(nBalerWgt, 2)
 
@@ -1436,24 +1468,56 @@ ErrorHandler:
                 End If
 
                 'Recycle Compactors PKR
-                If sContentDesc = RPTRECYCLETONGEN_RECYCLE And sEqptType = RPTRECYCLETONGEN_EQPT_PKR Then
+                If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or _
+                    sContentDesc = RPTRECYCLETONGEN_COMMINGLED_RECYCLE) _
+                    And sEqptType = RPTRECYCLETONGEN_EQPT_PKR Then
 
-                    'nPkrWgt = rrtg_process_pkr(sCustId, nStoreId, _
-                    'nEqptSeq, params, _
-                    'nPoundsPerYdInPKR)
+                    nPkrWgtContaminated = rrtg_process_contaminated(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerYdInPKR, _
+                        RPTRECYCLETONGEN_CONT_TON, _
+                        RPTRECYCLETONGEN_CONT_PU, _
+                        RPTRECYCLETONGEN_PU_FREQUENCY)
 
-                    nPkrWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInPKR, "RPTRECYCLETONGEN_PKR_TON", "RPTRECYCLETONGEN_PKR_PU", RPTRECYCLETONGEN_PU_FREQUENCY)
+                    If (nPkrWgtContaminated > 0) Then
+                        store(PKRWGTCONTAMINATED_IDX) = store(PKRWGTCONTAMINATED_IDX) + System.Math.Round(nPkrWgtContaminated, 2)
 
-                    store(PKRWGT_IDX) = store(PKRWGT_IDX) + System.Math.Round(nPkrWgt, 2)
+                        Debug.Print("---Recycle PKR Contaminated wgt Tons:" & Str(nPkrWgt))
+                        nPkrWgtContaminated = 0
+                    Else
+                        nPkrWgt = rrtg_process(sCustId, nStoreId, _
+                            nEqptSeq, params, _
+                            nPoundsPerYdInPKR, _
+                            nPoundsPerYdInPKR, _
+                            "RPTRECYCLETONGEN_PKR_TON", _
+                            "RPTRECYCLETONGEN_PKR_PU", _
+                            RPTRECYCLETONGEN_PU_FREQUENCY)
 
-                    Debug.Print("---Recycle PKR wgt Tons:" & Str(nPkrWgt))
+                        store(PKRWGT_IDX) = store(PKRWGT_IDX) + System.Math.Round(nPkrWgt, 2)
+                        Debug.Print("---Recycle PKR wgt Tons:" & Str(nPkrWgt))
+                    End If
+
+
 
                 End If
 
 
                 'Recycle Dumpsters
-                If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or sContentDesc = RPTRECYCLETONGEN_OCC) And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
-                    nDumWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUM, RPTRECYCLETONGEN_DUM_TON, RPTRECYCLETONGEN_DUM_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or _
+                    sContentDesc = RPTRECYCLETONGEN_OCC Or _
+                    sContentDesc = RPTRECYCLETONGEN_COMMINGLED_RECYCLE Or _
+                    sContentDesc = RPTRECYCLETONGEN_BOOK_RECYCLING Or _
+                    sContentDesc = RPTRECYCLETONGEN_MIXED_PAPER Or _
+                    sContentDesc = RPTRECYCLETONGEN_MIXED_RECYCLE) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_DUMP _
+                Then
+                    nDumWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerYdInDUM, _
+                        nPoundsPerYdInDUM, _
+                        RPTRECYCLETONGEN_DUM_TON, _
+                        RPTRECYCLETONGEN_DUM_PU, _
+                        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(DUMWGT_IDX) = store(DUMWGT_IDX) + System.Math.Round(nDumWgt, 2)
 
@@ -1462,8 +1526,17 @@ ErrorHandler:
 
 
                 'Recycle Tote
-                If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or sContentDesc = RPTRECYCLETONGEN_PAPER) And sEqptType = RPTRECYCLETONGEN_EQPT_TOTE Then
-                    nTotWgt = rrtg_process_tote(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInTOT, RPTRECYCLETONGEN_SERV_TOTE, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If (sContentDesc = RPTRECYCLETONGEN_RECYCLE Or _
+                    sContentDesc = RPTRECYCLETONGEN_PAPER) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_TOTE _
+                Then
+                    nTotWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerGalInTOT, _
+                        nPoundsPerYdInTOT, _
+                        RPTRECYCLETONGEN_TOTE_TON, _
+                        RPTRECYCLETONGEN_TOTE_PU, _
+                        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(TOTWGT_IDX) = store(TOTWGT_IDX) + System.Math.Round(nTotWgt, 2)
 
@@ -1474,16 +1547,34 @@ ErrorHandler:
 
 
                 'Recycle Composting
-                If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
-                    nDumCompWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUMCompost, RPTRECYCLETONGEN_COMPOST_TON, RPTRECYCLETONGEN_COMPOST_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or _
+                    sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_DUMP _
+                Then
+                    nDumCompWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerYdInDUMCompost, _
+                        nPoundsPerYdInDUMCompost, _
+                        RPTRECYCLETONGEN_COMPOST_TON, _
+                        RPTRECYCLETONGEN_COMPOST_PU, _
+                        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(DUMWGTCOMPOST_IDX) = store(DUMWGTCOMPOST_IDX) + System.Math.Round(nDumCompWgt, 2)
 
                     Debug.Print("---DUM wgt Composting Tons:" & Str(nDumWgt))
                 End If
 
-                If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And sEqptType = RPTRECYCLETONGEN_EQPT_TOTE Then
-                    nTotCompWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInTOTCompost, RPTRECYCLETONGEN_COMPOST_TON, RPTRECYCLETONGEN_COMPOST_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If (sContentDesc = RPTRECYCLETONGEN_COMPOST Or _
+                    sContentDesc = RPTRECYCLETONGEN_FOODWASTE) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_TOTE _
+                Then
+                    nTotCompWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerYdInTOTCompost, _
+                        nPoundsPerYdInTOTCompost, _
+                        RPTRECYCLETONGEN_COMPOST_TON, _
+                        RPTRECYCLETONGEN_COMPOST_PU, _
+                        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(TOTWGTCOMPOST_IDX) = store(TOTWGTCOMPOST_IDX) + System.Math.Round(nTotCompWgt, 2)
 
@@ -1491,8 +1582,18 @@ ErrorHandler:
                 End If
 
                 'Recycle Open Top
-                If (sContentDesc = RPTRECYCLETONGEN_CONDEMO Or sContentDesc = RPTRECYCLETONGEN_CONCRETE) And sEqptType = RPTRECYCLETONGEN_EQPT_OT Then
-                    nOtCondemoWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInOTCondemo, RPTRECYCLETONGEN_CONDEMO_TON, RPTRECYCLETONGEN_CONDEMO_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If (sContentDesc = RPTRECYCLETONGEN_CONDEMO Or _
+                    sContentDesc = RPTRECYCLETONGEN_CONCRETE Or _
+                    sContentDesc = RPTRECYCLETONGEN_WOOD) And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_OT _
+                Then
+                    nOtCondemoWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                        nEqptSeq, params, _
+                        nPoundsPerYdInOTCondemo, _
+                        nPoundsPerYdInOTCondemo, _
+                        RPTRECYCLETONGEN_CONDEMO_TON, _
+                        RPTRECYCLETONGEN_CONDEMO_PU, _
+                        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(OTWGTDCONDEMO_IDX) = store(OTWGTDCONDEMO_IDX) + System.Math.Round(nOtCondemoWgt, 2)
 
@@ -1501,7 +1602,10 @@ ErrorHandler:
 
 
                 'Total Store Recycle
-                store(STORE_RECYCLE_IDX) = store(BALERWGT_IDX) + store(PKRWGT_IDX) + store(DUMWGT_IDX) + store(TOTWGT_IDX) + store(DUMWGTCOMPOST_IDX) + store(TOTWGTCOMPOST_IDX) + store(OTWGTDCONDEMO_IDX)
+                store(STORE_RECYCLE_IDX) = store(BALERWGT_IDX) + store(PKRWGT_IDX) + _
+                                        store(DUMWGT_IDX) + store(TOTWGT_IDX) + _
+                                        store(DUMWGTCOMPOST_IDX) + store(TOTWGTCOMPOST_IDX) + _
+                                        store(OTWGTDCONDEMO_IDX)
 
             Next
 
@@ -1528,29 +1632,52 @@ ErrorHandler:
             sCustId = store(CUST_IDX)
             nStoreId = store(STORE_IDX)
 
-            sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & " WHERE a.cust_id = '" & sCustId & "'" & " AND a.store_id= " & Str(nStoreId) & " AND a.content_id = c.content_id " & " AND b.content_group_id = c.content_group_id " & " AND b.content_group_name ='RPTRECYCLETONGEN_TRASH' " & " AND c.content_id = d.content_id " & " AND a.eqpt_id = e.eqpt_id " & " ORDER BY a.store_id "
-            cmd.CommandText = sStmt
+            sStmt = "SELECT a.eqpt_seq , d.content_desc, a.eqpt_desc, a.store_id, e.eqpt_type " & _
+                    " FROM StoreEqpt a, ContentGroup b, ContentGroupDet c, Content d, Equipment e " & _
+                    " WHERE a.cust_id = '" & sCustId & "'" & _
+                    " AND a.store_id= " & Str(nStoreId) & _
+                    " AND a.content_id = c.content_id " & _
+                    " AND b.content_group_id = c.content_group_id " & _
+                    " AND b.content_group_name ='RPTRECYCLETONGEN_TRASH' " & _
+                    " AND c.content_id = d.content_id " & _
+                    " AND a.eqpt_id = e.eqpt_id " & _
+                    " ORDER BY a.store_id "
+
+            'cmd.CommandText = sStmt
             Debug.Print("TRASH Storeid:" & Str(nStoreId))
 
 
-            rs = getDataTable(sStmt) 'cmd.ExecuteReader()
+            rsTonReport = getDataTable(sStmt) 'cmd.ExecuteReader()
 
-            For row As Integer = 0 To rs.Rows.Count - 1
-                sContentDesc = Trim(rs.Rows(row).Item("content_desc"))
-                sEqptDesc = Trim(rs.Rows(row).Item("eqpt_desc"))
-                nEqptSeq = rs.Rows(row).Item("eqpt_seq")
-                sEqptType = Trim(rs.Rows(row).Item("eqpt_type"))
+            For row As Integer = 0 To rsTonReport.Rows.Count - 1
+
+                sContentDesc = Trim(rsTonReport.Rows(row).Item("content_desc"))
+                sEqptDesc = Trim(rsTonReport.Rows(row).Item("eqpt_desc"))
+                nEqptSeq = rsTonReport.Rows(row).Item("eqpt_seq")
+                sEqptType = Trim(rsTonReport.Rows(row).Item("eqpt_type"))
 
 
                 Debug.Print("--EqptDesc:" & sEqptDesc & "   Content:" & sContentDesc)
 
 
                 'Trash Dumpster
-                If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_DUMP Then
+                If sContentDesc = RPTRECYCLETONGEN_TRASH And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_DUMP _
+                Then
                     'Test Case 8D.begin
                     'nDumTrashWgt = rrtg_process_trash(sCustId, nStoreId, nEqptSeq,
+                    'AFTERMIGRATION.2014.09.13.begin
+                    '2015.03.08. As per TC-28 The "Service Rater Per Month" service was moved from "RPTRECYCLETONGEN_TRASH_TON" group to "RPTRECYCLETONGEN_TRASH_TON" group
+                    'and the formula to compute Trash weight in Dumpster was changed from rrtg_process_trash to rrtg_process_recycle
 
-                    nDumTrashWgt = rrtg_process_trash(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInDUMTrash, RPTRECYCLETONGEN_TRASH_TON, RPTRECYCLETONGEN_TRASH_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+
+                    nDumTrashWgt = rrtg_process_recycle(sCustId, nStoreId, _
+                                nEqptSeq, params, _
+                                nPoundsPerYdInDUMTrash, _
+                                nPoundsPerYdInDUMTrash, _
+                                RPTRECYCLETONGEN_TRASH_TON, _
+                                RPTRECYCLETONGEN_TRASH_PU, _
+                                RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
                     'Test Case 8D.end
 
                     store(DUMWGTTRASH_IDX) = store(DUMWGTTRASH_IDX) + System.Math.Round(nDumTrashWgt, 2)
@@ -1559,8 +1686,16 @@ ErrorHandler:
                 End If
 
                 'Trash Compactor
-                If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_PKR Then
-                    nPkrTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInPKRTrash, RPTRECYCLETONGEN_TRASH_PKR_TON, RPTRECYCLETONGEN_TRASH_PKR_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If sContentDesc = RPTRECYCLETONGEN_TRASH And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_PKR _
+                Then
+                    nPkrTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, _
+                                    params, _
+                                    nPoundsPerYdInPKRTrash, _
+                                    nPoundsPerYdInPKRTrash, _
+                                    RPTRECYCLETONGEN_TRASH_PKR_TON, _
+                                    RPTRECYCLETONGEN_TRASH_PKR_PU, _
+                                    RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
                     store(PKRWGTTRASH_IDX) = store(PKRWGTTRASH_IDX) + System.Math.Round(nPkrTrashWgt, 2)
 
@@ -1570,8 +1705,18 @@ ErrorHandler:
 
                 'Trash Totes
                 'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_TOTE Then
-                    nTotTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerGalInTotTrash, RPTRECYCLETONGEN_TRASH_TOTE_TON, RPTRECYCLETONGEN_TRASH_TOTE_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If sContentDesc = RPTRECYCLETONGEN_TRASH And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_TOTE _
+                Then
+                    'AFTERMIGRATION.2014.09.13.begin
+                    '2015.01.02. As per TC-21 changed from rrtg_process to rrpt_process_recycle to also count freq_times
+                    nTotTrashWgt = rrtg_process_recycle(sCustId, nStoreId, nEqptSeq, _
+                                    params, _
+                                    nPoundsPerGalInTotTrash, _
+                                    nPoundsPerYdInTotTrash, _
+                                    RPTRECYCLETONGEN_TRASH_TOTE_TON, _
+                                    RPTRECYCLETONGEN_TRASH_TOTE_PU, _
+                                    RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
 
                     'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -1582,8 +1727,18 @@ ErrorHandler:
 
                 'Trash VIP
                 'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_VIP Then
-                    nVipTrashWgt = rrtg_process_trash(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInVIPTrash, RPTRECYCLETONGEN_TRASH_VIP_TON, RPTRECYCLETONGEN_TRASH_VIP_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If sContentDesc = RPTRECYCLETONGEN_TRASH And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_VIP _
+                Then
+                    'AFTERMIGRATION.2014.09.13.begin
+                    '2015.02.21 AS per TC-27  changed from rrtg_process to rrpt_process_recycle to consider pounts per Service
+                    nVipTrashWgt = rrtg_process_recycle(sCustId, nStoreId, nEqptSeq, _
+                                    params, _
+                                    nPoundsPerYdInVIPTrash, _
+                                    nPoundsPerYdInVIPTrash, _
+                                    RPTRECYCLETONGEN_TRASH_VIP_TON, _
+                                    RPTRECYCLETONGEN_TRASH_VIP_PU, _
+                                    RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
 
                     'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -1594,8 +1749,23 @@ ErrorHandler:
 
                 'Trash O/T
                 'UPGRADE_WARNING: Couldn't resolve default property of object sEqptType. Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                If sContentDesc = RPTRECYCLETONGEN_TRASH And sEqptType = RPTRECYCLETONGEN_EQPT_OT Then
-                    nOtTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, params, nPoundsPerGalInTotTrash, RPTRECYCLETONGEN_TRASH_OT_TON, RPTRECYCLETONGEN_TRASH_OT_PU, RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+                If sContentDesc = RPTRECYCLETONGEN_TRASH And _
+                    sEqptType = RPTRECYCLETONGEN_EQPT_OT _
+                Then
+                    'AFTERMIGRATION.2014.09.13.begin
+                    'nOtTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, _
+                    '        params, nPoundsPerGalInTotTrash, _
+                    '        RPTRECYCLETONGEN_TRASH_OT_TON, _
+                    '        RPTRECYCLETONGEN_TRASH_OT_PU, _
+                    '        RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
+
+                    nOtTrashWgt = rrtg_process(sCustId, nStoreId, nEqptSeq, _
+                                    params, _
+                                    nPoundsPerYdInTotTrash, _
+                                    nPoundsPerYdInTotTrash, _
+                                    RPTRECYCLETONGEN_TRASH_OT_TON, _
+                                    RPTRECYCLETONGEN_TRASH_OT_PU, _
+                                    RPTRECYCLETONGEN_MONTHLY_FREQUENCY)
 
 
                     'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
@@ -1604,16 +1774,9 @@ ErrorHandler:
                     Debug.Print("---Open Top Trash wgt Tons:" & Str(nOtTrashWgt))
                 End If
 
-                'Trash for Contaminated Compactor
-
-
-                'Total Store Trash
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(OTWGTTRASH_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(VIPWGTTRASH_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(TOTWGTTRASH_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(PKRWGTTRASH_IDX). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                'UPGRADE_WARNING: Couldn't resolve default property of object store(). Click for more: 'ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                store(STORE_TRASH_IDX) = store(DUMWGTTRASH_IDX) + store(PKRWGTTRASH_IDX) + store(TOTWGTTRASH_IDX) + store(VIPWGTTRASH_IDX) + store(OTWGTTRASH_IDX)
+                store(STORE_TRASH_IDX) = store(DUMWGTTRASH_IDX) + store(PKRWGTTRASH_IDX) + _
+                                    store(TOTWGTTRASH_IDX) + store(VIPWGTTRASH_IDX) + _
+                                    store(OTWGTTRASH_IDX)
 
 
             Next
@@ -1724,17 +1887,29 @@ ErrorHandler:
         Dim wgt As Double
         Dim rsBale As DataTable
         Dim numBales As Double
-        Dim cmd As SqlCommand = cn.CreateCommand()
+        'Dim cmd As SqlCommand = cn.CreateCommand()
 
 
 
-        sStmt = " SELECT SUM(b.units) " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & _
-            " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & _
-            " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & _
-            " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & _
-            " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
-            "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = 'RPTRECYCLETONGEN_BALER' )"
-        cmd.CommandText = sStmt
+        sStmt = " SELECT SUM(b.units) " & _
+                " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & _
+                " WHERE a.invoice_no = b.invoice_no " & _
+                " AND a.cust_id = b.cust_id " & _
+                " AND a.store_id = b.store_id " & _
+                " AND a.account_no = b.account_no " & _
+                " AND a.vend_seq = b.vend_seq " & _
+                " AND a.cust_id = '" & sCustId & "' " & _
+                " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & _
+                " AND a.store_id = " & Str(nStoreId) & _
+                " AND b.serv_id = c.serv_id " & _
+                " AND b.eqpt_seq = d.eqpt_seq " & _
+                " AND d.cust_id = a.cust_id " & _
+                " AND d.store_id = a.store_id " & _
+                " AND b.eqpt_seq = " & Str(nEqptSeq) & _
+                " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+                "      WHERE e.serv_group_id = f.serv_group_id " & _
+                "      AND e.serv_group_name = 'RPTRECYCLETONGEN_BALER' )"
+        'cmd.CommandText = sStmt
         rsBale = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
         If rsBale.Rows.Count > 0 Then
@@ -1806,7 +1981,11 @@ ErrorHandler:
 
     End Function
 
-    Public Function rrtg_process(ByRef sCustId As String, ByRef nStoreId As Short, ByRef nEqptSeq As Short, ByRef params As gRptRecycleTonGenParamUDT, ByVal nPoundsPerUOMInContainer As Double, ByRef sServGroupNameTon As String, ByRef sServGroupNamePu As String, ByRef nMonthlyFrequency As Double) As Double
+    Public Function rrtg_process_contaminated(ByRef sCustId As String, ByRef nStoreId As Short, _
+        ByRef nEqptSeq As Short, ByRef params As gRptRecycleTonGenParamUDT, _
+        ByVal nPoundsPerUOMInContainer As Double, _
+        ByRef sServGroupNameTon As String, ByRef sServGroupNamePu As String, _
+        ByRef nMonthlyFrequency As Double) As Double
 
         Dim cmd As SqlCommand = cn.CreateCommand()
         Dim wgt As Double
@@ -1823,9 +2002,28 @@ ErrorHandler:
         tons = 0
         wgt = 0
 
+
         '1. Look for "Processing Fee per Ton" tonnage,
         'if not found then look for "Service Rate per Haul"
-        sStmt = " SELECT sum(b.units)  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNameTon & "' )"
+        sStmt = " SELECT sum(b.units)  " & _
+            " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & _
+            " WHERE a.invoice_no = b.invoice_no " & _
+            " AND a.cust_id = b.cust_id " & _
+            " AND a.store_id = b.store_id " & _
+            " AND a.account_no = b.account_no " & _
+            " AND a.vend_seq = b.vend_seq " & _
+            " AND a.cust_id = '" & sCustId & "' " & _
+            " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & _
+            " AND a.store_id = " & Str(nStoreId) & _
+            " AND b.serv_id = c.serv_id " & _
+            " AND b.eqpt_seq = d.eqpt_seq " & _
+            " AND d.cust_id = a.cust_id " & _
+            " AND d.store_id = a.store_id " & _
+            " AND b.eqpt_seq = " & Str(nEqptSeq) & _
+            " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+            "      WHERE e.serv_group_id = f.serv_group_id " & _
+            "      AND e.serv_group_name = '" & sServGroupNameTon & "' )"
+
         cmd.CommandText = sStmt
         rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
         If rsPU.Rows.Count > 0 Then
@@ -1834,13 +2032,107 @@ ErrorHandler:
             End If
         End If
 
+        rrtg_process_contaminated = tons
+
+    End Function
+
+
+    Public Function rrtg_process(ByRef sCustId As String, ByRef nStoreId As Short, _
+        ByRef nEqptSeq As Short, ByRef params As gRptRecycleTonGenParamUDT, _
+        ByVal nPoundsPerUOMInContainer As Double, _
+        ByVal nPoundsPerYdInContainer As Double, _
+        ByRef sServGroupNameTon As String, ByRef sServGroupNamePu As String, _
+        ByRef nMonthlyFrequency As Double) As Double
+
+        'Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim wgt As Double
+        Dim rsPU As DataTable
+        Dim numPU As Double
+        Dim eqptQty As Short
+        Dim eqptSizeCapacity As Double
+        Dim eqptActualQty As Short
+        Dim tons As Double
+        Dim freqPeriod As String
+        Dim servTon As String
+        Dim sumPU As Double
+        Dim yardage As Double
+        Dim overtons As Double
+
+
+        tons = 0
+        wgt = 0
+        yardage = 0
+        overtons = 0
+
+        '1. Look for "Processing Fee per Ton" tonnage,
+        'if not found then look for "Service Rate per Haul"
+        'sStmt = " SELECT sum(b.units), sum(CAST(ISNULL(h.property_value, 0) AS DECIMAL ) )  " & _
+        '    " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNameTon & "' )"
+        sStmt = " SELECT sum(b.units), sum(CAST(ISNULL(h.property_value, 0) AS DECIMAL ) )  " + _
+            " FROM vinvoice a JOIN vinvoicedet b " + _
+            " ON a.invoice_no = b.invoice_no " + _
+            "    AND a.cust_id = b.cust_id " + _
+            "    AND a.store_id = b.store_id " + _
+            "    AND a.account_no = b.account_no " + _
+            "    AND a.vend_seq = b.vend_seq " + _
+            " JOIN service c ON b.serv_id = c.serv_id " + _
+            " JOIN storeEqpt d ON d.cust_id = a.cust_id AND d.store_id = a.store_id AND b.eqpt_seq = d.eqpt_seq " + _
+            " JOIN ServiceGroupDet h ON b.serv_id = h.serv_id " + _
+            " JOIN ServiceGroup g ON  g.serv_group_id = h.serv_group_id " + _
+            " LEFT OUTER JOIN ServiceGroupDetProperty i " + _
+            "    ON h.property_seq = i.property_seq " + _
+            "    AND i.property_desc ='" + SERVICE_GROUP_DET_PROPERTY_NUMTONS + "' " + _
+            " WHERE a.cust_id = '" + sCustId + "' " + _
+            " AND a.period_seq IN (" + params.sPeriodSeqList + ") " + _
+            " AND a.store_id = " + Str(nStoreId) + _
+            " AND b.eqpt_seq = " + Str(nEqptSeq) + _
+            " AND g.serv_group_name='" + sServGroupNameTon + "' "
+
+
+        'cmd.CommandText = sStmt
+        rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsPU.Rows.Count > 0 Then
+            If Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+                tons = rsPU.Rows(0).Item(0)
+            End If
+            If Not IsDBNull(rsPU.Rows(0).Item(1)) Then
+                overtons = rsPU.Rows(0).Item(1)
+            End If
+            tons = tons + overtons
+        End If
+
 
 
 
         If tons = 0 Then
             '    sStmt = " SELECT sum(b.units), d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty  "
-            sStmt = " SELECT COUNT(b.units), SUM(b.units),d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period,  " & " c.serv_ton " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupNamePu & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period, c.serv_ton  "
-            cmd.CommandText = sStmt
+            sStmt = " SELECT COUNT(b.units), SUM(b.units),d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period,  " & _
+                " c.serv_ton " & _
+                " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & _
+                " WHERE a.invoice_no = b.invoice_no " & _
+                " AND a.cust_id = b.cust_id " & _
+                " AND a.store_id = b.store_id " & _
+                " AND a.account_no = b.account_no " & _
+                " AND a.vend_seq = b.vend_seq " & _
+                " AND a.cust_id = '" & sCustId & "' " & _
+                " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & _
+                " AND a.store_id = " & Str(nStoreId) & _
+                " AND b.serv_id = c.serv_id " & _
+                " AND b.eqpt_seq = d.eqpt_seq " & _
+                " AND d.cust_id = a.cust_id " & _
+                " AND d.store_id = a.store_id " & _
+                " AND b.eqpt_seq = " & Str(nEqptSeq) & _
+                " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+                "      WHERE e.serv_group_id = f.serv_group_id " & _
+                "      AND e.serv_group_name = '" & sServGroupNamePu & "' )" & _
+                " AND e.cust_id = a.cust_id " & _
+                " AND e.store_id = a.store_id " & _
+                " AND e.vend_seq = a.vend_seq " & _
+                " AND e.serv_id = b.serv_id " & _
+                " AND e.eqpt_seq = b.eqpt_seq " & _
+                " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period, c.serv_ton  "
+
+            'cmd.CommandText = sStmt
 
             rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -1894,6 +2186,222 @@ ErrorHandler:
         rrtg_process = wgt
 
     End Function
+    Public Function rrtg_process_recycle(ByRef sCustId As String, ByRef nStoreId As Short, _
+        ByRef nEqptSeq As Short, ByRef params As gRptRecycleTonGenParamUDT, _
+        ByVal nPoundsPerUOMInContainer As Double, _
+        ByVal nPoundsPerYdInContainer As Double, _
+        ByRef sServGroupNameTon As String, ByRef sServGroupNamePu As String, _
+        ByRef nMonthlyFrequency As Double) As Double
+
+        Dim cmd As SqlCommand = cn.CreateCommand()
+        Dim wgt As Double
+        Dim rsPU As DataTable
+        Dim numPU As Double
+        Dim eqptQty As Short
+        Dim eqptSizeCapacity As Double
+        Dim eqptActualQty As Short
+        Dim tons As Double
+        Dim freqPeriod As String
+        Dim servTon As String
+        Dim sumPU As Double
+        Dim yardage As Double
+        Dim nPoundsPerUOMInContainerAndService As Double
+        Dim servId As Short
+        Dim eqptId As Short
+        Dim freqTimes As String
+
+
+        tons = 0
+        wgt = 0
+        yardage = 0
+        nPoundsPerUOMInContainerAndService = 0
+
+        Dim SERVICE_RATE_PER_MONTH As gDumpUDT
+        SERVICE_RATE_PER_MONTH = exec_sql_single("SELECT serv_desc , STR(serv_id) FROM service WHERE serv_desc =''")
+
+        '1. Look for "Processing Fee per Ton" tonnage,
+        'if not found then look for "Service Rate per Haul"
+        sStmt = " SELECT sum(b.units)  " & _
+            " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " & _
+            " WHERE a.invoice_no = b.invoice_no " & _
+            " AND a.cust_id = b.cust_id " & _
+            " AND a.store_id = b.store_id " & _
+            " AND a.account_no = b.account_no " & _
+            " AND a.vend_seq = b.vend_seq " & _
+            " AND a.cust_id = '" & sCustId & "' " & _
+            " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & _
+            " AND a.store_id = " & Str(nStoreId) & _
+            " AND b.serv_id = c.serv_id " & _
+            " AND b.eqpt_seq = d.eqpt_seq " & _
+            " AND d.cust_id = a.cust_id " & _
+            " AND d.store_id = a.store_id " & _
+            " AND b.eqpt_seq = " & Str(nEqptSeq) & _
+            " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+            "      WHERE e.serv_group_id = f.serv_group_id " & _
+            "      AND e.serv_group_name = '" & sServGroupNameTon & "' )"
+        
+        cmd.CommandText = sStmt
+        rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+        If rsPU.Rows.Count > 0 Then
+            If Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+                tons = rsPU.Rows(0).Item(0)
+            End If
+        End If
+
+
+
+
+        If tons = 0 Then
+            sStmt = " SELECT COUNT(b.units), SUM(b.units),d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period,  " & _
+                " e.freq_times, c.serv_ton, b.serv_id, d.eqpt_id " & _
+                " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & _
+                " WHERE a.invoice_no = b.invoice_no " & _
+                " AND a.cust_id = b.cust_id " & _
+                " AND a.store_id = b.store_id " & _
+                " AND a.account_no = b.account_no " & _
+                " AND a.vend_seq = b.vend_seq " & _
+                " AND a.cust_id = '" & sCustId & "' " & _
+                " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & _
+                " AND a.store_id = " & Str(nStoreId) & _
+                " AND b.serv_id = c.serv_id " & _
+                " AND b.eqpt_seq = d.eqpt_seq " & _
+                " AND d.cust_id = a.cust_id " & _
+                " AND d.store_id = a.store_id " & _
+                " AND b.eqpt_seq = " & Str(nEqptSeq) & _
+                " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & _
+                "      WHERE e.serv_group_id = f.serv_group_id " & _
+                "      AND e.serv_group_name = '" & sServGroupNamePu & "' )" & _
+                " AND e.cust_id = a.cust_id " & _
+                " AND e.store_id = a.store_id " & _
+                " AND e.vend_seq = a.vend_seq " & _
+                " AND e.serv_id = b.serv_id " & _
+                " AND e.eqpt_seq = b.eqpt_seq " & _
+                " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, d.eqpt_actual_qty, e.freq_period, e.freq_times, c.serv_ton, b.serv_id, d.eqpt_id  "
+
+            cmd.CommandText = sStmt
+
+            rsPU = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
+
+            If rsPU.Rows.Count > 0 Then
+                For Each row As DataRow In rsPU.Rows
+                    'If rsPU.RecordCount > 0 Then
+
+                    numPU = row.Item(0)
+                    sumPU = row.Item(1)
+                    eqptQty = row.Item(2)
+                    eqptSizeCapacity = row.Item(3)
+                    servId = row.Item(8)
+                    eqptId = row.Item(9)
+
+
+                    If IsDBNull(row.Item(4)) Then
+                        'This only happens if ActualQty has not been updated
+                        eqptActualQty = eqptQty
+                    Else
+                        eqptActualQty = row.Item(4)
+                    End If
+
+                    freqPeriod = Trim(row.Item(5))
+
+                    freqtimes = row.Item(6)
+
+                    'IF service has not set tonnage flag then default to no-tonnage
+                    If IsDBNull(row.Item(7)) Then
+                        servTon = "F"
+                    Else
+                        servTon = Trim(row.Item(7))
+                    End If
+
+                    nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
+                    nPoundsPerUOMInContainerAndService = getPoundsPerUomInContainerAndService(nPoundsPerUOMInContainer, servId, eqptId)
+
+                    If freqPeriod = "O/C" Then
+                        wgt = wgt + eqptActualQty * eqptSizeCapacity * sumPU * nMonthlyFrequency * nPoundsPerUOMInContainer / POUNDS_PER_TON
+                    Else
+                        wgt = wgt + eqptActualQty * eqptSizeCapacity * freqTimes * nMonthlyFrequency * nPoundsPerUOMInContainer / POUNDS_PER_TON
+                        'Count the number of invoices showing Service Rate per Month
+
+
+                        If servId.ToString.Equals(SERVICE_RATE_PER_MONTH.str2) Then
+                            wgt = wgt + numPU
+                        End If
+                    End If
+
+
+
+                Next row
+            End If
+
+        Else
+
+            wgt = tons
+        End If
+
+
+        'Always add extra yardage fee
+        yardage = rrtg_process_yardage(sCustId, nStoreId, nEqptSeq, params, nPoundsPerYdInContainer, RPTRECYCLETONGEN_YARDAGE)
+
+        rrtg_process_recycle = wgt + yardage
+
+    End Function
+    'AFTERMIGRATION.2014.09.13.end
+    'AFTERMIGRATION.2014.09.14.begin
+    'Computes extra yardage fees
+    Public Function rrtg_process_yardage(ByVal sCustId As String, ByVal nStoreId As Integer, _
+        ByVal nEqptSeq As Integer, ByVal params As gRptRecycleTonGenParamUDT, _
+        ByVal nPoundsPerUOMInContainer As Double, _
+        ByVal sServGroupNameTon As String) As Double
+
+
+        Dim wgt As Double
+        Dim rsPU As System.Data.DataTable
+        'Dim numPU As Double
+        'Dim eqptQty As Integer
+        'Dim eqptSizeCapacity As Double
+        'Dim eqptActualQty As Integer
+        Dim yards As Double
+        'Dim freqPeriod As String
+        'Dim servTon As String
+        'Dim sumPU As Double
+
+        yards = 0
+        wgt = 0
+        'rsPU = New ADODB.Recordset
+
+        '1. Look for "Extra Yardage Fee" tonnage
+
+        sStmt = " SELECT sum(b.units)  " + _
+            " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d " + _
+            " WHERE a.invoice_no = b.invoice_no " + _
+            " AND a.cust_id = b.cust_id " + _
+            " AND a.store_id = b.store_id " + _
+            " AND a.account_no = b.account_no " + _
+            " AND a.vend_seq = b.vend_seq " + _
+            " AND a.cust_id = '" + sCustId + "' " + _
+            " AND a.period_seq IN (" + params.sPeriodSeqList + ") " + _
+            " AND a.store_id = " + Str(nStoreId) + _
+            " AND b.serv_id = c.serv_id " + _
+            " AND b.eqpt_seq = d.eqpt_seq " + _
+            " AND d.cust_id = a.cust_id " + _
+            " AND d.store_id = a.store_id " + _
+            " AND b.eqpt_seq = " + Str(nEqptSeq) + _
+            " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " + _
+            "      WHERE e.serv_group_id = f.serv_group_id " + _
+            "      AND e.serv_group_name = '" + sServGroupNameTon + "' )"
+
+        rsPU = getDataTable(sStmt)
+
+        If Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+            yards = rsPU.Rows(0).Item(0)
+            wgt = yards * nPoundsPerUOMInContainer / 2000
+        End If
+
+      
+
+        rrtg_process_yardage = wgt
+
+    End Function
+
 
     '--
 
@@ -2006,7 +2514,7 @@ ErrorHandler:
     'Totes use "Service Rate per Month"
     Public Function rrtg_process_tote(ByRef sCustId As String, ByRef nStoreId As Short, ByRef nEqptSeq As Short, ByRef params As gRptRecycleTonGenParamUDT, ByRef nPoundsPerTote As Double, ByRef sServGroupName As String, ByRef nMonthlyFrequency As Double) As Double
 
-        Dim cmd As SqlCommand = cn.CreateCommand
+        'Dim cmd As SqlCommand = cn.CreateCommand
         Dim wgt As Double
         Dim rsTote As DataTable
         Dim numTotes As Double
@@ -2015,7 +2523,7 @@ ErrorHandler:
         Dim freqPeriod As String
 
         sStmt = " SELECT SUM(b.units), d.eqpt_qty, d.eqpt_size_capacity, e.freq_period  " & " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, vcontract e " & " WHERE a.invoice_no = b.invoice_no " & " AND a.cust_id = b.cust_id " & " AND a.store_id = b.store_id " & " AND a.account_no = b.account_no " & " AND a.vend_seq = b.vend_seq " & " AND a.cust_id = '" & sCustId & "' " & " AND a.period_seq IN (" & params.sPeriodSeqList & ") " & " AND a.store_id = " & Str(nStoreId) & " AND b.serv_id = c.serv_id " & " AND b.eqpt_seq = d.eqpt_seq " & " AND d.cust_id = a.cust_id " & " AND d.store_id = a.store_id " & " AND b.eqpt_seq = " & Str(nEqptSeq) & " AND b.serv_id IN (SELECT serv_id FROM serviceGroup e, serviceGroupDet f " & "      WHERE e.serv_group_id = f.serv_group_id " & "      AND e.serv_group_name = '" & sServGroupName & "' )" & " AND e.cust_id = a.cust_id " & " AND e.store_id = a.store_id " & " AND e.vend_seq = a.vend_seq " & " AND e.serv_id = b.serv_id " & " AND e.eqpt_seq = b.eqpt_seq " & " GROUP BY d.eqpt_qty, d.eqpt_size_capacity, e.freq_period  "
-        cmd.CommandText = sStmt
+        'cmd.CommandText = sStmt
 
         rsTote = getDataTable(sStmt) 'cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 
@@ -2039,9 +2547,9 @@ ErrorHandler:
 
     Public Function getPoundsPerBaler() As Double
         getPoundsPerBaler = 0
-        Dim cmd As SqlCommand = cn.CreateCommand()
+        'Dim cmd As SqlCommand = cn.CreateCommand()
         sStmt = "SELECT pounds_per_ton FROM EqptContentConversionFactor " & " WHERE eqpt_type = '" & RPTRECYCLETONGEN_EQPT_BALER & "' " & " AND content_id = 0 "
-        cmd.CommandText = sStmt
+        'cmd.CommandText = sStmt
         
         rs = getDataTable(sStmt) 'cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
@@ -2083,9 +2591,9 @@ ErrorHandler:
     Public Function getPeriodDates(ByRef sPeriodSeq As Short) As gDumpUDT
         Dim startDate As Date
         Dim endDate As Date
-        Dim cmd As SqlCommand = cn.CreateCommand()
+        'Dim cmd As SqlCommand = cn.CreateCommand()
         sStmt = "SELECT period_start_date, period_end_date FROM period WHERE period_seq = " & Str(sPeriodSeq)
-        cmd.CommandText = sStmt
+        'cmd.CommandText = sStmt
 
         rs = getDataTable(sStmt) ' cmd.ExecuteReader()
         If rs.Rows.Count > 0 Then
@@ -2117,4 +2625,112 @@ ErrorHandler:
         getFreqPeriodFactor = nMonthlyFrequency
 
     End Function
+
+
+
+    Public Function getPoundsPerUomInContainerAndService(ByVal nPoundsPerUOMInContainer As Double, _
+        ByVal servId As Integer, ByVal eqptId As Integer) As Double
+
+        Dim pounds As Double
+
+        pounds = nPoundsPerUOMInContainer
+
+        sStmt = "SELECT b.pounds_per_ton FROM  EqptContentConversionFactor a " + _
+            " JOIN Equipment e " + _
+            " ON a.eqpt_type = e.eqpt_type LEFT OUTER JOIN EqptContentConversionFactorService b " + _
+            " ON a.eccf_seq = b.eccf_seq AND b.serv_id=" + Str(servId) + _
+            " WHERE e.eqpt_id = " + Str(eqptId)
+
+        rs = getDataTable(sStmt) ' cmd.ExecuteReader()
+        If rs.Rows.Count > 0 Then
+            If Not IsDBNull(rs.Rows(0).Item(0)) Then
+                pounds = rs.Rows(0).Item(0)
+            End If
+
+        End If
+
+        getPoundsPerUomInContainerAndService = pounds
+
+
+    End Function
+    'Calculates Over Tons
+    Public Function rrtg_process_overtons(ByVal sCustId As String, ByVal nStoreId As Integer, _
+    ByVal nEqptSeq As Integer, ByVal params As gRptRecycleTonGenParamUDT, _
+    ByVal sServGroupNameTon As String, ByVal sPropertyName As String) As Double
+
+
+        Dim wgt As Double
+        Dim rsPU As DataTable
+        Dim servTon As String
+
+
+        wgt = 0
+        'rsPU = New ADODB.Recordset
+
+        '1. Look for "Extra Yardage Fee" tonnage
+
+        sStmt = " SELECT sum(b.units), sum(cast(h.property_value as decimal) )  " + _
+            " FROM vinvoice a , vinvoicedet b,  service c, storeEqpt d, ServiceGroup g, ServiceGroupDet h, ServiceGroupDetProperty i " + _
+            " WHERE a.invoice_no = b.invoice_no " + _
+            " AND a.cust_id = b.cust_id " + _
+            " AND a.store_id = b.store_id " + _
+            " AND a.account_no = b.account_no " + _
+            " AND a.vend_seq = b.vend_seq " + _
+            " AND a.cust_id = '" + sCustId + "' " + _
+            " AND a.period_seq IN (" + params.sPeriodSeqList + ") " + _
+            " AND a.store_id = " + Str(nStoreId) + _
+            " AND b.serv_id = c.serv_id " + _
+            " AND b.eqpt_seq = d.eqpt_seq " + _
+            " AND d.cust_id = a.cust_id " + _
+            " AND d.store_id = a.store_id " + _
+            " AND b.eqpt_seq = " + Str(nEqptSeq) + _
+            " AND g.serv_group_id = h.serv_group_id " + _
+            " AND h.property_seq = i.property_seq " + _
+            " AND g.serv_group_name='" + sServGroupNameTon + "' " + _
+            " AND i.property_desc='" + sPropertyName + "' " + _
+            " AND b.serv_id = h.serv_id "
+
+
+        rsPU = getDataTable(sStmt)
+
+        If rsPU.Rows.Count > 0 AndAlso Not IsDBNull(rsPU.Rows(0).Item(0)) Then
+            wgt = rsPU.Rows(0).Item(0)
+            servTon = rsPU.Rows(0).Item(1)
+            'getServiceGroupDetProperty("FEE_PER_TON_OVER", "Number of Tons", servId)
+            wgt = wgt + servTon
+        End If
+
+
+
+        rrtg_process_overtons = wgt
+
+    End Function
+
+
+    Public Function getServiceGroupDetProperty(ByVal sGroupName As String, ByVal sPropertyName As String, ByVal nServId As Integer) As Double
+        Dim numTons As Double
+        Dim rsSGDP As DataTable
+
+
+        numTons = 0
+        sStmt = "SELECT property_value FROM ServiceGroup a, ServiceGroupDet b, ServiceGroupDetProperty c" + _
+                " WHERE a.serv_group_id = b.serv_group_id " + _
+                " AND b.property_seq = c.property_seq " + _
+                " AND a.serv_group_name='" + sGroupName + "' " + _
+                " AND c.property_desc='" + sPropertyName + "' " + _
+                " AND b.serv_id= " + Str(nServId)
+
+        rsSGDP = getDataTable(sStmt)
+
+        If (rsSGDP.Rows.Count > 0) Then
+            numTons = rsSGDP.Rows(0).Item(0)
+        End If
+
+
+        getServiceGroupDetProperty = numTons
+
+
+    End Function
+
+
 End Module
