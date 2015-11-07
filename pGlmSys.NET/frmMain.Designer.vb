@@ -190,6 +190,8 @@
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.pbMain = New System.Windows.Forms.ProgressBar
         Me.sbMain = New System.Windows.Forms.StatusStrip
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel
+        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.Toolbar1 = New System.Windows.Forms.ToolStrip
         Me.btInvoiceBooking = New System.Windows.Forms.ToolStripButton
@@ -355,8 +357,6 @@
         Me.mnuVendorPayments = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.mnuVendors = New Microsoft.VisualBasic.Compatibility.VB6.ToolStripMenuItemArray(Me.components)
         Me.MainMenu1 = New System.Windows.Forms.MenuStrip
-        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel
-        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel
         Me.sbMain.SuspendLayout()
         Me.Toolbar1.SuspendLayout()
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -439,6 +439,25 @@
         Me.sbMain.Name = "sbMain"
         Me.sbMain.Size = New System.Drawing.Size(643, 22)
         Me.sbMain.TabIndex = 1
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.AutoSize = False
+        Me.ToolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(200, 17)
+        Me.ToolStripStatusLabel1.Text = "Login:"
+        Me.ToolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'ToolStripStatusLabel2
+        '
+        Me.ToolStripStatusLabel2.AutoSize = False
+        Me.ToolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
+        Me.ToolStripStatusLabel2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(430, 17)
+        Me.ToolStripStatusLabel2.Text = "HH:MM:SS PM"
+        Me.ToolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'ImageList1
         '
@@ -1304,25 +1323,6 @@
         Me.MainMenu1.Name = "MainMenu1"
         Me.MainMenu1.Size = New System.Drawing.Size(719, 24)
         Me.MainMenu1.TabIndex = 4
-        '
-        'ToolStripStatusLabel1
-        '
-        Me.ToolStripStatusLabel1.AutoSize = False
-        Me.ToolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
-        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(200, 17)
-        Me.ToolStripStatusLabel1.Text = "Login:"
-        Me.ToolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
-        'ToolStripStatusLabel2
-        '
-        Me.ToolStripStatusLabel2.AutoSize = False
-        Me.ToolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
-        Me.ToolStripStatusLabel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(430, 17)
-        Me.ToolStripStatusLabel2.Text = "HH:MM:SS PM"
-        Me.ToolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'frmMain
         '

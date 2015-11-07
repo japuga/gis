@@ -237,6 +237,18 @@
     <Compile Include="frmRepBillPayViewer.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmRepCheck.Designer.vb">
+      <DependentUpon>frmRepCheck.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepCheck.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRepCheckViewer.Designer.vb">
+      <DependentUpon>frmRepCheckViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmRepCheckViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmRepGlmInvoiceViewer.Designer.vb">
       <DependentUpon>frmRepGlmInvoiceViewer.vb</DependentUpon>
     </Compile>
@@ -1496,6 +1508,14 @@
     <EmbeddedResource Include="frmRepBillPayViewer.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmRepBillPayViewer.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRepCheck.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepCheck.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRepCheckViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmRepCheckViewer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRepCostContSearch.resX">
       <DependentUpon>frmRepCostContSearch.vb</DependentUpon>

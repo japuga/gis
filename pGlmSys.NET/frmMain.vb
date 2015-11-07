@@ -380,7 +380,9 @@ ErrorHandler:
 	End Sub
 	
 	Public Sub mniWebReports_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mniWebReports.Click
-		VB6.ShowForm(frmWebReport, VB6.FormShowConstants.Modal, Me)
+        'VB6.ShowForm(frmWebReport, VB6.FormShowConstants.Modal, Me)
+        gReport.name = "Checks Report"
+        VB6.ShowForm(frmRepCheck, VB6.FormShowConstants.Modal, Me)
 	End Sub
 	
 	Public Sub mniWordTemplate_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mniWordTemplate.Click
@@ -478,5 +480,9 @@ ErrorHandler:
 
     Private Sub btInvoiceBooking_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btInvoiceBooking.Click
         VB6.ShowForm(frmInvoiceBooking, VB6.FormShowConstants.Modal, Me)
+    End Sub
+
+    Private Sub _mniReport_52_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _mniReport_52.Click
+
     End Sub
 End Class

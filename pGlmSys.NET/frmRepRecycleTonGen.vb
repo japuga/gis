@@ -138,7 +138,11 @@ Friend Class frmRepRecycleTonGen
             Exit Sub
         End If
 		
-		sStmt = "SELECT report_id, cust_id, cust_name, report_start, report_end, " & " store_number, store_name, trash_tons, " & " recycle_tons, store_total_tons, store_composting_tons," & " landfill_percent, recycle_percent " & " FROM RptRecycleTonGen " & " WHERE report_id = " & Str(nReport) & " ORDER BY store_number "
+        sStmt = "SELECT report_id, cust_id, cust_name, report_start, report_end, " & _
+                      " store_number AS store_no, store_name AS location, trash_tons, " & _
+                      " recycle_tons, store_total_tons, store_composting_tons," & _
+                      " landfill_percent, recycle_percent " & " FROM RptRecycleTonGen " & _
+                      " WHERE report_id = " & Str(nReport) & " ORDER BY store_number "
         cmd.CommandText = sStmt
         rsReport = getDataTable(sStmt) ' cmd.ExecuteReader() '.Open(sStmt, cn, ADODB.CursorTypeEnum.adOpenStatic, ADODB.LockTypeEnum.adLockReadOnly)
 		
@@ -169,7 +173,7 @@ ErrorHandler:
 
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
-            sFile = get_template(sLocalReport, cbReportTemplateDesc.SelectedValue)
+            sFile = get_template(sLocalReport, cbReportTemplate.SelectedItem)
             rptDoc.Load(sFile)
         Catch ex As Exception
             MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptGlmInvoice.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")

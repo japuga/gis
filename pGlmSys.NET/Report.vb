@@ -1280,7 +1280,8 @@ ErrorHandler:
 
 
         Dim recycleStore As Object
-
+        Dim recIdx As Short
+        recIdx = 0
 
         'Stores collection indices
         CUST_IDX = 0
@@ -1335,7 +1336,7 @@ ErrorHandler:
         " AND a.store_id IN ( SELECT store_id FROM groupStore gs " & _
         "                       WHERE gs.cust_id =  a.cust_id " & _
         "                       AND gs.group_seq = " & Str(params.nGroupSeq) & " ) "
-        '" and a.store_number in ('ATT91121') "
+        '" and a.store_number in ('ATTRDP03') "
         'ND242
         'ND621
         'ND628
@@ -1482,7 +1483,7 @@ ErrorHandler:
                     If (nPkrWgtContaminated > 0) Then
                         store(PKRWGTCONTAMINATED_IDX) = store(PKRWGTCONTAMINATED_IDX) + System.Math.Round(nPkrWgtContaminated, 2)
 
-                        Debug.Print("---Recycle PKR Contaminated wgt Tons:" & Str(nPkrWgt))
+                        Debug.Print("---Recycle PKR Contaminated wgt Tons:" & Str(nPkrWgtContaminated))
                         nPkrWgtContaminated = 0
                     Else
                         nPkrWgt = rrtg_process(sCustId, nStoreId, _
@@ -1781,7 +1782,20 @@ ErrorHandler:
 
             Next
 
+            'AFTERMIGRATION.2014.09.13.begin
+            'Trash for Contaminated Compactor. Before adding store to trashStore collection
+            'check if there is a recycling contaminated weight for it
+            For recIdx = 1 To recycleStores.Count()
+                recycleStore = recycleStores.Item(recIdx)
 
+                If recycleStore(PKRWGTCONTAMINATED_IDX) > 0 Then
+                    If recycleStore(CUST_IDX) = store(CUST_IDX) And recycleStore(STORE_IDX) = store(STORE_IDX) Then
+                        store(STORE_TRASH_IDX) = store(STORE_TRASH_IDX) + recycleStore(PKRWGTCONTAMINATED_IDX)
+                    End If
+                End If
+            Next
+
+            'AFTERMIGRATION.2014.09.13.end
 
             'stores.Remove idx
             'stores.Add store, store(CUST_IDX) + Str(store(STORE_IDX))
