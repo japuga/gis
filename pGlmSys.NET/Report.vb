@@ -2231,7 +2231,10 @@ ErrorHandler:
         nPoundsPerUOMInContainerAndService = 0
 
         Dim SERVICE_RATE_PER_MONTH As gDumpUDT
-        SERVICE_RATE_PER_MONTH = exec_sql_single("SELECT serv_desc , STR(serv_id) FROM service WHERE serv_desc =''")
+        SERVICE_RATE_PER_MONTH = exec_sql_single("SELECT serv_desc , STR(serv_id) FROM service WHERE serv_desc ='Service Rate per Month'")
+
+        Dim SERVICE_RATE_PER_WEEK As gDumpUDT
+        SERVICE_RATE_PER_WEEK = exec_sql_single("SELECT serv_desc , STR(serv_id) FROM service WHERE serv_desc ='Service Rate per Week'")
 
         '1. Look for "Processing Fee per Ton" tonnage,
         'if not found then look for "Service Rate per Haul"
@@ -2328,6 +2331,14 @@ ErrorHandler:
 
                     nMonthlyFrequency = getFreqPeriodFactor(freqPeriod)
                     nPoundsPerUOMInContainerAndService = getPoundsPerUomInContainerAndService(nPoundsPerUOMInContainer, servId, eqptId)
+
+                    '2015.02.20.begin
+                    'Customization for NRG
+                    If servId.ToString.Equals(SERVICE_RATE_PER_WEEK.str2) Then
+                        nMonthlyFrequency = 1
+                        freqPeriod = "O/C"
+                    End If
+                    '2015.02.20.end
 
                     If freqPeriod = "O/C" Then
                         wgt = wgt + eqptActualQty * eqptSizeCapacity * sumPU * nMonthlyFrequency * nPoundsPerUOMInContainer / POUNDS_PER_TON
