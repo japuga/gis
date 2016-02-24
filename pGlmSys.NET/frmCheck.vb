@@ -146,13 +146,16 @@ ErrorHandler:
 			MsgBox("Please enter the Transaction Authorization Code", MsgBoxStyle.OKOnly + MsgBoxStyle.Information, "Warning")
 			txtAuthorizationCode.Focus()
 			Exit Function
-		Else
-			If tran_dup(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex), txtAuthorizationCode.Text) Then
-				
-				MsgBox("Authorization code is duplicate. Please verify and try again")
-				txtAuthorizationCode.Focus()
-				Exit Function
-			End If
+        Else
+            '2015.02.23.begin
+            'Removed authorization code check
+            'If tran_dup(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex), txtAuthorizationCode.Text) Then
+
+            '        MsgBox("Authorization code is duplicate. Please verify and try again")
+            '       txtAuthorizationCode.Focus()
+            '      Exit Function
+            ' End If
+            '2015.02.23.end
 		End If
 		
 		
@@ -831,7 +834,11 @@ ErrorHandler:
         'Credit Card Transaction Header
         nDbTran = cn.BeginTransaction()
 
-        sStmt = "INSERT INTO BTransaction (tran_seq, cust_id, vend_id, " & "card_seq, authorization_code, tran_date, tran_amount) " & " VALUES (" & Str(nTranSeq) & "," & "'" & cbCustomer.Text & "'," & Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & "," & Str(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex)) & "," & Trim(txtAuthorizationCode.Text) & "," & "'" & CStr(dtTranDate.Value) & "'," & Str(CDbl(txtAmount.Text)) & ")"
+        sStmt = "INSERT INTO BTransaction (tran_seq, cust_id, vend_id, " & _
+                "card_seq, authorization_code, tran_date, tran_amount) " & _
+                " VALUES (" & Str(nTranSeq) & "," & "'" & cbCustomer.Text & "'," & _
+                Str(VB6.GetItemData(cbVendor, cbVendor.SelectedIndex)) & "," & _
+                Str(VB6.GetItemData(cbCardNumber, cbCardNumber.SelectedIndex)) & ",'" & Trim(txtAuthorizationCode.Text) & "'," & "'" & CStr(dtTranDate.Value) & "'," & Str(CDbl(txtAmount.Text)) & ")"
 
         cm = cn.CreateCommand '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
@@ -955,4 +962,7 @@ ErrorHandler:
 
   
     
+    Private Sub frCreditCard_Enter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles frCreditCard.Enter
+
+    End Sub
 End Class
