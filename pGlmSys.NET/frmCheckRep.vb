@@ -1515,6 +1515,9 @@ ErrorHandler:
             If gCheck.reprint = True And gCheck.bSameCheck = True Then
                 nTran = cn.BeginTransaction()
                 'Actualizo fecha de reimpresion de cheque
+                'BUG-23.2016.04.03.begin
+                gCheck.Date_Renamed = dtCheckDate.Value
+                'BUG-23.2016.04.03.end
                 sStmt = "UPDATE Bcheck " & " SET check_date='" & Str(dtCheckDate.Value) & "'" & " WHERE bank_cust_seq = " & gCheck.BankCustSeq & " AND check_no =" & Str(gCheck.VoidCheckNo)
 
                 'MsgBox sStmt
@@ -2607,5 +2610,9 @@ ErrorHandler:
                 close_form()
             End If
         End If
+    End Sub
+
+    Private Sub Toolbar1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles Toolbar1.ItemClicked
+
     End Sub
 End Class
