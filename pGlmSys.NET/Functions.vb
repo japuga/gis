@@ -474,8 +474,9 @@ Module Functions
 		If gnLoginId > 0 And Not cn Is Nothing Then
 			sStmt = "UPDATE slogin_audit " & " SET logout_time = getdate(), " & "    active = 0 " & " WHERE login_id = " & Str(gnLoginId)
             cm.CommandText = sStmt
-            cm.ExecuteNonQuery()
-		End If
+            cm.CommandType = CommandType.Text
+            cm.ExecuteScalar()
+        End If
 		
 	End Sub
 	Public Function fractionLen(ByRef source As Double) As Short

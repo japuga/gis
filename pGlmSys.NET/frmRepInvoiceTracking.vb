@@ -302,7 +302,7 @@ ErrorHandler:
         'Dim sReportTemplate As String 'Nombre de plantilla de reporte
         Dim fileTmp As Scripting.FileSystemObject
         fileTmp = New Scripting.FileSystemObject
-
+        sFile = ""
         'On Error GoTo ErrorHandler
         Dim rptDoc As ReportDocument = New ReportDocument()
         Try
@@ -311,7 +311,9 @@ ErrorHandler:
             'rptDoc.Load(strReportsSysPath & "rptInvoiceTracking.rpt")
             rptDoc.Load(sFile)
         Catch ex As Exception
-            MsgBox("Report template not found." & vbCrLf & "Please install: " & "rptInvoiceTracking.rpt", MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            MsgBox("Report template not found." + vbCrLf + "Please install: " + sFile, _
+                MsgBoxStyle.OkOnly + MsgBoxStyle.Critical, "GLM Error")
+            Return False
         End Try
 
         rptDoc.SetDataSource(dstReport)
