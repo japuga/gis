@@ -110,7 +110,7 @@ ErrorHandler:
                 dgUser.Rows(dgUser.SelectedCells(0).RowIndex).Selected = True
             End If
         End If
-        If dgUser.SelectedRows.Count > 0 Then
+        If dgUser.SelectedRows.Count > 0 And dgUser.SelectedRows(0).Index < rsUser.Rows.Count Then
             gUserRecord.bFlag = General.modo.UpdateRecord
             set_user()
 
@@ -128,6 +128,8 @@ ErrorHandler:
                 dgUser.Rows(aCell.RowIndex).Selected = True
             Next
         End If
+
+
         If IsDBNull(rsUser.Rows(dgUser.SelectedRows(0).Index).Item("ID")) Then
             gUserRecord.sUserName = ""
         Else

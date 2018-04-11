@@ -2,6 +2,8 @@ Option Strict Off
 Option Explicit On
 Imports System.Data.SqlClient
 Imports System.IO
+Imports System.Environment
+
 Module General
 
     Public OSdriveLetter As String = Path.GetPathRoot(My.Application.Info.DirectoryPath).ToString
@@ -1030,7 +1032,9 @@ Module General
         'Parametrize file name
         'sLogfile = "e:\Logfile.txt"
         'OS drive letter es de la forma "C:\" o "E:\"
-        sLogfile = OSdriveLetter & "Logfile.txt"
+
+
+        sLogfile = OSdriveLetter & "\Users\" & Environment.UserName.ToString & "\Logfile.txt"
         gReport.Index = 0
         gReport.name = ""
         gReport.static_Renamed = True
