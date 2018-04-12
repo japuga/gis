@@ -199,19 +199,29 @@ ErrorHandler:
 		End If
 		
 		Select Case gUserRecord.bFlag
-			Case General.modo.NewRecord
-			Case General.modo.UpdateRecord
-				txtUserName.Enabled = False
-				txtUserName.Text = gUserRecord.sUserName
-				txtUserDesc.Text = gUserRecord.sUserDesc
-				
-				set_cb(cbTypeId, gUserRecord.sTypeId)
-				cbTypeName.SelectedIndex = cbTypeId.SelectedIndex
-		End Select
+            Case General.modo.NewRecord
+                txtUserName.Enabled = True
+                txtUserName.Text = ""
+                txtUserDesc.Text = ""
+
+            Case General.modo.UpdateRecord
+                txtUserName.Enabled = False
+                txtUserName.Text = gUserRecord.sUserName
+                txtUserDesc.Text = gUserRecord.sUserDesc
+
+                set_cb(cbTypeId, gUserRecord.sTypeId)
+                cbTypeName.SelectedIndex = cbTypeId.SelectedIndex
+        End Select
+
+        txtUserName.Focus()
 	End Sub
 	
 	Private Sub set_limits()
         txtUserName.MaxLength = 10
         txtUserDesc.MaxLength = 50
 	End Sub
+
+    Private Sub txtUserDesc_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtUserDesc.TextChanged
+
+    End Sub
 End Class
