@@ -545,7 +545,7 @@
         '
         Me.mniArea.SetIndex(Me._mniArea_272, CType(272, Short))
         Me._mniArea_272.Name = "_mniArea_272"
-        Me._mniArea_272.Size = New System.Drawing.Size(127, 22)
+        Me._mniArea_272.Size = New System.Drawing.Size(120, 22)
         Me._mniArea_272.Text = "Area"
         '
         'mniBank
@@ -555,7 +555,7 @@
         '
         Me.mniBank.SetIndex(Me._mniBank_0, CType(0, Short))
         Me._mniBank_0.Name = "_mniBank_0"
-        Me._mniBank_0.Size = New System.Drawing.Size(220, 22)
+        Me._mniBank_0.Size = New System.Drawing.Size(207, 22)
         Me._mniBank_0.Text = "Bank Maintenance"
         Me._mniBank_0.Visible = False
         '
@@ -566,7 +566,7 @@
         '
         Me.mniBankAccount.SetIndex(Me._mniBankAccount_0, CType(0, Short))
         Me._mniBankAccount_0.Name = "_mniBankAccount_0"
-        Me._mniBankAccount_0.Size = New System.Drawing.Size(220, 22)
+        Me._mniBankAccount_0.Size = New System.Drawing.Size(207, 22)
         Me._mniBankAccount_0.Text = "Bank Account Maintenance"
         Me._mniBankAccount_0.Visible = False
         '
@@ -577,14 +577,14 @@
         '
         Me.mniBatchBrowser.SetIndex(Me._mniBatchBrowser_32, CType(32, Short))
         Me._mniBatchBrowser_32.Name = "_mniBatchBrowser_32"
-        Me._mniBatchBrowser_32.Size = New System.Drawing.Size(201, 22)
+        Me._mniBatchBrowser_32.Size = New System.Drawing.Size(191, 22)
         Me._mniBatchBrowser_32.Text = "Batch Browser"
         '
         '_mniBills_621
         '
         Me.mniBills.SetIndex(Me._mniBills_621, CType(621, Short))
         Me._mniBills_621.Name = "_mniBills_621"
-        Me._mniBills_621.Size = New System.Drawing.Size(132, 22)
+        Me._mniBills_621.Size = New System.Drawing.Size(124, 22)
         Me._mniBills_621.Text = "Bills"
         '
         'mniBucketList
@@ -594,7 +594,7 @@
         '
         Me.mniBucketList.SetIndex(Me._mniBucketList_0, CType(0, Short))
         Me._mniBucketList_0.Name = "_mniBucketList_0"
-        Me._mniBucketList_0.Size = New System.Drawing.Size(131, 22)
+        Me._mniBucketList_0.Size = New System.Drawing.Size(127, 22)
         Me._mniBucketList_0.Text = "Bucket List"
         '
         'mniCallings
@@ -604,7 +604,7 @@
         '
         Me.mniCallings.SetIndex(Me._mniCallings_31, CType(31, Short))
         Me._mniCallings_31.Name = "_mniCallings_31"
-        Me._mniCallings_31.Size = New System.Drawing.Size(202, 22)
+        Me._mniCallings_31.Size = New System.Drawing.Size(189, 22)
         Me._mniCallings_31.Text = "Alerts and Notes"
         '
         'mniCheck
@@ -614,21 +614,21 @@
         '
         Me.mniCheck.SetIndex(Me._mniCheck_0, CType(0, Short))
         Me._mniCheck_0.Name = "_mniCheck_0"
-        Me._mniCheck_0.Size = New System.Drawing.Size(168, 22)
+        Me._mniCheck_0.Size = New System.Drawing.Size(160, 22)
         Me._mniCheck_0.Text = "Check Generation"
         '
         '_mniCheck_1
         '
         Me.mniCheck.SetIndex(Me._mniCheck_1, CType(1, Short))
         Me._mniCheck_1.Name = "_mniCheck_1"
-        Me._mniCheck_1.Size = New System.Drawing.Size(168, 22)
+        Me._mniCheck_1.Size = New System.Drawing.Size(160, 22)
         Me._mniCheck_1.Text = "Check Re-Print"
         '
         '_mniCheck_2
         '
         Me.mniCheck.SetIndex(Me._mniCheck_2, CType(2, Short))
         Me._mniCheck_2.Name = "_mniCheck_2"
-        Me._mniCheck_2.Size = New System.Drawing.Size(168, 22)
+        Me._mniCheck_2.Size = New System.Drawing.Size(160, 22)
         Me._mniCheck_2.Text = "Check Browse"
         '
         '_mniCheck_3
@@ -636,14 +636,14 @@
         Me._mniCheck_3.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniCheckBatch_31, Me._mniBatchBrowser_32})
         Me.mniCheck.SetIndex(Me._mniCheck_3, CType(3, Short))
         Me._mniCheck_3.Name = "_mniCheck_3"
-        Me._mniCheck_3.Size = New System.Drawing.Size(168, 22)
+        Me._mniCheck_3.Size = New System.Drawing.Size(160, 22)
         Me._mniCheck_3.Text = "Batch Process"
         '
         '_mniCheckBatch_31
         '
         Me.mniCheckBatch.SetIndex(Me._mniCheckBatch_31, CType(31, Short))
         Me._mniCheckBatch_31.Name = "_mniCheckBatch_31"
-        Me._mniCheckBatch_31.Size = New System.Drawing.Size(201, 22)
+        Me._mniCheckBatch_31.Size = New System.Drawing.Size(191, 22)
         Me._mniCheckBatch_31.Text = "Batch Check Generation"
         '
         'mniCheckBatch
@@ -656,14 +656,14 @@
         '
         Me.mniContract.SetIndex(Me._mniContract_0, CType(0, Short))
         Me._mniContract_0.Name = "_mniContract_0"
-        Me._mniContract_0.Size = New System.Drawing.Size(186, 22)
+        Me._mniContract_0.Size = New System.Drawing.Size(169, 22)
         Me._mniContract_0.Text = "Contract Information"
         '
         '_mniCorporate_275
         '
         Me.mniCorporate.SetIndex(Me._mniCorporate_275, CType(275, Short))
         Me._mniCorporate_275.Name = "_mniCorporate_275"
-        Me._mniCorporate_275.Size = New System.Drawing.Size(127, 22)
+        Me._mniCorporate_275.Size = New System.Drawing.Size(120, 22)
         Me._mniCorporate_275.Text = "Corporate"
         '
         'mniCreditCard
@@ -673,7 +673,7 @@
         '
         Me.mniCreditCard.SetIndex(Me._mniCreditCard_0, CType(0, Short))
         Me._mniCreditCard_0.Name = "_mniCreditCard_0"
-        Me._mniCreditCard_0.Size = New System.Drawing.Size(220, 22)
+        Me._mniCreditCard_0.Size = New System.Drawing.Size(207, 22)
         Me._mniCreditCard_0.Text = "Credit Card Maintenance"
         Me._mniCreditCard_0.Visible = False
         '
@@ -682,14 +682,14 @@
         Me._mniCustomer_21.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniGeneralInfo_0, Me._mniContract_0, Me._mniFees_212})
         Me.mniCustomer.SetIndex(Me._mniCustomer_21, CType(21, Short))
         Me._mniCustomer_21.Name = "_mniCustomer_21"
-        Me._mniCustomer_21.Size = New System.Drawing.Size(198, 22)
+        Me._mniCustomer_21.Size = New System.Drawing.Size(181, 22)
         Me._mniCustomer_21.Text = "Customer"
         '
         '_mniGeneralInfo_0
         '
         Me.mniGeneralInfo.SetIndex(Me._mniGeneralInfo_0, CType(0, Short))
         Me._mniGeneralInfo_0.Name = "_mniGeneralInfo_0"
-        Me._mniGeneralInfo_0.Size = New System.Drawing.Size(186, 22)
+        Me._mniGeneralInfo_0.Size = New System.Drawing.Size(169, 22)
         Me._mniGeneralInfo_0.Text = "General Information"
         Me._mniGeneralInfo_0.Visible = False
         '
@@ -697,14 +697,14 @@
         '
         Me.mniFees.SetIndex(Me._mniFees_212, CType(212, Short))
         Me._mniFees_212.Name = "_mniFees_212"
-        Me._mniFees_212.Size = New System.Drawing.Size(186, 22)
+        Me._mniFees_212.Size = New System.Drawing.Size(169, 22)
         Me._mniFees_212.Text = "Fees"
         '
         '_mniDistrict_273
         '
         Me.mniDistrict.SetIndex(Me._mniDistrict_273, CType(273, Short))
         Me._mniDistrict_273.Name = "_mniDistrict_273"
-        Me._mniDistrict_273.Size = New System.Drawing.Size(127, 22)
+        Me._mniDistrict_273.Size = New System.Drawing.Size(120, 22)
         Me._mniDistrict_273.Text = "District"
         '
         'mniEquipment
@@ -714,14 +714,14 @@
         '
         Me.mniEquipment.SetIndex(Me._mniEquipment_23, CType(23, Short))
         Me._mniEquipment_23.Name = "_mniEquipment_23"
-        Me._mniEquipment_23.Size = New System.Drawing.Size(198, 22)
+        Me._mniEquipment_23.Size = New System.Drawing.Size(181, 22)
         Me._mniEquipment_23.Text = "Equipment Assignment"
         '
         '_mniEquipmet_622
         '
         Me.mniEquipmet.SetIndex(Me._mniEquipmet_622, CType(622, Short))
         Me._mniEquipmet_622.Name = "_mniEquipmet_622"
-        Me._mniEquipmet_622.Size = New System.Drawing.Size(132, 22)
+        Me._mniEquipmet_622.Size = New System.Drawing.Size(124, 22)
         Me._mniEquipmet_622.Text = "Equipment"
         '
         '_mniExcel_0
@@ -729,14 +729,14 @@
         Me._mniExcel_0.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniInvoices_0, Me._mniBucketList_0})
         Me.mniExcel.SetIndex(Me._mniExcel_0, CType(0, Short))
         Me._mniExcel_0.Name = "_mniExcel_0"
-        Me._mniExcel_0.Size = New System.Drawing.Size(205, 22)
+        Me._mniExcel_0.Size = New System.Drawing.Size(187, 22)
         Me._mniExcel_0.Text = "Import from Excel"
         '
         '_mniInvoices_0
         '
         Me.mniInvoices.SetIndex(Me._mniInvoices_0, CType(0, Short))
         Me._mniInvoices_0.Name = "_mniInvoices_0"
-        Me._mniInvoices_0.Size = New System.Drawing.Size(131, 22)
+        Me._mniInvoices_0.Size = New System.Drawing.Size(127, 22)
         Me._mniInvoices_0.Text = "Invoices"
         '
         'mniExit
@@ -746,7 +746,7 @@
         '
         Me.mniExit.SetIndex(Me._mniExit_11, CType(11, Short))
         Me._mniExit_11.Name = "_mniExit_11"
-        Me._mniExit_11.Size = New System.Drawing.Size(205, 22)
+        Me._mniExit_11.Size = New System.Drawing.Size(187, 22)
         Me._mniExit_11.Text = "Exit"
         '
         'mniExportCheck
@@ -756,7 +756,7 @@
         '
         Me.mniExportCheck.SetIndex(Me._mniExportCheck_121, CType(121, Short))
         Me._mniExportCheck_121.Name = "_mniExportCheck_121"
-        Me._mniExportCheck_121.Size = New System.Drawing.Size(117, 22)
+        Me._mniExportCheck_121.Size = New System.Drawing.Size(113, 22)
         Me._mniExportCheck_121.Text = "Checks"
         '
         'mniExportVendor
@@ -766,7 +766,7 @@
         '
         Me.mniExportVendor.SetIndex(Me._mniExportVendor_122, CType(122, Short))
         Me._mniExportVendor_122.Name = "_mniExportVendor_122"
-        Me._mniExportVendor_122.Size = New System.Drawing.Size(117, 22)
+        Me._mniExportVendor_122.Size = New System.Drawing.Size(113, 22)
         Me._mniExportVendor_122.Text = "Vendors"
         '
         'mniFees
@@ -779,7 +779,7 @@
         '
         Me.mniImpAccount.SetIndex(Me._mniImpAccount_133, CType(133, Short))
         Me._mniImpAccount_133.Name = "_mniImpAccount_133"
-        Me._mniImpAccount_133.Size = New System.Drawing.Size(126, 22)
+        Me._mniImpAccount_133.Size = New System.Drawing.Size(119, 22)
         Me._mniImpAccount_133.Text = "Accounts"
         '
         'mniImpCustomer
@@ -789,7 +789,7 @@
         '
         Me.mniImpCustomer.SetIndex(Me._mniImpCustomer_131, CType(131, Short))
         Me._mniImpCustomer_131.Name = "_mniImpCustomer_131"
-        Me._mniImpCustomer_131.Size = New System.Drawing.Size(126, 22)
+        Me._mniImpCustomer_131.Size = New System.Drawing.Size(119, 22)
         Me._mniImpCustomer_131.Text = "Customer"
         '
         'mniImpVendor
@@ -799,7 +799,7 @@
         '
         Me.mniImpVendor.SetIndex(Me._mniImpVendor_132, CType(132, Short))
         Me._mniImpVendor_132.Name = "_mniImpVendor_132"
-        Me._mniImpVendor_132.Size = New System.Drawing.Size(126, 22)
+        Me._mniImpVendor_132.Size = New System.Drawing.Size(119, 22)
         Me._mniImpVendor_132.Text = "Vendors"
         '
         'mniInvoiceBillSummary
@@ -809,7 +809,7 @@
         '
         Me.mniInvoiceBillSummary.SetIndex(Me._mniInvoiceBillSummary_123, CType(123, Short))
         Me._mniInvoiceBillSummary_123.Name = "_mniInvoiceBillSummary_123"
-        Me._mniInvoiceBillSummary_123.Size = New System.Drawing.Size(202, 22)
+        Me._mniInvoiceBillSummary_123.Size = New System.Drawing.Size(185, 22)
         Me._mniInvoiceBillSummary_123.Text = "Invoice Billing Summary"
         '
         'mniInvoices
@@ -822,7 +822,7 @@
         '
         Me.mniInvoicingGroups.SetIndex(Me._mniInvoicingGroups_26, CType(26, Short))
         Me._mniInvoicingGroups_26.Name = "_mniInvoicingGroups_26"
-        Me._mniInvoicingGroups_26.Size = New System.Drawing.Size(198, 22)
+        Me._mniInvoicingGroups_26.Size = New System.Drawing.Size(181, 22)
         Me._mniInvoicingGroups_26.Text = "Invoicing Groups"
         '
         'mniLocals
@@ -832,7 +832,7 @@
         '
         Me.mniLocals.SetIndex(Me._mniLocals_271, CType(271, Short))
         Me._mniLocals_271.Name = "_mniLocals_271"
-        Me._mniLocals_271.Size = New System.Drawing.Size(127, 22)
+        Me._mniLocals_271.Size = New System.Drawing.Size(120, 22)
         Me._mniLocals_271.Text = "Locals"
         '
         'mniMigTools
@@ -842,7 +842,7 @@
         '
         Me.mniMigTools.SetIndex(Me._mniMigTools_0, CType(0, Short))
         Me._mniMigTools_0.Name = "_mniMigTools_0"
-        Me._mniMigTools_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniMigTools_0.Size = New System.Drawing.Size(187, 22)
         Me._mniMigTools_0.Text = "Migration Tools"
         '
         '_mniOpCustomer_33
@@ -850,19 +850,19 @@
         Me._mniOpCustomer_33.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mniCustInvoiceGeneration, Me.mniCustInvoiceStoreGeneration})
         Me.mniOpCustomer.SetIndex(Me._mniOpCustomer_33, CType(33, Short))
         Me._mniOpCustomer_33.Name = "_mniOpCustomer_33"
-        Me._mniOpCustomer_33.Size = New System.Drawing.Size(202, 22)
+        Me._mniOpCustomer_33.Size = New System.Drawing.Size(189, 22)
         Me._mniOpCustomer_33.Text = "Customer"
         '
         'mniCustInvoiceGeneration
         '
         Me.mniCustInvoiceGeneration.Name = "mniCustInvoiceGeneration"
-        Me.mniCustInvoiceGeneration.Size = New System.Drawing.Size(262, 22)
+        Me.mniCustInvoiceGeneration.Size = New System.Drawing.Size(244, 22)
         Me.mniCustInvoiceGeneration.Text = "MS-Word Single Invoice Generation"
         '
         'mniCustInvoiceStoreGeneration
         '
         Me.mniCustInvoiceStoreGeneration.Name = "mniCustInvoiceStoreGeneration"
-        Me.mniCustInvoiceStoreGeneration.Size = New System.Drawing.Size(262, 22)
+        Me.mniCustInvoiceStoreGeneration.Size = New System.Drawing.Size(244, 22)
         Me.mniCustInvoiceStoreGeneration.Text = "MS-Word Batch Invoice Generation"
         '
         'mniPeriods
@@ -872,7 +872,7 @@
         '
         Me.mniPeriods.SetIndex(Me._mniPeriods_25, CType(25, Short))
         Me._mniPeriods_25.Name = "_mniPeriods_25"
-        Me._mniPeriods_25.Size = New System.Drawing.Size(198, 22)
+        Me._mniPeriods_25.Size = New System.Drawing.Size(181, 22)
         Me._mniPeriods_25.Text = "Invoicing Periods"
         '
         '_mniQB_0
@@ -880,7 +880,7 @@
         Me._mniQB_0.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniImpCustomer_131, Me._mniImpVendor_132, Me._mniImpAccount_133})
         Me.mniQB.SetIndex(Me._mniQB_0, CType(0, Short))
         Me._mniQB_0.Name = "_mniQB_0"
-        Me._mniQB_0.Size = New System.Drawing.Size(205, 22)
+        Me._mniQB_0.Size = New System.Drawing.Size(187, 22)
         Me._mniQB_0.Text = "Import from QuickBooks"
         '
         '_mniQB_1
@@ -888,14 +888,14 @@
         Me._mniQB_1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniExportCheck_121, Me._mniExportVendor_122})
         Me.mniQB.SetIndex(Me._mniQB_1, CType(1, Short))
         Me._mniQB_1.Name = "_mniQB_1"
-        Me._mniQB_1.Size = New System.Drawing.Size(205, 22)
+        Me._mniQB_1.Size = New System.Drawing.Size(187, 22)
         Me._mniQB_1.Text = "Export to Quick Books"
         '
         '_mniReceivables_63
         '
         Me.mniReceivables.SetIndex(Me._mniReceivables_63, CType(63, Short))
         Me._mniReceivables_63.Name = "_mniReceivables_63"
-        Me._mniReceivables_63.Size = New System.Drawing.Size(220, 22)
+        Me._mniReceivables_63.Size = New System.Drawing.Size(207, 22)
         Me._mniReceivables_63.Text = "Receivables"
         Me._mniReceivables_63.Visible = False
         '
@@ -903,7 +903,7 @@
         '
         Me.mniRegion.SetIndex(Me._mniRegion_274, CType(274, Short))
         Me._mniRegion_274.Name = "_mniRegion_274"
-        Me._mniRegion_274.Size = New System.Drawing.Size(127, 22)
+        Me._mniRegion_274.Size = New System.Drawing.Size(120, 22)
         Me._mniRegion_274.Text = "Region"
         '
         'mniReport
@@ -913,56 +913,56 @@
         '
         Me.mniReport.SetIndex(Me._mniReport_41, CType(41, Short))
         Me._mniReport_41.Name = "_mniReport_41"
-        Me._mniReport_41.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_41.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_41.Text = "GLM Invoice Report"
         '
         '_mniReport_42
         '
         Me.mniReport.SetIndex(Me._mniReport_42, CType(42, Short))
         Me._mniReport_42.Name = "_mniReport_42"
-        Me._mniReport_42.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_42.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_42.Text = "Cost Containment Report"
         '
         '_mniReport_43
         '
         Me.mniReport.SetIndex(Me._mniReport_43, CType(43, Short))
         Me._mniReport_43.Name = "_mniReport_43"
-        Me._mniReport_43.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_43.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_43.Text = "Check Disbursement Report"
         '
         '_mniReport_44
         '
         Me.mniReport.SetIndex(Me._mniReport_44, CType(44, Short))
         Me._mniReport_44.Name = "_mniReport_44"
-        Me._mniReport_44.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_44.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_44.Text = "Invoice Tracking Report"
         '
         '_mniReport_45
         '
         Me.mniReport.SetIndex(Me._mniReport_45, CType(45, Short))
         Me._mniReport_45.Name = "_mniReport_45"
-        Me._mniReport_45.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_45.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_45.Text = "Scrap Metal Rebate Report"
         '
         '_mniReport_46
         '
         Me.mniReport.SetIndex(Me._mniReport_46, CType(46, Short))
         Me._mniReport_46.Name = "_mniReport_46"
-        Me._mniReport_46.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_46.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_46.Text = "Recycle Tonnage Report"
         '
         '_mniReport_47
         '
         Me.mniReport.SetIndex(Me._mniReport_47, CType(47, Short))
         Me._mniReport_47.Name = "_mniReport_47"
-        Me._mniReport_47.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_47.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_47.Text = "Recycle Content Report"
         '
         '_mniReport_48
         '
         Me.mniReport.SetIndex(Me._mniReport_48, CType(48, Short))
         Me._mniReport_48.Name = "_mniReport_48"
-        Me._mniReport_48.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_48.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_48.Text = "Budget Report"
         Me._mniReport_48.Visible = False
         '
@@ -970,7 +970,7 @@
         '
         Me.mniReport.SetIndex(Me._mniReport_49, CType(49, Short))
         Me._mniReport_49.Name = "_mniReport_49"
-        Me._mniReport_49.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_49.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_49.Text = "Rebate Deduction Report"
         Me._mniReport_49.Visible = False
         '
@@ -978,21 +978,21 @@
         '
         Me.mniReport.SetIndex(Me._mniReport_50, CType(50, Short))
         Me._mniReport_50.Name = "_mniReport_50"
-        Me._mniReport_50.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_50.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_50.Text = "Universal Report"
         '
         '_mniReport_51
         '
         Me.mniReport.SetIndex(Me._mniReport_51, CType(51, Short))
         Me._mniReport_51.Name = "_mniReport_51"
-        Me._mniReport_51.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_51.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_51.Text = "Environmental Report"
         '
         '_mniReport_52
         '
         Me.mniReport.SetIndex(Me._mniReport_52, CType(52, Short))
         Me._mniReport_52.Name = "_mniReport_52"
-        Me._mniReport_52.Size = New System.Drawing.Size(245, 22)
+        Me._mniReport_52.Size = New System.Drawing.Size(234, 22)
         Me._mniReport_52.Text = "Recycle Tonnage Report General"
         '
         'mniReportDefinition
@@ -1002,7 +1002,7 @@
         '
         Me.mniReportDefinition.SetIndex(Me._mniReportDefinition_0, CType(0, Short))
         Me._mniReportDefinition_0.Name = "_mniReportDefinition_0"
-        Me._mniReportDefinition_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniReportDefinition_0.Size = New System.Drawing.Size(187, 22)
         Me._mniReportDefinition_0.Text = "Report Definition"
         '
         'mniServiceCatalog
@@ -1012,7 +1012,7 @@
         '
         Me.mniServiceCatalog.SetIndex(Me._mniServiceCatalog_0, CType(0, Short))
         Me._mniServiceCatalog_0.Name = "_mniServiceCatalog_0"
-        Me._mniServiceCatalog_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniServiceCatalog_0.Size = New System.Drawing.Size(187, 22)
         Me._mniServiceCatalog_0.Text = "Service Catalog"
         '
         'mniServiceGroups
@@ -1022,7 +1022,7 @@
         '
         Me.mniServiceGroups.SetIndex(Me._mniServiceGroups_0, CType(0, Short))
         Me._mniServiceGroups_0.Name = "_mniServiceGroups_0"
-        Me._mniServiceGroups_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniServiceGroups_0.Size = New System.Drawing.Size(187, 22)
         Me._mniServiceGroups_0.Text = "Service Groups"
         Me._mniServiceGroups_0.Visible = False
         '
@@ -1030,7 +1030,7 @@
         '
         Me.mniServices.SetIndex(Me._mniServices_623, CType(623, Short))
         Me._mniServices_623.Name = "_mniServices_623"
-        Me._mniServices_623.Size = New System.Drawing.Size(132, 22)
+        Me._mniServices_623.Size = New System.Drawing.Size(124, 22)
         Me._mniServices_623.Text = "Services"
         '
         'mniStoreAddress
@@ -1040,7 +1040,7 @@
         '
         Me.mniStoreAddress.SetIndex(Me._mniStoreAddress_223, CType(223, Short))
         Me._mniStoreAddress_223.Name = "_mniStoreAddress_223"
-        Me._mniStoreAddress_223.Size = New System.Drawing.Size(173, 22)
+        Me._mniStoreAddress_223.Size = New System.Drawing.Size(164, 22)
         Me._mniStoreAddress_223.Text = "Store Address"
         '
         'mniStoreGroups
@@ -1050,7 +1050,7 @@
         '
         Me.mniStoreGroups.SetIndex(Me._mniStoreGroups_222, CType(222, Short))
         Me._mniStoreGroups_222.Name = "_mniStoreGroups_222"
-        Me._mniStoreGroups_222.Size = New System.Drawing.Size(173, 22)
+        Me._mniStoreGroups_222.Size = New System.Drawing.Size(164, 22)
         Me._mniStoreGroups_222.Text = "Store Groups"
         '
         '_mniStores_22
@@ -1058,14 +1058,14 @@
         Me._mniStores_22.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniStoresMaint_221, Me._mniStoreGroups_222, Me._mniStoreAddress_223})
         Me.mniStores.SetIndex(Me._mniStores_22, CType(22, Short))
         Me._mniStores_22.Name = "_mniStores_22"
-        Me._mniStores_22.Size = New System.Drawing.Size(198, 22)
+        Me._mniStores_22.Size = New System.Drawing.Size(181, 22)
         Me._mniStores_22.Text = "Stores"
         '
         '_mniStoresMaint_221
         '
         Me.mniStoresMaint.SetIndex(Me._mniStoresMaint_221, CType(221, Short))
         Me._mniStoresMaint_221.Name = "_mniStoresMaint_221"
-        Me._mniStoresMaint_221.Size = New System.Drawing.Size(173, 22)
+        Me._mniStoresMaint_221.Size = New System.Drawing.Size(164, 22)
         Me._mniStoresMaint_221.Text = "Store Maintenance"
         '
         'mniStoresMaint
@@ -1078,7 +1078,7 @@
         '
         Me.mniSystemSetings.SetIndex(Me._mniSystemSetings_0, CType(0, Short))
         Me._mniSystemSetings_0.Name = "_mniSystemSetings_0"
-        Me._mniSystemSetings_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniSystemSetings_0.Size = New System.Drawing.Size(187, 22)
         Me._mniSystemSetings_0.Text = "System Settings"
         '
         'mniUserMaintenance
@@ -1088,14 +1088,14 @@
         '
         Me.mniUserMaintenance.SetIndex(Me._mniUserMaintenance_0, CType(0, Short))
         Me._mniUserMaintenance_0.Name = "_mniUserMaintenance_0"
-        Me._mniUserMaintenance_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniUserMaintenance_0.Size = New System.Drawing.Size(187, 22)
         Me._mniUserMaintenance_0.Text = "User Maintenance"
         '
         '_mniUserMaintenance_1
         '
         Me.mniUserMaintenance.SetIndex(Me._mniUserMaintenance_1, CType(1, Short))
         Me._mniUserMaintenance_1.Name = "_mniUserMaintenance_1"
-        Me._mniUserMaintenance_1.Size = New System.Drawing.Size(196, 22)
+        Me._mniUserMaintenance_1.Size = New System.Drawing.Size(187, 22)
         Me._mniUserMaintenance_1.Text = "User Privileges"
         '
         'mniVendors
@@ -1105,7 +1105,7 @@
         '
         Me.mniVendors.SetIndex(Me._mniVendors_24, CType(24, Short))
         Me._mniVendors_24.Name = "_mniVendors_24"
-        Me._mniVendors_24.Size = New System.Drawing.Size(198, 22)
+        Me._mniVendors_24.Size = New System.Drawing.Size(181, 22)
         Me._mniVendors_24.Text = "Vendors"
         '
         '_mniWebAccessLevels_27
@@ -1114,7 +1114,7 @@
         Me._mniWebAccessLevels_27.Enabled = False
         Me.mniWebAccessLevels.SetIndex(Me._mniWebAccessLevels_27, CType(27, Short))
         Me._mniWebAccessLevels_27.Name = "_mniWebAccessLevels_27"
-        Me._mniWebAccessLevels_27.Size = New System.Drawing.Size(198, 22)
+        Me._mniWebAccessLevels_27.Size = New System.Drawing.Size(181, 22)
         Me._mniWebAccessLevels_27.Text = "Web Access Levels"
         '
         'mniWordTemplate
@@ -1124,7 +1124,7 @@
         '
         Me.mniWordTemplate.SetIndex(Me._mniWordTemplate_0, CType(0, Short))
         Me._mniWordTemplate_0.Name = "_mniWordTemplate_0"
-        Me._mniWordTemplate_0.Size = New System.Drawing.Size(196, 22)
+        Me._mniWordTemplate_0.Size = New System.Drawing.Size(187, 22)
         Me._mniWordTemplate_0.Text = "MS-Word Templates"
         '
         '_mnuAdministrative_6
@@ -1132,7 +1132,7 @@
         Me._mnuAdministrative_6.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniBank_0, Me._mniBankAccount_0, Me._mniCreditCard_0, Me._mnuVendorPayments_0, Me._mnuInvoicing_62, Me._mniReceivables_63})
         Me.mnuAdministrative.SetIndex(Me._mnuAdministrative_6, CType(6, Short))
         Me._mnuAdministrative_6.Name = "_mnuAdministrative_6"
-        Me._mnuAdministrative_6.Size = New System.Drawing.Size(96, 20)
+        Me._mnuAdministrative_6.Size = New System.Drawing.Size(84, 20)
         Me._mnuAdministrative_6.Text = "Administrative"
         '
         '_mnuVendorPayments_0
@@ -1140,7 +1140,7 @@
         Me._mnuVendorPayments_0.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniCheck_0, Me._mniCheck_1, Me._mniCheck_2, Me._mniCheck_3})
         Me.mnuVendorPayments.SetIndex(Me._mnuVendorPayments_0, CType(0, Short))
         Me._mnuVendorPayments_0.Name = "_mnuVendorPayments_0"
-        Me._mnuVendorPayments_0.Size = New System.Drawing.Size(220, 22)
+        Me._mnuVendorPayments_0.Size = New System.Drawing.Size(207, 22)
         Me._mnuVendorPayments_0.Text = "Vendor Payments"
         '
         '_mnuInvoicing_62
@@ -1148,7 +1148,7 @@
         Me._mnuInvoicing_62.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniBills_621, Me._mniEquipmet_622, Me._mniServices_623})
         Me.mnuInvoicing.SetIndex(Me._mnuInvoicing_62, CType(62, Short))
         Me._mnuInvoicing_62.Name = "_mnuInvoicing_62"
-        Me._mnuInvoicing_62.Size = New System.Drawing.Size(220, 22)
+        Me._mnuInvoicing_62.Size = New System.Drawing.Size(207, 22)
         Me._mnuInvoicing_62.Text = "Invoicing"
         Me._mnuInvoicing_62.Visible = False
         '
@@ -1157,46 +1157,46 @@
         Me._mnuFile_1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniExcel_0, Me._mniQB_0, Me._mniQB_1, Me.mnuExport, Me.mnuLF, Me.mniSeparator, Me._mniExit_11})
         Me.mnuFile.SetIndex(Me._mnuFile_1, CType(1, Short))
         Me._mnuFile_1.Name = "_mnuFile_1"
-        Me._mnuFile_1.Size = New System.Drawing.Size(37, 20)
+        Me._mnuFile_1.Size = New System.Drawing.Size(35, 20)
         Me._mnuFile_1.Text = "File"
         '
         'mnuExport
         '
         Me.mnuExport.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniInvoiceBillSummary_123})
         Me.mnuExport.Name = "mnuExport"
-        Me.mnuExport.Size = New System.Drawing.Size(205, 22)
+        Me.mnuExport.Size = New System.Drawing.Size(187, 22)
         Me.mnuExport.Text = "Export"
         '
         'mnuLF
         '
         Me.mnuLF.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mniCCR})
         Me.mnuLF.Name = "mnuLF"
-        Me.mnuLF.Size = New System.Drawing.Size(205, 22)
+        Me.mnuLF.Size = New System.Drawing.Size(187, 22)
         Me.mnuLF.Text = "Export to Laserfiche"
         '
         'mniCCR
         '
         Me.mniCCR.Name = "mniCCR"
-        Me.mniCCR.Size = New System.Drawing.Size(209, 22)
+        Me.mniCCR.Size = New System.Drawing.Size(192, 22)
         Me.mniCCR.Text = "Cost Containment Report"
         '
         'mniSeparator
         '
         Me.mniSeparator.Name = "mniSeparator"
-        Me.mniSeparator.Size = New System.Drawing.Size(202, 6)
+        Me.mniSeparator.Size = New System.Drawing.Size(184, 6)
         '
         '_mnuHelp_6
         '
         Me._mnuHelp_6.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mniAbout})
         Me.mnuHelp.SetIndex(Me._mnuHelp_6, CType(6, Short))
         Me._mnuHelp_6.Name = "_mnuHelp_6"
-        Me._mnuHelp_6.Size = New System.Drawing.Size(44, 20)
+        Me._mnuHelp_6.Size = New System.Drawing.Size(41, 20)
         Me._mnuHelp_6.Text = "Help"
         '
         'mniAbout
         '
         Me.mniAbout.Name = "mniAbout"
-        Me.mniAbout.Size = New System.Drawing.Size(127, 22)
+        Me.mniAbout.Size = New System.Drawing.Size(123, 22)
         Me.mniAbout.Text = "About GIS"
         '
         '_mnuInput_2
@@ -1204,25 +1204,25 @@
         Me._mnuInput_2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniCustomer_21, Me._mniStores_22, Me._mniEquipment_23, Me._mniVendors_24, Me.mniSeparator2, Me._mniPeriods_25, Me._mniInvoicingGroups_26, Me._mniSeparator3_4, Me._mniWebAccessLevels_27})
         Me.mnuInput.SetIndex(Me._mnuInput_2, CType(2, Short))
         Me._mnuInput_2.Name = "_mnuInput_2"
-        Me._mnuInput_2.Size = New System.Drawing.Size(52, 20)
+        Me._mnuInput_2.Size = New System.Drawing.Size(48, 20)
         Me._mnuInput_2.Text = "Inputs"
         '
         'mniSeparator2
         '
         Me.mniSeparator2.Name = "mniSeparator2"
-        Me.mniSeparator2.Size = New System.Drawing.Size(195, 6)
+        Me.mniSeparator2.Size = New System.Drawing.Size(178, 6)
         '
         '_mniSeparator3_4
         '
         Me._mniSeparator3_4.Name = "_mniSeparator3_4"
-        Me._mniSeparator3_4.Size = New System.Drawing.Size(195, 6)
+        Me._mniSeparator3_4.Size = New System.Drawing.Size(178, 6)
         '
         '_mnuOperatons_3
         '
         Me._mnuOperatons_3.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniCallings_31, Me._mnuVendors_32, Me._mniOpCustomer_33, Me.mnuSales, Me.mniRate, Me.mniCustStoreSearch})
         Me.mnuOperatons.SetIndex(Me._mnuOperatons_3, CType(3, Short))
         Me._mnuOperatons_3.Name = "_mnuOperatons_3"
-        Me._mnuOperatons_3.Size = New System.Drawing.Size(77, 20)
+        Me._mnuOperatons_3.Size = New System.Drawing.Size(70, 20)
         Me._mnuOperatons_3.Text = "Operations"
         '
         '_mnuVendors_32
@@ -1230,51 +1230,51 @@
         Me._mnuVendors_32.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mniInvoiceBooking, Me.mniInvoiceImport, Me.mniAutomatedInvoice})
         Me.mnuVendors.SetIndex(Me._mnuVendors_32, CType(32, Short))
         Me._mnuVendors_32.Name = "_mnuVendors_32"
-        Me._mnuVendors_32.Size = New System.Drawing.Size(202, 22)
+        Me._mnuVendors_32.Size = New System.Drawing.Size(189, 22)
         Me._mnuVendors_32.Text = "Vendors"
         '
         'mniInvoiceBooking
         '
         Me.mniInvoiceBooking.Name = "mniInvoiceBooking"
-        Me.mniInvoiceBooking.Size = New System.Drawing.Size(241, 22)
+        Me.mniInvoiceBooking.Size = New System.Drawing.Size(220, 22)
         Me.mniInvoiceBooking.Text = "Invoice Booking"
         '
         'mniInvoiceImport
         '
         Me.mniInvoiceImport.Name = "mniInvoiceImport"
-        Me.mniInvoiceImport.Size = New System.Drawing.Size(241, 22)
+        Me.mniInvoiceImport.Size = New System.Drawing.Size(220, 22)
         Me.mniInvoiceImport.Text = "Import invoices from Laserfiche"
         '
         'mniAutomatedInvoice
         '
         Me.mniAutomatedInvoice.Name = "mniAutomatedInvoice"
-        Me.mniAutomatedInvoice.Size = New System.Drawing.Size(241, 22)
+        Me.mniAutomatedInvoice.Size = New System.Drawing.Size(220, 22)
         Me.mniAutomatedInvoice.Text = "Automated Invoice Generation"
         '
         'mnuSales
         '
         Me.mnuSales.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mniSaleRequest})
         Me.mnuSales.Name = "mnuSales"
-        Me.mnuSales.Size = New System.Drawing.Size(202, 22)
+        Me.mnuSales.Size = New System.Drawing.Size(189, 22)
         Me.mnuSales.Text = "Equipment Sales"
         Me.mnuSales.Visible = False
         '
         'mniSaleRequest
         '
         Me.mniSaleRequest.Name = "mniSaleRequest"
-        Me.mniSaleRequest.Size = New System.Drawing.Size(145, 22)
+        Me.mniSaleRequest.Size = New System.Drawing.Size(143, 22)
         Me.mniSaleRequest.Text = "Sale Requests"
         '
         'mniRate
         '
         Me.mniRate.Name = "mniRate"
-        Me.mniRate.Size = New System.Drawing.Size(202, 22)
+        Me.mniRate.Size = New System.Drawing.Size(189, 22)
         Me.mniRate.Text = "Rate Search"
         '
         'mniCustStoreSearch
         '
         Me.mniCustStoreSearch.Name = "mniCustStoreSearch"
-        Me.mniCustStoreSearch.Size = New System.Drawing.Size(202, 22)
+        Me.mniCustStoreSearch.Size = New System.Drawing.Size(189, 22)
         Me.mniCustStoreSearch.Text = "Customer - Store Search"
         '
         '_mnuReports_4
@@ -1282,24 +1282,24 @@
         Me._mnuReports_4.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniReport_41, Me._mniReport_42, Me._mniReport_43, Me._mniReport_44, Me._mniReport_45, Me._mniReport_46, Me._mniReport_47, Me._mniReport_48, Me._mniReport_49, Me._mniReport_50, Me._mniReport_51, Me._mniReport_52, Me.mniSeparator4, Me.mniReprint, Me.mniWebReports})
         Me.mnuReports.SetIndex(Me._mnuReports_4, CType(4, Short))
         Me._mnuReports_4.Name = "_mnuReports_4"
-        Me._mnuReports_4.Size = New System.Drawing.Size(59, 20)
+        Me._mnuReports_4.Size = New System.Drawing.Size(56, 20)
         Me._mnuReports_4.Text = "Reports"
         '
         'mniSeparator4
         '
         Me.mniSeparator4.Name = "mniSeparator4"
-        Me.mniSeparator4.Size = New System.Drawing.Size(242, 6)
+        Me.mniSeparator4.Size = New System.Drawing.Size(231, 6)
         '
         'mniReprint
         '
         Me.mniReprint.Name = "mniReprint"
-        Me.mniReprint.Size = New System.Drawing.Size(245, 22)
+        Me.mniReprint.Size = New System.Drawing.Size(234, 22)
         Me.mniReprint.Text = "Review & Reprint"
         '
         'mniWebReports
         '
         Me.mniWebReports.Name = "mniWebReports"
-        Me.mniWebReports.Size = New System.Drawing.Size(245, 22)
+        Me.mniWebReports.Size = New System.Drawing.Size(234, 22)
         Me.mniWebReports.Text = "Web Reports"
         '
         '_mnuSettings_0
@@ -1307,14 +1307,15 @@
         Me._mnuSettings_0.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._mniSystemSetings_0, Me._mniUserMaintenance_0, Me._mniUserMaintenance_1, Me.mniWebUser, Me._mniServiceCatalog_0, Me._mniServiceGroups_0, Me._mniMigTools_0, Me._mniReportDefinition_0, Me._mniWordTemplate_0})
         Me.mnuSettings.SetIndex(Me._mnuSettings_0, CType(0, Short))
         Me._mnuSettings_0.Name = "_mnuSettings_0"
-        Me._mnuSettings_0.Size = New System.Drawing.Size(61, 20)
+        Me._mnuSettings_0.Size = New System.Drawing.Size(57, 20)
         Me._mnuSettings_0.Text = "Settings"
         '
         'mniWebUser
         '
         Me.mniWebUser.Name = "mniWebUser"
-        Me.mniWebUser.Size = New System.Drawing.Size(196, 22)
+        Me.mniWebUser.Size = New System.Drawing.Size(187, 22)
         Me.mniWebUser.Text = "Web User Maintenance"
+        Me.mniWebUser.Visible = False
         '
         'MainMenu1
         '

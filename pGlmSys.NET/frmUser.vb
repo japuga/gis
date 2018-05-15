@@ -155,12 +155,16 @@ ErrorHandler:
         Dim nTran As SqlTransaction = Nothing
 		
 		On Error GoTo ErrorHandler
-		
 
         cm = cn.CreateCommand() '.let_ActiveConnection(cn)
         cm.CommandType = CommandType.Text
-		
-        If dgUser.SelectedRows.Count > 0 Then
+
+        If dgUser.SelectedRows.Count < 1 Then
+            If dgUser.SelectedCells.Count > 0 Then
+                dgUser.Rows(dgUser.SelectedCells(0).RowIndex).Selected = True
+            End If
+        End If
+        If dgUser.SelectedRows.Count > 0 And dgUser.SelectedRows(0).Index < rsUser.Rows.Count Then
             If MsgBox("Do you want to delete this record.", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "GLM Warning") = MsgBoxResult.Yes Then
                 nTran = cn.BeginTransaction()
                 'Primero se eliminan privilegios en suser_data
@@ -228,6 +232,8 @@ ErrorHandler:
 
                 load_dgUser()
             End If 'Do you want to delete?
+        Else
+            MsgBox("You must select a user before attempting this command.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "GLM Message")
         End If
         Exit Sub
 
